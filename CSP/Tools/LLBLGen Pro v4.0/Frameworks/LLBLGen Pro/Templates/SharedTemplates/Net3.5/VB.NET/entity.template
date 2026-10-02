@@ -1,0 +1,57 @@
+﻿' ////////////////////////////////////////////////////////////////////////////////////////////////////////
+' // This is generated code. 
+' ////////////////////////////////////////////////////////////////////////////////////////////////////////
+' // Code is generated using LLBLGen Pro version: <[LLBLGenVersion]>
+' // Code is generated on: <[Time]>
+' // Code is generated using templates: <[TemplateName]>
+' // Templates vendor: Solutions Design.
+' // Templates version: <[TemplateVersion]>
+' ////////////////////////////////////////////////////////////////////////////////////////////////////////
+Imports System
+Imports System.ComponentModel
+Imports System.Collections.Generic
+Imports System.Collections
+#If Not CF Then
+Imports System.Runtime.Serialization
+#End If
+Imports System.Data
+Imports System.Xml.Serialization
+Imports <[RootNamespace]>
+Imports <[RootNamespace]>.FactoryClasses
+Imports <[RootNamespace]>.DaoClasses
+Imports <[RootNamespace]>.RelationClasses
+Imports <[RootNamespace]>.HelperClasses
+Imports <[RootNamespace]>.CollectionClasses
+<[Foreach AdditionalNamespace CrLf]>Imports <[CurrentAdditionalNamespace]><[NextForeach]>
+Imports SD.LLBLGen.Pro.ORMSupportClasses
+<[ UserCodeRegion "AdditionalNamespaces" ]>
+' __LLBLGENPRO_USER_CODE_REGION_START AdditionalNamespaces
+' __LLBLGENPRO_USER_CODE_REGION_END
+<[ EndUserCodeRegion ]>
+Namespace <[RootNamespace]>.EntityClasses
+	''' <summary>Entity class which represents the entity '<[CurrentEntityName]>'<br/><br/>
+	''' <[Foreach CustomProperty Entity]>
+	''' <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary>
+	<Serializable()> _<[Foreach Attribute Entity]>
+	<[Attribute]><[NextForeach]>
+	Public Class <[CurrentEntityName]>Entity 
+		Inherits <[ If IsSubType ]><[ SuperTypeName ]>Entity<[ Else ]><[SettingValue Entity "EntityBaseClassName"]><[ EndIf ]>
+<[Foreach AdditionalInterface CrLf]>		Implements <[CurrentAdditionalInterface]><[NextForeach]><[ UserCodeRegion "AdditionalInterfaces" ]>
+		' __LLBLGENPRO_USER_CODE_REGION_START AdditionalInterfaces
+		' __LLBLGENPRO_USER_CODE_REGION_END
+		<[ EndUserCodeRegion ]>	
+
+<# SD_EntityIncludeTemplate #>
+
+#Region "Custom Entity Code"
+		<[ UserCodeRegion "CustomEntityCode" ]>
+		' __LLBLGENPRO_USER_CODE_REGION_START CustomEntityCode
+		' __LLBLGENPRO_USER_CODE_REGION_END
+		<[ EndUserCodeRegion ]>
+#End Region
+
+#Region "Included Code"
+<# Custom_EntityTemplate #>
+#End Region
+	End Class
+End Namespace

@@ -1,0 +1,381 @@
+
+@using System.Web.Http.Cors
+@model  Csp.Web.DataTransferObjects.EnterpriseAgreementsDto
+
+<style type="text/css">
+  body ul.k-reset.k-tabstrip-items {
+    background-color: #eee;
+    border-top: solid 0.25px rgba(220, 220, 220, 1);
+    padding: 0;
+  }
+
+  body div.k-tabstrip div.k-content.k-state-active {
+    border: none;
+    padding: 32px 16px 16px 16px;
+  }
+
+  body .k-tabstrip-items .k-loading.k-complete {
+    border: none;
+  }
+
+  body .k-tabstrip > .k-tabstrip-items > .k-item {
+    border: none;
+    text-decoration: none;
+  }
+
+  body .k-item.k-state-default .k-link {
+    font-weight: 500;
+    margin: 0;
+    padding: 12px 15px;
+    text-transform: none;
+    border: none;
+    border-radius: 0;
+    color: rgba(0, 0, 0, 0.65);
+  }
+
+  body .k-item.k-state-default.k-state-active a.k-link {
+    text-transform: none;
+    text-decoration: none;
+  }
+</style>
+
+<input type="hidden" value="0" id="dataDirty" />
+<div class="elaTitle">Enterprise Agreements</div>
+<div class="elaDescription">Displays a consolidated view for all CSP IDs under the selected Enterprise Agreement </div>
+
+@(Html.Kendo().TabStrip()
+    .Name("tabstrip")
+    .Items(tabstrip =>
+    {
+        tabstrip.Add().Text("Licenses")
+            .Content(@<text>
+<div class="grid-header">
+    <div class="grid-left">
+        <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateElaAuthCode();">Activate Enterprise Agreement</button>
+        @if (Model != null && Model.Ela2ButtonLinkAccess.HasEla2Roles)
+        {
+            if (!String.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.Ela2IoTButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.Ela2IoTButtonLink')">ELA-Device Security Activation</button>
+            }
+
+            if (!String.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.Ela2SaaSButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.Ela2SaaSButtonLink')">ELA-SaaS Inline Activation</button>
+            }
+
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.Ela2AiOpsButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.Ela2AiOpsButtonLink')">ELA-AI Ops Activation</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.ElaScmButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.ElaScmButtonLink')">ELA-Ngfw Activation</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.EsaScmButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.EsaScmButtonLink')">SCM Activation</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.ElaDlpButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.ElaDlpButtonLink')">ELA-DLP Activation</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.ElaAdnsrButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.ElaAdnsrButtonLink')">ELA-ADNSR Activation</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.ElaQuantumButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.ElaQuantumButtonLink')">Quantum Activation</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.ElaSdWanZingboxButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.ElaSdWanZingboxButtonLink')">Activate SD-WAN (Device Security)</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.ElaSdWanAddCgxButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.ElaSdWanAddCgxButtonLink')">Activate Prisma SD-WAN</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.ElaSdWanAddCoresecButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.ElaSdWanAddCoresecButtonLink')">Activate SD-WAN (Core Security)</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.ElaSdWanLoggingServiceButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.ElaSdWanLoggingServiceButtonLink')">Activate SD-WAN (SLS)</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.EsaSdWanZingboxButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.EsaSdWanZingboxButtonLink')">Activate SD-WAN (Device Security) ESA</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.EsaSdWanAddCgxButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.EsaSdWanAddCgxButtonLink')">Activate Prisma SD-WAN ESA</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.EsaSdWanAddCoresecButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.EsaSdWanAddCoresecButtonLink')">Activate SD-WAN (Core Security) ESA</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.EsaSdWanLoggingServiceButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.EsaSdWanLoggingServiceButtonLink')">Activate SD-WAN (SLS) ESA</button>
+            }
+            if (!string.IsNullOrEmpty(Model.Ela2ButtonLinkAccess.Ela8AdnsrButtonLink))
+            {
+                <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" onclick="activateOnHub('@Model.Ela2ButtonLinkAccess.Ela8AdnsrButtonLink')">Activate ADNSR</button>
+            }
+        }
+
+        @if (Model != null && Model.HasEla2ConvertADVURL2Roles && Model.HasUrl4SiteLicense)
+        {
+            <button type="button" id="convertButton" class="k-button k-primary" onclick="confirmConversion();" @(Model.ConvertButtonEnabled == "disabled" ? "disabled ='disabled'" : "")>@ViewBag.ConvertButtonText</button>
+            <span id="notifyUser" style="color: green; display:none;">You will be notified by email when it is completed.</span>
+        }
+
+    </div>
+
+</div>
+<div class="fieldset" id="@UniqueId.EnterpriseAgreements">
+    <div>&nbsp;</div>
+    <div class="grid-content">
+        @if (Model != null && Model.EnterpriseAgreements != null)
+        {
+            @(Html.Kendo().Grid(Model.EnterpriseAgreements)
+                  .Name("EnterpriseAgreementGrid")
+                  .Columns(columns =>
+                  {
+                      columns.Bound(x => x.EnterpriseAgreement).Hidden(true);
+                      columns.Bound(x => x.SupportAccountId).Title("Account ID").Filterable(false);
+                      columns.Bound(x => x.SupportAccountName).Title("Account Name").Filterable(false);
+                      columns.Bound(x => x.DisplayAuthorizationCode).Title("Auth Code");
+                      columns.Bound(x => x.MainAuthCode).Title("Auth Code").Hidden();
+                      columns.Bound(x => x.Description).Title("License Description").Filterable(false);
+                      columns.Bound(x => x.ExpirationDateDisplay).Title("Expiration Date").ClientTemplate("<div class=\'#=ExpirationDateCssClass#\'>#=ExpirationDateDisplay#</div>").Filterable(false);
+                      columns.Bound(x => x.UsedTotalInfo).Title("").Filterable(false).Sortable(false).Width(170)
+                          .HeaderTemplate(@"<span>Licenses (Used / Total)</span><span class=""csp-tooltip""><i class=""icon-question-sign icon-large"" onclick=""SupportPortal.Help(this, 62, {width:210, height: 160});""></i></span>");
+                      columns.Bound(x => x.BoundedOrUnbounded).Title("").Width(170)
+                          .HeaderTemplate(@"<span>Bounded / Unbounded</span><span class=""csp-tooltip""><i class=""icon-question-sign icon-large"" onclick=""SupportPortal.Help(this, 63, {width:210, height: 160});""></i></span>");
+                  })
+                  .DataSource(dataSource => dataSource
+                      .Server()
+                      .Group(groups => groups.Add(y => y.EnterpriseAgreement))
+                      .Group(groups => groups.Add(y => y.MainAuthCode))
+                  )
+            )
+        }
+    </div>
+</div>
+            </text>);
+        tabstrip.Add().Text("EA Consumption Details")
+            .Selected(true)
+            .Content(@<text>
+                <div id="ela-home-container"></div>
+            </text>);
+
+        tabstrip.Add().Text("EA Contract Details")
+            .Content(@<text>
+                <div id="ela-contract-history"></div>
+            </text>);
+    })
+    .Animation(animation =>
+    {
+        animation.Enable(false);
+    })
+)
+
+<div>
+  @(Html.Kendo().Window()
+          .Name((string)@UniqueId.ActivateElaAuthCodeWindow)
+          .Visible(false)
+          .Width(500)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+              .Open("onActivateElaAuthCodeWindowOpen")
+              .Close("onActivateElaAuthCodeWindowClose"))
+          .Title("Enterprise Agreement Auth-Code Activation")
+    )
+</div>
+<div>
+  @(Html.Kendo().Window()
+          .Name((string)@UniqueId.ManageElaTokensWindow)
+          .Visible(false)
+          .Width(770)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+              .Open("onManageElaTokensWindowOpen")
+              .Close("onManageElaTokensWindowClose"))
+          .Title("Manage VM/CN-X-Series Tokens")
+    )
+</div>
+<div>
+  @(Html.Kendo().Window()
+        .Name((string)@UniqueId.GrantElaTokensWindow)
+        .Visible(false)
+        .Width(450)
+        .Height(320)
+        .Modal(true)
+        .Draggable()
+        .Events(events => events
+            .Open("onGrantElaTokensWindowOpen")
+            .Close("onGrantElaTokensWindowClose"))
+        .Title("Grant ELA Access")
+    )
+</div>
+
+<script>
+    function activateElaAuthCode() {
+        var direction = '/SiteLicense/ActivateElaAuthCode';
+        var window = $('#@UniqueId.ActivateElaAuthCodeWindow').data("kendoWindow");
+        window.refresh(direction);
+        window.setOptions({
+            minHeight: 300
+        });
+        window.open();
+        window.center();
+    }
+
+    function activateOnHub(url) {
+        window.open(url, "_blank");
+    }
+
+    function onActivateElaAuthCodeWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.ActivateElaAuthCodeWindow');
+    }
+
+    //refresh EnterpriseAgreementGrid
+    function onActivateElaAuthCodeWindowClose() {
+        SupportPortal.OnWindowClose("EnterpriseAgreementGrid");
+    }
+
+    function onManageElaTokensWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.ManageElaTokensWindow');
+    }
+
+    function onManageElaTokensWindowClose() {
+        var isDataDirty = $('#dataDirty').val();
+        console.log("dataDirty=" + isDataDirty);
+        if (isDataDirty !== '0') {
+            SupportPortal.Confirmation("You haven't saved your changes yet, do you want to exit?", function () {
+                $('#dataDirty').val(0);
+                $('#@UniqueId.ManageElaTokensWindow').data('kendoWindow').close();
+            }, null, null);
+            this.preventDefault();
+        }
+
+        SupportPortal.OnWindowClose("EnterpriseAgreementGrid");
+    }
+
+    function onGrantElaTokensWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.GrantElaTokensWindow');
+    }
+
+    //do not refresh Grid
+    function onGrantElaTokensWindowClose() {
+
+    }
+
+    //VM-ELA token management dialog
+    function manageTokens(grandParentAuthcode) {
+        var direction = '/SiteLicense/ManageElaAuthCodeTokens?authCode=' + grandParentAuthcode;
+        var window = $('#@UniqueId.ManageElaTokensWindow').data("kendoWindow");
+        window.refresh(direction);
+        window.setOptions({
+            minHeight: 300
+        });
+        window.open();
+        window.center();
+    }
+
+    function grantTokens(grandParentAuthcode) {
+        var direction = '/SiteLicense/GrantElaAuthCodeTokens?authCode=' + grandParentAuthcode;
+        var window = $('#@UniqueId.GrantElaTokensWindow').data("kendoWindow");
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+
+    $(function () {
+        var hasPendingTokensRequest = '@Model.HasTokenGrantRequest';
+        if (hasPendingTokensRequest === 'False') {
+            $('#reviewTokensGrantBtn').hide();
+        }
+    });
+
+    function CheckConversionStatus() {
+        var inprogressStatus = "InProgress";
+        var CompleteStatus = "Complete";
+        var ErrorStatus = "Error";
+        var FatalErrorStatus = "FatalError";
+
+        var requestId = Math.floor(Math.random() * 10000) + 1;
+        var savedStatus = @Html.Raw(Json.Encode(Model.ConvertStatus));
+        $.ajax({
+            url: "@Url.Action("GetConversionStatus", "SiteLicense")",
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function(data) {
+                if (data.Data != null && data.Data != "") {
+                    if (savedStatus != data.Data.Status) {
+                        if (data.Data.Status === CompleteStatus) {
+                            SupportPortal.Message("Conversion completed Successfully", { width: 400, height: 200, title: 'URL4 Conversion' }, function() {});
+                        } else if (data.Data.Status === ErrorStatus) {
+                            SupportPortal.Message("An error occurred during conversion", { width: 400, height: 200, title: 'URL4 Conversion' }, function() {});
+                        }else if (data.Data.Status === FatalErrorStatus) {
+                            SupportPortal.Message("A fatal error occurred during conversion", { width: 400, height: 200, title: 'URL4 Conversion' }, function() {});
+                        }
+
+                    } else if (data.Data.Status === inprogressStatus) {
+                        setTimeout(function(){CheckConversionStatus();}, 15000);
+                    }
+                }
+            },
+            error: function(error){
+                console.debug(error);
+                SupportPortal.Message("An exception was thrown while checking for conversion  status.", { width: 400, height: 200, title: 'URL4 Conversion' }, function() {});
+            }
+        });
+    }
+
+    function convertUrl4ToAdvanceUrl() {
+        var convertButton = document.getElementById("convertButton");
+        convertButton.innerText = "Conversion started";
+        convertButton.disabled = true;
+        document.getElementById('notifyUser').style.display = '';
+
+        $.ajax({
+            url: "@Url.Action("ConvertUrl4ToAdvanceUrl", "SiteLicense")",
+            type: 'Post',
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function(data) {
+                if (data != null && data != "") {
+                    SupportPortal.Message(data, { width: 400, height: 200, title: 'URL4 Conversion' }, function() {});
+                }
+            },
+            error: function(error){
+                console.debug(error);
+                SupportPortal.Message("An error occurred while trying to call convert Ela Url4 API. Please contact customer support", { width: 400, height: 200, title: 'URL4 Conversion' }, function() {});
+
+                //In case of exception caused by certificate, or bad connection show the button again
+                var convertButton = document.getElementById("convertButton");
+                convertButton.innerText = "Convert to ADVURL";
+                convertButton.disabled = false;
+            }
+        });
+    }
+
+    function confirmConversion() {
+        var message = "<div style= 'background: #EED08C; font-weight: bold;'><span>Be aware that once you convert to AdvURL, it will apply to ALL devices across ALL CSP accounts under the same ELA Master License." + "<br><br>" +
+        "Once converted you cannot revert or downgrade to URL4." + "<br><br><br>" +
+        "Please confirm you wish to convert to AdvURL</span></div>";
+        SupportPortal.Confirmation(message, function () { convertUrl4ToAdvanceUrl(); }, function () { return false; },{ width: 400, height: 300});
+    }
+
+    var CheckForConversionStatus = '@Html.Raw(Json.Encode(Model.CheckForConversionStatus))';
+    if (CheckForConversionStatus === 'true')
+        CheckConversionStatus();
+
+</script>

@@ -1,0 +1,179 @@
+﻿@using Csp.Api.Model
+@using Kendo.Mvc.UI
+
+@model Csp.Web.DataTransferObjects.SupportAccountListDto
+
+
+
+
+
+<script>
+    function onSupportAccountEnterPress(e) {
+
+        if (e.keyCode == 13) {
+            SearchAccounts();
+            return false;
+        }
+    }
+
+    function onDataBound(e) {
+
+
+        $("#AccountGrid tbody tr .Groups").each(function () {
+
+            var currentDataItem = $("#AccountGrid").data("kendoGrid").dataItem($(this).closest("tr"));
+
+            var htmlstring = '';
+            for (i = 0 ; i < currentDataItem.Groups.length ; i++) {
+                if (currentDataItem.Groups[i].SupportAccountGroupName != null)
+                    htmlstring += "<a href='#'>" + currentDataItem.Groups[i].SupportAccountGroupName + '</a><br/>';
+            }
+            $(this).context.innerHTML = htmlstring;
+
+        })
+
+    }
+
+    function SearchAccounts() {
+
+        var grid = $("#AccountGrid").data("kendoGrid").dataSource;
+        grid.filter(
+        {
+            field: document.getElementById("cmbAccountSearchEntity").value,
+            operator: "eq",
+            value: document.getElementById('txtAccountSearchValue').value
+        }
+        )
+        grid.read();
+    }
+</script>
+
+<script>
+
+    $(function () {
+        // Notice that the Name() of the grid is used to get its client-side instance
+        var grid = $("#AccountGrid").data("kendoGrid");
+
+    });
+
+    function onSearchData() {
+
+        return {
+            userAccountId: "@ViewBag.Id"
+
+        };
+    }
+
+</script>
+
+
+<div class="width-height">
+    <div class="grid-header">
+        <div class="grid-right">
+
+            <div class="grid-filter">
+                <span class="filter_by">Filter By:</span>
+
+
+                @(Html.Kendo().DropDownList()
+          .Name("cmbAccountSearchEntity")
+          .DataTextField("Text")
+          .DataValueField("Value")
+          .BindTo(new List<SelectListItem>() {
+              new SelectListItem() {
+                  Text = "Company Name",
+                  Value = "CompanyName"
+              },
+              new SelectListItem() {
+                  Text = "Phone Number",
+                  Value = "PhoneNumber"
+              },
+              new SelectListItem() {
+                  Text = "Description",
+                  Value = "Description"
+              }, 
+              new SelectListItem() {
+                  Text = "Customer Number",
+                  Value = "CustomerNumber"
+              },
+			   new SelectListItem() {
+                  Text = "Location",
+                  Value = "City"
+              },
+			  new SelectListItem() {
+                  Text = "Address",
+                  Value = "Address1"
+              },
+			   new SelectListItem() {
+                  Text = "Region",
+                  Value = "Region"
+              },
+			  
+			     new SelectListItem() {
+                  Text = "Country",
+                  Value = "Country"
+              },
+              
+          })
+          .Value("SupportAccountGroupName")
+    )
+            </div>
+
+            <div class="grid-filter">
+                <div class="grid-filter k-textbox" id="Textbox">
+                    <input type="text" id="txtAccountSearchValue" onkeypress="return onSupportAccountEnterPress(event)" />
+                </div>
+            </div>
+
+
+            <div class="grid-filter">
+                <input type="button" value="Search" onclick="SearchAccounts()" class="k-button" />
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="grid-content">
+
+    @{
+        if (Model != null && Model.Accounts != null) {
+
+            var maxPageSizeForms = Convert.ToInt32(Model.Accounts.Count);
+            var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+            if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                pageSizeOptionsForms.Add(maxPageSizeForms);
+            }
+
+        @(Html.Kendo().Grid(Model.Accounts)
+            .Name("AccountGrid")
+            .Columns(columns => {
+
+                columns.Bound(p => p.CompanyName).Width(100).Filterable(false).Sortable(true).Column.Title = "Company Name";
+                columns.Bound(p => p.CustomerNumber).Width(150).Filterable(false).Sortable(true).Column.Title = "Customer Number";
+                columns.Bound(p => p.PhoneNumber).Width(150).Filterable(false).Sortable(true).Column.Title = "Phone Number";
+                columns.Bound(p => p.Address1).Width(100).Filterable(false).Sortable(true).Column.Title = "Address";
+                columns.Bound(p => p.City).Width(100).Filterable(false).Sortable(true).Column.Title = "Location";
+                columns.Bound(p => p.Region).Width(100).Filterable(false).Sortable(true).Column.Title = "Region";
+                columns.Bound(p => p.Country).Width(100).Filterable(false).Sortable(true).Column.Title = "Country";
+            })
+
+            .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+            .Sortable()
+            .Filterable()
+            .Events(e => e.DataBound("onDataBound"))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .Total((int)ViewData["total"])
+                .PageSize(10)
+                .Read(read => {
+                    read.Action(ViewBag.Action, ViewBag.Controller)
+                                  .Data("onSearchData");
+                })
+            ))
+        }}
+
+</div>
+
+
+

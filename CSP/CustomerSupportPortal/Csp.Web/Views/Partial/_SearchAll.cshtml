@@ -1,0 +1,548 @@
+﻿@using Csp.Api.Model
+@using Csp.Api.Services.Contracts
+@using Csp.Api.HelperClasses
+@using System.Linq
+@using Kendo.Mvc.UI
+@model SearchAllViewModel
+
+@{
+    var searchingOneAccount = Model.DefaultSupportAccountId.HasValue;
+    bool showCspIds = !searchingOneAccount && Model.CspIds != null;
+}
+
+<style type="text/css">
+    .bold { font-weight: bold; }
+    body .k-master-row.k-alt, body .k-master-row.k-alt:hover, body .k-detail-row.k-alt, body .k-detail-row.k-alt:hover, body .k-detail-row.k-alt th.k-header, body .k-detail-row.k-alt td[role="gridcell"] { background-color: rgba(52, 52, 52, 0.15); }
+    .k-button.selected { border: solid 1px rgba(195, 195, 195, 1);background-color: rgba(215, 215, 215, 1); }
+    #SearchDivCspIds .k-select { width: 42px; }
+    #SearchDivCspIds .k-reset .k-select { width: 15px; }
+    #SearchDiv.error #SearchDivCspIds .k-select { width: 23px; }
+    #SearchDivCspIds .k-dropdown-wrap { width: calc(100% + 8px); }
+    #SearchDiv.error #SearchDivSearchValue input, #SearchDiv.error #SearchDivCspIds .k-dropdown-wrap { border-color: #ff000050;background-color: #FFF9F8; }
+    /*.cbCompText {display: inline-block;padding-left: 5px;width: calc(100% - 20px);height: 14px;overflow: hidden;line-height: 14px;vertical-align: top; }*/
+    .k-widget.k-multiselect.k-header { max-height: 50px; overflow: auto; }
+    div#SearchDiv { margin: 7px 0 0 0;padding: 0;background-color:#fff; }
+</style>
+<script>
+    var showCspIds = @showCspIds.ToString().ToLower();
+    var firstRun = true;
+
+    function checkInput() {
+        /*
+        if (showCspIds) {
+            if (!getSearchFields().searchValue) {
+                $('#SearchDiv').addClass("error");
+                $('.grid-filter__search-button').hide();
+                return false;
+            }
+            $('.grid-filter__search-button').show();
+            $('#SearchDiv').removeClass("error");
+        }
+        */
+        return true;
+    }
+
+    function searchAll() {
+        if (!checkInput()) {
+            return;
+        }
+
+        var searchFields = getSearchFields();
+        var grid = $('#SearchAllGrid').data("kendoGrid").dataSource;
+        grid.filter(
+            {
+                field: searchFields.searchField,
+                operator: "eq",
+                value: searchFields.searchValue.trim()
+            }
+        );
+         $('#SearchAllGrid').show();
+        if (firstRun === true) {
+            firstRun = false;
+            @if (!searchingOneAccount) {
+                <text>
+            var searchAllWindow = $('#SearchAllWindow').data("kendoWindow");
+            if (searchAllWindow) {
+                if (searchAllWindow.setOptions) {
+                    searchAllWindow.setOptions({
+                        minWidth: 1100
+                    });
+                }
+                if (searchAllWindow.center) {
+                    searchAllWindow.center();
+                }
+            }
+                </text>
+            }
+        };
+        //$('#SearchAllGrid').show();
+
+    }
+
+    var isFirstDataBind = true;
+    function SearchAllGridDataBound(e) {
+        if (isFirstDataBind) {
+            $('#SearchAllGrid').data("kendoGrid").dataSource._total = '@Convert.ToInt32(Model.DataParameters.TotalRecordCount)';
+            isFirstDataBind = false;
+        }
+        setTimeout(function () {
+            setRowsState();
+            if ($('.k-master-row td a.k-icon').length > 0) {
+                $('#expand-all').show();
+                $('#collapse-all').show();
+            } else {
+                $('#expand-all').hide();
+                $('#collapse-all').hide();
+            }
+        }, 25);
+    }
+
+    function getSearchFields() {
+        var searchField = $('#FilterByCombo').val();
+        var searchValue;
+        if (searchField === "CspId") {
+            searchValue = $("#ddlSupportAccountsDdl").val()?.toString().replaceAll(',', ', ') || '';
+        } else if (searchField == "ExpiresBy") {
+            searchValue = $('#SearchDateValue').val();
+        } else {
+            searchValue = $('#SearchValue').val();
+        }
+
+        return {
+            searchField: searchField,
+            searchValue: searchValue
+        };
+    }
+
+    function onSearchAllEnterPress(e) {
+        if (e.keyCode == 13) {
+            searchAll();
+            return false;
+        }
+    }
+
+    function onSearchAllEnterUp(e) {
+        checkInput();
+    }
+
+    var maxRecforCsvExport = 10000;
+
+    function exportSearchAllToCsv() {
+        if (!checkInput()) {
+            return;
+        }
+
+        var grid = $('#SearchAllGrid').data("kendoGrid").dataSource;
+        var totalRecCount = grid.total();
+        /*
+        if (totalRecCount > maxRecforCsvExport) {
+            alert('Export currently disabled for more than 10,000 devices.  We\'re working to increase this limit');
+            return;
+        }
+        */
+        var id = '@(Model.DefaultSupportAccountId.HasValue ? Model.DefaultSupportAccountId.Value.ToString() : string.Empty)';
+
+        var searchFields = getSearchFields();
+
+        location.href = '@Url.Action("SearchAllReport", "SearchAll")?id=' + id + '&searchField='
+            + searchFields.searchField + '&searchValue=' + searchFields.searchValue;
+    }
+
+    function FilterByComboChange() {
+        checkInput();
+        var dropDownControl = $("#FilterByCombo").data("kendoDropDownList");
+        var selectedValue = dropDownControl.value();
+        if (selectedValue === "CspId") {
+            $('#SearchDiv').show();
+            $("#DateSearchDiv").hide();
+            $('#SearchDivSearchValue').hide();
+            $('#SearchDivCspIds').show();
+        } else if (selectedValue === "ExpiresBy") {
+            $('#SearchDiv').hide();
+            $("#DateSearchDiv").show();
+            $("#SearchDivSearchValue").hide();
+            $('#SearchDivCspIds').hide();
+        } else {
+            $('#SearchDiv').show();
+            $("#DateSearchDiv").hide();
+            $('#SearchDivSearchValue').show();
+            $('#SearchDivCspIds').hide();
+        }
+    }
+
+    var initialLoad = true;
+    function searchAllRequestStart() {
+
+        var showPleaseWaitMessage = true;
+
+        if (initialLoad === true) {
+            initialLoad = false;
+            @if (searchingOneAccount) {
+                <text>
+            showPleaseWaitMessage = false;
+                </text>
+            }
+        }
+
+        if (showPleaseWaitMessage) {
+            SupportPortal.BlockUI();
+        }
+    }
+
+    function searchAllRequestEnd() {
+        SupportPortal.UnBlockUI();
+    }
+
+    $(function() {
+        $('#SearchValue').focus();
+    });
+
+    function formatSupportAccount(data) {
+        return data.AssetType === "@AssetTypes.CloudServices"
+            || data.AssetType === "@AssetTypes.Casb" 
+            ? "<a href=\"/SupportAccount/CloudServices/" + data.SupportAccountId + "\">" + data.SupportAccountName + "</a><br>"
+            : data.ModelName // TODO: assemble link to IONs home page
+                && data.ModelName.includes('-ION')
+                ? data.SupportAccountName
+                : "<div style=\"white-space: nowrap;\"><a href=\"/SupportAccount/Devices/" + data.SupportAccountId + "?assettype=" + data.AssetType + "&devicecode=" + data.DeviceCode + "\">" + data.SupportAccountName +"</a></div>";
+    }
+
+    function formatSNs(data) {
+        var returnData = "";
+        if (data.AssetType === "@AssetTypes.CloudServices"
+            || data.AssetType === "@AssetTypes.Casb") {
+            var formatedSns = data.DeviceCode.split("\n");
+            for (var i = 0; i < formatedSns.length; i ++) {
+                returnData = returnData +
+                    "<a href=\"/SupportAccount/CloudServices/" +
+                    data.SupportAccountId +
+                    "\">" +
+                    formatedSns[i] +
+                    "</a><br>";
+            }
+            return returnData;
+        } else if (data.ModelName // TODO: assemble link to IONs home page
+            && data.ModelName.includes('-ION')) {
+            return data.DeviceCode;
+        } else {
+            returnData = "<div style=\"white-space: nowrap;\"><a href=\"/SupportAccount/Devices/" +
+                data.SupportAccountId +
+                "?assettype=" +
+                data.AssetType +
+                "&devicecode=" +
+                data.DeviceCode +
+                "\">" + data.DeviceCode
+                +"</a></div>";
+
+            return returnData;
+        }
+
+    }
+
+    function openActivationLinksLookupWindow() {
+        var window = $('#ActivationLinkLookupWindowPopup').data("kendoWindow");
+        window.setOptions({
+            minHeight: 500,
+            minWidth: 920
+        });
+        window.title("Activation Links Lookup");
+        window.refresh();
+        window.refresh("/SearchAll/ActivationLinksLookup");
+        window.open();
+        window.center();
+    }
+
+    function onOpenActivationLinksLookupWindow() {
+        SupportPortal.OnWindowOpen("ActivationLinkLookupWindowPopup");
+    }
+
+    function onCloseActivationLinksLookupWindow() {
+        /*
+        var window = $('#ActivationLinkLookupWindowPopup').data("kendoWindow");
+        window.content("");
+        window.refresh();
+        SupportPortal.OnWindowClose(deviceGridId);
+        */
+    }
+</script>
+
+<style>
+    #SearchAssetTypes label {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    div.locrow {
+        max-width: 150px;
+    }
+
+    span.loc {
+        white-space: nowrap;
+        margin-right: 5px;
+        display: inline-block;
+    }
+</style>
+
+@{
+    var title = Model.DefaultSupportAccountId.HasValue ? "Search All Assets in Current Account" : "Search Across Multiple Accounts";
+}
+
+<div>
+    @(Html.Kendo().Window()
+        .Name("ActivationLinkLookupWindowPopup")
+        .Visible(false)
+        .Modal(true)
+        .Draggable()
+        .Title("Activate License")
+        .Events(events => events.Close("onOpenActivationLinksLookupWindow").Open("onCloseActivationLinksLookupWindow"))
+    )
+</div>
+
+<div class="contextTitle"> @title </div>
+
+<div class="grid-header" id="gridFilterOptions">
+    @*if (Model.IsSuperuser)
+    {
+    <div class="grid-left">
+        <input class="k-button" type="button" value="Activation Links Lookup" onclick="openActivationLinksLookupWindow()"/>
+    </div>
+    }*@
+    @*@if (Model.HasMultipleAccounts && Model.SearchCurrentSupportAccount) {
+        <div class="grid-left" style="margin-right: 10px;">
+            <span>Search</span>
+            <label>@Html.RadioButtonFor(x => x.SearchCurrentSupportAccount, false) All Accounts</label>
+            <label>@Html.RadioButtonFor(x => x.SearchCurrentSupportAccount, true) @Model.CurrentSupportAccountName</label>
+        </div>
+    }
+    <div class="grid-left" id="SearchAssetTypes">
+        <span>Search Asset Type:</span>
+        <label>@Html.CheckBoxFor(x => x.SearchAssetTypes.SearchDevices) Devices</label>
+        <label>@Html.CheckBoxFor(x => x.SearchAssetTypes.SearchSpares) Spares</label>
+        <label>@Html.CheckBoxFor(x => x.SearchAssetTypes.SearchTraps) Traps</label>
+        <label>@Html.CheckBoxFor(x => x.SearchAssetTypes.SearchVms) VMs</label>
+    </div>*@
+    <div class="grid-right">
+
+        <div class="grid-filter">
+            @{
+                var filterBys = new List<SelectListItem>();
+                if (showCspIds) 
+                {
+                    filterBys.Add(new SelectListItem { Text = "Support Account", Value = "CspId" });
+                }
+                filterBys.Add(new SelectListItem { Text = "Serial Number", Value = "DeviceCode" });
+                filterBys.Add(new SelectListItem { Text = "Authorization Code", Value = "AuthorizationCodes" });
+                @*filterBys.Add(new SelectListItem { Text = "Expires By", Value = "ExpiresBy" });
+                if (!searchingOneAccount) {
+                    filterBys.Add(new SelectListItem { Text = "Support Account", Value = "SupportAccountName" });
+                }
+                filterBys.Add(new SelectListItem { Text = "Model Name", Value = "ModelName" });
+                filterBys.Add(new SelectListItem { Text = "Device Name", Value = "DeviceName" });
+                filterBys.Add(new SelectListItem { Text = "Device Tag", Value = "DeviceTag" });
+                filterBys.Add(new SelectListItem { Text = "Authorized Support Center", Value = "AuthorizedSupportCenter" });
+                filterBys.Add(new SelectListItem { Text = "Location", Value = "Location" });*@
+            }
+            @(Html.Kendo().DropDownList()
+                  .Name("FilterByCombo")
+                  .Events(events => events.Change("FilterByComboChange"))
+                  .DataTextField("Text")
+                  .DataValueField("Value")
+                  .BindTo(filterBys)
+                  )
+        </div>
+
+        <div class="grid-filter">
+            <div class="grid-filter">
+                <div id="SearchDiv" class="grid-filter">
+                    <span id="SearchDivCspIds">
+                    @if (showCspIds)
+                    {
+                        List<SelectListItem> cspIds = Model.CspIds.Select(i => new SelectListItem { Value = i.Key.ToString(), Text = i.Key + " - " + i.Value }).ToList();
+
+                    <text>
+                        @(Html.Kendo().MultiSelect()
+                            .Name("SupportAccountCombo")
+                            .AutoBind(false)
+                            .HtmlAttributes(new { style = "width: 187px !important;margin-right: 25px;", id = "ddlSupportAccountsDdl" })
+                            .Placeholder("All accounts")
+                            //.Events(e => e.Change("onSupportAccountClose"))
+                            //.TagMode(MultiSelectTagMode.Single)
+                            //.Template("<input type='checkbox' name='cbActType' onClick='onCheck(event);' /><span class='cbCompText' title='#:data.Text#'>#:data.Text#</span>")
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .Filter("contains")
+                            .BindTo(cspIds))
+                    </text>
+                        @*
+                        List<SelectListItem> cspIds = Model.CspIds.Select(i => new SelectListItem { Value = i.Key.ToString(), Text = i.Key + " - " + i.Value }).ToList();
+                        cspIds.Insert(0, new SelectListItem { Value = string.Empty, Text = "... select Support Account ..." });
+                    <text>
+                        @(Html.Kendo().DropDownList()
+                            .Name("SupportAccountCombo")
+                            .Events(events => events.Change("checkInput"))
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .BindTo(cspIds))
+                    </text>
+                        *@
+                    }
+                    </span>
+                    <span id="SearchDivSearchValue" style="@(showCspIds ? "display:none;" : string.Empty)">
+                    @Html.TextBox("SearchValue", null, new {
+                        onkeypress = "return onSearchAllEnterPress(event)",
+                        onkeyup = "return onSearchAllEnterUp(event)",
+                        @class = "grid-filter__search-input",
+                        placeholder = "Search" + (showCspIds ? " (value is required)" : string.Empty),
+                        aria_label = "Search"
+                    })
+                    </span>
+                    <button aria-label="search" type="button" id="@UniqueId.FindSaas" class="grid-filter__search-button" onclick="searchAll()">
+                        <span aria-hidden="true" class="fa fa-search" />
+                    </button>
+                </div>
+                <div id="DateSearchDiv" class="filter-datepicker">
+                    @{
+                        var defaultDate = DateTime.Now.AddMonths(3);
+                    }
+                    @(Html.Kendo().DatePicker()
+                          .Name("SearchDateValue")
+                          .Value(defaultDate)
+                          .HtmlAttributes(new {
+                              onkeypress = "return onSearchAllEnterPress(event)",
+                              @class = "grid-filter__date-input"
+                          }))
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@{
+    var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+}
+
+@* .HtmlAttributes(new { @class = "proddevicegrid", style = "display: " + (searchingOneAccount ? "block" : "none") + ";" })*@
+<div class="grid-content">
+<div class="grid-right" style="z-index: 2;position: absolute;right: 13px;">
+    <div class="grid-actions">
+        <input type="button" value="Expand All" id="expand-all" class="k-button" style="display:none;" />
+        <input type="button" value="Collapse All" id="collapse-all" class="k-button" style="display:none;" />
+    </div>
+</div>
+
+@(Html.Kendo().Grid<SearchAllModel>()
+                  .Name("SearchAllGrid")
+                  .BindTo(Model.SearchAllResults)
+                  .HtmlAttributes(new { @class = "proddevicegrid" })
+                  .Columns(columns => {
+                      columns.Bound(c => c.SupportAccountName).Sortable(false).Title("Support<br/>Account").Hidden(searchingOneAccount).ClientTemplate("# if (SupportAccountId > 0) { ##=formatSupportAccount(data)## } else { ##=SupportAccountName## } #").Encoded(false);
+                      columns.Bound(c => c.AssetType).Sortable(false).Title("Asset<br/>Type");
+                      columns.Bound(c => c.DeviceCode).Title("SN").ClientTemplate("# if (SupportAccountId > 0) { ##=formatSNs(data)## } else { ##=DeviceCode## } #").Encoded(false);
+                      columns.Bound(c => c.ModelName).Sortable(false).ClientTemplate("#=ModelName#").Encoded(false);
+                      columns.Bound(c => c.DeviceName).Title("Device<br/>Name");
+                      columns.Bound(c => c.Licenses).Sortable(false).ClientTemplate("#=Licenses#").Encoded(false);
+                      columns.Bound(c => c.AuthorizationCodes).Sortable(false).Title("Auth<br/>Codes").ClientTemplate("#=AuthorizationCodes#").Encoded(false);
+                      columns.Bound(c => c.ExpirationDates).Sortable(false).Title("Expiration<br/>Dates").ClientTemplate("#=ExpirationDates#").Encoded(false);
+                      columns.Bound(c => c.Quantity).Hidden(!searchingOneAccount).Sortable(false).ClientTemplate("#=Quantity#").Encoded(false);
+                      columns.Bound(c => c.HtmlLocation).Sortable(false).Encoded(false).Title("Location");
+                      columns.Bound(c => c.HtmlGroups).Title("Groups").Hidden(!searchingOneAccount).Sortable(false).ClientTemplate("#=HtmlGroups#").Encoded(false);
+                      columns.Bound(c => c.AuthorizedSupportCenter).Sortable(false).Title("ASC");
+                      columns.Bound(c => c.DeviceTag).Sortable(false).Title("Device<br/>Tag");
+                  })
+                  .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                  .Sortable()
+                  .Events(e => { e.DataBound("SearchAllGridDataBound"); e.DetailInit("initDetail"); })
+                  .Resizable(resize => resize.Columns(true))
+                  .ClientDetailTemplateId("template")
+                  .ToolBar(toolBar => {
+                      toolBar.Custom()
+                      .Text("Export To CSV")
+                      .HtmlAttributes(new { id = "export", data_link_type = "export-csv-assets" })
+                      .Url("javascript: exportSearchAllToCsv();");
+                  })
+                  .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                                    .Events(e => e.RequestEnd("searchAllRequestEnd").RequestStart("searchAllRequestStart"))
+                                                    .Model(model => model.Id(p => p.Id))
+                                                    .PageSize(10)
+                                                    .Sort(s => s.Add(searchingOneAccount ? "AssetType" : "SupportAccountName"))
+                                                    .Read(read => read.Action("View", "SearchAll", new {
+                                                        id = Model.DefaultSupportAccountId
+                                                    }).Data("SetAntiForgery"))
+                  )
+      )
+    <script id="template" type="text/kendo-tmpl">
+        @((Html.Kendo().Grid<SearchAllDetail>()
+            .Name("ChildGrid_#=DeviceCode#")
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.Model).Title("Model");
+                columns.Bound(o => o.License).Title("License");
+                columns.Bound(o => o.AuthorizationCode).Title("Auth code").Width(120);
+                columns.Bound(o => o.ExpirationDate).Title("Expiration date").Width(120);
+                columns.Bound(o => o.Quantity).Title("Quantity").Width(120);
+            })
+            .ToClientTemplate()))
+    </script>
+    <script>
+        function initDetail(e) {
+            var childDataDiv = $("#ChildGrid_" + e.data.DeviceCode);
+            if (e.data.ChildLicenses) {
+                childDataDiv.data("kendoGrid").dataSource.data(e.data.ChildLicenses);
+            }
+            if (!(e.data.ChildLicenses
+                && e.data.ChildLicenses.length > 0)) {
+                var childDiv = childDataDiv.parent().parent();
+                childDiv.prev().removeClass('bold');
+                childDiv.prev().find('a.k-icon').remove();
+                childDiv.remove();
+            }
+        }
+
+        function setButtonsState() {
+            var total = $('.k-master-row').length;
+            var selected = $('.k-master-row.bold').length;
+
+            if (total === selected) { // all collapsed
+                $('#expand-all').addClass('selected');
+                $('#collapse-all').removeClass('selected');
+            } else if (selected === 0) { // all expanded
+                $('#expand-all').removeClass('selected');
+                $('#collapse-all').addClass('selected');
+            } else {
+                $('#expand-all').removeClass('selected');
+                $('#collapse-all').removeClass('selected');
+            }
+        }
+        
+        function setRowsState() {
+            $('.k-master-row > td.k-hierarchy-cell a').click(function flipMasterRow(e) {
+                var el = $(this).parent().parent()
+                if (el.hasClass('bold')) {
+                    el.removeClass('bold');
+                } else {
+                    el.addClass('bold');
+                }
+                setButtonsState();
+            });
+            $('#expand-all').click(function() {
+                $('.k-master-row:not(.bold) > td.k-hierarchy-cell a').click();
+            });
+            $('#collapse-all').click(function() {
+                $('.k-master-row.bold > td.k-hierarchy-cell a').click();
+            });
+            $('.k-master-row > td.k-hierarchy-cell a').click();
+            setButtonsState();
+        }
+@*
+        $('#FindSearchValue').keyup(function(e) {
+            if (e.keyCode == 13) {
+                $('#@UniqueId.FindCnSeries').click();
+            }
+        });
+*@
+        $(document).ready(checkInput);
+    </script>
+</div>

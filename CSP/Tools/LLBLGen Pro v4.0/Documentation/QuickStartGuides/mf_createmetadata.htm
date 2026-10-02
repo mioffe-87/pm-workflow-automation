@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>LLBLGen Pro quick start guide: Create meta-data from entity model</title>
+	<link rel="STYLESHEET" type="text/css" href="stylesheets/general.css">
+	<script src="script.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	function toggle()
+	{
+		var workType=getCookie("qsg_workType");
+		switch(workType)
+		{
+			case 'MF1':
+				hideDiv("MF_Fields");
+				hideDiv("MF_UpdateScripts");
+				break;
+			case 'MF2':
+				hideDiv("MF_Entities");
+				hideDiv("MF_CreateScripts");
+				break;
+			default:
+				hideDiv("MF_Fields");
+				hideDiv("MF_UpdateScripts");
+				break;
+		}
+	}
+	</script>
+</head>
+<body>
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td>
+			<H1>Create meta-data from entity model&nbsp;&nbsp;<img src="pics/ValidateAndUpdateIcon_v3.png" width="16" height="16" border="0" alt=""></H1>
+		</td>
+		<td align="right" nowrap>
+			<br>
+			<a href="javascript:history.go(-1)" class="nohover"><img src="pics/back.gif" width="30" height="23" border="0" alt="back"></a>&nbsp;&nbsp;
+			<a href="index.htm" title="home" class="nohover"><img src="pics/home.gif" width="30" height="23" alt="home" border="0"></a>
+		</td>
+	</tr>
+</table>
+<br clear="all"><br>
+<div id="MF_Entities">
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td valign="top">
+			<img src="pics/1.png" width="30" height="30" alt="1." border="0">
+		</td>
+		<td class="content">
+			Right-click Entities in the Project Explorer and select 
+			<a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/AutoMappingUnmappedElements.htm" target="_blank" title="more information" class="info">Auto-map Unmapped Entities</a>. 
+			This will make LLBLGen Pro create a new table in the Relational Model Data storage added in step 2 and mappings between the entity you created and the newly created table. 
+			A log is shown what actions have been taken for you.<br>
+			<img src="pics/createmetadata3.png" width="458" height="279" alt="" border="0">
+		</td>
+	</tr>
+</table></div>
+
+<div id="MF_Fields">
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td valign="top">
+			<img src="pics/1.png" width="30" height="30" alt="1." border="0">
+		</td>
+		<td class="content">
+			Right-click Entities in the Project Explorer and select 
+			<a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/AutoMappingUnmappedElements.htm" target="_blank" title="more information" class="info">Auto-map Unmapped Entity Fields</a>. 
+			This will make LLBLGen Pro create new fields in the mapped tables in the Relational Model Data storage and mappings between the entity fields you created and the newly created table fields. </div>
+			A log is shown what actions have been taken for you.<br>
+			<img src="pics/createmetadata3.png" width="458" height="279" alt="" border="0">
+		</td>
+	</tr>
+</table>
+</div>
+
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td valign="top">
+			<img src="pics/2.png" width="30" height="30" alt="2." border="0">
+		</td>
+		<td class="content">
+			To examine the mappings, click the Field Mappings tab (a.) of the editor of the entity you created. To quickly find the table 
+			created, click the Lookup button (b.) next to the Mapping Target on the Field Mappings tab to go to the node of the table in Catalog Explorer.<br>
+			<img src="pics/createmetadata4a.png" width="639" height="612" alt="Field mappings" border="0"><br><br>
+			<img src="pics/createmetadata4b.png" width="223" height="199" alt="Catalog explorer" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/3.png" width="30" height="30" alt="3." border="0">
+		</td>
+		<td class="content">
+			The designer can't always automatically update the relational model data on the fly when you make a change in the Abstract Entity Model, as not all actions are 1:1 translatable, 
+			so to complete the process, you have to Validate and Adjust the Relational Model Data by clicking the <i>Validate and Adjust Relational Model Data button</i> on the toolbar. 
+			This action performs a full 
+			<a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/ProjectValidation.htm" target="_blank" title="more information" class="info">Project Validation</a> 
+			and also adjusts the relational model data based on the entity definition. If you don't receive a validation error, everything is setup properly and the relational model data is adjusted. 
+			You should now see a table definition with primary key and fields in the Catalog Explorer.<br>
+			<img src="pics/createmetadata5.png" width="546" height="105" alt="Validate and adjust" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/4.png" width="30" height="30" alt="4." border="0">
+		</td>
+		<td class="content">
+			In Catalog Explorer rename the schema and / or catalog node if you want to have a different name for these in your actual database.
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" height="10" style="background-image: url(pics/hline.png); background-repeat: no-repeat;">&nbsp;</td>
+	</tr>
+</table>
+<br clear="all">
+<div id="MF_CreateScripts">
+<table cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="2">
+			<img src="pics/nextstep.png" width="257" height="20" alt="next step" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td width="90">&nbsp;</td>
+		<td class="content">
+			<a href="mf_createscripts.htm">Create DDL SQL Create Scripts</a>
+		</td>
+	</tr>
+</table></div>
+<div id="MF_UpdateScripts">
+<table cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="2">
+			<img src="pics/nextstep.png" width="257" height="20" alt="next step" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td width="90">&nbsp;</td>
+		<td class="content">
+			<a href="mf_updatescripts.htm">Create DDL SQL Update Scripts</a>
+		</td>
+	</tr>
+</table>
+</div>
+<br><br>
+<script type="text/javascript">toggle();</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" ?>
+<framework xmlns="http://sd/llblgen/pro/frameworkDefinition.xsd" name="LLBLGen Pro Runtime Framework" dataFolder="LLBLGen Pro">
+	<supportedDrivers/>
+	<supportedPlatforms>
+		<platform name=".NET 3.5"/>
+		<platform name=".NET 4.0"/>
+		<platform name=".NET 4.5"/>
+	</supportedPlatforms>
+	<supportedTemplateGroups>
+		<templateGroup name="Adapter"/>
+		<templateGroup name="SelfServicing"/>
+	</supportedTemplateGroups>
+	<attributeDefaults>
+		<attribute targetElement="256" value="Browsable($false)"/>
+	</attributeDefaults>
+	<interfaceDefaults/>
+	<namespaceDefaults/>
+	<validationAssembly filename="SD.Frameworks.Validation.LLBLGenPro.dll" path=""/>
+	<systemTypeConverters>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.BooleanCharYNConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.BooleanCharYNConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.BooleanNumericConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.BooleanNumericConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.ByteDecimalConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.ByteDecimalConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.CharStringConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.CharStringConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.DateTimeDateTimeUTCConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.DateTimeDateTimeUTCConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.DoubleDecimalConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.DoubleDecimalConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.GuidByteArrayConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.GuidByteArrayConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.GuidStringConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.GuidStringConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.Int16DecimalConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.Int16DecimalConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.Int32DecimalConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.Int32DecimalConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.Int64DecimalConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.Int64DecimalConverter"/>
+		<systemTypeConverter typeName="SD.LLBLGen.Pro.TypeConverters.SingleDecimalConverter" codeGeneratorData="SD.LLBLGen.Pro.ORMSupportClasses.SingleDecimalConverter"/>
+	</systemTypeConverters>
+</framework>

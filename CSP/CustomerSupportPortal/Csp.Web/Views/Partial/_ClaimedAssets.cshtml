@@ -1,0 +1,240 @@
+﻿@using Csp.Api.HelperClasses
+@using Csp.Api.Model
+@model Csp.Web.DataTransferObjects.ClaimedAssetsDto
+@{ 
+    ActionHelper actionHelper = Model.ActionHelper;
+    var claimedPurchasesGridId = UniqueId.GridClaimedPurchases;
+    var addAssetsWindowId = UniqueId.AddAssetsWindowId;
+    var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+}
+<style>
+    .csp-physical-devices-msg {
+        display: inline-block;
+    }
+</style>
+<script>
+    var selectedIds = [];
+    var claimedPurchasesGridId = '@claimedPurchasesGridId';
+
+    function OnGridClaimedPurchasesDataBound(e) {
+        var view = this.dataSource.view();
+        for (var i = 0; i < view.length; i++) {
+            if (selectedIds[view[i].id]) {
+                this.tbody.find("tr[data-uid='" + view[i].uid + "']")
+                    .addClass("k-state-selected")
+                    .find(".checkbox")
+                    .attr("checked", "checked");
+            }
+        }
+    }
+
+    function OnGridClaimedPurchasesSelectRow(e) {
+        var grid = $('#' + claimedPurchasesGridId).data("kendoGrid");
+        var row = $(e.target).closest("tr");
+        var dataItem = grid.dataItem(row);
+        var state = $(e.target).is(":checked");
+
+        if (!state) {
+            grid.thead.find('.select-all').prop('checked', false);
+        } else {
+            selectedIds[dataItem.Id] = state;
+        }
+    }
+
+    function OnGridClaimedPurchasesSelectAll(e) {
+        var grid = $('#' + claimedPurchasesGridId).data('kendoGrid');
+        var state = $(e.target).is(":checked");
+        var view = grid.dataSource.view();
+
+        $.each(view, function() {
+            grid.tbody.find("tr[data-uid='" + this.uid + "']")
+                .find(".select-one")
+                .prop('checked', state);
+            selectedIds[this.Id] = state;
+        });
+    }
+</script>
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)addAssetsWindowId)
+        .Visible(false)
+        .Width(1280)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title("Add Assets from Sales Order")
+    )
+</div>
+<div id="claimedAssets">
+    @{ Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications); }
+    <div class="content">
+        <div class="csp-content-sections-parent">
+            <div class="grid-header">
+                <div class="grid-left">
+                    <input type="button" class="k-button k-primary" value="Add Assets from Sales Order" onclick="AddAssets(this);"/>&nbsp;
+                    <p class="csp-physical-devices-msg error">Note: This feature is only available for physical devices and Panorama </p>
+                </div>
+                <div class="grid-right">
+                </div>
+            </div>
+            <div>
+                @if (Model.HasEaLicense)
+                {
+                    <span class="csp-physical-devices-msg error">Note: You are activating an enterprise agreement that will be applied to all your assets. It will overwrite any existing agreement (licenses or support agreement ) for all assets in your account. 
+                     <br/>   For support accounts with many devices, this process may take a while, so please check later. </span>
+                }
+            </div>
+            <div >
+                <div class="row-fluid">
+                    <fieldset>
+                        <legend class="csp-fieldset-legend">List of Assets from Sales Orders</legend>
+                    @(Html.Kendo().Grid(Model.ClaimedPurchases)
+                          .Name((string) claimedPurchasesGridId)
+                          .Columns(columns =>
+                          {
+                              columns.Bound(p => p.Id).Sortable(false).HeaderTemplate("<input id=\"checkAll\" type=\"checkbox\" class=\"select-all\" />").ClientTemplate("<input type=\"checkbox\" class=\"select-one\" />");
+                              columns.Bound(p => p.AssetType);
+                              columns.Bound(p => p.Code).Title("Serial Number/Authorization Code");
+                              columns.Bound(p => p.SalesOrderNumber);
+                              columns.Bound(p => p.PartNumber);
+                              columns.Bound(p => p.ShipDate).Format(SiteHelper.DateFormatString);
+                          })
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .PageSize(20)
+                              .ServerOperation(false)
+                              .Read(read => read.Action("GetClaimedPurchases", "BulkRegistration"))
+                          )
+                          .ToolBar(toolbar =>
+                          {
+                              toolbar.Template("<input type=\"button\" class=\"k-button unclaim-selected\" value=\"Remove Selected\" onclick=\"UnClaimPurchases(this);\" />&nbsp;<input type=\"button\" class=\"k-button unclaim-all\" value=\"Remove All\" onclick=\"UnClaimPurchases(this);\" />");
+                          })
+                          .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                          .Sortable()
+                          .Resizable(resize => resize.Columns(true))
+                          .Events(e => e.DataBound("OnGridClaimedPurchasesDataBound")))
+                    </fieldset>
+                </div>
+            </div>
+            
+        </div>
+
+        <div>&nbsp;</div>
+
+        <div>
+            <input type="button" class="k-button k-primary" value="Proceed to Bulk Activation" onclick="RedirectToBulkActivation();"/>
+        </div>
+    </div>
+</div>
+<script>
+    
+    function AddAssets(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+        var direction = '@(Url.Action("AddAssets", "BulkRegistration", new { id=Model.ActionHelper.Id, bulkRegistrationId = Model.BulkRegistrationId }))';
+        var window = $("#@UniqueId.addAssetsWindowId").data("kendoWindow");
+        window.content(" ");
+        window.setOptions({
+            minWidth: 1200,
+            minHeight: 500
+        });
+        window.bind('open', OnAddAssetsWindowOpen);
+        window.bind('close', OnAddAssetsWindowClose);
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+
+    function OnAddAssetsWindowOpen() {
+        SupportPortal.OnWindowOpen('@addAssetsWindowId');
+    }
+
+    function OnAddAssetsWindowClose() {
+        SupportPortal.OnWindowClose('@claimedPurchasesGridId');
+    }
+
+    function UnClaimPurchases(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+        var isUnclaimAll = $(e).hasClass('unclaim-all') ? true : false;
+        var message = (isUnclaimAll) ? "Are you sure, you want to remove all the assets" : "Are you sure, you want to remove the selected assets";
+        var data = $('#' + claimedPurchasesGridId).data('kendoGrid').dataSource.data();
+        var selectedRows = [];
+
+        if (!isUnclaimAll) {
+            for (var i = 0; i < data.length; i++) {
+                if (selectedIds.length > 0 && selectedIds[data[i].Id]) {
+                    selectedRows.push(data[i]);
+                }
+            }
+
+            if (selectedRows.length === 0) {
+                SupportPortal.Message("Please select the assets you want to remove");
+                return;
+            }
+        }
+
+        var unClaimPurchasesAction = function() {
+            SupportPortal.ClearNotification();
+            SupportPortal.BlockUI();
+
+            $.ajax({
+                url: (isUnclaimAll) ? '@(Url.Action("UnClaimAllPurchases", "BulkRegistration"))' : '@(Url.Action("UnClaimPurchases", "BulkRegistration"))',
+                type: 'POST',
+                dataType: 'json',
+                data: (isUnclaimAll) ? null : JSON.stringify({ purchases: selectedRows }),
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                success: function (result) {
+                    SupportPortal.UnBlockUI();
+
+                    if (result.Success) {
+                        SupportPortal.Notification(result.Message, SupportPortal.NotificationType.Success);
+
+                        selectedIds = [];
+                        $('#' + claimedPurchasesGridId).data('kendoGrid').dataSource.read();
+
+                        return;
+                    }
+
+                    SupportPortal.Notification(result.Message, SupportPortal.NotificationType.Error);
+                },
+                error: function () {
+                    SupportPortal.UnBlockUI();
+                    SupportPortal.Notification("Failed to remove your selected assets.", SupportPortal.NotificationType.Error);
+                }
+            });
+        };
+
+        SupportPortal.Confirmation(message, function () { unClaimPurchasesAction(); }, null);
+    }
+
+    function RedirectToBulkActivation() {
+        //$('div.k-widget[id^="bulkregistrationtabid_"]').data("kendoTabStrip").select(1);
+        location.href = '@(Url.Action("Devices", "SupportAccount", new {id = Model.ActionHelper.Id, assetType="PrepBulkRegistration"}))&bulkRegistrationId=@Model.BulkRegistrationId';
+    }
+
+    $(document).ready(function () {
+
+        var gridClaimedPurchases = $('#' + claimedPurchasesGridId).data('kendoGrid');
+
+        gridClaimedPurchases.thead.on("click", ".select-all", OnGridClaimedPurchasesSelectAll);
+        gridClaimedPurchases.tbody.on("change", ".select-one", OnGridClaimedPurchasesSelectRow);
+
+        gridClaimedPurchases.bind('dataBound', function () {
+            var grid = this;
+            var state = (grid.tbody.find('.select-one').length > 0 && !grid.tbody.find('.select-one').is(':not(:checked)')) ? true : false;
+            grid.thead.find('.select-all').prop('checked', state);
+
+            var view = grid.dataSource.view();
+            for (var i = 0; i < view.length; i++) {
+                if (selectedIds.length > 0 && selectedIds[view[i].Id]) {
+                    grid.tbody.find("tr[data-uid='" + view[i].uid + "']")
+						.find(".select-one")
+						.prop('checked', true);
+                }
+            }
+        });
+    });
+</script>

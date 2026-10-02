@@ -1,0 +1,20 @@
+﻿@using Kendo.Mvc.UI;
+
+@{
+    ActionHelper actionHelper = ViewBag.ActionHelper;
+   
+}
+
+<div>
+
+    <div>
+        @( Html.Kendo().TabStrip()
+               .Animation(false)
+               .Name((string)UniqueId.registerTabId)
+               .Items(tabstrip => tabstrip.Add().Text("Register Device")
+                                          .Content(Html.Action(actionHelper.RegisterDevice, ControllerFields.DeviceController, new {
+                                              id = actionHelper.Id
+                                          }).ToString()).Selected(true))
+              )
+    </div>
+</div>

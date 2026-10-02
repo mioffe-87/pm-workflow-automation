@@ -1,0 +1,467 @@
+@using Csp.Api.HelperClasses
+@using Csp.Api.Services.Contracts
+@model Csp.Web.Controllers.PrepBulkRegistrationDto
+
+@{
+    var uniqueId = UniqueId.PrepBulkReg;
+    var formId = uniqueId + "PrepBulkRegForm";
+    var deviceNameId = uniqueId + "DeviceNameId";
+    var deviceTagId = uniqueId + "DeviceTagId";
+    var address1Id = uniqueId + "Address1";
+    var address2Id = uniqueId + "Address2";
+    var cityId = uniqueId + "CityId";
+    var countryDropDownId = uniqueId + "CountryDropDownId";
+    var regionDropDownId = uniqueId + "RegionDropDownId";
+    var regionTextId = uniqueId + "RegionTextId";
+    var regionTextHiddenId = uniqueId + "RegionTextHiddenId";
+    var regionName = uniqueId + "RegionName";
+    var regionTextDivId = uniqueId + "RegionTextDivId";
+    var regionDropDownDivId = uniqueId + "RegionDropDownDivId";
+    var postalCodeId = uniqueId + "PostalCodeId";
+    var remarksId = uniqueId + "RemarksId";
+    var isOverrideDefaultsId = uniqueId + "IsOverrideDefaultsId";
+        
+    var hdnFilterTypeId = uniqueId + "FilterType";
+    var hdnModelCompatibilityId = uniqueId + "ModelCompatibility";
+    
+    var prepBulkRegDeviceAndLicensesGridId = UniqueId.PrepBulkRegDeviceAndLicensesGridId;
+    var selectDevicesFilter = UniqueId.SelectDevicesFilter;
+    var claimMorePurchases = UniqueId.ClaimMorePurchases;
+    var prepBulkRegAvailableLicensesGridId = UniqueId.PrepBulkRegAvailableLicensesGridId;
+    var prepBulkRegGridId = UniqueId.PrepBulkRegGridId;
+}
+
+<style>
+    .draggable_license {
+        cursor: move /*pointer*/;
+    }
+    .draggable_license_dragging {
+        background-color: #7FD0DD;
+    }
+    .dragging_license_shadow {
+        color: #8998A0;
+    }
+    .droppable {
+        background-color: #CED5D5;
+        border: solid 1px #CED5D5;
+    }
+    .droppable_hover {
+        border: solid 1px #006D91;
+    }
+    .draggable_hover {
+        background-color: #006D91;
+    }
+   .draggable_license_disabled {
+       cursor: not-allowed;
+   }
+    
+    span.k-widget.k-tooltip-validation {
+        display: inline-block;
+        width: 160px;
+        text-align: left;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        background: none;
+        box-shadow: none;
+        color: red;
+    }
+                
+    .k-tooltip-validation .k-warning {
+        display: none;
+    }
+
+    .radiobuttonlist {
+        width: 125px;
+    }
+    .radiobuttonlist label {
+        cursor: pointer;
+    }
+
+    .plus:before {
+        font-family: 'FontAwesome';
+        content: "\f078";
+    }
+
+    .minus:before {
+        font-family: 'FontAwesome';
+        content: "\f054";
+    }
+
+    .device-defaults-header {
+        cursor: pointer;
+    }
+
+    .license-details {
+        cursor: pointer;
+    }
+
+    .license-details-table td {
+        text-align: left;
+        padding: 3px;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+
+        PrepBulkRegistrationManageUtil.Init({
+            formId: '@formId',
+            filterTypeId: '@selectDevicesFilter',
+            claimMorePurchasesId: '@claimMorePurchases',
+            hdnFilterTypeId: '@hdnFilterTypeId',
+            prepBulkRegGridId: '@(prepBulkRegGridId)',
+            prepBulkRegAvailableLicensesGridId: '@(prepBulkRegAvailableLicensesGridId)',
+            prepBulkRegDeviceAndLicensesGridId: '@(prepBulkRegDeviceAndLicensesGridId)',
+            modelCompatibilityId: '@hdnModelCompatibilityId',
+            urlPrepBulkRegSaveDraft: '@(Url.Action("PrepBulkRegSaveDraft", "BulkRegistration", new { id=Model.ActionHelper.Id }))',
+            urlGetCustomizeBulkRegistration: '@(Url.Action("Devices", "SupportAccount", new {id = Model.ActionHelper.Id, assetType="CustomizeBulkRegistration"}))',
+            urlGetPrepBulkRegistration: '@(Url.Action("Devices", "SupportAccount", new {id = Model.ActionHelper.Id, assetType="PrepBulkRegistration"}))',
+            urlClaimMorePurchases: '@(Url.Action("Devices", "SupportAccount", new {id = Model.ActionHelper.Id, assetType="ClaimedAssets"}))'
+        });
+
+        PrepBulkRegistrationManageUtil.DeviceDefaults.Init({
+            deviceNameId: '@deviceNameId',
+            deviceTagId: '@deviceTagId',
+            address1Id: '@address1Id',
+            address2Id: '@address2Id',
+            cityId: '@cityId',
+            regionTextId: '@regionTextId',
+            regionTextHiddenId: '@regionTextHiddenId',
+            regionTextDivId: '@regionTextDivId',
+            regionDropDownDivId: '@regionDropDownDivId',
+            regionDropDownId: '@regionDropDownId',
+            countryDropDownId: '@countryDropDownId',
+            dropDownRegionSelect: '@Constants.DropDownRegionSelect',
+            postalCodeId: '@postalCodeId',
+            remarksId: '@remarksId',
+            isOverrideDefaultsId: '@isOverrideDefaultsId'
+        });
+
+        $('.bulk-registration-prep-save').on("click",
+            $.proxy(PrepBulkRegistrationManageUtil.SaveDraft, { isDraft: false })
+        );
+
+        $('.bulk-registration-prep-save-draft').on("click",
+            $.proxy(PrepBulkRegistrationManageUtil.SaveDraft, { isDraft: true })
+        );
+    });
+
+    $(function () {
+        $('#@formId').kendoValidator({
+            rules: {
+                validRegion: function (input) {
+                    if (input.is("[data-validregion-msg]")) {
+                        if ($('#@regionTextId').is(":hidden") && (input.val() === "" || input.val() === "0")) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
+                validOtherRegion: function (input) {
+                    if (input.is("[data-validotherregion-msg]")) {
+                        if (!input.is(":hidden") && (input.val() === "")) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            }
+        });
+    });
+</script>
+<script type="text/x-kendo-template" id="LicenseDetailsTemplate">
+    <table class="license-details-table">
+        <tr>
+            <td>Authorization Code:</td>
+            <td>#=AuthorizationCode#</td>
+        </tr>
+        <tr>
+            <td>Type:</td>
+            <td>#=PartNumber#</td>
+        </tr>
+        <tr>
+            <td>Registration Date:</td>
+            <td>#=SupportPortal.FormatDate(RegistrationDate)#</td>
+        </tr>
+        <tr>
+            <td>Expiration Date:</td>
+            <td>#=SupportPortal.FormatDate(ExpirationDate)#</td>
+        </tr>
+    </table>
+</script>
+
+<div>
+    <fieldset>
+        <legend>Select Devices</legend>
+
+        <div>
+            Bulk Activation allows you to register devices and apply licenses quickly.
+            <br/>
+            To begin, search for and select any devices you'd like to work with.
+            <br/>
+            You may only select a single type of devices each time you use bulk registration
+        </div>
+
+        <br/>
+
+        <div class="radiobuttonlist">
+            <span style="font-weight: bold;">Filter:</span>
+            <label>@Html.RadioButtonFor(x => x.SelectDevicesFilter, SelectDevicesFilterTypes.ClaimedPurchases, new {@Name = selectDevicesFilter}) List of Assets from Sales Order(s)</label>
+            <label>@Html.RadioButtonFor(x => x.SelectDevicesFilter, SelectDevicesFilterTypes.RegisteredDevices, new {@Name = selectDevicesFilter}) List of Registered Devices</label>
+            <!-- Comments By LK On 04/28 - Removing Both option to avoid confusion
+            <label>@Html.RadioButtonFor(x => x.SelectDevicesFilter, SelectDevicesFilterTypes.Both, new {@Name = selectDevicesFilter}) Both</label>
+            -->
+        </div>
+        <fieldset>
+            <legend>Available Devices</legend>
+            @Html.Hidden((string) hdnFilterTypeId, Model.SelectDevicesFilter)
+            @Html.Hidden((string) hdnModelCompatibilityId, Model.ModelCompatibility)
+            @(Html.Kendo().Grid<PrepBulkRegistration.SelectableDevice>()
+                  .Name((string) prepBulkRegGridId)
+                  .Columns(columns =>
+                  {
+                      columns.Bound(x => x.ModelCompatibility).ClientGroupHeaderTemplate("Device Type: #=value# <button type='button' class='k-button selectall' data-modelcompatibility='#=value#'>Select All</button>&nbsp;<button type='button' class='k-button unselectall' data-modelcompatibility='#=value#'>Unselect All</button>").Hidden(true);
+                      columns.Bound(x => x.DeviceId).ClientTemplate("<input type='checkbox' class='selectone' data-modelcompatibility='#=ModelCompatibility#' value='#=DeviceId#' #= IsSelected ? checked='checked' : '' #/>").Title("").Sortable(false).Filterable(false);
+                      columns.Bound(x => x.SerialNumber);
+                      columns.Bound(x => x.PartNumber);
+                      columns.Bound(x => x.ShipDate).Format(SiteHelper.DateFormatString);
+                      columns.Bound(x => x.RegistrationDate).Format(SiteHelper.DateFormatString);
+                  })
+                  .Resizable(resize => resize.Columns(true))
+                  .DataSource(dataSource => dataSource
+                      .Ajax()
+                      .Model(model => model.Id(p => p.DeviceId))
+                      .Group(g => g.Add(x => x.ModelCompatibility))
+                      .Read(read => read.Action("GetClaimedOrRegisteredDevicesForPrepBulkReg", "BulkRegistration",
+                          new {id = Model.ActionHelper.Id, bulkRegistrationId = Model.BulkRegistrationId}).Data("PrepBulkRegistrationManageUtil.AvailableDevicesGrid.GetParams"))
+                      .Events(e => e.RequestStart("PrepBulkRegistrationManageUtil.AvailableDevicesGrid.OnGridAvailableDevicesRequestStart").RequestEnd("PrepBulkRegistrationManageUtil.AvailableDevicesGrid.OnGridAvailableDevicesRequestEnd"))
+                  )
+                  .Events(e => e.DataBound("PrepBulkRegistrationManageUtil.AvailableDevicesGrid.OnGridAvailableDevicesDataBound"))
+                  )
+        </fieldset>
+    </fieldset>
+</div>
+
+<form id="@formId">
+    <div class="device-defaults-section">
+        <fieldset>
+            <legend class="device-defaults-header"><span class="toggle minus">&nbsp;Asset Default Values</span></legend>
+
+            <div class="fieldset device-defaults">
+                <fieldset>
+                    <legend>Device Information</legend>
+                    <div style="color: red">
+                       <p> <span style="font-weight: bold">Note:</span>
+                        If a serial number with 4-Hour replacement service is not located in the city/postal code designated in your Order Summary, your RMA order will default to Next Business Day delivery.</p>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Device Name: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.TextBoxFor(model => model.DefaultDeviceName, new {maxlength = 46, id = deviceNameId})
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label(ApiConstants.DEVICE_CATEGORY + ": ")
+                        </div>
+                        <div class="csp-field">
+                            @(Html.Kendo().DropDownListFor(model => model.DefaultDeviceCategoryId)
+                                  .HtmlAttributes(new {@class = "k-dropdown", id = deviceTagId})
+                                  .OptionLabel(Constants.DropDownPleaseSelect)
+                                  .DataValueField("DeviceCategoryId")
+                                  .DataTextField("DeviceCategoryName")
+                                  .BindTo(Model.DeviceCategories))
+                            <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 12);"></i></span>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Location Information <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 7);"></i></span></legend>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Address1: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.TextBoxFor(model => model.DefaultDeviceAddress1, new {maxlength = 255, id = address1Id, data_val_required = "Address1 is required"})
+                            <span class="csp-required">*</span>
+                            <span class="k-invalid-msg" data-for="DefaultDeviceAddress1"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Address2: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.TextBoxFor(model => model.DefaultDeviceAddress2, new {maxlength = 255, id = address2Id})
+                            <span class="k-invalid-msg" data-for="DefaultDeviceAddress2"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("City: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.TextBoxFor(model => model.DefaultDeviceCity, new {maxlength = 101, id = cityId, data_val_required = "City is required"})
+                            <span class="csp-required">*</span>
+                            <span class="k-invalid-msg" data-for="DefaultDeviceCity"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Country: ")
+                        </div>
+                        <div class="csp-field">
+                            @(Html.Kendo().DropDownListFor(model => Model.DefaultDeviceCountryId)
+                                  .HtmlAttributes(new {@class = "k-dropdown", id = countryDropDownId, data_val_required = "Country is required"})
+                                  .Events(e => e.Change("PrepBulkRegistrationManageUtil.DeviceDefaults.OnCountryDropdownChange").DataBound("PrepBulkRegistrationManageUtil.DeviceDefaults.OnCountryDropdownChange"))
+                                  .OptionLabel(Constants.DropDownCountrySelect)
+                                  .DataValueField("Id")
+                                  .DataTextField("Name")
+                                  .DataSource(source => source.Read(read =>
+                                  {
+
+                                      if (read != null)
+                                      {
+
+                                          read.Action("GetCountries", "Base");
+                                      }
+                                  })).Value(Model.DefaultDeviceCountryId.ToString()))
+                            <span class="csp-required">*</span>
+                            <span class="k-invalid-msg" data-for="DefaultDeviceCountryId"></span>
+                        </div>
+                    </div>
+                    <div>
+
+                        <input id="@regionTextHiddenId" name="@regionName" type="hidden" value="@Model.DefaultDeviceRegionId"/>
+
+                        <div class="csp-label">
+                            @Html.Label("Region/State: ")
+                        </div>
+                        <div class="csp-field">
+                            <div id="@regionTextDivId">
+                                @Html.TextBoxFor(model => Model.DefaultDeviceOtherRegion, new {id = regionTextId, data_validotherregion_msg = "Region is required", onchange = "PrepBulkRegistrationManageUtil.DeviceDefaults.OnRegionTextChange();"})
+                                <span class="csp-required">*</span>
+                                <span class="k-invalid-msg" data-for="DefaultDeviceOtherRegion"></span>
+                            </div>
+                            <div id="@regionDropDownDivId" style="display: none;">
+                                @(Html.Kendo().DropDownListFor(model => Model.DefaultDeviceRegionId)
+                                      .OptionLabel(Constants.DropDownRegionSelect)
+                                      .HtmlAttributes(new {@class = "k-dropdown", id = regionDropDownId, data_validregion_msg = "Region is required"})
+                                      .Events(e => e.Change("PrepBulkRegistrationManageUtil.DeviceDefaults.OnRegionDropdownChange").DataBound("PrepBulkRegistrationManageUtil.DeviceDefaults.OnRegionDropdownChange"))
+                                      .DataValueField("Id")
+                                      .DataTextField("Name")
+                                      .DataSource(source => source.Read(read => read.Action("GetRegions", "Base").Data("PrepBulkRegistrationManageUtil.DeviceDefaults.FilterCountry")).ServerFiltering(true))
+                                      .Value(Model.DefaultDeviceRegionId.ToString())
+                                      .AutoBind(false)
+                                      .CascadeFrom(countryDropDownId)
+                                      )
+                                <span class="csp-required">*</span>
+                                <span class="k-invalid-msg" data-for="DefaultDeviceRegionId"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Postal Code: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.TextBoxFor(model => model.DefaultDevicePostalCode, new {maxlength = 16, @id = postalCodeId, data_val_required = "Zip Code is required"})
+                            <span class="csp-required">*</span>
+                            <span class="k-invalid-msg" data-for="DefaultDevicePostalCode"></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Remarks: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.TextAreaFor(model => model.DefaultDeviceComments, new {@class = "csp-comments", maxlength = 256, height = 150, id = remarksId})
+                        </div>
+                    </div>
+                    @if (Model.BulkRegistrationId.HasValue)
+                    {
+                        <div>
+                            <div class="csp-label">
+                                &nbsp;
+                            </div>
+                            <div class="csp-field">
+                                <label>@Html.CheckBoxFor(model => model.IsOverrideDefaults, new{@id = isOverrideDefaultsId}) Override Device Defaults</label>
+                            </div>
+                        </div>
+                    }
+                </fieldset>
+            </div>
+        </fieldset>
+    </div>
+</form>
+
+<div>
+    <fieldset>
+        <legend>Select Available Licenses</legend>
+        @(Html.Kendo().Grid<PrepBulkRegistration.Availablelicense>()
+            .Name((string)prepBulkRegAvailableLicensesGridId)
+            .Columns(columns =>
+            {
+                columns.Bound(x => x.SalesOrderNumber).ClientTemplate("<a href='javascript:void(0);' class='apply-license' data-salesordernumber='#=SalesOrderNumber#' data-partnumber='#=PartNumber#'>Apply</a>").Title("").Sortable(false).Filterable(false);
+                columns.Bound(x => x.SalesOrderNumber);
+                columns.Bound(x => x.ShipDate).Format(SiteHelper.DateFormatString);
+                columns.Bound(x => x.PartNumber);
+                columns.Bound(x => x.Quantity);
+            })
+            .Resizable(resize => resize.Columns(true))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .Read(read => read.Action("GetAvailableLicensesForPrepBulkReg", "BulkRegistration",
+                    new { id = Model.ActionHelper.Id, bulkRegistrationId = Model.BulkRegistrationId }).Data("PrepBulkRegistrationManageUtil.AvailableLicensesGrid.GetParams"))
+            )
+            .Events(e => e.DataBound("PrepBulkRegistrationManageUtil.AvailableLicensesGrid.OnGridAvailableLicensesDataBound"))
+        )
+    </fieldset>
+</div>
+
+<div>
+    <fieldset>
+        <legend>Review Device/License Association</legend>
+        @(Html.Kendo().Grid(Model.DevsAndLics)
+            .Name((string)prepBulkRegDeviceAndLicensesGridId)
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.AssetDisplayName).Title("Asset");
+                columns.Bound(p => p.StandardSupportDisplayName).Title("Service").ClientTemplate("#=PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.DragAndDrop.RenderMovableCell(data, 'StandardSupport')#");
+                columns.Bound(p => p.ThreatProtectionDisplayName).Title("Threat Protection").ClientTemplate("#=PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.DragAndDrop.RenderMovableCell(data, 'ThreatProtection')#"); ;
+                columns.Bound(p => p.UrlDisplayName).Title("Url Filtering").ClientTemplate("#=PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.DragAndDrop.RenderMovableCell(data, 'Url')#"); ;
+                columns.Bound(p => p.GpPortalDisplayName).Title("GP Portal").ClientTemplate("#=PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.DragAndDrop.RenderMovableCell(data, 'GpPortal')#"); ;
+                columns.Bound(p => p.GpGatewayDisplayName).Title("GP Gateway").ClientTemplate("#=PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.DragAndDrop.RenderMovableCell(data, 'GpGateway')#"); ;
+                columns.Bound(p => p.WildfireDisplayName).Title("WildFire").ClientTemplate("#=PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.DragAndDrop.RenderMovableCell(data, 'Wildfire')#"); ;
+                columns.Bound(p => p.DnsDisplayName).Title("DNS").ClientTemplate("#=PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.DragAndDrop.RenderMovableCell(data, 'Dns')#"); ;
+                columns.Bound(p => p.SdwanDisplayName).Title("SD-WAN").ClientTemplate("#=PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.DragAndDrop.RenderMovableCell(data, 'Sdwan')#"); ;
+                columns.Bound(p => p.PaaDisplayName).Title("PAA").ClientTemplate("#=PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.DragAndDrop.RenderMovableCell(data, 'Paa')#"); ;
+                columns.Bound(p => p.PanoramaManagementDisplayName).Title("Panorama Management").ClientTemplate("#=PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.DragAndDrop.RenderMovableCell(data, 'PanoramaManagement')#"); ;
+            })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .Model(model => model.Id("DeviceId"))
+            )
+            .Events(e => e.DataBound("PrepBulkRegistrationManageUtil.DevicesAndLicensesGrid.OnDeviceAndLicensesDataBound"))
+        )
+        <div>&nbsp;</div>
+        <div>*Drag and drop licenses between devices to re-assign licenses. You'll have another opportuntiy to re-assign licenses on the Customization page</div>
+    </fieldset>
+</div>
+
+<div>
+    <button type="button" class="k-button k-primary bulk-registration-prep-save">Proceed to Final Customizations</button>
+    <button type="button" class="k-button bulk-registration-prep-save-draft">Save as Draft</button>
+    @if (Model.BulkRegistrationId.HasValue)
+    {
+           <button type="button" class="k-button" onclick="BulkRegistrationManageUtil.DiscardDraft(this);">Cancel and Discard Progress</button>
+    }
+</div>

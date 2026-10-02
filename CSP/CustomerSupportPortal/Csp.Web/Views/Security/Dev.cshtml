@@ -1,0 +1,28 @@
+﻿@model dynamic
+
+<h2>Developer Login</h2>
+
+@using (Html.BeginForm("DevLogin", "Security")) {
+    
+    <div>
+        <span>Full User Name:</span>
+        @Html.TextBox("id")
+        <button type="submit">Log In</button>
+    </div>
+
+
+    <div>
+        <div>Quick Logins</div>
+        <div>@Html.ActionLink("jmesser@paloaltonetworks.com - PANW Group Member", "DevLogin", new { id = "jmesser@paloaltonetworks.com" })</div>
+        <div>@Html.ActionLink("jhernandez@venocoinc.com", "DevLogin", new { id = "jhernandez@venocoinc.com" })</div>
+        <div>@Html.ActionLink("mlavoie@paloaltonetworks.com", "DevLogin", new { id = "mlavoie@paloaltonetworks.com" })</div>
+        <div>@Html.ActionLink("lkoneru@paloaltonetworks.com", "DevLogin", new { id = "lkoneru@paloaltonetworks.com" })</div>
+        <div>@Html.ActionLink("gengle@paloaltonetworks.com", "DevLogin", new { id = "gengle@paloaltonetworks.com" })</div>
+    </div>
+}
+
+<script>
+    $(function () {
+        $('#id').focus();
+    });
+</script>

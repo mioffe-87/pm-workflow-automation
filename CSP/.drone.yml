@@ -1,0 +1,30 @@
+kind: pipeline
+type: kubernetes
+name: drone-runner
+
+steps:
+
+  - name: CheckMarx Scan
+    image: itc-docker-dev-local.artifactory.paloaltonetworks.com/circleci-gcp-base-image:latest
+    environment:
+      BD_TOKEN:
+        from_secret: bd_token
+      BD_GCP_KEY:
+        from_secret: bd_gcp_key
+      cx_password:
+        from_secret: Cx_Password
+    commands:
+    - yum install -y which
+    - "curl -o runcx.sh --silent -X GET -H \"Authorization: Bearer $(echo 'YmFzZTY0dmFyKCkgewogICAgcHJpbnRmICIkMSIgfCBiYXNlNjRzdHJlYW0KfQoKYmFzZTY0c3RyZWFtKCkgewogICAgYmFzZTY0IHwgdHIgJy8rJyAnXy0nIHwgdHIgLWQgJz1cbicKfQoKc2FfZW1haWw9InNlY3VyZS1jaWNkLWxvZy1hZ2dyZWdhdG9yQGluZm9zZWMtc2RsYy1sYWIuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iCnNjb3BlPSJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9hdXRoL2RldnN0b3JhZ2UucmVhZF93cml0ZSIKdmFsaWRfZm9yX3NlYz0iJHszOi0zNjAwfSIKCmlmIFsgLXogIiRCRF9HQ1BfS0VZIiBdOyB0aGVuCiAgICBlY2hvICJFUlJPUjogXCRCRF9HQ1BfS0VZIGVudmlyb25tZW50IHZhcmlhYmxlIHdhcyBub3QgcHJvdmlkZWQiCiAgICBleGl0IDEKZWxzZQogICAgcHJpdmF0ZV9rZXk9IiQoZWNobyAkQkRfR0NQX0tFWSB8IGJhc2U2NCAtZCkiCmZpCgpoZWFkZXI9J3siYWxnIjoiUlMyNTYiLCJ0eXAiOiJKV1QifScKY2xhaW09JChjYXQgPDxFT0YKICB7CiAgICAiaXNzIjogIiRzYV9lbWFpbCIsCiAgICAic2NvcGUiOiAiJHNjb3BlIiwKICAgICJhdWQiOiAiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vb2F1dGgyL3Y0L3Rva2VuIiwKICAgICJleHAiOiAkKCgkKGRhdGUgKyVzKSArICR2YWxpZF9mb3Jfc2VjKSksCiAgICAiaWF0IjogJChkYXRlICslcykKICB9CkVPRgopCnJlcXVlc3RfYm9keT0iJChiYXNlNjR2YXIgIiRoZWFkZXIiKS4kKGJhc2U2NHZhciAiJGNsYWltIikiCnNpZ25hdHVyZT0kKG9wZW5zc2wgZGdzdCAtc2hhMjU2IC1zaWduIDwoZWNobyAiJHByaXZhdGVfa2V5IikgPChwcmludGYgIiRyZXF1ZXN0X2JvZHkiKSB8IGJhc2U2NHN0cmVhbSkKCmp3dF90b2tlbj0iJHJlcXVlc3RfYm9keS4kc2lnbmF0dXJlIgoKY3VybCAtcyAtWCBQT1NUIGh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92NC90b2tlbiBcCiAgICAtLWRhdGEtdXJsZW5jb2RlICdncmFudF90eXBlPXVybjppZXRmOnBhcmFtczpvYXV0aDpncmFudC10eXBlOmp3dC1iZWFyZXInIFwKICAgIC0tZGF0YS11cmxlbmNvZGUgImFzc2VydGlvbj0kand0X3Rva2VuIiB8IGF3ayAnbWF0Y2goJDAsIC9hY2Nlc3NfdG9rZW4iOiJbXiJdKi8pIHtwcmludCBzdWJzdHIoJDAsIFJTVEFSVCsxNSwgUkxFTkdUSC0xNSl9Jw==' | base64 -d | bash)\" \"https://storage.googleapis.com/storage/v1/b/secure-cicd-scripts/o/runcx.sh?alt=media\""
+    - bash runcx.sh --cx-project="CxServer\\\\SP\\\\Company\\\\IT\\\\${DRONE_REPO_NAME}" --user="svc-it" --password="$cx_password" --path-exclude="Test,*test*,QA" --file-exclude="*.yml,*.yaml,*test*"
+
+image_pull_secrets:
+  - art-com-secrt
+
+trigger:
+  branch:
+    - master
+
+  ref:
+    exclude:
+      - refs/tags/**

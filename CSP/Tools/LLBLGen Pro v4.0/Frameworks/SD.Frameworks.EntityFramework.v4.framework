@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" ?>
+<framework xmlns="http://sd/llblgen/pro/frameworkDefinition.xsd" name="Entity Framework v4" dataFolder="Entity Framework">
+	<supportedDrivers>
+		<driver id="2D18D138-1DD2-467E-86CC-4838250611AE"/>	<!-- SQL Server -->
+		<driver id="3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA"/> <!-- Sybase iAnywhere / ASA -->
+		<driver id="758A392F-06F3-498b-AED9-D85A4C795BDA"/> <!-- MySql -->
+		<driver id="88EBFD8C-CBDD-4452-88AF-1C99E41A123F"/> <!-- PostgreSql -->
+		<driver id="BB438EBA-A0B5-4236-A2B8-64D828A138AF"/>	<!-- DB2 -->
+		<driver id="BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A"/> <!-- Firebird -->
+	</supportedDrivers>
+	<supportedPlatforms>
+		<platform name=".NET 4.0"/>
+	</supportedPlatforms>
+	<supportedTemplateGroups>
+		<templateGroup name="General"/>
+	</supportedTemplateGroups>
+	<attributeDefaults>
+		<attribute targetElement="30" value="Serializable"/>
+		<attribute targetElement="30" value="DataContract(IsReference$=$true)"/>
+		<attribute targetElement="3904" value="DataMember"/>
+	</attributeDefaults>
+	<interfaceDefaults/>
+	<namespaceDefaults/>
+	<systemTypeConverters/>
+	<validationAssembly filename="SD.Frameworks.Validation.EntityFrameworkv4.dll" path=""/>
+</framework>

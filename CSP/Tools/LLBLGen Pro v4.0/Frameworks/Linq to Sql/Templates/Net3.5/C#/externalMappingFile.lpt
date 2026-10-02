@@ -1,0 +1,207 @@
+﻿<%
+	Project currentProject = _executingGenerator.ProjectDefinition;
+	var allTargetedCatalogs = GeneratorUtils.GetAllMappedTargetsInScope(_executingGenerator).Select(t=>t.ContainingSchema.ParentCatalog).Distinct();
+	bool hasMultipleCatalogs = allTargetedCatalogs.Count() > 1;
+%><?xml version="1.0" encoding="utf-8"?>
+<Database Name="<%=allTargetedCatalogs.First().CatalogName%>" xmlns="http://schemas.microsoft.com/linqtosql/mapping/2007">
+<%	var processedEntities = new HashSet<EntityDefinition>();
+	foreach(EntityDefinition entity in _executingGenerator.Entities.OrderBy(e=>e.Name))
+	{
+		if(processedEntities.Contains(entity))
+		{
+			continue;
+		}
+		EntityMapping mapping = (EntityMapping)currentProject.GetGroupableModelElementMapping(entity, _executingGenerator.DriverID);
+		IProjectElementMapTargetElement mappedTarget = mapping.MappedTarget;
+%>	<Table Name="<%=SD_LinqToSqlGeneralUtils.ProduceTargetFullName(hasMultipleCatalogs, mappedTarget)%>" Member="<%=GeneratorUtils.PluralizeString(entity.Name)%>">
+<%=ProduceTypeXml(entity, 1, processedEntities)%>
+	</Table>
+<%	}
+
+	var tvMappings = GeneratorUtils.GetAllTypedViewMappingsInScope(_executingGenerator);
+	foreach(var mapping in tvMappings.OrderBy(tvm=>tvm.MappedElement.Name))
+	{
+		IProjectElementMapTargetElement mappedTarget = mapping.MappedTarget;
+		TypedViewDefinition typedView = (TypedViewDefinition)mapping.MappedElement;
+		bool emitMemberAttribute = ((mappedTarget.ElementType==ProjectElementMapTargetElementType.Table) || (mappedTarget.ElementType==ProjectElementMapTargetElementType.View));
+%>	<Table Name="<%=SD_LinqToSqlGeneralUtils.ProduceTargetFullName(hasMultipleCatalogs, mappedTarget)%>" <%if(emitMemberAttribute) { %>Member="<%=typedView.Name%>TypedView"<%}%>>
+		<Type Name="<%=_executingGenerator.RootNamespaceToUse%>.TypedViewClasses.<%=typedView.Name%>TypedViewRow">
+<%		foreach(var field in typedView.Fields.OrderBy(f=>f.Name))
+		{
+			var fieldMapping = mapping.GetFieldMappingOfField(field);
+			var targetField = fieldMapping.MappedTarget;
+			var camelCasedFieldName = GeneratorUtils.CamelCaseString(field.Name);
+%>			<Column Name="<%=targetField.FieldName%>" Member="<%=field.Name%>" Storage="_<%=camelCasedFieldName%>" DbType="<%=SD_LinqToSqlGeneralUtils.ProduceDbTypeString(targetField)%>"<% if(!field.IsOptional) {%> CanBeNull="false"<%}%> />
+<%		}
+%>		</Type>
+	</Table>
+<%	}
+
+	var spResultsetMappingInfos = GeneratorUtils.GetAllSPResultsetMappingInfos(_executingGenerator);
+	foreach(var spResultsetInfo in spResultsetMappingInfos)
+	{
+		DBStoredProcedure targetProc = spResultsetInfo.StoredProcedureDefinition;
+		foreach(var mappingCombination in spResultsetInfo.GetAllDifferentMappingCombinationsOnResultsets())
+		{
+			List<string> viewNamesUsed = mappingCombination.Select(m=>m.MappedElement.Name).ToList();
+			string methodName = string.Format("Get{0}", string.Join("", viewNamesUsed.ToArray()));
+%>	<Function Name = "<%=SD_LinqToSqlGeneralUtils.ProduceTargetFullName(hasMultipleCatalogs, targetProc)%>" Method="<%=methodName%>" >
+<%			foreach(var parameterInfo in targetProc.Parameters.OrderBy(pi=>pi.Key))
+			{
+				string parameterName = CoreUtils.MakeCLSCompliantName(parameterInfo.Value.ParameterName, null, false, false, false);
+%>		<Parameter Name="<%=parameterName%>" Parameter="<%=parameterInfo.Value.ParameterName%>" DbType="<%=SD_LinqToSqlGeneralUtils.ProduceDbTypeString(parameterInfo.Value, true)%>" Direction="<%=SD_LinqToSqlGeneralUtils.ConvertParameterDirectionToString(parameterInfo.Value.Direction)%>"/> 
+<%			}
+			foreach(var viewName in viewNamesUsed)
+			{
+%>		<ElementType Name="<%=_executingGenerator.RootNamespaceToUse%>.TypedViewClasses.<%=viewName%>TypedViewRow" />
+<%			}
+%>	</Function>		
+<%		}
+	}
+	
+	foreach(var spCall in _executingGenerator.ActionProcedures.OrderBy(sp=>sp.Name))
+	{
+		var mapping = currentProject.GetGroupableModelElementMapping(spCall, _executingGenerator.DriverID);
+		DBStoredProcedure targetProc = (DBStoredProcedure)mapping.MappedTarget;
+%>	<Function Name = "<%=SD_LinqToSqlGeneralUtils.ProduceTargetFullName(hasMultipleCatalogs, targetProc)%>" Method="Call<%=spCall.Name%>" >
+<%		foreach(var spCallParameter in GeneratorUtils.GetStoredProcedureParametersToWalk(false, false, spCall, _executingGenerator))
+		{
+			var parameterMapping = mapping.GetFieldMappingOfField(spCallParameter);
+			string parameterName = CoreUtils.MakeCLSCompliantName(parameterMapping.MappedTarget.FieldName, null, false, false, false);
+%>		<Parameter Name="<%=parameterName%>" Parameter="<%=parameterMapping.MappedTarget.FieldName%>" DbType="<%=SD_LinqToSqlGeneralUtils.ProduceDbTypeString(parameterMapping.MappedTarget, true)%>" Direction="<%=SD_LinqToSqlGeneralUtils.ConvertParameterDirectionToString(spCallParameter.Direction)%>"/> 
+<%		}
+%>		<Return />
+	</Function>
+<%	}
+
+	var tvfCallMappingPairs = GeneratorUtils.GetAllTvfCallMappingsInScope(_executingGenerator);
+	// pairs: value1 is tvfcall mapping, value2 is returnelement mapping. 
+	foreach(var pair in tvfCallMappingPairs)
+	{
+		var tvfCallMapping = (TvfCallMapping)pair.Value1;
+		string returnType = tvfCallMapping.MappedTvfCall.ReturnElement.Name;
+		if(tvfCallMapping.MappedTvfCall.ReturnElement is TypedViewDefinition)
+		{
+			returnType += "TypedViewRow";
+		}
+%>	<Function Name = "<%=SD_LinqToSqlGeneralUtils.ProduceTargetFullName(hasMultipleCatalogs, tvfCallMapping.MappedTarget)%>" Method="<%=tvfCallMapping.MappedTvfCall.Name%>" IsComposable="True" >
+<%		foreach(var tvfParamMapping in tvfCallMapping.FieldMappings.OrderBy(fm=>fm.MappedTarget.OrdinalPosition))
+		{
+			var mappedParameter = tvfParamMapping.MappedFieldInstance as TvfCallParameterDefinition;
+			string parameterNameCamelCased = GeneratorUtils.CamelCaseString(mappedParameter.Name);
+%>		<Parameter Name="<%=parameterNameCamelCased%>" Parameter="<%=tvfParamMapping.MappedTarget.FieldName%>" DbType="<%=SD_LinqToSqlGeneralUtils.ProduceDbTypeString(tvfParamMapping.MappedTarget, true)%>"/> 
+<%		}
+		if(tvfCallMapping.MappedTvfCall.ReturnElement is TypedViewDefinition)
+		{
+%>		<ElementType Name="<%=_executingGenerator.RootNamespaceToUse%>.EntityClasses.<%=returnType%>" />
+<%		}
+		else
+		{
+%>		<ElementType Name="<%=_executingGenerator.RootNamespaceToUse%>.TypedViewClasses.<%=returnType%>" />
+<%		}
+%>	</Function>
+<%	}
+	
+%><# SD_LinqToSqlCustomMappingsInclude #>
+</Database>
+
+<~	// produces nested XML for the current entity. Linq to sql's mapping file encloses subtype entity definitions inside supertype definitions
+	private string ProduceTypeXml(EntityDefinition entity, int recursionDepth, HashSet<EntityDefinition> processedEntities)
+	{
+		if(processedEntities.Contains(entity))
+		{
+			return string.Empty;
+		}
+		processedEntities.Add(entity);
+		bool isSubType = entity.IsSubType;
+		string tabs = new String('\t', recursionDepth+1);
+		StringBuilder builder = new StringBuilder();
+		builder.AppendFormat("{0}<Type Name=\"{1}.EntityClasses.{2}\"", tabs, _executingGenerator.RootNamespaceToUse, entity.Name);
+		if(entity.InheritanceType==InheritanceHierarchyType.TargetPerEntityHierarchy)
+		{
+			builder.AppendFormat(" InheritanceCode=\"{0}\"", GeneratorUtils.GetDiscriminatorValueAsString(entity, _executingGenerator, false));
+			if(entity.IsHierarchyRoot)
+			{
+				builder.Append(" IsInheritanceDefault=\"true\"");
+			}
+		}
+		builder.AppendFormat(">{0}", Environment.NewLine);
+		
+		EntityMapping mapping = (EntityMapping)_executingGenerator.ProjectDefinition.GetGroupableModelElementMapping(entity, _executingGenerator.DriverID);
+		var entityFields = entity.Fields.OrderBy(f=>f.Name);
+		foreach(IFieldElementCore field in entityFields)
+		{
+			var fieldMapping = mapping.GetFieldMappingOfField(field);
+			var targetField = fieldMapping.MappedTarget;
+			bool isDbGenerated = (targetField.IsIdentity || targetField.IsTimeStamp || targetField.IsComputed || targetField.IsRowGUID);
+			bool noUpdateCheck = isDbGenerated || field.IsReadOnly || (targetField.Length > (1024*1024));
+		
+			builder.AppendFormat("{0}\t<Column Name=\"{1}\" Member=\"{2}\" Storage=\"_{3}\" DbType=\"{4}\"", tabs, targetField.FieldName, 
+							field.Name, GeneratorUtils.CamelCaseString(field.Name), SD_LinqToSqlGeneralUtils.ProduceDbTypeString(targetField));
+			if(field.IsPartOfIdentifyingFields) 
+			{
+				builder.Append(" IsPrimaryKey=\"true\"");
+			}
+			if(isDbGenerated)
+			{
+				builder.Append(" IsDbGenerated=\"true\"");
+			}
+			builder.AppendFormat(" CanBeNull=\"{0}\"", targetField.IsNullable?"true":"false");
+			if(noUpdateCheck) 
+			{
+				builder.Append(" UpdateCheck=\"Never\"");
+			}
+			if(field.IsDiscriminator) 
+			{
+				builder.Append(" IsDiscriminator=\"true\"");
+			}
+			builder.AppendFormat("/>{0}", Environment.NewLine);
+		}
+		var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(_executingGenerator, entity);
+		foreach(RelationshipInfo relationshipInfo in allRelationshipInfosToTraverse)
+		{
+			switch(relationshipInfo.RelationshipType)
+			{
+				case EntityRelationshipType.ManyToMany:
+					// Linq to Sql doesn't support m:n
+					continue;
+				case EntityRelationshipType.ManyToOne:
+					builder.AppendFormat("{0}\t<Association Name=\"{1}\" Member=\"{2}\" ThisKey=\"{3}\" OtherKey=\"{4}\" Storage=\"_{5}\" IsForeignKey=\"true\"/>{6}",
+								tabs, relationshipInfo.UniqueAssociationName, relationshipInfo.Navigator, relationshipInfo.GetFkFieldsAsStringFromFkSide(true), 
+								relationshipInfo.GetPkFieldsAsStringFromPkSide(true), relationshipInfo.CamelCasedNavigator, Environment.NewLine);
+					break;
+				case EntityRelationshipType.OneToOne:
+					if(relationshipInfo.IsOnPkSide)
+					{
+						builder.AppendFormat("{0}\t<Association Name=\"{1}\" Member=\"{2}\" ThisKey=\"{3}\" OtherKey=\"{4}\" Storage=\"_{5}\"/>{6}",
+								tabs, relationshipInfo.UniqueAssociationName, relationshipInfo.Navigator, relationshipInfo.GetPkFieldsAsStringFromPkSide(true), 
+								relationshipInfo.GetFkFieldsAsStringFromFkSide(true), relationshipInfo.CamelCasedNavigator, 
+								Environment.NewLine);
+					}
+					else
+					{
+						builder.AppendFormat("{0}\t<Association Name=\"{1}\" Member=\"{2}\" ThisKey=\"{3}\" OtherKey=\"{4}\" Storage=\"_{5}\" IsForeignKey=\"true\"/>{6}",
+								tabs, relationshipInfo.UniqueAssociationName, relationshipInfo.Navigator, relationshipInfo.GetFkFieldsAsStringFromFkSide(true), 
+								relationshipInfo.GetPkFieldsAsStringFromPkSide(true), relationshipInfo.CamelCasedNavigator, 
+								Environment.NewLine);
+					}
+					break;
+				case EntityRelationshipType.OneToMany:
+					builder.AppendFormat("{0}\t<Association Name=\"{1}\" Member=\"{2}\" ThisKey=\"{3}\" OtherKey=\"{4}\" Storage=\"_{5}\"/>{6}", 
+								tabs, relationshipInfo.UniqueAssociationName, relationshipInfo.Navigator, relationshipInfo.GetPkFieldsAsStringFromPkSide(true), 
+								relationshipInfo.GetFkFieldsAsStringFromFkSide(true), relationshipInfo.CamelCasedNavigator, 
+								Environment.NewLine);
+					break;
+			}
+		}
+		if(entity.InheritanceType==InheritanceHierarchyType.TargetPerEntityHierarchy)
+		{
+			foreach(EntityDefinition subType in _executingGenerator.ProjectDefinition.GetAllSubtypesForEntity(entity))
+			{			
+				builder.AppendFormat("{0}{1}", ProduceTypeXml(subType, recursionDepth+1, processedEntities), Environment.NewLine);
+			}
+		}
+		builder.AppendFormat("{0}</Type>", tabs);
+		return builder.ToString();
+	}
+~>

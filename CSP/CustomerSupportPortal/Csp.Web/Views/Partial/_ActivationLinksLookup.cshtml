@@ -1,0 +1,158 @@
+﻿﻿@model Csp.Web.DataTransferObjects.ActivationLinkLookupDto
+
+<style type="text/css">
+    div.k-window .csp-submit-container { position: absolute;width: calc(100% - 15px);bottom: 0; }
+    #lookup-grid { width: 100%;/*height:400px;border:solid 1px #00ACDC;*/ }
+    div.k-window tr.oddBlock { background-color:#eee; }
+    div.k-window div.k-pager-wrap.k-grid-pager.k-widget { position: absolute;width: calc(100% - 2px);top: 390px; }
+    .llabel { font-weight: normal;line-height: 20px;color: #333333;font-size: 12px;cursor: text;clear:both; }
+    #messagediv { padding:10px;color:red; }
+    #searchValue { padding-left: 10px;padding-right: 10px; }
+    .hub-link { margin:0 10px; }
+    .search-highlight { background-color:lightyellow; }
+    div#lookup-grid > div { position: absolute;width: calc(100% - 15px);margin-top: 10px; }
+</style>
+
+<script>
+    function Lookup() {
+        $("#ActivationLinkLookupGrid").data("kendoGrid").dataSource.page(1);
+    }
+
+    function Clear() {
+        $('#searchValue').val('');
+        Lookup();
+    }
+
+    function CopyToClipboard(value) {
+        if (!value) {
+            return;
+        }
+
+        var theBody = document.getElementsByTagName('body')[0];
+        var tempInput = document.createElement('TEXTAREA');
+
+        theBody.appendChild(tempInput);
+        tempInput.innerHTML = value;
+        tempInput.select();
+        document.execCommand('copy');
+        theBody.removeChild(tempInput);
+        return false;
+    }
+
+    function GetParams() {
+        $('#messagediv').addClass('hide').html('');
+        $('#lookup-grid').removeClass('hide');
+        return {
+            "searchValue": $('#searchValue').val().trim()
+        };
+    }
+
+    function DataBinding(result) {
+        var data = result.sender.dataSource.data();
+        if (data
+            && data.length > 0) {
+            var key = '';
+            for (var count = 0; count < data.length; count++) {
+                if (count == 0) { // first row
+                    key = data[count].ActivationLinkHash;
+                    data[count].parent = true;
+                } else {
+                    if (key !== data[count].ActivationLinkHash) { // new key
+                        key = data[count].ActivationLinkHash;
+                        data[count].parent = true;
+                        //PartHash
+                    } else { // same key
+                        data[count].parent = false;
+                        data[count].SalesOrderNumber = '';
+                        data[count].MasterOrderNumber = '';
+                        data[count].ActivationLinkHash = '';
+                        data[count].CreatedBy = '';
+                    }
+                }
+            }
+        }
+    }
+
+    function DataBound(result) {
+        var data = result.sender.dataSource.data();
+        if (data
+            && data.length > 0) {
+            var search = $('#searchValue').val().trim();
+            var isOdd = true;
+            for (var count = 0; count < data.length; count++) {
+                if (data[count].parent) {
+                    isOdd = !isOdd;
+                }
+                if (isOdd) {
+                    result.sender.items()[count].className += ' oddBlock';
+                }
+            }
+            if (search.length > 0) {
+                result.sender.tbody.html(result.sender.tbody.html().replace(new RegExp(search, "gi"), '<span class=\'search-highlight\'>' + search + '</span>'));
+            }
+        }
+    }
+
+    function HandleError(data) {
+        $('#lookup-grid').addClass('hide');
+        $('#messagediv').removeClass('hide').html(data.errors);
+    }
+
+    function PartHash(value) {
+        if (value) {
+            var len = value.length;
+            return len > 5 ? value.substring(len - 5, len) : value;
+        }
+        return '';
+    }
+
+    $(document).ready(function () {
+        $('#searchValue').keyup(function (e) {
+            if (e.keyCode === 13) {
+                Lookup();
+            }
+        });
+    });
+</script>
+
+<div id="lookup-grid">
+    @(Html.Kendo().Grid(Model.Items)
+        .Name("ActivationLinkLookupGrid")
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.ActivationLinkHash).Title("Activation Link")
+                //.ClientTemplate("<span title='#=ActivationLinkHash#'>...#:PartHash(data.ActivationLinkHash)#</span> <a href='#=ActivationLinkHash#' target='_blank' class='hub-link' title='Navigate to HUB'>hub</a> <a href='\\#' onclick='CopyToClipboard(\"#=ActivationLinkHash#\")' title='Copy to clipboard'>copy</a>");
+                //.ClientTemplate("# if (parent) {#<span title='#=ActivationLinkHash#'>...#:PartHash(data.ActivationLinkHash)#</span> <a href='#=ActivationLinkHash#' target='_blank' class='hub-link' title='Navigate to HUB'>hub</a> <a href='\\#' onclick='CopyToClipboard(\"#=ActivationLinkHash#\")' title='Copy to clipboard'>copy</a>#} else {#<span title='#=ActivationLinkHash#' style='font-style:italic;'>...#:PartHash(data.ActivationLinkHash)#</span>#} #");
+                .ClientTemplate("# if (parent) {#<span title='#=ActivationLinkHash#'>...#:PartHash(data.ActivationLinkHash)#</span> <a href='#=ActivationLinkHash#' target='_blank' class='hub-link' title='Navigate to HUB'>hub</a> <a href='\\#' onclick='CopyToClipboard(\"#=ActivationLinkHash#\")' title='Copy to clipboard'>copy</a>#} else {# #} #");
+            columns.Bound(p => p.SalesOrderNumber).Width("125px").Title("Sales Order Numer").ClientTemplate("<span title='#=MasterOrderNumber#'>#=SalesOrderNumber#</span>");
+            //columns.Bound(p => p.SalesforceAccountId).Width("200px").Title("Salesforce Account ID");
+            columns.Bound(p => p.AuthorizationCode).Width("75px").Title("Auth Code");
+            columns.Bound(p => p.Status).Width("75px").Title("Status");
+            //columns.Bound(p => p.Details).Title("License Activation Details")
+            //    .ClientTemplate("<b>Product:</b> #=Details.Product#, <b>Group:</b> #=Details.Group#, <b>SubGroup:</b> #=Details.SubGroup#, <b>EvalId:</b> #=Details.EvalId#, <b>RegistrationDate:</b> #=Details.RegistrationDate#, <b>PartNumber:</b> #=Details.PartNumber#, <b>ExpirationDate:</b> #=Details.ExpirationDate#, <b>Quantity:</b> #=Details.Quantity#, <b>UseCount:</b> #=Details.UseCount#, <b>SaasQuantity:</b> #=Details.SaasQuantity#");
+            columns.Bound(p => p.CreatedOn).Width("175px").Title("Created Date");
+            columns.Bound(p => p.CreatedBy).Width("250px").Title("Created By");
+        })
+        .Pageable(pageable => pageable.ButtonCount(10))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Model(model => { model.Id(p => p.Id); })
+            .PageSize(10)
+            .ServerOperation(true)
+            .Read(read => read.Action("ActivationLinksLookup", "SearchAll").Data("GetParams"))
+            .Events(events => events.Error("HandleError"))
+        )
+        .Events(events => { events.DataBinding("DataBinding"); events.DataBound("DataBound"); })
+    )
+</div>
+<div id="messagediv" class="hide"></div>
+<div class="csp-submit-container">
+    <div style="display: inline;">
+        <span class="llabel">Search for Sales Order Numer, Authorization Code, Status, Created Date or By value (optional):</span>
+        <span class="csp-field">
+            <input id="searchValue" type="text" value="" />
+        </span>
+    </div>
+    <input type="button" class="k-button csp-submit" value="Lookup" onclick="Lookup()" />
+    <input type="button" class="k-button csp-submit" value="Clear" onclick="Clear()" />
+</div>

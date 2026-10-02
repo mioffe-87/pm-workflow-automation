@@ -1,0 +1,21 @@
+﻿<?xml version="1.0"?>
+<templateBindings xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd" name="SD.TemplateBindings.General"
+				  description ="General template bindings for the templates which are shared among all frameworks. Specific for .NET 2.0/3.0/3.5/4.0/4.5 based platforms"
+				  precedenceLevel="9">
+	<supportedPlatforms>
+		<platform name=".NET 2.0"/>
+		<platform name=".NET 3.0"/>
+		<platform name=".NET 3.5"/>
+		<platform name=".NET 4.0"/>
+		<platform name=".NET 4.5"/>
+	</supportedPlatforms>
+	<supportedFrameworks/>
+
+	<language name="C#">
+		<templateBinding templateID="SD_AppConfigTemplate" filename="General\appConfig.template"/>
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_AppConfigTemplate" filename="General\appConfig.template"/>
+	</language>
+</templateBindings>
+

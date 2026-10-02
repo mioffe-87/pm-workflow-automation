@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<language xmlns="http://sd/llblgen/pro/languageDefinition.xsd" 
+		  name="VB.NET" fileExtension ="vb" arrayIndexOperatorOpenChar ="(" hasArrayIndexOperatorOnIdentifier ="true"
+		  arrayIndexOperatorCloseChar=")" lineConcatenator="_"  supportsNamespaces="true" attributeAssignmentOperator=":=" attributePattern="&lt;{0}&gt; _">
+	<keywords>
+		<keyword name="trueKeyword" value ="True"/>
+		<keyword name="falseKeyword" value ="False"/>
+		<keyword name="thisKeyword" value ="Me"/>
+		<keyword name="nullKeyword" value="Nothing"/>
+		<keyword name="partialKeyword" value ="Partial"/>
+		<keyword name="typeofKeyword" value="GetType"/>
+		<keyword name="byteKeyword" value="CByte"/>
+		<keyword name="int16Keyword" value="CShort"/>
+		<keyword name="int32Keyword" value="CInt"/>
+		<keyword name="int64Keyword" value="CLng"/>
+		<keyword name="singleKeyword" value="CSng"/>
+		<keyword name="doubleKeyword" value="CDbl"/>
+		<keyword name="decimalKeyword" value="CDec"/>
+	</keywords>
+</language>

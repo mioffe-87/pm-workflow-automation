@@ -1,0 +1,30 @@
+﻿///////////////////////////////////////////////////////////////
+// This is generated code. 
+//////////////////////////////////////////////////////////////
+// Code is generated using LLBLGen Pro version: <[LLBLGenVersion]>
+// Code is generated on: <[Time]>
+// Code is generated using templates: <[TemplateName]>
+// Templates vendor: Solutions Design.
+//////////////////////////////////////////////////////////////
+using System;
+using System.Data;
+using System.Data.Common;
+using <[RootNamespace]>.HelperClasses;
+using SD.LLBLGen.Pro.ORMSupportClasses;
+
+namespace <[RootNamespace]>.DaoClasses
+{
+	/// <summary>Generic DAO class for usage with Typed list classes.</summary>
+	/// <remarks>For backwards compatibility.</remarks>
+	public partial class TypedListDAO : CommonDaoBase
+	{
+		/// <summary>CTor</summary>
+		public TypedListDAO() : base()
+		{
+		}
+		
+		#region Included Code
+<# Custom_TypedListDAOTemplate #>
+		#endregion
+	}
+}

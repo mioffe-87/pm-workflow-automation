@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+
+	<Import Project="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Microsoft.Common.Tasks"/>
+	<Import Project="lib\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+	<Import Project="lib\MicrosoftWebApplicationTargets\Microsoft.WebApplication.targets" />
+	<Import Project="C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v10.0\Web\Microsoft.Web.Publishing.targets" />
+	
+	<PropertyGroup>
+		<StringDate>$([System.DateTime]::Now.ToString('yyyyMMdd'))</StringDate>
+		<NightlyZipName>Demo</NightlyZipName>
+		<NightlyBuildPath>CustomerSupportPortal\Csp.web\outputDir\_PublishedWebsites</NightlyBuildPath>
+	</PropertyGroup>
+	
+	<Target Name="TransformXml">
+		<TransformXml Source="$(NightlyBuildPath)\Csp.web\Web.config" Transform="$(NightlyBuildPath)\Csp.web\Web.$(Configuration).config" 
+		Destination="$(NightlyBuildPath)\Csp.web\Web.config" />
+	</Target>
+
+	<Target Name="CreateZip" DependsOnTargets="TransformXml">
+		<PropertyGroup>
+			<StringDate>$([System.DateTime]::Now.ToString('yyyyMMdd'))</StringDate>
+			<NightlyZipName>Demo</NightlyZipName>
+			<NightlyBuildPath>CustomerSupportPortal\Csp.web\outputDir\_PublishedWebsites</NightlyBuildPath>
+		</PropertyGroup>
+		<ItemGroup>
+			<ApplicationFiles Include="$(NightlyBuildPath)\**\*.*" />
+		</ItemGroup>
+		
+		<!--><MakeDir Directories="$(NightlyBuildPath)"/>-->
+		
+		<Zip Files="@(ApplicationFiles)"
+		WorkingDirectory="$(NightlyBuildPath)"
+		ZipFileName="$(NightlyBuildPath)\$(StringDate)_$(NightlyZipName).zip"
+		ZipLevel="9" />
+	</Target>
+	
+	<Target Name="PushtoNexus" DependsOnTargets="CreateZip">  
+        <Exec Command="Tools\cURL\bin2\curl.exe -v -u admin:paloaltonexus --upload-file $(NightlyBuildPath)\$(StringDate)_$(NightlyZipName).zip http://10.101.6.37:8081/repository/Paloalto-Hosted/csp/1.0/$(StringDate)_$(NightlyZipName).zip"/>  
+    </Target> 
+	
+</Project>

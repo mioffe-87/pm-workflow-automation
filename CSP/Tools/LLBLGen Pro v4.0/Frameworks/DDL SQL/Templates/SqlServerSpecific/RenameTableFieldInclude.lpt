@@ -1,0 +1,3 @@
+﻿<% // The field to rename is stored in the variable 'field'. The current schema is in the variable 'schema' %>
+EXEC sp_rename '[<%=schema.SchemaOwner%>].[<%=field.ParentTable.Name%>].[<%=GetOriginalName(field)%>]', '<%=GetNewName(field)%>', 'COLUMN'
+GO

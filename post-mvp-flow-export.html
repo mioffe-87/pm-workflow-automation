@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>CSR AI Admin Assistant — Post-MVP Flow</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #fff;
+  padding: 24px 28px 32px;
+}
+.header { margin-bottom: 14px; }
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #64748b; margin-bottom: 4px; }
+.title   { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 3px; }
+.subtitle{ font-size: 12px; color: #475569; }
+.legend  { display: flex; flex-wrap: wrap; gap: 14px; margin: 12px 0 16px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #475569; }
+.legend-dot  { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.diagram-wrap { overflow-x: auto; }
+.callouts { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+.callout  { flex: 1 1 200px; padding: 10px 12px; border-radius: 6px; border-left: 3px solid; background: #f8fafc; }
+.callout-title { font-size: 10px; font-weight: 700; margin-bottom: 3px; }
+.callout-body  { font-size: 10px; color: #475569; line-height: 1.5; }
+@media print {
+  body { padding: 8mm 10mm; }
+  @page { size: A4 landscape; margin: 8mm; }
+  .diagram-wrap { overflow: visible; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="eyebrow">CSR AI Admin Assistant · Phase 2 · Post-MVP</div>
+  <div class="title">Multi-Scenario LLM Classifier — Post-MVP Flow</div>
+  <div class="subtitle">6+ scenarios · RAG eligibility → LLM Classifier → Scenario Confirmed → Deterministic decision tree · Human always confirms writes</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div>Trigger</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div>Deterministic</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>AI / LLM</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0f766e"></div>AI + Vector</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#b45309"></div>Human in Loop</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#15803d"></div>Gate / Confirmed</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c2410c; transform:rotate(45deg)"></div>Decision</div>
+</div>
+
+<div class="diagram-wrap">
+<!--
+  3-row snake layout, 6 nodes per row
+  NODE_W=160 NODE_H=58 STEP=192 GAP=32
+  ROW1 y=30:  trigger(0) catcheck(1) extract(2) rag(3) simgate(4-diamond) llmclass(5)
+  ROW2 y=210: confirmed(8) sigfetch(9) chips(10) parallel(11)
+  ROW3 y=390: confbadge(12) action(13) aisearch(14) csr(15) exec(16) feedback(17)
+  reanalyze loop: feedback right→ down → connects back up to llmclass top
+
+  diamond center simgate: cx=788+80=868, cy=30+29=59
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1390" height="580"
+     viewBox="0 0 1390 580"
+     style="display:block;max-width:100%">
+<defs>
+  <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+    <path d="M0,0 L0,7 L7,3.5 z" fill="#94a3b8"/>
+  </marker>
+  <marker id="arr-b" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+    <path d="M0,0 L0,7 L7,3.5 z" fill="#1d4ed8"/>
+  </marker>
+  <marker id="arr-o" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+    <path d="M0,0 L0,7 L7,3.5 z" fill="#c2410c"/>
+  </marker>
+  <style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}</style>
+</defs>
+
+<!-- ═══════════════ ROW 1 ARROWS ═══════════════ -->
+<!-- trigger→catcheck -->
+<line x1="180" y1="59" x2="209" y2="59" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- catcheck→extract label Admin -->
+<line x1="372" y1="59" x2="401" y2="59" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<text x="386" y="53" font-size="8" fill="#94a3b8" text-anchor="middle">Admin</text>
+<!-- extract→rag -->
+<line x1="564" y1="59" x2="593" y2="59" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- rag→simgate (right→diamond left) -->
+<line x1="756" y1="59" x2="787" y2="59" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- simgate right→llmclass label ≥0.70 -->
+<line x1="949" y1="59" x2="978" y2="59" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<text x="963" y="53" font-size="8" fill="#94a3b8" text-anchor="middle">≥ 0.70</text>
+
+<!-- Hermes exits (down dashed) -->
+<!-- catcheck → not admin -->
+<line x1="292" y1="88" x2="292" y2="115" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+<text x="296" y="126" font-size="8" fill="#94a3b8">Not Admin → Hermes</text>
+<!-- simgate bottom → not similar -->
+<line x1="868" y1="88" x2="868" y2="115" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+<text x="872" y="126" font-size="8" fill="#94a3b8">&lt; 0.70 → exit</text>
+
+<!-- ═══════════════ CONNECTOR ROW1→ROW2 ═══════════════ -->
+<!-- llmclass bottom → down → Scenario Confirmed top (col2 row2) -->
+<path d="M 1060 88 L 1060 165 L 484 165 L 484 210"
+      fill="none" stroke="#1d4ed8" stroke-width="2" stroke-dasharray="5,3"
+      marker-end="url(#arr-b)"/>
+<text x="772" y="161" font-size="9" fill="#1d4ed8" text-anchor="middle" font-weight="600">→ Activate · LLM Classifies Scenario</text>
+
+<!-- ═══════════════ ROW 2 ARROWS ═══════════════ -->
+<!-- confirmed→sigfetch -->
+<line x1="564" y1="239" x2="593" y2="239" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- sigfetch→chips -->
+<line x1="756" y1="239" x2="785" y2="239" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- chips→parallel -->
+<line x1="948" y1="239" x2="977" y2="239" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+<!-- ═══════════════ CONNECTOR ROW2→ROW3 ═══════════════ -->
+<path d="M 1060 268 L 1060 345 L 80 345 L 80 390"
+      fill="none" stroke="#1d4ed8" stroke-width="2" stroke-dasharray="5,3"
+      marker-end="url(#arr-b)"/>
+<text x="580" y="341" font-size="9" fill="#1d4ed8" text-anchor="middle" font-weight="600">→ Confidence Badge + Recommended Action</text>
+
+<!-- ═══════════════ ROW 3 ARROWS ═══════════════ -->
+<!-- confbadge→action -->
+<line x1="180" y1="419" x2="209" y2="419" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- action→aisearch -->
+<line x1="372" y1="419" x2="401" y2="419" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- aisearch→csr -->
+<line x1="564" y1="419" x2="593" y2="419" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- csr→exec label Confirms -->
+<line x1="756" y1="419" x2="785" y2="419" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<text x="770" y="413" font-size="8" fill="#94a3b8" text-anchor="middle">Confirms</text>
+<!-- exec→feedback -->
+<line x1="948" y1="419" x2="977" y2="419" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+<!-- feedback→reanalyze -->
+<line x1="1140" y1="419" x2="1169" y2="419" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr)"/>
+<!-- reanalyze loop back up to llmclass (row1 col5) -->
+<!-- reanalyze right edge→ down to y=510 → go left to x=1060 → up to llmclass bottom (1060,88) -->
+<path d="M 1332 448 L 1360 448 L 1360 510 L 1060 510 L 1060 88"
+      fill="none" stroke="#c2410c" stroke-width="1.5" stroke-dasharray="5,3"
+      marker-end="url(#arr-o)"/>
+<text x="1200" y="525" font-size="9" fill="#c2410c" text-anchor="middle" font-weight="600">Re-classify → LLM Classifier</text>
+
+<!-- ═══════════════ ROW 1 NODES ═══════════════ -->
+
+<!-- trigger col0 x=20 y=30 -->
+<rect x="20" y="30" width="160" height="58" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<rect x="21" y="31" width="158" height="4" rx="2" fill="#2563eb"/>
+<text x="100" y="54" font-size="10" font-weight="700" fill="#2563eb" text-anchor="middle">Case Assigned</text>
+<text x="100" y="69" font-size="8" fill="#475569" text-anchor="middle">Salesforce Service Cloud</text>
+
+<!-- catcheck col1 x=212 y=30 -->
+<rect x="212" y="30" width="160" height="58" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+<rect x="213" y="31" width="158" height="4" rx="2" fill="#1d4ed8"/>
+<text x="292" y="54" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Category = Admin?</text>
+<text x="292" y="69" font-size="8" fill="#475569" text-anchor="middle">Hard rule — false → Hermes</text>
+
+<!-- extract col2 x=404 y=30 -->
+<rect x="404" y="30" width="160" height="58" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+<rect x="405" y="31" width="158" height="4" rx="2" fill="#1d4ed8"/>
+<text x="484" y="54" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Extract Fields</text>
+<text x="484" y="69" font-size="8" fill="#475569" text-anchor="middle">Subject · Desc · Type · Category</text>
+
+<!-- rag col3 x=596 y=30 -->
+<rect x="596" y="30" width="160" height="58" rx="7" fill="#f0fdfa" stroke="#0f766e" stroke-width="1.5"/>
+<rect x="597" y="31" width="158" height="4" rx="2" fill="#0f766e"/>
+<text x="676" y="54" font-size="10" font-weight="700" fill="#0f766e" text-anchor="middle">RAG Vector Embed</text>
+<text x="676" y="69" font-size="8" fill="#475569" text-anchor="middle">4 fields → similarity search</text>
+
+<!-- simgate col4 DIAMOND cx=868 cy=59 -->
+<polygon points="868,30 949,59 868,88 787,59" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5"/>
+<text x="868" y="55" font-size="9" font-weight="700" fill="#c2410c" text-anchor="middle">Similarity ≥ 0.70?</text>
+<text x="868" y="69" font-size="7.5" fill="#475569" text-anchor="middle">Yes → Activate</text>
+
+<!-- llmclass col5 x=980 y=30 -->
+<rect x="980" y="30" width="160" height="58" rx="7" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+<rect x="981" y="31" width="158" height="4" rx="2" fill="#7c3aed"/>
+<text x="1060" y="54" font-size="10" font-weight="700" fill="#7c3aed" text-anchor="middle">LLM Classifier</text>
+<text x="1060" y="69" font-size="8" fill="#475569" text-anchor="middle">Case text → scenario + conf %</text>
+
+<!-- ═══════════════ ROW 2 NODES ═══════════════ -->
+
+<!-- sigfetch col2 x=404 y=210 -->
+<rect x="404" y="210" width="160" height="58" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+<rect x="405" y="211" width="158" height="4" rx="2" fill="#1d4ed8"/>
+<text x="484" y="234" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Signal Fetch</text>
+<text x="484" y="249" font-size="8" fill="#475569" text-anchor="middle">Per-scenario · 12 signals</text>
+
+<!-- chips col3 x=596 y=210 -->
+<rect x="596" y="210" width="160" height="58" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+<rect x="597" y="211" width="158" height="4" rx="2" fill="#1d4ed8"/>
+<text x="676" y="234" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">12 Signals Render</text>
+<text x="676" y="249" font-size="8" fill="#475569" text-anchor="middle">Unavailable if API fails · never blank</text>
+
+<!-- confirmed col4 x=788 y=210 -->
+<rect x="788" y="210" width="160" height="58" rx="7" fill="#f0fdf4" stroke="#15803d" stroke-width="1.5"/>
+<rect x="789" y="211" width="158" height="4" rx="2" fill="#15803d"/>
+<text x="868" y="234" font-size="10" font-weight="700" fill="#15803d" text-anchor="middle">Scenario Confirmed</text>
+<text x="868" y="249" font-size="8" fill="#475569" text-anchor="middle">Case text + signals → locked</text>
+
+<!-- parallel col5 x=980 y=210 -->
+<rect x="980" y="210" width="160" height="58" rx="7" fill="#f0fdfa" stroke="#0f766e" stroke-width="1.5"/>
+<rect x="981" y="211" width="158" height="4" rx="2" fill="#0f766e"/>
+<text x="1060" y="234" font-size="10" font-weight="700" fill="#0f766e" text-anchor="middle">Case Similarity</text>
+<text x="1060" y="249" font-size="8" fill="#475569" text-anchor="middle">Similar resolved cases</text>
+
+<!-- ═══════════════ ROW 3 NODES ═══════════════ -->
+
+<!-- confbadge col0 x=20 y=390 -->
+<rect x="20" y="390" width="160" height="58" rx="7" fill="#f0fdfa" stroke="#0f766e" stroke-width="1.5"/>
+<rect x="21" y="391" width="158" height="4" rx="2" fill="#0f766e"/>
+<text x="100" y="414" font-size="10" font-weight="700" fill="#0f766e" text-anchor="middle">Confidence Badge (P1)</text>
+<text x="100" y="429" font-size="8" fill="#475569" text-anchor="middle">Pinned header · evidence trail</text>
+
+<!-- action col1 x=212 y=390 -->
+<rect x="212" y="390" width="160" height="58" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+<rect x="213" y="391" width="158" height="4" rx="2" fill="#1d4ed8"/>
+<text x="292" y="414" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Recommended Action</text>
+<text x="292" y="429" font-size="8" fill="#475569" text-anchor="middle">Deterministic · scenario config</text>
+
+<!-- aisearch col2 x=404 y=390 -->
+<rect x="404" y="390" width="160" height="58" rx="7" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+<rect x="405" y="391" width="158" height="4" rx="2" fill="#7c3aed"/>
+<text x="484" y="414" font-size="10" font-weight="700" fill="#7c3aed" text-anchor="middle">AI Search (in dev)</text>
+<text x="484" y="429" font-size="8" fill="#475569" text-anchor="middle">Read-only · RAG over KB + Okta</text>
+
+<!-- csr col3 x=596 y=390 -->
+<rect x="596" y="390" width="160" height="58" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+<rect x="597" y="391" width="158" height="4" rx="2" fill="#b45309"/>
+<text x="676" y="414" font-size="10" font-weight="700" fill="#b45309" text-anchor="middle">CSR Confirms</text>
+<text x="676" y="429" font-size="8" fill="#475569" text-anchor="middle">One click · override logged</text>
+
+<!-- exec col4 x=788 y=390 -->
+<rect x="788" y="390" width="160" height="58" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+<rect x="789" y="391" width="158" height="4" rx="2" fill="#1d4ed8"/>
+<text x="868" y="414" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Execute Action</text>
+<text x="868" y="429" font-size="8" fill="#475569" text-anchor="middle">Writes to Okta · audit logged</text>
+
+<!-- feedback col5 x=980 y=390 -->
+<rect x="980" y="390" width="160" height="58" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+<rect x="981" y="391" width="158" height="4" rx="2" fill="#1d4ed8"/>
+<text x="1060" y="414" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Feedback Widget</text>
+<text x="1060" y="429" font-size="8" fill="#475569" text-anchor="middle">Feeds per-scenario calibration</text>
+
+<!-- reanalyze col6 x=1172 y=390 -->
+<rect x="1172" y="390" width="160" height="58" rx="7" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5"/>
+<rect x="1173" y="391" width="158" height="4" rx="2" fill="#c2410c"/>
+<text x="1252" y="414" font-size="10" font-weight="700" fill="#c2410c" text-anchor="middle">Re-Analyze</text>
+<text x="1252" y="429" font-size="8" fill="#475569" text-anchor="middle">New comment / CSR request</text>
+
+<!-- Row labels -->
+<text x="1380" y="59"  font-size="9" fill="#cbd5e1" text-anchor="end" font-style="italic">Eligibility</text>
+<text x="1380" y="239" font-size="9" fill="#cbd5e1" text-anchor="end" font-style="italic">Classification</text>
+<text x="1380" y="419" font-size="9" fill="#cbd5e1" text-anchor="end" font-style="italic">Resolution</text>
+
+</svg>
+</div>
+
+<div class="callouts">
+  <div class="callout" style="border-color:#c2410c">
+    <div class="callout-title" style="color:#c2410c">Three-stage funnel</div>
+    <div class="callout-body">Row 1 = eligibility (Category + RAG ≥ 0.70). Row 2 = signal fetch → signals inform scenario confirmation → parallel reasoning. Row 3 = reasoning surface + CSR confirmation + write execution + feedback loop.</div>
+  </div>
+  <div class="callout" style="border-color:#7c3aed">
+    <div class="callout-title" style="color:#7c3aed">AI scope expands — boundary stays</div>
+    <div class="callout-body">LLM classifies scenario from case text (row 1). Signals are fetched and rendered before Scenario Confirmed — Okta Status, Membership, IDP type and others are inputs to confirmation, not outputs. Case Similarity surfaces similar resolved cases to inform the recommendation. Decision tree traversal and all API writes remain permanently deterministic. Model never in the write path.</div>
+  </div>
+  <div class="callout" style="border-color:#b45309">
+    <div class="callout-title" style="color:#b45309">Re-Analyze loop</div>
+    <div class="callout-body">When case context shifts (new comment, CSR request), Re-Analyze re-runs from the LLM Classifier step. Diffs previous snapshot — surfaces only what changed. P2: CDC-triggered auto re-analyze.</div>
+  </div>
+</div>
+
+<p style="margin-top:20px;font-size:9px;color:#94a3b8">
+  CSR AI Admin Assistant · Phase 2 · Post-MVP Scope · Palo Alto Networks · 2026
+</p>
+
+</body>
+</html>

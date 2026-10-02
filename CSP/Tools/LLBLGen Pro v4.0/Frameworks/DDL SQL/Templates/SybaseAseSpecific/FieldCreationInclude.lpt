@@ -1,0 +1,73 @@
+﻿<~
+	// The enum definition for the Dbtypes as it is used by the sybase ase driver. Used here to determine in readable code
+	// if a field requires a length specification and/or collation specifications emitted in the DDL
+	public enum AseDbTypes
+	{
+		BigInt,
+		Binary,
+		Bit,
+		Char,
+		Date,
+		DateTime,
+		Decimal,
+		Double,
+		FloatReal,
+		FloatDouble,
+		Integer,
+		Image,
+		Money,
+		NChar,
+		Numeric,
+		NVarChar,
+		Real,
+		SmallDateTime,
+		SmallInt,
+		SmallMoney,
+		Text,
+		Time,
+		TimeStamp,
+		TinyInt,
+		UniChar,
+		UniText,
+		UniVarChar,
+		UnsignedBigInt,
+		UnsignedInt,
+		UnsignedSmallInt,
+		VarBinary,
+		VarChar,
+	}
+	
+	// Creates the string which defines the field, complete with name, type, identity (if applicable) and nullable/not nullable
+	private string CreateFieldDefinitionString(DBTableField field)
+	{
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.AppendFormat("{0} {1}", field.FieldName, field.TypeDefinition.DBTypeAsString);
+		switch((AseDbTypes)field.TypeDefinition.DBType)
+		{
+			case AseDbTypes.Decimal:
+			case AseDbTypes.Numeric:
+				toReturn.AppendFormat(" ({0}, {1})", field.TypeDefinition.Precision, field.TypeDefinition.Scale);
+				break;
+			case AseDbTypes.Char:
+			case AseDbTypes.NChar:
+			case AseDbTypes.NVarChar:
+			case AseDbTypes.VarChar:
+			case AseDbTypes.UniVarChar:
+			case AseDbTypes.UniChar:
+			case AseDbTypes.Binary:
+			case AseDbTypes.VarBinary:
+				toReturn.AppendFormat(" ({0})", field.TypeDefinition.Length);
+				break;
+		}
+		if(field.IsIdentity)
+		{
+			toReturn.Append(" identity");
+		}
+		if(!field.IsNullable)
+		{
+			toReturn.Append(" not");
+		}
+		toReturn.Append(" null");
+		return toReturn.ToString();
+	}
+~>

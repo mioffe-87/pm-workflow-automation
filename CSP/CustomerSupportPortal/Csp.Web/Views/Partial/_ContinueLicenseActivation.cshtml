@@ -1,0 +1,68 @@
+﻿@using Csp.Web.DataTransferObjects
+@model ActivateLicense
+
+@using (Ajax.BeginForm("ContinueActivateLicense", "License", null, new AjaxOptions {
+    OnBegin = "SupportPortal.BlockUI();",
+    OnComplete = "SupportPortal.UnBlockUI();",
+    UpdateTargetId = "containerActivateLicenseDiv"
+},
+        new { id = (string)UniqueId.activateLicenseForm })) {
+        
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.SerialNumber)
+    @Html.HiddenFor(model => model.AuthorizationCode)  
+    @Html.HiddenFor(model => model.DeviceBundleModel)
+    @Html.HiddenFor(model => model.LicenseBundleModel) 
+    @Html.HiddenFor(model => model.PostalCode) 
+    @Html.HiddenFor(model => model.City) 
+    @Html.HiddenFor(model => model.IsSiteLicense) 
+       
+    if (Model.IsReplacementBundle) {   
+    <div style="color: red">
+        <h4>Warning</h4>
+        <p>Please confirm the information that you entered below.</p>
+        <br />
+        <p>You have elected to replace the existing bundle subscription for device <span style="font-weight: bold">@Model.SerialNumber</span> .Should you proceed, all existing licenses provided by <span style="font-weight: bold">@Model.DeviceBundleModel</span> will be terminated and replaced with the new licenses in the <span style="font-weight: bold">@Model.LicenseBundleModel </span>bundle. No credit will be given for any remaining time on your original bundle, and the new license period will take effect immediately. </p>
+        <br />
+        <p>If this is not your intent, please click the <span style="font-weight: bold">CANCEL</span> button and contact your reseller regarding your licensing options. Otherwise, please click the <span style="font-weight: bold">CONTINUE</span> button to proceed.</p>
+    </div>  
+        
+    } else if (Model.Is4HourRma) {
+    <div style="color: red">
+        <h4>Activate 4Hour RMA License - Confirmation</h4>
+        <p>
+            <span style="font-weight: bold">Note:</span>
+            The 4 Hour RMA license <span style="font-style: italic">only covers device:<span style="font-weight: bold"> @Model.SerialNumber </span>
+                at the location of <span style="font-weight: bold">@(Model.City), @(Model.PostalCode).</span></span>
+        </p>
+        <p>Please confirm this is correct. This registration will <span style="text-decoration: underline">NOT</span> apply to any other device(s) or locations. </p>
+        <p>To change the device's location, a change request form must be submitted. To request and submit the form, please create a case online at support.paloaltonetworks.com, otherwise please press continue.</p>
+        <p>Palo Alto Networks will not be liable if devices were physically re-located without our knowledge.</p>
+    </div>  
+        
+    } else if (Model.IsSiteLicense) {
+    <div style="color: red">
+        <h4>Site License - Confirmation</h4>
+        <p>
+            You are activating a site license. Once activated the site license will provide the license for all devices that do not already have the license
+                or has the same type of license that expires before the end of this site license. Please press continue if you would like to activate this license.
+        </p>
+    </div>  
+    }
+        
+        
+    <div class="buttons-bottom-right">
+        <input type="submit" class="k-button"  value="Continue" onClick="@(UniqueId.continueLicenseActivation)closeContinueLicenseWindow()"/>
+        <input type="button"  class="k-button"  value="Cancel" onClick="@(UniqueId.continueLicenseActivation)closeContinueLicenseWindow()"/>
+    </div>
+}
+
+<script>
+
+    function @(UniqueId.continueLicenseActivation)closeContinueLicenseWindow() {
+
+        $("#continueLicenseWindow").data("kendoWindow").close();
+    }
+
+
+</script>

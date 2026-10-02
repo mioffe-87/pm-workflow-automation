@@ -1,0 +1,170 @@
+﻿@using Csp.Web.DataTransferObjects
+@model DeviceLicensesDto
+
+@{ 
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+}
+
+<script>
+    function panOsChange() {
+        var panOsV = $("#ddPanOsVersion").val();
+        if (panOsV == "8") {
+            $("#ActivateLicense_UpgradeAuthorizationCode").attr("readonly", false);
+        } else {
+            $("#ActivateLicense_UpgradeAuthorizationCode").attr("readonly", true);
+            $("#ActivateLicense_UpgradeAuthorizationCode").val("");
+        }
+    }
+
+    //commented by sseetham on 03/04/2019 - This will be handled by licensing and no additional validations are required from CSP.
+    //$(function () {
+    //    $('#ActivateLicense_UpgradeAuthorizationCode').bind('paste', function(event) {
+    //        setTimeout(showVmUpgradeMessage, 100);
+    //    });
+    //    $('#ActivateLicense_UpgradeAuthorizationCode').bind('keydown', showVmUpgradeMessage);
+    //});
+
+    function showVmUpgradeMessage() {
+        var upgradeAuthCode = $("#ActivateLicense_UpgradeAuthorizationCode").val();
+        if (upgradeAuthCode == "") {
+            return;
+        }
+        var deviceSerialNumber = "@Model.Device.SerialNumber";
+        var urldata = "/License/GetVmUpgradeModels?serialNumber=" + deviceSerialNumber + "&upgradeAuthCode=" + upgradeAuthCode;
+
+        $.getJSON(urldata, vmModelsResponse);
+    }
+
+    function vmModelsResponse(data) {
+        if (data != null) {
+            console.log(data);
+            if (data.IsValidUpgradeAuthCode == true) {
+                console.log("comes here");
+                $("#divUpgradeNote").html(data.UpgradeMessage);
+            } else {
+                $("#divUpgradeNote").html("");
+                $("#divUpgradeNote").text("");
+            }
+            }
+    }
+
+</script>
+
+<div id="containerUpgradeLicenseDiv">
+    @using (Ajax.BeginForm("ActivateLicense", "License", null, new AjaxOptions {
+
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();",
+        UpdateTargetId = "containerUpgradeLicenseDiv"
+    },
+        new { id = (string)UniqueId.upgradeLicenseForm })) {
+        @Html.HiddenFor(model => model.Eula.SelectedEulaId,new { id = "SelectedEulaId", name="SelectedEulaId" })
+        @Html.HiddenFor(model => model.ActivateLicense.SerialNumber)
+        @Html.AntiForgeryToken()
+
+        <div class="fieldset" id="@UniqueId.AuthCodeUpgrade" style="display: none">
+            <fieldset>
+                <legend>Upgrade Auth-Code Activation</legend>
+                    <div id="divPanOsSection">
+                    <div class="csp-label">
+                        @Html.Label("PAN OS Version:")
+                    </div>
+                    <div class="csp-field">
+                        @(Html.Kendo().DropDownList()
+                        .Name("ddPanOsVersion")
+                              .DataTextField("Text")
+                              .DataValueField("Value")
+                              .Events(e => e.Change("panOsChange"))
+                              .BindTo(new List<SelectListItem>() {
+                                  new SelectListItem() {
+                                      Text = "PAN-OS 5.0",
+                                      Value = "5"
+                                  },
+                                  new SelectListItem() {
+                                      Text = "PAN-OS 6.0",
+                                      Value = "6"
+                                  },
+                                   new SelectListItem() {
+                                      Text = "PAN-OS 6.1",
+                                      Value = "6.1"
+                                  },
+                                  new SelectListItem() {
+                                      Text = "PAN-OS  7.0",
+                                      Value = "7"
+                                  },
+                                  new SelectListItem() {
+                                      Text = "PAN-OS 7.1",
+                                      Value = "7.1"
+                                  },
+                                  new SelectListItem() {
+                                      Text = "PAN-OS 8.0",
+                                      Value = "8"
+                                  }
+                              })
+                              .Value("5")
+                              .HtmlAttributes(new {@class = "k-dropdown", id = "ddPanOsVersion", name = "ddPanOsVersion"}))
+                    </div>
+                </div>
+                <div id="divUpgradeSection">
+                    <div class="csp-label">
+                        @Html.Label("Authorization Code:")
+                    </div>
+
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.ActivateLicense.UpgradeAuthorizationCode)
+                        @Html.TextBoxFor(model => model.ActivateLicense.UpgradeAuthorizationCode, new {maxlength = "46", @readonly = "readonly"})
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+                <div id="divUpgradeNote" style="color: green; margin-top: 5px;"></div>
+            </fieldset>
+        </div>
+        }
+
+</div>
+
+<script>
+
+    @if (Model.ActivateLicense.ActivateSuccessful) {
+    <text>
+    $(function () {
+        SupportPortal.OnWindowClose(licenseGridId);
+    });
+    </text>
+    }
+
+    //This is used to remove the validation on a key up for remove validation to eliminate redundant calls to the server
+    $("[data-val-remote]").keyup(function () { return false });
+
+    //This is needed for unobtrusive validation to work on mvc postback ajax forms
+    $.validator.unobtrusive.parse("#@UniqueId.upgradeLicenseForm");
+
+    //Only include the code to cause the window to display on a post back where the license was determined to be a replacement bundle, 4 hour rma or site license. 
+    @if (Model.ActivateLicense.IsReplacementBundle || Model.ActivateLicense.Is4HourRma || Model.ActivateLicense.IsSiteLicense) {
+    
+        <text>
+    $("#continueLicenseWindow").kendoWindow({
+        width: "425px",
+        minHeight: "100px",
+        title: "Continue Activation",
+        modal: true,
+        draggable: true,
+        visible: false,
+        scrollable: false,
+        actions: [
+            "Close"
+        ],
+    });
+
+    @(UniqueId.activateLicense)openContinueLicenseWindow();
+    </text>
+    
+}
+
+    function @(UniqueId.activateLicense)openContinueLicenseWindow() {
+        var window = $("#continueLicenseWindow");
+        window.data("kendoWindow").open();
+        window.data("kendoWindow").center();
+    }
+
+</script>

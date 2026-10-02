@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="SD.TemplateBindings.OracleSpecific.DDLSQL" description="Oracle specific template bindings for DDL SQL generation" 
+						precedenceLevel="10" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+	<supportedPlatforms>
+		<platform name="RDBMS"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="DDL SQL" />
+	</supportedFrameworks>
+	<supportedDrivers>
+		<driver id="A8034CB0-319D-4cdd-BC7D-1E7CFDBA3B74"/>
+		<driver id="DE158D99-1B10-4d88-8DEA-888E7930FF40"/>
+	</supportedDrivers>
+	<language name="SQL">
+		<templateBinding templateID="SD_DDLSQL_AlterTableFieldInclude" filename="OracleSpecific\AlterTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateForeignKeyConstraintInclude" filename="OracleSpecific\CreateForeignKeyConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreatePrimaryKeyConstraintInclude" filename="OracleSpecific\CreatePrimaryKeyConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateSchemaInclude" filename="OracleSpecific\CreateSchemaInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateSequenceInclude" filename="OracleSpecific\CreateSequenceInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateTableFieldInclude" filename="OracleSpecific\CreateTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateTableInclude" filename="OracleSpecific\CreateTableInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateUniqueConstraintInclude" filename="OracleSpecific\CreateUniqueConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropForeignKeyConstraintInclude" filename="OracleSpecific\DropConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropPrimaryKeyConstraintInclude" filename="OracleSpecific\DropConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropSequenceInclude" filename="OracleSpecific\DropSequenceInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropTableFieldInclude" filename="OracleSpecific\DropTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropTableInclude" filename="OracleSpecific\DropTableInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropUniqueConstraintInclude" filename="OracleSpecific\DropConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_FieldCreationInclude" filename="OracleSpecific\FieldCreationInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_RenameTableFieldInclude" filename="OracleSpecific\RenameTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_RenameTableInclude" filename="OracleSpecific\RenameTableInclude.lpt" templateLanguage="C#" includeOnly="true" />
+	</language>
+</templateBindings>

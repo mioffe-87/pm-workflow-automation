@@ -1,0 +1,57 @@
+﻿@model Csp.Web.DataTransferObjects.SapSupportAccountDto
+
+<script type="text/javascript">
+
+    function CloseSupportAccountsForSapWindow(e) {
+        var selectedAccount = $("#SupportAccountId").val();
+
+        if (selectedAccount == "") {
+            SupportPortal.Notification("Support Account is required.", SupportPortal.NotificationType.Error);
+            e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+            return false;
+        } else {
+            $("#SelectedSupportAccountId").val(selectedAccount);
+        }
+
+        var window = $("#SupportAccountsForSapWindow").data("kendoWindow");
+        window.close();
+
+        return true;
+    }
+</script>
+
+
+
+<div id="SelectSupportAccountDiv" class="horizontal-form-element" style="width: 100%;">
+    <form id="SelectSupportAccountForm">
+
+        <div>
+            @Html.Partial("../Partial/_ResponseNotification", Model.Notifications)
+        </div>
+
+        <div class="fieldset fieldset-padded">
+            <div>
+                <div>There are multiple support accounts found. Please choose a support account to continue with the registration process.</div>
+                <br />
+                <div class="csp-label">
+                    Select Support Account:
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(x => x.SupportAccountId)
+                    @(Html.Kendo().DropDownListFor(x => x.SupportAccountId)
+                          .OptionLabel(Constants.DropDownPleaseSelect)
+                          .DataValueField("Value")
+                          .DataTextField("Name")
+                          .BindTo(Model.Accounts)
+                          )
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+        </div>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input type="button" value="Continue" class="k-button" onclick="return CloseSupportAccountsForSapWindow();" />
+        </div>
+    </form>
+</div>

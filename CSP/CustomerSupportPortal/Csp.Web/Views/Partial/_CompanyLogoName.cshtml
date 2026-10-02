@@ -1,0 +1,29 @@
+﻿@using System.Configuration
+
+@{
+    var supportAccount = CurrentState.GetSupportAccount();
+    var companyLogo = (supportAccount != null) ? CurrentState.GetSupportAccount().SupportAccountLogo : null;
+    var contentType = (supportAccount != null) ? CurrentState.GetSupportAccount().LogoContentType : string.Empty;
+}
+@*@Html.Partial("../Partial/_BannerMessage")*@
+<!--<span style="width: 100%">
+   <span id="SupportAccountTitle" class="contextTitle">
+        @{
+            if (companyLogo != null && contentType != string.Empty) {
+                var logoContent = Convert.ToBase64String(companyLogo);
+                var imgSrc = String.Format("data:{0};base64,{1}", contentType, logoContent);
+
+            <img alt="Logo" src="@imgSrc" class="csp-company-logo" />
+            }
+        }
+        @CurrentState.GetSupportAccountName()
+
+    </span> 
+
+    <span class="helpTitle" style="float: right">
+        <a href="@ConfigurationManager.AppSettings["Portalhelpurl"]" target="_new" class="marketing-font">Help</a>
+        <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick=" SupportPortal.Help(this, 17); "></i></span>
+    </span>
+
+</span>
+<br /> -->

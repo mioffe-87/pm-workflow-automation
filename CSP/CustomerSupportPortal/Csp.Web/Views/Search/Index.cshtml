@@ -1,0 +1,240 @@
+﻿@{
+    ViewBag.Title = "Search Results - Customer Support - Palo Alto Networks";
+    Layout = "~/Views/Shared/_SiteLayout.cshtml";
+    var communityUrl = System.Configuration.ConfigurationManager.AppSettings["Communityurl"];
+    var fileSupportCaseUnAuthUrl = System.Configuration.ConfigurationManager.AppSettings["SalesforceFileSupportCaseUnAuthUrl"];
+    var fileSupportCaseAuthUrl = System.Configuration.ConfigurationManager.AppSettings["SalesforceFileSupportCaseAuthUrl"];
+    var isAuthenticated = Request.IsAuthenticated;
+    var fileSupportCaseUrl = fileSupportCaseUnAuthUrl;
+    var dataSeachHub = System.Configuration.ConfigurationManager.AppSettings["CoveoSearchHub"];
+    var coveoOrganizationId = System.Configuration.ConfigurationManager.AppSettings["CoveoOrganizationId"];
+    var coveoAnalyticsEndpoint = "https://" + coveoOrganizationId + ".analytics.org.coveo.com/rest/ua";
+    if (isAuthenticated)
+    {
+        fileSupportCaseUrl = fileSupportCaseAuthUrl;
+    }
+}
+
+<style>
+    .button-link {
+        padding: 10px;
+    }
+
+    .button-link {
+        display: inline-block;
+        margin: 0;
+        font-family: inherit;
+        padding: .6em 1em;
+        -webkit-appearance: none;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        transition: background-color .25s ease-out,color .25s ease-out;
+        font-size: 1.125rem;
+        line-height: 1;
+        text-align: center;
+        cursor: pointer;
+        background-color: #f2f5f7;
+        color: #48525a;
+        display: block;
+        width: 100%;
+        margin-right: 0;
+        margin-left: 0
+    }
+
+    [data-whatinput=mouse] .button-link {
+        outline: 0
+    }
+
+    .button-link:focus,.button-link:hover {
+        background-color: #e5e8ea;
+        color: #48525a
+    }
+
+    .button-link .button-link-icon {
+        margin-right: 1rem;
+        margin-top: -3px
+    }
+</style>
+<div class="grid-container">
+    <div class="grid-x grid-padding-x">
+        <div class="cell">
+        <div id="search" class='CoveoSearchInterface' data-enable-history="false" data-design="new">
+            <div class="CoveoPromotedResultsBadge" data-show-badge-for-featured-results="true" data-color-for-featured-results="#fa582d" data-caption-for-featured='Featured'></div>  
+            <div class="CoveoAnalytics" data-search-hub="@dataSeachHub" data-endpoint="@coveoAnalyticsEndpoint"></div>    
+            <div class="CoveoFoldingForThread" data-field="@@foldingcollection" data-child="@@foldingchild" data-parent="@@foldingparent" data-rearrange="date ascending" data-enable-expand="true" data-range="2"></div>
+            <div class="coveo-main-section">
+
+
+            <div class="coveo-facet-column">
+            <div class="coveo__facetheader"><h2 class="subheader coveo--titleheader">Filter your Results </h2></div>
+                <div class="CoveoFacet" data-title="By Source" data-field="@@source" id="source"></div>
+                <div class="CoveoFacet" data-title="Product Category" data-field="@@panproduct" id="product"></div>
+                <div class="CoveoFacet" data-title="OS Version" data-field="@@panosversion" id="osversion"></div>
+                <div class="CoveoFacet" data-title="Feature Category" data-field="@@panfeaturecategory" id="featurecategory"></div>
+                <div class="CoveoFacet" data-title="Feature" data-field="@@panfeature" id="feature"></div>
+                <div class="CoveoFacet" data-title="By type of LIVEcommunity post" data-field="@@liboardinteractionstyle" data-number-of-values='10' data-value-caption='{"forum":"Discussions" , "tkb":"Articles", "idea":"Ideas", "blog":"Blogs", "qanda":"Q&As", "group":"Group Hubs", "contest":"Contests"}'></div>
+            </div>
+
+            <div class="coveo-results-column content-card">
+                <h1 class="section-header"><strong><span class="CoveoQueryPropertyOutput" data-property="totalCountFiltered"></span> Results</strong> For '<span class="CoveoQueryPropertyOutput" data-property="query"></span>' across Palo Alto Networks.</h1>
+                <div class="CoveoBreadcrumb"></div>
+                <div class="coveo-results-header coveo__results-header">
+                <div class="coveo-sort-section">
+                    <span class="CoveoSort" data-sort-criteria="relevancy" data-caption="Relevance"></span>
+                    <span class="CoveoSort" data-sort-criteria="date descending,date ascending" data-caption="Date"></span>
+                </div>
+                <div class="coveo-summary-section">
+                    <div class="CoveoResultsPerPage"></div>
+                    <span class="CoveoQuerySummary"></span>
+                    <div class="CoveoPager"></div>
+                </div>
+                </div>
+                <div class="CoveoHiddenQuery"></div>
+                <div class="CoveoDidYouMean"></div>
+                <div class="CoveoErrorReport"></div>
+                <span class="CoveoTriggers"></span>
+                <div class="CoveoSmartSnippet"></div>     
+                <div class="CoveoSmartSnippetSuggestions"></div> 
+                <div class="CoveoResultList" data-layout="list" data-wait-animation="fade" data-auto-select-fields-to-include="true">
+                    <script id="Lithium2" class="result-template" type="text/underscore">
+                        <div class="coveo-result-frame coveo__result-frame templatelithium">
+                            <div class="coveo-result-row">
+
+                                <div class="coveo-result-cell" style="padding-left:15px">
+                                    <div class="coveo-result-row">
+                                    <div class="coveo-result-cell" style="font-size:18px; float:left; width: 70%;">
+                                        <div class="coveo-source-badge">
+                                            <%- Coveo.TemplateHelpers.getHelper("fieldValueCaptionHelper") ? Coveo.TemplateHelpers.getHelper("fieldValueCaptionHelper")(raw.source): raw.source %>
+                                        </div>
+                                    </div>
+                                        <div class="coveo-result-cell" style="float:right; padding-top: 1px">
+                                        <span class="CoveoFieldValue" data-field="@@date" data-helper="date" data-helper-options="{predefinedFormat: 'MM/DD/yyyy'}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="coveo-result-row">
+                                        <a class="CoveoResultLink" data-always-open-in-new-window='true'></a>
+                                    </div>
+
+                                    <div class="coveo-result-row  coveo__result-body">
+
+                                        <div class="coveo-result-cell coveo__excerpt">
+                                            <div class="CoveoExcerpt">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="coveo-result-row coveo__badgesection">
+                                            <div class="coveo-result-cell">
+                                                <div class="CoveoBadge" data-field="@@licategoryshorttitle"></div>
+                                                <div class="CoveoBadge" data-field="@@liboardshorttitle"></div>
+                                                <div class="CoveoBadge" data-field="@@litopiclabelsfacet" data-split-values='true' data-display-separator=' '></div>
+                                            </div>
+                                        </div>
+
+                                        <div className="coveo__resultstats-section">
+                                        <% if (raw.syssourcetype == "Lithium") { %>
+                                            <div class="coveo-result-cell lia-summary-view-statistics-wrapper">
+                                            <div class="coveo__resultstat">
+                                                <% if (raw.limessageissolution === 'True') { %>
+                                                    <span class="article-tag__solved">Solved</span>
+                                                <% } %>
+                                            </div>
+                                            <!--<div class="coveo__resultstat">-->
+                                                <!--<span class="lia-summary-view-statistic-post-date article-tag__date"><%- dateTime(raw.sysdate) %></span>-->
+                                            <!--</div>-->
+                                            <div class="coveo__resultstat">
+                                                <% if (raw.limessagekudoscount != '0') { %>
+                                                    <span class="CoveoFieldValue lia-summary-view-statistic-kudos article-tag__likes" data-field="@@limessagekudoscount"></span><span class="article-tag__text"> Likes</span>
+                                                <% } %>
+                                            </div>
+                                            <div class="coveo__resultstat">
+                                                <span class="CoveoFieldValue lia-summary-view-statistic-views article-tag__views" data-field="@@litopicviewcount"></span><span class="article-tag__text"> Views</span>
+                                            </div>
+                                            </div>
+                                        <% } %>
+                                        </div>
+                                    </div>
+
+                                    <% if(_.size(childResults)>0) { %>
+                                    <span class="CoveoResultFolding" data-result-template-id="LithiumChildResult"></span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </script>
+                    <script id="LithiumChildResult" type="text/underscore">
+                        <div class="coveo-result-frame coveo-email-result">
+                            <div class="coveo-result-row">
+                                <div class="coveo-result-cell">
+                                    <div class="coveo-result-row">
+                                        <div class="coveo-result-cell">
+                                            <% if (raw.limessageissolution == 'False') { %>
+                                            <div class="lithium-icons post"></div>
+                                            <% } else { %>
+                                            <div class="lithium-icons postacc"></div>
+                                            <% } %>
+                                            <a class="CoveoResultLink" data-always-open-in-new-window='true'></a>
+                                        </div>
+                                        <div class="coveo-result-cell">
+                                            <span class="CoveoFieldValue" data-field="@@limessageposttime" data-helper="emailDateTime" data-helper-options="{predefinedFormat: 'yyyy/MM/DD'}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="coveo-result-row">
+                                        <div class="coveo-result-cell">
+                                            <div class="CoveoExcerpt">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="coveo-result-row">
+                                        <div class="coveo-result-cell">
+                                            <span class="CoveoResultAttachments" data-result-template-id="EmailResultAttachment"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </script>
+                </div>
+                <div class="CoveoPager"></div>
+                <div class="CoveoLogo"></div>
+            </div>
+            <!-- Begin Still Cant find solution -->
+            <br />
+            <div class="coveo-results-column content-card" style="background-color: white;width:70%">
+                <div class="cell solution-header section-button" style="text-align: center;">
+                    <h2 class="subheader">Still Can't find a solution?</h2>
+                </div>
+                <div>
+                    <div class="flex-container">
+                        <div class="flex-content">
+                            <h3 class="article-header">Ask a Question</h3>
+                            <p>Head over the our LIVE Community and get some answers!</p>
+                            <a class="button-link" href="@communityUrl" target="_blank" data-track="true" data-track-type="support-hm-cta" data-track-category="Can’t Find a Solution" data-track-value="Ask a Question">
+                                <img src="~/Images/live-mini-icon.svg" alt="live" class="button-link-icon">Ask a Question ›</a>
+                        </div>
+                        <div class="flex-content">
+                            <h3 class="article-header">Create a Case</h3>
+                            <p>Let us know how we can help and one of our specialists will be in touch!</p>
+                            <a class="button-link" href="@fileSupportCaseUrl" target="_top" data-track="true" data-track-type="support-hm-cta" data-track-category="Can’t Find a Solution" data-track-value="File a Case">
+                                <img src="~/Images/case-mini-icon.svg" alt="case" class="button-link-icon">File a case ›</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <!-- End Still Cant find solution -->
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="~/Scripts/js/jquery.min.js"></script>
+<script type="text/javascript" src="~/Scripts/js/URI.js"></script>
+<script type="text/javascript" src="~/Scripts/js/app-coveo.js"></script>
+@section OmniturePageVariables {
+<script type="text/javascript">
+    webData.pageName = "support:portal:Search Results";
+    webData.siteSection = "Support Portal Search Results";
+</script>
+}

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0"?>
+<templateBindings xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd" name="SD.TemplateBindings.MySqlSpecific"
+				  description ="Template bindings for the templates which are specific for MySql based databases."
+				  databaseDriverID="758A392F-06F3-498b-AED9-D85A4C795BDA" precedenceLevel="10">
+	<supportedPlatforms>
+		<platform name=".NET 3.5"/>
+		<platform name=".NET 4.0"/>
+		<platform name=".NET 4.5"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="LLBLGen Pro Runtime Framework"/>
+	</supportedFrameworks>
+
+	<language name="C#">
+		<!-- DB Specific template bindings -->
+		<templateBinding templateID="SD_DQEReferenceXmlIncludeTemplate" filename="MySqlSpecific\Shared\dqeReferenceXmlInclude.template" templateLanguage="TDL" />
+		<!-- DB Specific include template bindings -->
+		<templateBinding templateID="SD_DQENamespaceIncludeTemplate" filename="MySqlSpecific\C#\dqeNamespaceInclude.template" />
+		<templateBinding templateID="SD_ProcedureNameIncludeTemplate" filename="MySqlSpecific\Shared\procedureNameInclude.template" templateLanguage="TDL" />
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_DQEReferenceXmlIncludeTemplate" filename="MySqlSpecific\Shared\dqeReferenceXmlInclude.template" templateLanguage="TDL" />
+		<!-- DB Specific include template bindings -->
+		<templateBinding templateID="SD_DQENamespaceIncludeTemplate" filename="MySqlSpecific\VB.NET\dqeNamespaceInclude.template" />
+		<templateBinding templateID="SD_ProcedureNameIncludeTemplate" filename="MySqlSpecific\Shared\procedureNameInclude.template" templateLanguage="TDL" />
+	</language>
+</templateBindings>

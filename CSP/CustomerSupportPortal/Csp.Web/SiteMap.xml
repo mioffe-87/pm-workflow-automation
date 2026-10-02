@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap>
+  <SiteMapHome>
+    <SupportAccount>
+      <!--<Url>../Details</Url>-->
+      <Url>#</Url>
+      <isRoot>true</isRoot>
+      <Title>Home</Title>
+      <SubTitle></SubTitle>
+      <Table></Table>
+      <IsUrl>false</IsUrl>
+    </SupportAccount>
+    <SupportAccount>
+      <Url>../Details</Url>
+      <isRoot>false</isRoot>
+      <Title></Title>
+      <SubTitle>Account Home</SubTitle>
+      <Table>SupportAccount</Table>
+      <IsUrl>false</IsUrl>
+    </SupportAccount>
+    <SupportAccount1>
+      <!--<Url>../Details</Url>-->
+      <Url>#</Url>
+      <isRoot>true</isRoot>
+      <Title>Home</Title>
+      <SubTitle></SubTitle>
+      <Table></Table>
+    </SupportAccount1>
+    <SupportAccount1>
+      <Url>/SupportAccount/Details</Url>
+      <isRoot>false</isRoot>
+      <Title></Title>
+      <SubTitle>Account Home</SubTitle>
+      <Table>SupportAccount</Table>
+    </SupportAccount1>
+    <Groups>
+      <!--<Url>../Details</Url>-->
+      <Url>#</Url>
+      <isRoot>true</isRoot>
+      <Title>Home</Title>
+      <SubTitle></SubTitle>
+      <Table></Table>
+      <IsUrl>false</IsUrl>
+    </Groups>
+    <Groups>
+      <Url>/SupportAccount/Details</Url>
+      <isRoot>false</isRoot>
+      <Title></Title>
+      <SubTitle></SubTitle>
+      <Table>SupportAccount</Table>
+      <IsUrl>false</IsUrl>
+    </Groups>
+    <Groups>
+      <Url>../Details</Url>
+      <isRoot>false</isRoot>
+      <Title></Title>
+      <SubTitle>Group Home</SubTitle>
+      <Table>Groups</Table>
+      <IsUrl>true</IsUrl>
+    </Groups>
+
+    <Groups1>
+      <!--<Url>../Details</Url>-->
+      <Url>#</Url>
+      <isRoot>true</isRoot>
+      <Title>Home</Title>
+      <SubTitle></SubTitle>
+      <Table></Table>
+    </Groups1>
+    <Groups1>
+      <Url>/SupportAccount/Details</Url>
+      <isRoot>false</isRoot>
+      <Title></Title>
+      <SubTitle></SubTitle>
+      <Table>SupportAccount</Table>
+    </Groups1>
+    <Groups1>
+      <Url>../Group/Details</Url>
+      <isRoot>false</isRoot>
+      <Title></Title>
+      <SubTitle>Group Home</SubTitle>
+      <Table>Groups</Table>
+    </Groups1>
+
+    <CreateGroup>
+      <!--<Url>../Details</Url>-->
+      <Url>#</Url>
+      <isRoot>true</isRoot>
+      <Title>Home</Title>
+      <SubTitle></SubTitle>
+      <Table></Table>
+    </CreateGroup>
+    <CreateGroup>
+      <Url>/SupportAccount/Details</Url>
+      <isRoot>false</isRoot>
+      <Title></Title>
+      <SubTitle>Group Home</SubTitle>
+      <Table>SupportAccount</Table>
+    </CreateGroup>
+    <Devices>
+      <!--<Url>../Details</Url>-->
+      <Url>#</Url>
+      <isRoot>true</isRoot>
+      <Title>Home</Title>
+      <SubTitle></SubTitle>
+      <Table></Table>
+    </Devices>
+    <Devices>
+      <Url>/SupportAccount/Details</Url>
+      <isRoot>false</isRoot>
+      <Title></Title>
+      <SubTitle></SubTitle>
+      <Table>SupportAccount</Table>
+    </Devices>
+    <Devices>
+      <Url>../Device/Details</Url>
+      <isRoot>false</isRoot>
+      <Title></Title>
+      <SubTitle>Devices Details</SubTitle>
+      <Table>Devices</Table>
+    </Devices>
+
+
+     
+    <Users>
+      <Url>../Details</Url>
+    </Users>
+    <Users>
+      <Url>../Details</Url>
+    </Users>
+  </SiteMapHome>
+</siteMap>
+

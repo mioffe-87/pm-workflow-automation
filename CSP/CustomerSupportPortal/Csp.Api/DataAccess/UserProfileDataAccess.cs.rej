@@ -1,0 +1,9 @@
+diff a/CustomerSupportPortal/Csp.Api/DataAccess/UserProfileDataAccess.cs b/CustomerSupportPortal/Csp.Api/DataAccess/UserProfileDataAccess.cs	(rejected hunks)
+@@ -90,7 +90,6 @@
+                     c.countryname = mySqlReader["Name"] == null || mySqlReader["Name"] is DBNull ? string.Empty : HttpUtility.HtmlEncode(mySqlReader["Name"].ToString());
+                     c.ZipcodeLength = mySqlReader["ZipcodeLength"] == null || mySqlReader["ZipcodeLength"] is DBNull ? 0 : Convert.ToInt32(mySqlReader["ZipcodeLength"].ToString());
+                     c.ZipcodeValidation = mySqlReader["ZipcodeValidation"] == null || mySqlReader["ZipcodeValidation"] is DBNull ? string.Empty : HttpUtility.HtmlEncode(mySqlReader["ZipcodeValidation"].ToString()); c.ZipcodeValidation = mySqlReader["ZipcodeValidation"] == null || mySqlReader["ZipcodeValidation"] is DBNull ? string.Empty : HttpUtility.HtmlEncode(mySqlReader["ZipcodeValidation"].ToString());
+-                    c.IsZipcodeRequired = mySqlReader["IsZipcodeRequired"] == null || mySqlReader["IsZipcodeRequired"] is DBNull ? false : Convert.ToBoolean( mySqlReader["IsZipcodeRequired"]);
+                     c.IsZipcodeRequired = mySqlReader["IsZipcodeRequired"] == null || mySqlReader["IsZipcodeRequired"] is DBNull ? false : Convert.ToBoolean(mySqlReader["IsZipcodeRequired"]);
+                     countries.Add(c);
+                 }

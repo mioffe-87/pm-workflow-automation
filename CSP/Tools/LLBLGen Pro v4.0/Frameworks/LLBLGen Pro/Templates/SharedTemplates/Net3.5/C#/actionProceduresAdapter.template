@@ -1,0 +1,57 @@
+﻿///////////////////////////////////////////////////////////////
+// This is generated code. 
+//////////////////////////////////////////////////////////////
+// Code is generated using LLBLGen Pro version: <[LLBLGenVersion]>
+// Code is generated on: <[Time]>
+// Code is generated using templates: <[TemplateName]>
+// Templates vendor: Solutions Design.
+// Templates version: <[TemplateVersion]>
+//////////////////////////////////////////////////////////////
+using System;
+using System.Data;
+using SD.LLBLGen.Pro.ORMSupportClasses;
+
+namespace <[RootNamespace]><[DbSpecificNamespaceSuffix]>
+{
+	/// <summary>Class which contains the static logic to execute action stored procedures in the database.</summary>
+	public static partial class ActionProcedures
+	{
+<[Foreach ActionStoredProcedureCall]>
+		/// <summary>Delegate definition for stored procedure '<[ActualStoredProcedureName]>' to be used in combination of a UnitOfWork2 object.</summary>
+		public delegate int <[CurrentSPCallName]>CallBack(<[Foreach InputParameter Comma]><[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfParameter]>><[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]> <[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters]>, <[EndIf]><[Foreach OutputParameter Comma]>ref <[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfParameter]>><[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]> <[CaseCamel CurrentParameterName]><[NextForeach]><[If HasParameter]>, <[EndIf]>IDataAccessCore dataAccessProvider);<[NextForeach]>
+
+<[Foreach ActionStoredProcedureCall CrLf]>
+		/// <summary>Calls stored procedure '<[ActualStoredProcedureName]>'.<br/><br/><[Foreach CustomProperty RetrievalStoredProcedureCall]>
+		/// <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary>
+<[If HasParameter NoCursors]><[Foreach Parameter NoCursors CrLf]>		/// <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter. <[Description]></param><[NextForeach]>
+<[EndIf]>		/// <returns>Number of rows affected, if the database / routine doesn't suppress rowcounting.</returns>
+		public static int <[CurrentSPCallName]>(<[Foreach InputParameter Comma]><[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfParameter]>><[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]> <[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]>ref <[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfParameter]>><[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]> <[CaseCamel CurrentParameterName]><[NextForeach]>)
+		{
+			using(DataAccessAdapter dataAccessProvider = new DataAccessAdapter())
+			{
+				return <[CurrentSPCallName]>(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]>ref <[CaseCamel CurrentParameterName]><[NextForeach]><[If HasParameter NoCursors]>, <[EndIf]>dataAccessProvider);
+			}
+		}
+
+		/// <summary>Calls stored procedure '<[ActualStoredProcedureName]>'.<br/><br/><[Foreach CustomProperty RetrievalStoredProcedureCall]>
+		/// <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary>
+		/// <param name="dataAccessProvider">The data access provider.</param>
+<[If HasParameter NoCursors]><[Foreach Parameter NoCursors CrLf]>		/// <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter. <[Description]></param><[NextForeach]>
+<[EndIf]>		/// <returns>Number of rows affected, if the database / routine doesn't suppress rowcounting.</returns>
+		public static int <[CurrentSPCallName]>(<[Foreach InputParameter Comma]><[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfParameter]>><[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]> <[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]>ref <[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfParameter]>><[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]> <[CaseCamel CurrentParameterName]><[NextForeach]><[If HasParameter NoCursors]>, <[EndIf]>IDataAccessCore dataAccessProvider)
+		{
+			using(StoredProcedureCall call = Create<[CurrentSPCallName]>Call(dataAccessProvider<[If HasParameter NoCursors]>, <[EndIf]><[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]><[CaseCamel CurrentParameterName]><[NextForeach]>))
+			{
+				int toReturn = call.Call();<[Foreach OutputParameter NoCursors]>
+<[If HasTypeConverterDefined]>				<[CaseCamel CurrentParameterName]> = (<[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfParameter]>><[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]>)new <[TypeConverterFullName]>().ConvertFrom(call.GetParameterValue<<[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfMappedTargetField]>><[Else]><[TypeOfMappedTargetField]><[EndIf]><[Else]><[TypeOfMappedTargetField]><[EndIf]>>(<[ParameterIndex]>));<[Else]>				<[CaseCamel CurrentParameterName]> = call.GetParameterValue<<[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfParameter]>><[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]>>(<[ParameterIndex]>);<[EndIf]><[NextForeach]>
+				return toReturn;
+			}
+		}<[NextForeach]>
+		
+<[Foreach ActionStoredProcedureCall]><# SD_ProceduresIncludeTemplate #>
+<[NextForeach]>
+		#region Included Code
+<# Custom_ActionProceduresTemplate #>
+		#endregion
+	}
+}

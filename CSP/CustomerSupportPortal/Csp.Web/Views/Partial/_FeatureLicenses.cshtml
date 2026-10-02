@@ -1,0 +1,49 @@
+﻿@model Csp.Web.DataTransferObjects.DeviceLicensesDto
+<script>
+    function showDisclaimer(selector) {
+        var message = "<p>You are enabling the ability to view and store SSL decrypted sessions (e.g., Hypertext Transfer Protocol Secure or HTTPS).  A country or jurisdiction that governs the SSL sessions may have regulations or laws prohibiting this conduct.</p>" +
+            "<p>It is your responsibility to ensure that your decryption of the SSL sessions and subsequent use of the decrypted SSL sessions are permissible under all applicable regulations or laws.  Palo Alto Networks is not responsible for any failure by you to comply with the applicable regulation or law.</p>";
+
+        var confirmAction = function () {
+            selector.checked = true;
+        };
+
+        var cancelAction = function () {
+            selector.checked = false;
+        };
+
+        if (selector.checked) {
+            SupportPortal.Confirmation(message, function () { confirmAction(); }, function () { cancelAction(); }, { width: 550, height: 220, title: 'Notice', yesTitle: 'I understand and wish to proceed', noTitle: 'Cancel', actions: {} });
+        }
+    }
+</script>
+
+<div class="fieldset" id="@UniqueId.IsEligibleForFeatureLicense">
+    <fieldset>
+        <legend>Available Feature Licenses
+        </legend>
+        <ul class="list-style-none">
+            @*Decryption Port Mirror License*@
+            @if (Model.IsEligibleForDpmLicense)
+            {
+            <li id="@UniqueId.DPM_li">
+                <label>
+                    <input type="checkbox" onclick="showDisclaimer(this)" class="TrialLinkCheckBox" id="@UniqueId.DPM" name="DPM">
+                    Decryption Port Mirror</label>
+            </li>
+            }
+            @*Network Packet Broker License*@
+            @if (Model.IsEligibleForDpbLicense)
+            {
+            <li id="@UniqueId.DPB_li">
+                <label>
+                    <input type="checkbox" onclick="showDisclaimer(this)" class="TrialLinkCheckBox" id="@UniqueId.DPB" name="DPB">
+                    Network Packet Broker</label>
+            </li>  
+            }
+        </ul>
+    </fieldset>
+</div>
+
+<div></div>
+

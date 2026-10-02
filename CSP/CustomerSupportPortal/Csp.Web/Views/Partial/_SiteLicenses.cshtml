@@ -1,0 +1,259 @@
+﻿@using Csp.Api.Services.Contracts
+@model  Csp.Web.DataTransferObjects.SiteLicenseDto
+<style>
+    .k-grid td{
+    white-space: normal !important;
+}
+</style>
+<script>
+
+    var siteLicenseAction = $('#@UniqueId.SiteLicenseAction');
+    var siteLicenseActionLicenseId = $('#@UniqueId.SiteLicenseActionLicenseId');
+    var submitButton = $('#@UniqueId.SubmitButton');
+
+    function @(UniqueId.SiteLicense)getGridParams() {
+        var p = SetAntiForgery();
+        return p;
+    }
+
+    function @(UniqueId.SiteLicense)addSiteLicense() {
+        //alert('Add Site License');
+
+        var direction = "/@ControllerFields.LicenseController/ActivateSiteLicense/@(Model.SupportAccountId)";
+        var window = $("#@UniqueId.ActivateSiteLicenseWindowId").data("kendoWindow");
+        window.content(" ");
+        window.refresh();
+        window.refresh(direction);
+        //window.setOptions({
+        //    minHeight: 430
+        //});
+        window.open();
+        window.center();
+    }
+
+    function @(UniqueId.SiteLicense)onOpenActivateSiteLicenseWindow() {
+
+        SupportPortal.OnWindowOpen("@UniqueId.ActivateSiteLicenseWindowId");
+    }
+
+    function @(UniqueId.SiteLicense)onCloseActivateSiteLicenseWindow() {
+        //the site license activation dialog is closing. Check if "apiKeyId" element has value or not. If it has value, set 
+        //the value to displayApiKey DIV element.
+        var apiKey = $("#apiKeyId").val();
+        SupportPortal.OnWindowClose("@UniqueId.SiteLicenseGrid");
+        if (apiKey.length > 0 && apiKey !== 'null') {
+            $('#displayApiKey').text('API Key: ' + apiKey);
+        } 
+    }
+
+    function @(UniqueId.SiteLicense)regenerateLicense(licenseId) {
+
+        //siteLicenseAction.val('Regenerate');
+        //siteLicenseActionLicenseId.val(licenseId);
+        //submitButton.submit();
+
+        $('#@UniqueId.SiteLicenseAction').val('Regenerate');
+        $('#@UniqueId.SiteLicenseActionLicenseId').val(licenseId);
+        $('#@UniqueId.SubmitButton').submit();
+    }
+
+    function @(UniqueId.SiteLicense)disableLicense(licenseId) {
+
+        //siteLicenseAction.val('Disable');
+        //siteLicenseActionLicenseId.val(licenseId);
+        //submitButton.submit();
+
+        $('#@UniqueId.SiteLicenseAction').val('Disable');
+        $('#@UniqueId.SiteLicenseActionLicenseId').val(licenseId);
+        $('#@UniqueId.SubmitButton').submit();
+    }
+
+    function @(UniqueId.SiteLicense)enableLicense(licenseId) {
+
+        //siteLicenseAction.val('Enable');
+        //siteLicenseActionLicenseId.val(licenseId);
+        //submitButton.submit();
+
+        $('#@UniqueId.SiteLicenseAction').val('Enable');
+        $('#@UniqueId.SiteLicenseActionLicenseId').val(licenseId);
+        $('#@UniqueId.SubmitButton').submit();
+    }
+
+    function @(UniqueId.SiteLicense)showApiKey(licenseId) {
+        $('#@UniqueId.SiteLicenseAction').val('GetKey');
+        $('#@UniqueId.SiteLicenseActionLicenseId').val(licenseId);
+        $('#@UniqueId.SubmitButton').submit();
+    }
+
+    var isFirstDataBind = true;
+
+    function @(UniqueId.SiteLicense)onSiteLicenseDataBound() {
+        var grid = $('#@(UniqueId.SiteLicenseGrid)').data("kendoGrid");
+
+        if (isFirstDataBind) {
+            isFirstDataBind = false;
+            
+            @if (Model.DataParameters.TotalRecordCount > 0)
+            {
+                <text>
+            grid.dataSource._total = '@Model.DataParameters.TotalRecordCount';
+             </text>
+            }
+        }
+
+        $(".PartNumberToolTip").kendoTooltip();
+
+        //the value of DIV displayApiKey is set in onCloseActivateSiteLicenseWindow function, 
+        //display it if it is not empty and the databinding is finished.
+        var apiKey = $('#displayApiKey').text();
+        if (apiKey !== 'null' && apiKey.length > 0) {
+            $('#displayApiKey').show();
+        }
+    }
+
+    function kendoGridNewLines(text) {
+        //var regexp = new RegExp('\n', 'g');
+        //return text.replace(regexp, '<br>');
+        return text;
+    }
+
+    function @(UniqueId.EnterpriseAgreements)showEnterpriseAgreements() {
+        var direction = "/@ControllerFields.SiteLicenseController/ShowEnterpriseAgreements/@(Model.SupportAccountId)";
+        var window = $("#@UniqueId.ShowEnterpriseAgreementsWindowId").data("kendoWindow");
+        window.refresh();
+        window.refresh(direction);
+        //window.setOptions({
+        //    minHeight: 430
+        //});
+        window.open();
+        window.center();
+    }
+
+    function @(UniqueId.SiteLicense)onOpenShowEnterpriseAgreementsWindow() {
+        SupportPortal.OnWindowOpen("@UniqueId.ShowEnterpriseAgreementsWindowId");
+    }
+
+        $(document).ready(function () {
+        //display API Key: @Model.DisplayApiKey. If Model.DisplayApiKey is not null and empty, display it, otherwise hide it. 
+            var apiKey = '@Model.DisplayApiKey';
+
+        if (apiKey.length > 0 && apiKey !== 'null') {
+            $('#displayApiKey').text('API Key: ' + apiKey);
+            $('#displayApiKey').show();
+        } else {
+            $('#displayApiKey').hide();
+        }
+    });
+
+</script>
+
+<div>
+    @(
+    Html.Kendo().Window()
+        .Name((string) UniqueId.ActivateSiteLicenseWindowId)
+        .Events(events => events
+            .Close((string) UniqueId.SiteLicense + "onCloseActivateSiteLicenseWindow")
+            .Open((string) UniqueId.SiteLicense + "onOpenActivateSiteLicenseWindow")
+        )
+        .Modal(true)
+        .Width(540)
+        .Visible(false)
+        .Draggable()
+        .Title("Activate Site License")
+          )
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.ShowEnterpriseAgreementsWindowId)
+        .Events(events => events
+                              .Open((string)UniqueId.SiteLicense + "onOpenShowEnterpriseAgreementsWindow")
+        )
+        .Modal(true)
+        .Width(1000)
+        .Visible(false)
+        .Draggable()
+        .Title("Enterprise Agreements Across Support Accounts")
+          )
+</div>
+
+<div id="@UniqueId.SiteLicensesDiv">
+    <div class="contextTitle">Site Licenses</div>
+    @using (Ajax.BeginForm("SiteLicenseAction", "SiteLicense", new {}, new AjaxOptions
+    {
+        UpdateTargetId = UniqueId.SiteLicensesDiv,
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();"
+    }, new {id = "formsitelicense"}))
+    {
+        @Html.Partial("../Partial/_ResponseNotification", Model.Notifications)
+        @Html.HiddenFor(x => x.SupportAccountId)
+        @Html.HiddenFor(x => x.SiteLicenseAction, new {id = UniqueId.SiteLicenseAction})
+        @Html.HiddenFor(x => x.SiteLicenseActionLicenseId, new {id = UniqueId.SiteLicenseActionLicenseId})
+        <button id="@UniqueId.SubmitButton" type="submit" style="display: none;"></button>
+
+        @Html.AntiForgeryToken()
+
+        <div class="alert alert-info" id="displayApiKey"></div>
+
+        <div class="grid-header" style="height: inherit;">
+            <div class="grid-left">
+                <input type="button" class="k-button k-primary" data-link-type="site-license" onclick="@(UniqueId.SiteLicense)addSiteLicense()" value="Add Site License"/>
+            </div>
+        </div>
+
+        <div class="grid-content">
+            @{
+                if (Model != null && Model.SiteLicenses != null)
+                {
+                    var maxPageSizeForms = Convert.ToInt32(Model.SiteLicenses.Count);
+                    var pageSizeOptionsForms = new List<int> {5, 10, 20, 50};
+                    if (maxPageSizeForms > pageSizeOptionsForms.Max())
+                    {
+                        pageSizeOptionsForms.Add(maxPageSizeForms);
+                    }
+
+                    @(Html.Kendo().Grid(Model.SiteLicenses)
+                          .Name((string) UniqueId.SiteLicenseGrid)
+                          .Columns(columns =>
+                          {
+
+                              columns.Bound(x => x.DisplayAuthorizationCode).Title("AuthorizationCode").Filterable(false).Width("10%");
+                              columns.Bound(x => x.Description).Title("Description").Filterable(false).Width("50%"); //icon-question-sign
+                              columns.Bound(x => x.ExpirationDateDisplay).Title("Expiration Date").Width("10%").ClientTemplate("<div class=\"#=ExpirationDateCssClass#\">#=ExpirationDateDisplay#</div>").Filterable(false);
+                              columns.Bound(x => x.Notes).Title("Licenses (Used / Total)").ClientTemplate("#=kendoGridNewLines(Notes)#").Filterable(false).Sortable(false);
+                              columns.Bound(x => x.ApiKeyState).Title("API Key").ClientTemplate(
+                                  "#if(ApiKeyStatesString == \"" + AfApiKeyStatuses.Enabled + "\" && !IsExpired){#" +
+                                  "<a href='javascript: void(0);' onClick='" + UniqueId.SiteLicense + "showApiKey(#=LicenseId#);'>API Key</a> " +
+                                  "#}#").Filterable(false).Sortable(false).Hidden(Model.HasEditAutoFocusApiKeyPerm == false);
+                              columns.Bound(x => x.Actions).Title("Actions").ClientTemplate(
+                                  "#if(IsAutofocus && !IsExpired){" +
+                                  "if(ApiKeyStatesString == \"" + AfApiKeyStatuses.Enabled + "\"){# " +
+                                  "<a href='javascript: void(0);' onclick='" + UniqueId.SiteLicense + "regenerateLicense(#=LicenseId#);'>Regenerate</a> " +
+                                  "<a href='javascript: void(0);' onclick='" + UniqueId.SiteLicense + "disableLicense(#=LicenseId#);'>Disable</a>" +
+                                  " #}else{# " +
+                                  "<a href='javascript: void(0);' onclick='" + UniqueId.SiteLicense + "enableLicense(#=LicenseId#);'>Enable</a> " +
+                                  "#}}#").Filterable(false).Sortable(false).Hidden(Model.HasEditAutoFocusApiKeyPerm == false);
+                          })
+                          .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                          .Sortable()
+                          .Filterable()
+                          .Resizable(resize => resize.Columns(true))
+                          .Events(e => e.DataBound((string) UniqueId.SiteLicense + "onSiteLicenseDataBound"))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                              .Model(model => model.Id(p => p.LicenseId))
+                              .PageSize(Model.DataParameters.PaginationCount)
+                              .Read(read => read.Action("GetSiteLicenses", "SiteLicense", new
+                              {
+                                  Model.ActionHelper.Id
+                              }).Data(UniqueId.SiteLicense + "getGridParams"))
+                          )
+                          )
+                }
+            }
+        </div>
+    }
+</div>

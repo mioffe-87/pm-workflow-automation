@@ -1,0 +1,611 @@
+﻿@model Csp.Web.DataTransferObjects.DeviceDto
+@using Csp.Api.HelperClasses
+@using Kendo.Mvc.UI
+
+
+@{ 
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+    var actionHelper = Model.ActionHelper;
+
+    var showTransferLicense = false;
+    if (ViewBag.IsValidForTransfer != null) {
+        showTransferLicense = ViewBag.IsValidForTransfer;
+    }
+
+    var showDeviceTransfer = false;
+    if (ViewBag.ShowBeginDeviceTransferButton != null) {
+        showDeviceTransfer = ViewBag.ShowBeginDeviceTransferButton;
+    }
+
+    var showBootstrapContainer = false;
+    if (ViewBag.ShowBootstrapContainerButton != null) {
+        showBootstrapContainer = ViewBag.ShowBootstrapContainerButton;
+    }
+
+    var uniqueId = UniqueId.Device;
+    var countryDropDownId = uniqueId + "CountryDropDownId";
+    var regionDropDownId = uniqueId + "RegionDropDownId";
+    var regionTextId = uniqueId + "RegionTextId";
+    var regionTextHiddenId = uniqueId + "RegionTextHiddenId";
+    var regionName = uniqueId + "RegionName";
+    var regionTextDivId = uniqueId + "RegionTextDivId";
+    var regionDropDownDivId = uniqueId + "RegionDropDownDivId";
+    //var deviceTitle = Html.Raw(Common.GetCurrentDeviceTitle());
+    var deviceTitle = Common.GetCurrentDeviceTitle();
+
+}
+
+
+<script>
+    $("#divSupportCvrge").show();
+    function ReloadDeviceName() {
+        var window = $(deviceWindowId).data("kendoWindow");
+        var title = '@deviceTitle';
+        if (title == null || title.length === 0) {
+            title = 'Device';
+        } else {
+            title = 'Device: ' + title;            
+        }
+        window.title(title);
+    }
+
+    function @(uniqueId)onCloseDeviceLicenseActivationWindow() {
+        var window = $("#@UniqueId.activateLicenseWindow").data("kendoWindow");
+        window.content("");
+        window.refresh();
+    }
+
+    function @(uniqueId)onCloseDeviceTrialLicenseActivationWindow() {
+        var window = $("#@UniqueId.activateTrialLicenseWindow").data("kendoWindow");
+        window.content("");
+        window.refresh();
+    }
+
+    function @(uniqueId)onOpenDeviceLicenseActivationWindow() {
+        SupportPortal.OnWindowOpen("@UniqueId.activateLicenseWindow");
+
+    }
+
+    function @(uniqueId)onOpenDeviceTrialLicenseActivationWindow() {
+        SupportPortal.OnWindowOpen("@UniqueId.activateTrialLicenseWindow");
+
+    }
+
+    function @(uniqueId)onOpenDeviceTransferLicensesWindow() {
+        SupportPortal.OnWindowOpen('@UniqueId.TransferLicensesWindow');
+    }
+
+    function @(uniqueId)onCloseDeviceTransferLicensesWindow() {
+        var window = $('#@UniqueId.TransferLicensesWindow').data('kendoWindow');
+        window.content('');
+        window.refresh();
+    }
+
+    function @(uniqueId)onOpenDeviceTransferWindow() {
+        SupportPortal.OnWindowOpen('DeviceTabDeviceTransferWindow');
+    }
+
+    function @(uniqueId)onCloseDeviceTransferWindow() {
+    }
+
+
+    function @(uniqueId)openDeviceLicenseActivationWindow() {
+        var direction = "/@ControllerFields.LicenseController/@actionHelper.ActivateLicense?serialNumber=@Model.Device.SerialNumber";
+        var window = $("#@UniqueId.activateLicenseWindow").data("kendoWindow");
+
+        window.setOptions({
+            minWidth: 470,
+            minHeight: 150
+        });
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+
+    function wipeOutNFRWildfire() {
+        var message = "All WildFire-related information for this device will be deleted.  Do you wish to continue?";
+
+        var deleteAction = function () {
+            var direction = "/@ControllerFields.DeviceController/@actionHelper.WipeOutNFRWildfire?serialnumber=@Model.Device.SerialNumber";
+            SupportPortal.BlockUI();
+            $.ajax({
+                url: direction,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                success: function (result) {
+                    SupportPortal.UnBlockUI();
+                    if (result.Success) {
+                        SupportPortal.Message("Successfully deleted @ApiConstants.WILDFIRENFR information!");
+                    } else {
+                        SupportPortal.Message("Failed to delete @ApiConstants.WILDFIRENFR information. Please try again after sometime.");
+                    }
+                },
+                error: function () {
+                    SupportPortal.UnBlockUI();
+                    SupportPortal.Message("Failed to delete @ApiConstants.WILDFIRENFR information. Please try again after sometime.");
+                }
+            });
+        };
+
+        SupportPortal.Confirmation(message, function () { deleteAction(); }, null);
+    }
+
+
+
+    function @(uniqueId)openDeviceTrialLicenseWindow(mode) {
+
+        var direction = "/@ControllerFields.LicenseController/@actionHelper.ActivateTrialLicense?serialNumber=@Model.Device.SerialNumber&mode=" + mode;
+        var window = $("#@UniqueId.activateTrialLicenseWindow").data("kendoWindow");
+
+        window.setOptions({
+            minWidth: 500,
+            minHeight: 250
+        });
+        window.title("Feature Evaluation Activation");
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+
+    function openDeviceLicenseTransferWindow() {
+
+        var direction = '/License/Transfer?deviceId=@Model.Device.Id';
+
+        var window = $('#@UniqueId.TransferLicensesWindow').data('kendoWindow');
+
+        window.setOptions({
+            minWidth: 800,
+            minHeight: 250
+        });
+        window.title("Transfer License");
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+
+    function @(uniqueId)OnCountryDropdownChange() {
+        SupportPortal.OnCountryDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionTextDivId", "@regionDropDownDivId", "@countryDropDownId");
+    }
+
+    function @(uniqueId)OnRegionDropdownChange() {
+        SupportPortal.OnRegionDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionDropDownId", "@regionDropDownDivId", "@Constants.DropDownRegionSelect");
+    }
+
+    function @(uniqueId)OnRegionTextChange() {
+        SupportPortal.OnRegionTextChange("@regionTextHiddenId", "@regionTextId");
+    }
+
+    function @(uniqueId)FilterCountry() {
+        return { countryId: $("#@countryDropDownId").val() };
+    }
+
+    function openDeviceTransferWindow() {
+
+        var direction = '/DeviceTransfer/BeginTransfer?deviceId=@Model.Device.Id';
+
+        var window = $('#DeviceTabDeviceTransferWindow').data('kendoWindow');
+
+        window.setOptions({
+            minWidth: 800,
+            minHeight: 250
+        });
+        window.title("Device Transfer");
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+
+    function openBootstrapContainerWindow() {
+        
+        var direction = '/BootstrapContainer/?deviceId=@Model.Device.Id';
+
+        var window = $('#DeviceTabDeviceTransferWindow').data('kendoWindow');
+
+        window.setOptions({
+            minWidth: 800,
+            minHeight: 250
+        });
+        window.title("Bootstrap Container");
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+
+</script>
+
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)UniqueId.activateLicenseWindow)
+          .Visible(false)
+          .Modal(true)
+          .Draggable()
+          .Title("Activate License")
+          .Events(events => events
+                                  .Close((string)UniqueId.device + "onCloseDeviceLicenseActivationWindow")
+                                  .Open((string)UniqueId.device + "onOpenDeviceLicenseActivationWindow")
+                                  )
+    )
+</div>
+
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.activateTrialLicenseWindow)
+        .Visible(false)
+        .Modal(true)
+        .Draggable()
+        .Title("Trial License Activation")
+        .Events(events => events
+                                .Close((string)uniqueId + "onCloseDeviceTrialLicenseActivationWindow")
+                                .Open((string)uniqueId + "onOpenDeviceTrialLicenseActivationWindow")
+                                )
+    )
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.TransferLicensesWindow)
+        .Visible(false)
+        .Modal(true)
+        .Draggable()
+        .Title("Transfer License")
+        .Events(events => events
+                              .Close((string)uniqueId + "onCloseDeviceTransferLicensesWindow")
+                              .Open((string)uniqueId + "onOpenDeviceTransferLicensesWindow")
+        )
+          )
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name("DeviceTabDeviceTransferWindow")
+        .Visible(false)
+        .Modal(true)
+        .Draggable()
+        .Title("Device Transfer")
+        .Events(events => events
+            .Close((string)uniqueId + "onCloseDeviceTransferWindow")
+            .Open((string)uniqueId + "onOpenDeviceTransferWindow")
+        )
+          )
+</div>
+
+<div id="@UniqueId.containerDeviceEditDiv">
+    @using (Ajax.BeginForm("Edit", "Device", null, new AjaxOptions {
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "ReloadDeviceName(); SupportPortal.UnBlockUI();",
+        UpdateTargetId = (string)UniqueId.containerDeviceEditDiv
+    }, new { id = (string)UniqueId.DeviceForm })) {
+        
+        @Html.AntiForgeryToken()
+        
+        @Html.HiddenFor(model => model.Device.Id)
+        @Html.HiddenFor(model => model.Device.CpuId)
+        @Html.HiddenFor(model => model.Device.CustomerServiceNotes)
+        @Html.HiddenFor(model => model.Device.GracePeriodDays)
+        @Html.HiddenFor(model => model.Device.IsActive)
+        @Html.HiddenFor(model => model.Device.IsRMAReplacement)
+        @Html.HiddenFor(model => model.Device.IsRMAReturn)
+        @Html.HiddenFor(model => model.Device.IsSAPSynched)
+        @Html.HiddenFor(model => model.Device.IsVirtualMachine)
+        @Html.HiddenFor(model => model.Device.MacAddress)
+        @Html.HiddenFor(model => model.Device.ModelName)
+        @Html.HiddenFor(model => model.Device.RegistrationDate)
+        @Html.HiddenFor(model => model.Device.SalesForceAccountId)
+        @Html.HiddenFor(model => model.Device.ShipDate)
+        @Html.HiddenFor(model => model.Device.ShipmentNumber)
+        @Html.HiddenFor(model => model.Device.UuId)
+        @Html.HiddenFor(model => model.Device.VirtualSystemsAvailable)
+        @Html.HiddenFor(model => model.Device.LastUpdate)
+        @Html.HiddenFor(model => model.Device.LastUpdateByUserAccountId)
+        @Html.HiddenFor(model => model.Device.SerialNumber)
+        @Html.HiddenFor(model => model.Device.Customer.Id)
+        @Html.HiddenFor(model => model.Device.Customer.Name)
+        @Html.HiddenFor(model => model.Device.IsCloudDevice)
+        if (!Model.Device.IsVirtualMachine) {
+         @Html.HiddenFor(model => model.Device.HyperVisorVersion)
+         }
+
+        //Light Cyber: do not allow to change device name
+        if (!string.IsNullOrEmpty(Model.Device.ModelName) && Model.Device.ModelName.StartsWith("PAN-LCP-"))
+        {
+            @Html.HiddenFor(model => model.Device.DeviceName);
+        } 
+
+        <div class="csp-content-sections-parent">
+            <div class="horizontal-form-element" style="width: 550px">
+                <div class="fieldset">
+                    <fieldset>
+                        <legend>Device Information</legend>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Serial Number: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.DisplayFor(model => model.Device.SerialNumber)
+                            </div>
+                        </div>
+                        @if (Model.Device.IsCgx)
+                        {
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label("Tenant Id: ")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.DisplayFor(model => model.Device.TenantId)
+                                </div>
+                            </div>
+                        }
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Model: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.DisplayFor(model => model.Device.ModelName,new {id = (string)UniqueId.modelName})
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Device Name: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Device.DeviceName)
+                                @{
+                                    //Light Cyber: do not allow to change device name
+                                    if (!string.IsNullOrEmpty(Model.Device.ModelName) && Model.Device.ModelName.StartsWith("PAN-LCP-"))
+                                    {
+                                        <input type="text" readonly value="@Model.Device.DeviceName"/>
+                                    }
+                                    else
+                                    {
+                                        @Html.EditorFor(model => model.Device.DeviceName, new { maxlength = 46 })                                        
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label(ApiConstants.DEVICE_CATEGORY + ": ")
+                            </div>
+                            <div class="csp-field">
+                                @(Html.Kendo().DropDownListFor(model => model.Device.DeviceCategoryId)
+                                      .HtmlAttributes(new { @class = "k-dropdown", id = (string)UniqueId.DeviceTag })
+                                      .OptionLabel(Constants.DropDownPleaseSelect)
+                                      .DataValueField("DeviceCategoryId")
+                                      .DataTextField("DeviceCategoryName")
+                                      .BindTo(Model.DeviceCategories))
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 12);"></i></span>
+                            </div>
+                        </div>
+                         <div id="@UniqueId.panOsSection">
+                                <div class="csp-label"  >
+                                    @Html.LabelFor(model => model.Device.PanOsVersion, "OS Release:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.Device.PanOsVersion)
+                                
+                                    @(Html.Kendo().DropDownListFor(model => model.Device.PanOsVersion)
+                                         .HtmlAttributes(new { @class = "k-dropdown", id = (string)UniqueId.OsDropDown })
+                                          .OptionLabel(Constants.DropDownOsReleaseSelect)
+                                          .DataValueField("PanOsVersion")
+                                          .DataTextField("PanOsVersion")
+                                          .DataSource(source =>source
+                                                .Read(read => read.Action("GetPanOsVersions", "Device")))
+
+                                    .Value(Model.Device.PanOsVersion)
+                                    )                   
+
+                                    @if (Model.Device.IsVirtualMachine) {
+                                        <span class="csp-required">*</span>
+                                    }
+                                </div>
+                             
+                             </div>
+                        @if(Model.Device.IsTraps){
+                        <div id="@UniqueId.TMSSection">
+                        <div class="csp-label" style="width: 200px;">
+                            @Html.Label((string)UniqueId.TMSLabel, "Traps Management Service:") 
+                        </div>
+                        <div class="csp-field">
+                            @Html.CheckBoxFor(m => m.Device.IsTrapsManagementService, new { @disabled = "disabled" })                           
+                        </div>
+                    </div>
+                        }
+                             
+                                 <div>
+                              @if (Model.Device.IsVirtualMachine) {
+                                     <div class="csp-label">
+                                        @Html.LabelFor(model => model.Device.HyperVisorVersion, "Virtual Platform:")
+                                    </div>
+                                    <div class="csp-field">
+                                        @Html.ValidationMessageFor(model => model.Device.HyperVisorVersion)
+                                        @(Html.Kendo().DropDownListFor(model => model.Device.HyperVisorVersion)
+                                                    .OptionLabel(Constants.DropDownVirtualPlatformSelect)
+                                                    .HtmlAttributes(new { @class = "k-dropdown", id = (string)UniqueId.HyperVisorDropDown })
+                                                    .DataValueField("HyperVisorVersion")
+                                                    .DataTextField("DisplayValue")
+                                                    .DataSource(source => source.Read(read => read.Action("GetHyperVisorVersions", "Device")))
+                                                    .Value(Model.Device.HyperVisorVersion)
+                                                    )
+                                        <span class="csp-required">*</span>
+                                    </div>
+                                      }
+                                </div>
+                    @if(Model.Device.Contains4HRSupport){
+                   <div id="divSupportCvrge">
+                            <div class="csp-label">
+                                @Html.Label("Support Coverage: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.TextBox("txtSupportCvrg", "4 Hour Premium Support", new { disabled = "disabled" })
+                            </div>
+
+                        </div>
+                        }
+                  
+                    </fieldset>
+                    @if (!Model.Device.IsCloudDevice && Model.Device.IsSaasStubDevice == false && !Model.Device.IsTraps) {
+                    <div class="fieldset-upper">
+                        <fieldset>
+                            <legend>Location Information <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 7);"></i></span></legend>
+                            <div id="divNotes">
+                                <div class="innernotification">
+                                    (Inaccurate location information may impede timely RMA turnaround, in the event of hardware<br/> replacement.)
+                                </div>
+                                <div>
+                                    If you have a 4 Hour RMA support contract for this product: <br />
+                                    4 Hour Premium Support operates within certain geographies only. If you relocate<br /> your device from the originally-approved location, please open a support case at<br /> https://supportcases.paloaltonetworks.com to validate your new location.
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label("Address 1:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.Device.Address1)
+                                    @Html.TextBoxFor(model => model.Device.Address1, new { maxlength = 256 })
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                    
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label("Address 2:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.TextBoxFor(model => model.Device.Address2, new { maxlength = 256 })
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label("City: ")
+                                </div>
+                                <div class="csp-field" id="div_City">
+                                    @Html.ValidationMessageFor(model => model.Device.City)
+                                    @Html.EditorFor(model => model.Device.City, new { maxlength = 101 })
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label("Country: ")
+                                </div>
+                                <div class="csp-field" id="div_Country">
+                                    @Html.ValidationMessageFor(model => Model.Device.CountryId)
+                                    @(Html.Kendo().DropDownListFor(model => Model.Device.CountryId)
+                                          .HtmlAttributes(new { @class = "k-dropdown", id = countryDropDownId })
+                                          .Events(e => e.Change(uniqueId + "OnCountryDropdownChange").DataBound((string)uniqueId + "OnCountryDropdownChange"))
+                                          .OptionLabel(Constants.DropDownCountrySelect)
+                                          .DataValueField("Id")
+                                          .DataTextField("Name")
+                                          .DataSource(source => source.Read(read => {
+
+                                              if (read != null) {
+
+                                                  read.Action("GetCountries", "Base");
+                                              }
+                                          })).Value(Model.Device.CountryId.ToString()))
+                                            <span class="required">*</span>
+                                </div>
+                            </div>
+                            <div>
+
+                                <input id="@regionTextHiddenId" name="@regionName" type="hidden" value="@Model.Device.Region"/>
+
+                                <div class="csp-label">
+                                    @Html.Label("Region/State: ")
+                                </div>
+                                <div class="csp-field">
+                                    <div id="@regionTextDivId">
+                                        @Html.ValidationMessageFor(model => Model.Device.Region)
+                                        @Html.TextBoxFor(model => Model.Device.Region, new { id = regionTextId, onchange = (string)uniqueId + "OnRegionTextChange()" })
+                                    </div>
+                                    <div id="@regionDropDownDivId" style="display: none;">
+                                        @Html.ValidationMessageFor(model => Model.Device.Region)
+                                        @(Html.Kendo().DropDownListFor(model => Model.Device.Region)
+                                              .OptionLabel(Constants.DropDownRegionSelect)
+                                              .HtmlAttributes(new { @class = "k-dropdown", id = regionDropDownId, name = "" })
+                                              .Events(e => e.Change((string)uniqueId + "OnRegionDropdownChange").DataBound((string)uniqueId + "OnRegionDropdownChange"))
+                                              .DataValueField("Name")
+                                              .DataTextField("Name")
+                                              .DataSource(source => source.Read(read => read.Action("GetRegions", "Base").Data((string)uniqueId + "FilterCountry")).ServerFiltering(true))
+                                              .Value(Model.Device.Region)
+                                              .AutoBind(false)
+                                              .CascadeFrom(countryDropDownId)
+                                              )
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label("Postal Code: ")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.Device.PostalCode)
+                                    @Html.EditorFor(model => model.Device.PostalCode, new { maxlength = 16 })
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label("Remarks: ")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.Device.Comments)
+                                    @Html.TextAreaFor(model => model.Device.Comments, new { @class = "csp-comments", maxlength = 256, height = 150 })
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </div>
+                    }
+                </div>
+                <div class="csp-submit-container">
+                    <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+                    @if (showDeviceTransfer) {
+                        <input class="k-button" type="button" value="Transfer Ownership" onclick="openDeviceTransferWindow();" />
+                    }
+
+                    @if (showTransferLicense) {
+                        <input class="k-button inline-button" type="button" value="Transfer Licenses" onclick="openDeviceLicenseTransferWindow();"/>
+                    }
+                    @if (showBootstrapContainer) {
+                        <input class="k-button" type="button" value="Bootstrap Container" onclick="openBootstrapContainerWindow();" />
+                    }
+                    @if (Model.Device.ModelName.ToUpper().Contains("NFR")) {
+                        <input class="k-button inline-button" type="button" value="Delete WildFire Data" onclick="wipeOutNFRWildfire();"/>
+                    }
+                    <input class="k-button csp-submit" type="submit" value="Submit" />
+                </div>
+            </div>
+        </div>
+   
+    }
+</div>
+
+<script>
+    $.validator.unobtrusive.parse("#@UniqueId.DeviceForm");
+    @if (!Model.Device.IsVirtualMachine) {
+      
+           @:$("#@UniqueId.OsDropDown").rules("remove", "required");
+    }
+
+    $(function () {
+        var modelName = '@Model.Device.ModelName';
+        if (modelName.startsWith('PAN-LCP-') || modelName.startsWith('PAN-PA-EP')) {
+            $('#@UniqueId.panOsSection').hide();
+        }
+    });
+</script>

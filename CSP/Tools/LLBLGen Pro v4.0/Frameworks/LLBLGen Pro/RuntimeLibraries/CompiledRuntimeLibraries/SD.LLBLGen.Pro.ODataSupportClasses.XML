@@ -1,0 +1,812 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SD.LLBLGen.Pro.ODataSupportClasses</name>
+    </assembly>
+    <members>
+        <member name="T:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1">
+            <summary>
+            The Query provider class for the WCF Data services support.
+            </summary>
+            <typeparam name="TLinqMetaData"></typeparam>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1.#ctor(SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider,SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1"/> class.
+            </summary>
+            <param name="metaDataProvider">The meta data provider.</param>
+            <param name="containingService">The containing service.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1.GetOpenPropertyValue(System.Object,System.String)">
+            <summary>
+            Gets the value of the open property.
+            </summary>
+            <param name="target">Instance of the type that declares the open property.</param>
+            <param name="propertyName">Name of the open property.</param>
+            <returns>The value of the open property.</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1.GetOpenPropertyValues(System.Object)">
+            <summary>
+            Gets the name and values of all the properties that are defined in the given instance of an open type.
+            </summary>
+            <param name="target">Instance of the type that declares the open property.</param>
+            <returns>
+            A collection of name and values of all the open properties.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1.GetPropertyValue(System.Object,System.Data.Services.Providers.ResourceProperty)">
+            <summary>
+            Gets the value of the open property.
+            </summary>
+            <param name="target">Instance of the type that declares the open property.</param>
+            <param name="resourceProperty">Value for the open property.</param>
+            <returns>Value for the property.</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1.InvokeServiceOperation(System.Data.Services.Providers.ServiceOperation,System.Object[])">
+            <summary>
+            Invokes the given service operation and returns the results.
+            </summary>
+            <param name="serviceOperation">Service operation to invoke.</param>
+            <param name="parameters">Values of parameters to pass to the service operation.</param>
+            <returns>
+            The result of the service operation, or a null value for a service operation that returns void.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1.GetQueryRootForResourceSet(System.Data.Services.Providers.ResourceSet)">
+            <summary>
+            Gets the <see cref="T:System.Linq.IQueryable`1"/> that represents the container.
+            </summary>
+            <param name="resourceSet">The resource set.</param>
+            <returns>
+            An <see cref="T:System.Linq.IQueryable`1"/> that represents the resource set, or a null value if there is no resource set for the specified <paramref name="resourceSet"/>.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1.GetResourceType(System.Object)">
+            <summary>
+            Gets the resource type for the instance that is specified by the parameter.
+            </summary>
+            <param name="target">Instance to extract a resource type from.</param>
+            <returns>
+            The <see cref="T:System.Data.Services.Providers.ResourceType"/> of the supplied object.
+            </returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1.CurrentDataSource">
+            <summary>
+            The data source object from which data is provided.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataQueryProvider`1.IsNullPropagationRequired">
+            <summary>
+            Gets a value that indicates whether null propagation is required in expression trees.
+            </summary>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1">
+            <summary>
+            Base class implementation for WCF Data Services dataservice classes using LLBLGen Pro. 
+            </summary>
+            <typeparam name="TLinqMetaData">The type of the LinqMetaData class to use by the service</typeparam>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.CreateLinqMetaDataInstance">
+            <summary>
+            Creates a new TLinqMetaData instance. 
+            </summary>
+            <returns>A ready to use TLinqMetaData instance</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.CreateTransactionControllerInstance">
+            <summary>
+            Creates a ready to use transaction controller. For Adapter, create a new DataAccessAdapter instance. For Selfservicing, create a new 
+            Transaction instance.
+            </summary>
+            <returns>ready to use transaction controller.</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.CreateUnitOfWorkInstance">
+            <summary>
+            Creates a ready to use unit of work instance. For Adapter, create a new UnitOfWork2 instance. For SelfServicing, create a new
+            UnitOfWork instance. 
+            </summary>
+            <returns>ready to use unit of work instance</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.GetModelMetadata">
+            <summary>
+            Gets the model meta data.
+            </summary>
+            <returns>ready to use ModelMetaData class</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.GetQueryProvider">
+            <summary>
+            Gets the query provider.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.GetExpandProvider">
+            <summary>
+            Gets the expand provider.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.GetUpdateProvider">
+            <summary>
+            Gets the update provider.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.GetService(System.Type)">
+            <summary>Returns service implementation.</summary>
+            <param name="serviceType">The type of the service requested.</param>
+            <returns>Implementation of such service or null.</returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.QueryProvider">
+            <summary>
+            Gets the query provider.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.Metadata">
+            <summary>
+            Gets the meta data of the model represented by the service
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.ExpandProvider">
+            <summary>
+            Gets the expand provider.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.UpdateProvider">
+            <summary>
+            Gets the update provider.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.ContainerName">
+            <summary>
+            Gets the name of the container. This value is used for example when a proxy is generated by VS through Add Service Reference.
+            The main context class generated will have the ContainerName. By default it returns "LLBLGenProODataService"
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.ContainerNamespace">
+            <summary>
+            Gets the container namespace. This is used in the $metadata response. By default it returns the namespace of the TLinqMetaData type.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceBase`1.AllowSubTypeNavigators">
+            <summary>
+            Gets a value indicating whether subtype navigators are allowed (true, default) or not. As ODataSupportClasses is compiled against
+            an assembly which supports OData v3, the navigators of subtypes are by default allowed (OData v3 or higher). If you're communicating
+            with clients on OData v2, override this property and return false. 
+            </summary>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceExpandProvider">
+            <summary>
+            Class which produces the prefetch paths for a query if the OData query contains Expand directives. 
+            </summary>
+            <remarks>Code based on original templates made by Brian Chance</remarks>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceExpandProvider.ApplyExpansions(System.Linq.IQueryable,System.Collections.Generic.ICollection{System.Data.Services.ExpandSegmentCollection})">
+            <summary>
+            Applies expansions to the specified <paramref name="query"/> parameter.
+            </summary>
+            <param name="query">The <see cref="T:System.Linq.IQueryable`1"/> object to expand.</param>
+            <param name="expandPaths">A collection of <see cref="T:System.Data.Services.ExpandSegmentCollection"/> paths to expand.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceExpandProvider.AppendWithPathCall``1(System.Linq.IQueryable,SD.LLBLGen.Pro.LinqSupportClasses.IPathEdge[])">
+            <summary>
+            Appends the WithPath call to the queryable specified
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="query">The query to append WithPath to.</param>
+            <param name="pathEdges">The path edges.</param>
+            <returns></returns>
+            <remarks>Declared public to avoid medium trust issues as the method is called through reflection</remarks>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceExpandProvider.AddSegment(SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode,System.Collections.Generic.IList{System.Data.Services.ExpandSegment},System.Int32,SD.LLBLGen.Pro.ORMSupportClasses.IPrefetchPathElementCore,System.Type)">
+            <summary>
+            Adds the segment as pathedgenode
+            </summary>
+            <param name="parentNode">The parent node.</param>
+            <param name="segments">The segments.</param>
+            <param name="currentNodeIndex">The current node index in the segments list.</param>
+            <param name="pathElement">The path element.</param>
+            <param name="entityType">Type of the entity.</param>
+            <remarks>Declared public to avoid medium trust reflection issues.</remarks>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceExpandProvider.DecodeSegment(SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode,System.Collections.Generic.IList{System.Data.Services.ExpandSegment},System.Int32,System.Type)">
+            <summary>
+            Decodes an expansion segment.
+            </summary>
+            <param name="parentNode">The parent node.</param>
+            <param name="segments">The segments.</param>
+            <param name="currentNodeIndex">The current node index in the segments list.</param>
+            <param name="entityType">Type of the entity.</param>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider">
+            <summary>
+            Class which holds and determines the meta data of the model represented by a WCF Data Services service based on LLBLGenProODataService
+            </summary>
+        </member>
+        <member name="F:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider._primitiveEdmMappings">
+            <summary>
+            Dictionary with type - Edm type mappings (in string).
+            </summary>
+        </member>
+        <member name="F:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider._semaphore">
+            <summary>
+            Lock object for factory delegate creator method. 
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.#cctor">
+            <summary>
+            Initializes the <see cref="T:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider"/> class.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.#ctor(System.Type,System.Type,System.String,System.String,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider"/> class.
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="linqMetaDataType">Type of the LinqMetaData class.</param>
+            <param name="containerName">Name of the container.</param>
+            <param name="containerNamespace">The container namespace.</param>
+            <param name="allowSubTypeNavigators">if set to <c>true</c> [allow sub type navigators].</param>
+            <exception cref="T:System.ArgumentNullException">serviceType</exception>
+            <exception cref="T:System.ArgumentException">containerName is empty/null;containerName</exception>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.TryResolveResourceSet(System.String,System.Data.Services.Providers.ResourceSet@)">
+            <summary>
+            Tries to get a resource set based on the specified name.
+            </summary>
+            <param name="name">Name of the <see cref="T:System.Data.Services.Providers.ResourceSet"/> to resolve.</param>
+            <param name="resourceSet">Returns the resource set or a null value if a resource set with the given <paramref name="name"/> is not found.</param>
+            <returns>
+            true when resource set with the given <paramref name="name"/> is found; otherwise false.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.TryResolveResourceType(System.String,System.Data.Services.Providers.ResourceType@)">
+            <summary>
+            Tries to get a resource type based on the specified name.
+            </summary>
+            <param name="name">Name of the type to resolve.</param>
+            <param name="resourceType">Returns the resource type or a null value if a resource type with the given <paramref name="name"/> is not found.</param>
+            <returns>
+            true when resource type with the given <paramref name="name"/> is found; otherwise false.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.TryResolveServiceOperation(System.String,System.Data.Services.Providers.ServiceOperation@)">
+            <summary>
+            Tries to get a service operation based on the specified name.
+            </summary>
+            <param name="name">Name of the service operation to resolve.</param>
+            <param name="serviceOperation">Returns the service operation or a null value if a service operation with the given <paramref name="name"/> is not found.</param>
+            <returns>
+            true when service operation with the given <paramref name="name"/> is found; otherwise false.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetDerivedTypes(System.Data.Services.Providers.ResourceType)">
+            <summary>
+            Attempts to return all types that derive from the specified resource type.
+            </summary>
+            <param name="resourceType">The base <see cref="T:System.Data.Services.Providers.ResourceType"/>.</param>
+            <returns>
+            An <see cref="T:System.Collections.Generic.IEnumerable`1"/> collection of derived <see cref="T:System.Data.Services.Providers.ResourceType"/> objects.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetResourceAssociationSet(System.Data.Services.Providers.ResourceSet,System.Data.Services.Providers.ResourceType,System.Data.Services.Providers.ResourceProperty)">
+            <summary>
+            Gets the <see cref="T:System.Data.Services.Providers.ResourceAssociationSet"/> instance when given the source association end.
+            </summary>
+            <param name="resourceSet">Resource set of the source association end.</param>
+            <param name="resourceType">Resource type of the source association end.</param>
+            <param name="resourceProperty">Resource property of the source association end.</param>
+            <returns>
+            A <see cref="T:System.Data.Services.Providers.ResourceAssociationSet"/> instance.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.HasDerivedTypes(System.Data.Services.Providers.ResourceType)">
+            <summary>
+            Determines whether a resource type has derived types.
+            </summary>
+            <param name="resourceType">A <see cref="T:System.Data.Services.Providers.ResourceType"/> object to evaluate.</param>
+            <returns>
+            true when <paramref name="resourceType"/> represents an entity that has derived types; otherwise false.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetCachedFactoryForEntityType(System.Type)">
+            <summary>
+            Gets the type of the factory for entity.
+            </summary>
+            <param name="entityType">Type of the entity.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetCachedPropertyForEntityType(System.Type,System.String)">
+            <summary>
+            Gets the property descriptor of the name specified on the entity specified
+            </summary>
+            <param name="entityType">Type of the entity.</param>
+            <param name="propertyName">Name of the property.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetPrimitiveType(System.Type)">
+            <summary>
+            Gets the type of the primitive.
+            </summary>
+            <param name="realType">Type of the real.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.IsPrimitiveType(System.Type)">
+            <summary>
+            Determines whether the specified type is a primitive type or not.
+            </summary>
+            <param name="realType">Type of the real.</param>
+            <returns>
+            	<c>true</c> if [is primitive type] [the specified real type]; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetRealEntityTypeFromServiceEntityTypeName(System.String)">
+            <summary>
+            Gets the type of the entity using the typename of the entity used inside the service, which has the containername instead of the real namespace
+            </summary>
+            <param name="typeName">Name of the type.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetResourceTypeForEntityType(System.Type)">
+            <summary>
+            Gets the ResourceType associated with the entity type specified.
+            </summary>
+            <param name="type">The type.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetResourceTypeCustomStateForEntityType(System.Type)">
+            <summary>
+            Gets the resourcetypecustomstate object for the entity type specified
+            </summary>
+            <param name="entityType">Type of the entity.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.BuildModel">
+            <summary>
+            Builds the model meta-data using the linq metadata type. 
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.DetermineServiceOperations">
+            <summary>
+            Determines the service operation methods in the service type.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.AddServiceOperation(System.Reflection.MethodInfo,System.String)">
+            <summary>
+            Adds the service operation of the method specified with the call action specified
+            </summary>
+            <param name="serviceOperationMethod">The service operation method.</param>
+            <param name="callAction">The call action.</param>
+            <exception cref="T:System.InvalidOperationException">
+            </exception>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.AddResourceTypeAndSet(System.Collections.Generic.Dictionary{System.String,SD.LLBLGen.Pro.ODataSupportClasses.ResourceTypeCustomState},System.String)">
+            <summary>
+            Adds the resource type and set for the entity with the name specified. If it's already present, it simply returns that resourcetype.
+            It recurses through the names, solving supertypes first.
+            </summary>
+            <param name="resourceCustomStatePerEntityName">Name of the resource custom state per entity.</param>
+            <param name="entityName">Name of the entity.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.DiscoverEntityFields(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore,System.Data.Services.Providers.ResourceType,System.Type,SD.LLBLGen.Pro.ODataSupportClasses.ResourceTypeCustomState)">
+            <summary>
+            Discovers the entity fields for the entity type specified.
+            </summary>
+            <param name="instance">The instance.</param>
+            <param name="resourceType">Type of the resource.</param>
+            <param name="entityType">Type of the entity.</param>
+            <param name="customState">State of the custom.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.DetermineInheritedProperties(System.Type,System.Collections.Generic.IEnumerable{System.ComponentModel.PropertyDescriptor})">
+            <summary>
+            Determines the inherited properties. This method only marks a property as inherited if it belongs to another entity or to commonentitybase or
+            classes up in the entity hierarchy.
+            </summary>
+            <param name="entityType">Type of the entity.</param>
+            <param name="allProperties">All properties.</param>
+            <returns>enumerable of property descriptors which are truly inherited from other entities.</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.DiscoverEntityNavigators(System.Data.Services.Providers.ResourceType)">
+            <summary>
+            Discovers the entity navigators.
+            </summary>
+            <param name="resourceType">Type of the resource.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.CreateAssociationSets(System.Data.Services.Providers.ResourceType)">
+            <summary>
+            Creates the association sets.
+            </summary>
+            <param name="resourceType">Type of the resource.</param>
+            <remarks>M:N relations have no associations, as they're read only in llblgen pro.</remarks>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.FindOppositeNavigator(SD.LLBLGen.Pro.ORMSupportClasses.IEntityRelation,System.Data.Services.Providers.ResourceType@,System.Data.Services.Providers.ResourceProperty@)">
+            <summary>
+            Finds the opposite navigator of the relation specified. If not found, the opposite navigator is null.
+            </summary>
+            <param name="relation">The relation.</param>
+            <param name="oppositeResourceType">Type of the opposite resource.</param>
+            <param name="oppositeNavigator">The opposite navigator.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.CreateUniqueRelationName(SD.LLBLGen.Pro.ORMSupportClasses.IEntityRelation)">
+            <summary>
+            Creates a unique name for the relation specified. The name is: PkEntityNameFkEntityName.FkFields. The FkFields are joined with a |
+            </summary>
+            <param name="relation">The relation.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.AddNavigatorProperty(System.Type,System.Data.Services.Providers.ResourcePropertyKind,System.String,System.Data.Services.Providers.ResourceType,SD.LLBLGen.Pro.ORMSupportClasses.IEntityRelation)">
+            <summary>
+            Adds the navigator property.
+            </summary>
+            <param name="relatedEntityType">Type of the related entity.</param>
+            <param name="propertyKind">Kind of the property.</param>
+            <param name="propertyName">Name of the property.</param>
+            <param name="containerType">Type of the container.</param>
+            <param name="mappedEntityRelation">The mapped entity relation.</param>
+            <remarks>If _allowSubTypeNavigators is set to false, the provider switches to ODatav2: 
+            Due to a limitation in WCF Data Services, it will only add the navigator if the containerType isn't a subtype. 
+            If it's a subtype, it will ignore the navigator. Also, it will only add the navigator when the containerType's resourceSet and the 
+            relatedEntityType's resourceset are not equal in the situation if one or both are subtypes. WCF Data Services can't deal with navigators 
+            which point to a resourcetype which is in the same resourceset and which is a subtype. 
+            If one side is a subtype and both sides are in the same resourceset this limitation is hit and the navigator isn't added.</remarks>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.AddPrimitiveProperty(System.Data.Services.Providers.ResourceType,System.ComponentModel.PropertyDescriptor,System.Boolean)">
+            <summary>
+            Adds the primitive property to the resourcetype specified.
+            </summary>
+            <param name="resourceType">Type of the resource.</param>
+            <param name="property">The property.</param>
+            <param name="isPrimaryKey">if set to <c>true</c> [is primary key].</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetFactory(System.Type)">
+            <summary>
+            Gets the factory for the entity with the type specified.
+            </summary>
+            <param name="elementType">Type of the element.</param>
+            <returns>the factory for the element specified, or null if not found</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.ProduceEntityFactoryDelegate(System.Type)">
+            <summary>
+            Produces the entity factory delegate and sets the 
+            </summary>
+            <param name="elementType">Type of the element.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetNavigatorProperties(System.Data.Services.Providers.ResourceType)">
+            <summary>
+            Gets the navigator properties.
+            </summary>
+            <param name="resourceType">Type of the resource.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.GetGenericInterfaceElementType(System.Type,System.Reflection.TypeFilter)">
+            <summary>
+            Gets the type of the generic interface element.
+            </summary>
+            <param name="interfaceType">The type.</param>
+            <param name="typeFilter">The type filter.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.IQueryableTypeFilter(System.Type,System.Object)">
+            <summary>
+            IQueryable type filter method, used in service operation retrieval
+            </summary>
+            <param name="type">The m.</param>
+            <param name="filterCriteria">The filter criteria.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.IEnumerableTypeFilter(System.Type,System.Object)">
+            <summary>
+            IEnumerable type filter method, used in service operation retrieval
+            </summary>
+            <param name="type">The type.</param>
+            <param name="filterCriteria">The filter criteria.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.TryFindAnyContainerForType(System.Data.Services.Providers.ResourceType,System.Data.Services.Providers.ResourceSet@)">
+            <summary>
+            Tries the type of the find any container for.
+            </summary>
+            <param name="type">The type.</param>
+            <param name="container">The container.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.ResourceTypeIsAssignableFrom(System.Data.Services.Providers.ResourceType,System.Data.Services.Providers.ResourceType)">
+            <summary>
+            Determines whether the resource type specified is a supertype of the base type specified.
+            </summary>
+            <param name="baseType">Type of the base.</param>
+            <param name="superType">Type of the super.</param>
+            <returns></returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.ContainerName">
+            <summary>
+            Container name for the data source.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.ContainerNamespace">
+            <summary>
+            Namespace name for the data source.  This is used in the $metadata response. 
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.ResourceSets">
+            <summary>
+            Gets all available containers.
+            </summary>
+            <value></value>
+            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> collection of <see cref="T:System.Data.Services.Providers.ResourceSet"/> objects.</returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.ServiceOperations">
+            <summary>
+            Returns all the service operations in this data source.
+            </summary>
+            <value></value>
+            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> collection of <see cref="T:System.Data.Services.Providers.ServiceOperation"/> objects.</returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider.Types">
+            <summary>
+            Returns all the types in this data source.
+            </summary>
+            <value></value>
+            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> collection of <see cref="T:System.Data.Services.Providers.ResourceType"/> objects.</returns>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider">
+            <summary>
+            Class which provides CUD support (insert/update/delete for WCF Data Services.
+            </summary>
+            <remarks>Code based on original templates made by Brian Chance</remarks>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.#ctor(SD.LLBLGen.Pro.ORMSupportClasses.IUnitOfWorkCore,System.Func{SD.LLBLGen.Pro.ORMSupportClasses.ITransactionController},SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider"/> class.
+            </summary>
+            <param name="unitOfWork">The unit of work.</param>
+            <param name="transactionControllerCreatorFunc">The transaction controller creator func.</param>
+            <param name="metaDataProvider">The meta data provider.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.GetResource(System.Linq.IQueryable,System.String)">
+            <summary>
+            Gets the resource of the specified type identified by a query and type name.
+            </summary>
+            <param name="query">Language integratee query(LINQ) pointing to a particular resource.</param>
+            <param name="fullTypeName">The fully qualified type name of resource.</param>
+            <returns>
+            An opaque object representing a resource of the specified type, referenced by the specified query.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.CreateResource(System.String,System.String)">
+            <summary>
+            Creates the resource of the specified type and that belongs to the specified container.
+            </summary>
+            <param name="containerName">The name of the entity set to which the resource belongs.</param>
+            <param name="fullTypeName">The full namespace-qualified type name of the resource.</param>
+            <returns>
+            The object representing a resource of specified type and belonging to the specified container.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.ResetResource(System.Object)">
+            <summary>
+            Updates the resource identified by the parameter <paramref name="resource"/>.
+            </summary>
+            <param name="resource">The resource to be updated.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.GetValue(System.Object,System.String)">
+            <summary>
+            Gets the value of the specified property on the target object.
+            </summary>
+            <param name="targetResource">An opaque object that represents a resource.</param>
+            <param name="propertyName">The name of the property whose value needs to be retrieved.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.SetValue(System.Object,System.String,System.Object)">
+            <summary>
+            Sets the value of the property with the specified name on the target resource to the specified property value.
+            </summary>
+            <param name="targetResource">The target object that defines the property.</param>
+            <param name="propertyName">The name of the property whose value needs to be updated.</param>
+            <param name="propertyValue">The property value for update.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.SetReference(System.Object,System.String,System.Object)">
+            <summary>
+            Sets the value of the specified reference property on the target object.
+            </summary>
+            <param name="targetResource">The target object that defines the property.</param>
+            <param name="propertyName">The name of the property whose value needs to be updated.</param>
+            <param name="propertyValue">The property value to be updated.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.AddReferenceToCollection(System.Object,System.String,System.Object)">
+            <summary>
+            Adds the specified value to the collection.
+            </summary>
+            <param name="targetResource">Target object that defines the property.</param>
+            <param name="propertyName">The name of the collection property to which the resource should be added..</param>
+            <param name="resourceToBeAdded">The opaque object representing the resource to be added.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.RemoveReferenceFromCollection(System.Object,System.String,System.Object)">
+            <summary>
+            Removes the specified value from the collection.
+            </summary>
+            <param name="targetResource">The target object that defines the property.</param>
+            <param name="propertyName">The name of the property whose value needs to be updated.</param>
+            <param name="resourceToBeRemoved">The property value that needs to be removed.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.DeleteResource(System.Object)">
+            <summary>
+            Deletes the specified resource.
+            </summary>
+            <param name="targetResource">The resource to be deleted.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.ResolveResource(System.Object)">
+            <summary>
+            Returns the instance of the resource represented by the specified resource object.
+            </summary>
+            <param name="resource">The object representing the resource whose instance needs to be retrieved.</param>
+            <returns>
+            Returns the instance of the resource represented by the specified resource object.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.SaveChanges">
+            <summary>
+            Saves all the changes that have been made by using the <see cref="T:System.Data.Services.IUpdatable"/> APIs.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.ClearChanges">
+            <summary>
+            Cancels a change to the data.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.SetConcurrencyValues(System.Object,System.Nullable{System.Boolean},System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
+            <summary>
+            Supplies the eTag value for the given entity resource.
+            </summary>
+            <param name="resourceCookie">Cookie that represents the resource.</param>
+            <param name="checkForEquality">A <see cref="T:System.Boolean"/> that is true when property values must be compared for equality; false when 
+            property values must be compared for inequality.</param>
+            <param name="concurrencyValues">An <see cref="T:System.Collections.Generic.IEnumerable`1"/> list of the eTag property names and corresponding 
+            values.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceUpdateProvider.GetEntityCollectionForNavigator(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore,System.String)">
+            <summary>
+            Gets the entity collection in the entity specified where the navigator specified is mapped on (e.g. 'Orders').
+            </summary>
+            <param name="entity">The entity.</param>
+            <param name="navigatorName">Name of the navigator.</param>
+            <returns></returns>
+            <remarks>Lazy loading friendly method, so it won't trigger lazy loading on selfservicing and will pre-create collection on adapter.</remarks>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.ODataSupportClasses.MetaDataCache">
+            <summary>
+            Simple cache which caches the meta-data provider for the service type specified. 
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.MetaDataCache.#cctor">
+            <summary>
+            Initializes the <see cref="T:SD.LLBLGen.Pro.ODataSupportClasses.MetaDataCache"/> class.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.MetaDataCache.AddInstance(System.Type,SD.LLBLGen.Pro.ODataSupportClasses.LLBLGenProODataServiceMetadataProvider)">
+            <summary>
+            Adds the instance specified, if there isn't an element with the key specified in the cache. If there is an element in the cache with the
+            key specified, that element is returned. 
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <param name="metaDataProvider">The meta data provider.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.MetaDataCache.GetInstance(System.Type)">
+            <summary>
+            Gets the instance cached under the key specified. 
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+            <returns></returns>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode">
+            <summary>Container class for pathedge information</summary>
+            <remarks>Declared public to avoid medium trust reflection issues as reflection is used to call generic method variants.</remarks>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode"/> class.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode.#ctor(System.Type,SD.LLBLGen.Pro.ORMSupportClasses.IPrefetchPathElementCore,System.Data.Services.ExpandSegment)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode"/> class.
+            </summary>
+            <param name="entityType">Type of the entity.</param>
+            <param name="pathElement">The path element.</param>
+            <param name="segment">The segment.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode.GetPathEdge">
+            <summary>Gets the path edge.</summary>
+            <returns>the path edge instance represented by this node</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode.GetPathEdgeGeneric``1">
+            <summary>
+            Gets the path edge.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode.GetChildPathEdges">
+            <summary>Gets the child path edges.</summary>
+            <returns>array of the patch edges requested</returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.PathEdgeNode.ChildPathEdgeNodes">
+            <summary>Gets the child path edge nodes.</summary>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.ODataSupportClasses.ResourcePropertyCustomState">
+            <summary>
+            Simple bucket class which contains state information for a ResourceProperty which represents a navigator.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.ResourcePropertyCustomState.MappedRelation">
+            <summary>
+            Gets or sets the relation mapped by the navigator
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.ResourcePropertyCustomState.AssociationSet">
+            <summary>
+            Gets or sets the association set. Can be null in case the navigator isn't in an association set.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.ResourcePropertyCustomState.RelatedEntityType">
+            <summary>
+            Gets or sets the type of the related entity.
+            </summary>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.ODataSupportClasses.ResourceSetCustomState">
+            <summary>
+            Simple bucket class which holds custom state for a ResourceSet.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.ResourceSetCustomState.LinqMetaDataProperty">
+            <summary>
+            Gets or sets the linq meta data property.
+            </summary>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.ODataSupportClasses.ResourceTypeCustomState">
+            <summary>
+            Simple bucket class which holds the custom state of a ResourceType
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.ResourceTypeCustomState.AddProperties(System.Collections.Generic.IEnumerable{System.ComponentModel.PropertyDescriptor})">
+            <summary>
+            Adds all the properties specified which are browsable to this custom state.
+            </summary>
+            <param name="discoveredProperties">The discovered properties.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.ODataSupportClasses.ResourceTypeCustomState.GetPropertyDescriptor(System.String)">
+            <summary>
+            Gets the property descriptor.
+            </summary>
+            <param name="name">The name.</param>
+            <returns></returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.ResourceTypeCustomState.LinqMetaDataProperty">
+            <summary>
+            Gets or sets the related linq meta data property.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.ResourceTypeCustomState.EntityType">
+            <summary>
+            Gets or sets the type of the entity.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.ResourceTypeCustomState.Factory">
+            <summary>
+            Gets or sets the factory.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.ResourceTypeCustomState.RelatedResourceSet">
+            <summary>
+            Gets or sets the related resource set.
+            </summary>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.ODataSupportClasses.ResourceTypeCustomState.InheritanceInfo">
+            <summary>
+            Gets or sets the inheritance info.
+            </summary>
+        </member>
+    </members>
+</doc>

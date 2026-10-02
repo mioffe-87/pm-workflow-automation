@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+      <Title>Create EntityCollection Instance</Title>
+      <Shortcut>llblA_CreateEntityCollection</Shortcut>
+      <Description>Code snippet to create a new EntityCollection instance, adapter specific. </Description>
+      <Author>Solutions Design</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal Editable="true">
+          <ID>EntityCollectionVariable</ID>
+          <ToolTip>The variable which holds the EntityCollection instance reference</ToolTip>
+          <Default>myCollection</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>EntityFactory</ID>
+          <ToolTip>The factory to pass to the EntityCollection constructor</ToolTip>
+          <Default>MyEntityFactory</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="VB"><![CDATA[Dim $EntityCollectionVariable$ As New EntityCollection(New $EntityFactory$())
+$end$]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

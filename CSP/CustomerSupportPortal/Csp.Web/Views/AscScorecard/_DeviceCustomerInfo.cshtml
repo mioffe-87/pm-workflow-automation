@@ -1,0 +1,169 @@
+﻿@using Csp.Web.DataTransferObjects
+@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.AscScoreCardDto
+
+@if (Model.PartnerProfile != null)
+{
+    <div class="tabel-cell" style="padding: 5px; width: 23%">
+        <div class="titleRoundedDiv">
+            <div class="row">
+            <div style="width: 80%" class="tabel-cell">
+                Profile
+            </div>
+            <div class="tabel-cell pull-right">
+                <span class="csp-white-tooltip"><i class="icon-question-sign icon-large"
+                                                             onclick="SupportPortal.Help(this,32,{ title: 'Profile',height:90});"></i></span>
+            </div>
+        </div>
+        </div>
+        <br />
+        <br />
+       
+        <div class="table" style="border-color: #337ab7; border-style: solid; border-width: 1px; background-color: #DCE6F2; width: 100%;">
+            <div class="tablerow">
+                <div class="tabel-cell1 tabel-cell-bottom-border" style="text-align: right;">Type</div>
+                <div class="tabel-cell1 tabel-cell-border tabel-cell-bottom-border">@Model.PartnerProfile.Type</div>
+            </div>
+            <div class="tablerow">
+                <div class="tabel-cell1 tabel-cell-bottom-border" style="text-align: right;">Partner Level</div>
+                <div class="tabel-cell1 tabel-cell-border tabel-cell-bottom-border">@Model.PartnerProfile.PartnerLevel</div>
+            </div>
+            <div class="tablerow">
+                <div class="tabel-cell1 tabel-cell-bottom-border" style="text-align: right;">Elite</div>
+                <div class="tabel-cell1 tabel-cell-border tabel-cell-bottom-border">@Model.PartnerProfile.Elite</div>
+            </div>
+            <div class="tablerow">
+                <div class="tabel-cell1" style="text-align: right;">Theatre</div>
+                <div class="tabel-cell1 tabel-cell-border">@Model.PartnerProfile.Theatre</div>
+            </div>
+            @if(Model.IsInternal && !Model.MultipleAsc){
+                <div class="tablerow">
+                <div class="tabel-cell1 tabel-cell-top-border" style="text-align: right;">Bookings</div>
+                <div class="tabel-cell1 tabel-cell-border tabel-cell-top-border">@String.Format("{0:C0}",Model.PartnerProfile.BookingAmount)</div>
+            </div>
+            }
+        </div>
+        
+    </div>
+    <div class="tabel-cell wrapText" style="padding: 5px; width: 35%">
+        @{ Html.RenderPartial("../AscScorecard/_DeviceInfo", Model, new ViewDataDictionary { { "Id", "DeviceInformation" }, 
+      { "Title", "Device Information" },{"HelpMessageId","39"},
+               {"IsInternal", Model.IsInternal}
+           }); }
+        <br/><br/>
+        <div class="pull-right">
+            <a class="k-button k-button-icontext" title="Export to CSV" data-link-type="export-csv-assets"
+               href="@(String.Format("/AscScorecard/DeviceInformationDownload/?isFiveQuater={0}&sfdcAccountId={1}&isInternal={2}&theatre={3}&isIncludeCurrentPartial={4}",
+                           Model.IsLastFiveQtr, Model.SFDCAccountId, Model.IsInternal, Model.Theatre, Model.IsincludeCurrentPartial))">
+                Export to CSV</a>
+        </div>
+
+    </div>
+}
+else {
+    <div class="tabel-cell wrapText" style="padding: 5px; width: 29%">
+        @{ Html.RenderPartial("../AscScorecard/_DeviceInfo", Model, new ViewDataDictionary { { "Id", "DeviceInformation" }, 
+               { "Title", "Device Information" },{"HelpMessageId","39"},
+               { "IsInternal", Model.IsInternal } }); }
+    </div>
+    
+    <div class="tabel-cell" style="padding: 5px; width: 29%">
+        <div class="titleRoundedDiv">
+              <div class="row">
+            <div style="width: 80%" class="tabel-cell">
+                Customer Information
+            </div>
+            <div class="tabel-cell pull-right">
+                <span class="csp-white-tooltip"><i class="icon-question-sign icon-large"
+                                                             onclick="SupportPortal.Help(this,40,{ title: 'Customer Information',height:120});"></i></span>
+            </div>
+        </div>
+        </div> <br />
+        <br />
+        <div class="greyRoundedDiv">
+            @* <div class="row"><a class='CustomerInfoexport-img btn btn-primary pull-right' title="Export to Image"><i class="icon-download-alt"></i></a></div>*@
+
+            <div class="row" style="margin-left: 0px;">
+
+                @(Html.Kendo().Chart(Model.InternalCustomerInformationChart)
+                      .Name("customerInfoBarChart")
+                      .Title("")
+                      .PlotArea(p => p.Margin(0, 40, 0, 0))
+                      .Legend(legend => legend
+                          .Position(ChartLegendPosition.Bottom)
+                      )
+                      .ChartArea(chartArea => chartArea
+                          .Background("transparent")
+                      )
+                      .Series(series =>
+                      {
+                          series.Column(model => model.AmericasCount).Color("#C0504D")
+                              .Name("Americas")
+                              .Overlay(ChartBarSeriesOverlay.None)
+                              .Labels(l => l.Visible(false).Font("bold 13pt Pragmatica-Web,Arial,Helvetica,sans-serif").Color("#584F45"))
+                              .Tooltip(t => t.Visible(true)
+                              );
+                          series.Column(model => model.EmeaCount).Color("#9BBB59")
+                              .Name("EMEA")
+                              .Overlay(ChartBarSeriesOverlay.None)
+                              .Labels(l => l.Visible(false).Font("13pt Pragmatica-Web,Arial,Helvetica,sans-serif").Color("#584F45"))
+                              .Tooltip(t => t.Visible(true));
+                          series.Column(model => model.JapanCount).Color("#8064A2")
+                              .Name("Japan")
+                              .Overlay(ChartBarSeriesOverlay.None)
+                              .Labels(l => l.Visible(false).Font("13pt Pragmatica-Web,Arial,Helvetica,sans-serif").Color("#584F45"))
+                              .Tooltip(t => t.Visible(true));
+                          series.Column(model => model.ApacCount).Color("#4BACC6")
+                              .Name("APAC")
+                              .Overlay(ChartBarSeriesOverlay.None)
+                              .Labels(l => l.Visible(false).Font("13pt Pragmatica-Web,Arial,Helvetica,sans-serif").Color("#584F45"))
+                              .Tooltip(t => t.Visible(true));
+                      })
+                      .CategoryAxis(axis => axis
+                          .Name("series-axis")
+                          .Line(line => line.Visible(false))
+                      )
+
+                      .CategoryAxis(axis => axis.Name("label-axis")
+                          .Categories(model => model.Category)
+
+                      )
+
+                      .ValueAxis(axis => axis
+                          .Numeric()
+                          .Labels(labels => labels.Format("{0}"))
+
+                      )
+                      .Tooltip(tooltip => tooltip
+                          .Visible(true)
+                          .Format("{0}")
+                          .Template("#= value #")
+                      )
+                      )
+
+            </div>
+        </div>
+        <br/><br/>
+        <div class="pull-right">
+            <a class="k-button k-button-icontext" title="Export to CSV" data-link-type="export-csv-assets"
+               href="@(String.Format("/AscScorecard/DeviceInformationDownload/?isFiveQuater={0}&sfdcAccountId={1}&isInternal={2}&theatre={3}&isIncludeCurrentPartial={4}",
+                           Model.IsLastFiveQtr, Model.SFDCAccountId, Model.IsInternal, Model.Theatre, Model.IsincludeCurrentPartial))">
+                Export to CSV</a>
+        </div>
+    </div>
+    
+    
+    @*<script type="text/javascript">
+        $(".CustomerInfoexport-img").click(function () {
+            var chart = $("#customerInfoBarChart").getKendoChart();
+            chart.exportImage().done(function (data) {
+                kendo.saveAs({
+                    dataURI: data,
+                    fileName: "CustomerInfo.png",
+                    proxyURL: "@Url.Action("Export_Save", "Chart_Api")"
+            });
+        });
+
+        });
+    </script>*@
+}

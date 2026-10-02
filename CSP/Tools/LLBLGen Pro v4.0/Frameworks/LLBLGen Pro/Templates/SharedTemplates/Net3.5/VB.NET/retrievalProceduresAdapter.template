@@ -1,0 +1,97 @@
+﻿'///////////////////////////////////////////////////////////////
+'// This Is generated code. 
+'//////////////////////////////////////////////////////////////
+'// Code Is generated Using LLBLGen Pro version: <[LLBLGenVersion]>
+'// Code Is generated On: <[Time]>
+'// Code Is generated Using templates: <[TemplateName]>
+'// Templates vendor: Solutions Design.
+'// Templates version: <[TemplateVersion]>
+'//////////////////////////////////////////////////////////////
+Imports System
+Imports System.Data
+Imports SD.LLBLGen.Pro.ORMSupportClasses
+
+Namespace <[RootNamespace]><[DbSpecificNamespaceSuffix]>
+	''' <summary>Class which contains the Static logic To execute retrieval stored procedures In the database.</summary>
+	Public Class RetrievalProcedures
+		''' <summary>private CTor so no instance can be created.</summary>
+		Private Sub New()
+		End Sub
+		
+<[Foreach TypedView MappedOnResultset CrLf]>
+		''' <summary>Gets the SP Call Using query For fetching the <[CurrentTypedViewName]> TypedView.</summary>
+<[If HasParameter NoCursors]><[Foreach Parameter NoCursors CrLf]>		''' <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter of stored procedure</param><[NextForeach]>
+<[EndIf]>		''' <returns>ready To use IRetrievalQuery instance For fetching the typedview</returns>
+		Public Shared Function GetQueryFor<[CurrentTypedViewName]>TypedView(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]>ByRef <[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]>) As IRetrievalQuery
+			Dim query As IRetrievalQuery = Get<[CurrentSPCallName]>CallAsQuery(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]><[CaseCamel CurrentParameterName]><[NextForeach]>)
+			query.ResultsetNumber = <[ResultsetNumber]>
+			Return query
+		End Function
+		
+		''' <summary>Fetches the typed view '<[CurrentTypedViewName]>' using a stored procedure call. </summary>
+		''' <param name="typedViewToFetch">The typed view To fetch. Should be a '<[CurrentTypedViewName]>TypedView' instance</param>
+<[If HasParameter NoCursors]><[Foreach Parameter NoCursors CrLf]>		''' <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter Of stored procedure</param><[NextForeach]>
+<[EndIf]>		''' <returns> The specified TypedView To fetch</returns>
+		Public Shared Function Fetch<[CurrentTypedViewName]>TypedView(Of TTypedView As ITypedView2)(typedViewToFetch As TTypedView<[If HasParameter NoCursors]>, <[EndIf]><[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]>ByRef <[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]>) As TTypedView 
+			Using adapter As New DataAccessAdapter()
+				Fetch<[CurrentTypedViewName]>TypedView(adapter, typedViewToFetch<[If HasParameter NoCursors]>, <[EndIf]><[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]><[CaseCamel CurrentParameterName]><[NextForeach]>)
+			End Using
+			Return typedViewToFetch
+		End Function
+
+		''' <summary>Fetches the typed view '<[CurrentTypedViewName]>' using a stored procedure call. </summary>
+		''' <param name="adapter">The adapter.</param>
+		''' <param name="typedViewToFetch">The typed view To fetch. Should be a '<[CurrentTypedViewName]>TypedView' instance</param>
+<[If HasParameter NoCursors]><[Foreach Parameter NoCursors CrLf]>		''' <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter Of stored procedure</param><[NextForeach]>
+<[EndIf]>		Public Shared Sub Fetch<[CurrentTypedViewName]>TypedView(adapter As IDataAccessAdapter, typedViewToFetch As ITypedView2<[If HasParameter NoCursors]>, <[EndIf]><[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]>ByRef <[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]>)
+			Dim spCall = Create<[CurrentSPCallName]>Call(adapter<[If HasParameter NoCursors]>, <[EndIf]><[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]><[CaseCamel CurrentParameterName]><[NextForeach]>)
+			Dim query As IRetrievalQuery = spCall.ToRetrievalQuery()
+			query.ResultsetNumber = <[ResultsetNumber]>
+			adapter.FetchTypedView(typedViewToFetch, query)<[Foreach OutputParameter NoCursors]>
+<[If HasTypeConverterDefined]>			<[CaseCamel CurrentParameterName]> = CType(New <[TypeConverterFullName]>().ConvertFrom(spCall.GetParameterValue(Of <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfMappedTargetField]>)<[Else]><[TypeOfMappedTargetField]><[EndIf]><[Else]><[TypeOfMappedTargetField]><[EndIf]>)(<[ParameterIndex]>), <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]>)<[Else]>			<[CaseCamel CurrentParameterName]> = spCall.GetParameterValue(Of <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]>)(<[ParameterIndex]>)<[EndIf]><[NextForeach]>
+		End Sub<[NextForeach]>
+
+<[Foreach RetrievalStoredProcedureCall CrLf]>
+		''' <summary>Calls stored procedure '<[ActualStoredProcedureName]>'.<br/><br/>
+		''' <[Foreach CustomProperty RetrievalStoredProcedureCall]>
+		''' <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary>
+<[If HasParameter NoCursors]><[Foreach Parameter NoCursors CrLf]>		''' <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter. <[Description]></param><[NextForeach]>
+<[EndIf]>		''' <returns>Filled <[ProcedureOutputType]> With resultset(s) Of stored procedure</returns>
+		Public Shared Function <[CurrentSPCallName]>(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]>ByRef <[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]>) As <[ProcedureOutputType]>
+			Using dataAccessProvider As New DataAccessAdapter()
+				Return <[CurrentSPCallName]>(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasParameter NoCursors]>, <[EndIf]>dataAccessProvider)
+			End Using
+		End Function
+
+		''' <summary>Calls stored procedure '<[ActualStoredProcedureName]>'.<br/><br/>
+		''' <[Foreach CustomProperty RetrievalStoredProcedureCall]>
+		''' <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary>
+		''' <param name="dataAccessProvider">The data access provider.</param>
+<[If HasParameter NoCursors]><[Foreach Parameter NoCursors CrLf]>		''' <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter. <[Description]></param><[NextForeach]>
+<[EndIf]>		''' <returns>Filled <[ProcedureOutputType]> With resultset(s) Of stored procedure</returns>
+		Public Shared Function <[CurrentSPCallName]>(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]>ByRef <[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasParameter NoCursors]>, <[EndIf]>dataAccessProvider As IDataAccessCore) As <[ProcedureOutputType]>
+			Using spCall As StoredProcedureCall = Create<[CurrentSPCallName]>Call(dataAccessProvider<[If HasParameter NoCursors]>, <[EndIf]><[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]><[CaseCamel CurrentParameterName]><[NextForeach]>)
+				Dim toReturn As <[ProcedureOutputType]> = spCall.Fill<[ProcedureOutputType]>()<[Foreach OutputParameter NoCursors]>
+<[If HasTypeConverterDefined]>				<[CaseCamel CurrentParameterName]> = CType(New <[TypeConverterFullName]>().ConvertFrom(spCall.GetParameterValue(Of <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfMappedTargetField]>)<[Else]><[TypeOfMappedTargetField]><[EndIf]><[Else]><[TypeOfMappedTargetField]><[EndIf]>)(<[ParameterIndex]>), <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]>)<[Else]>				<[CaseCamel CurrentParameterName]> = spCall.GetParameterValue(Of <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]>)(<[ParameterIndex]>)<[EndIf]><[NextForeach]>
+				Return toReturn
+			End Using
+		End Function
+
+		''' <summary>Creates an IRetrievalQuery Object For a Call To the procedure '<[ActualStoredProcedureName]>'.
+		''' <[Foreach CustomProperty RetrievalStoredProcedureCall]>
+		''' <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary>
+<[If HasParameter NoCursors]><[Foreach Parameter NoCursors CrLf]>		''' <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter Of stored procedure.</param><[NextForeach]>
+<[EndIf]>		''' <returns>IRetrievalQuery Object which Is ready To use For datafetching</returns>
+		Public Shared Function Get<[CurrentSPCallName]>CallAsQuery(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]>ByRef <[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]>) As IRetrievalQuery
+			Using dataAccessProvider As New DataAccessAdapter()
+				Return Create<[CurrentSPCallName]>Call(dataAccessProvider<[If HasParameter NoCursors]>, <[EndIf]><[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]><[CaseCamel CurrentParameterName]><[NextForeach]>).ToRetrievalQuery()
+			End Using
+		End Function<[NextForeach]>
+
+<[Foreach RetrievalStoredProcedureCall]><# SD_ProceduresIncludeTemplate #>
+<[NextForeach]>
+#Region "Included Code"
+<# Custom_RetrievalProceduresAdapterTemplate #>
+#End Region
+	End Class
+End Namespace

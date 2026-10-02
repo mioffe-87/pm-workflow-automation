@@ -1,0 +1,904 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://services.paloaltonetworks.com/License" elementFormDefault="qualified" targetNamespace="http://services.paloaltonetworks.com/License" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="https://panservice.qa.sap.api.paloaltonetworks.com/License.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="https://panservice.qa.sap.api.paloaltonetworks.com/License.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts" />
+  <xs:import schemaLocation="https://panservice.qa.sap.api.paloaltonetworks.com/License.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts.License" />
+  <xs:element name="PushToDeviceMaster">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="deviceMaster" nillable="true" type="tns:DeviceMaster" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="DeviceMaster">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AccountId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="BillToCountry" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ClaimKey" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CpuId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DeviceName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Grace" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="HashKey" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="IsActive" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsVm" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MacAddress" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Pan_Notes" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PartId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PurchaseType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RegisterDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="SaleOrderNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SalesForceAccountId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SerialNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ShipDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="ShipNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Source" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="TenantId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UuId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Vsys" nillable="true" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DeviceMaster" nillable="true" type="tns:DeviceMaster" />
+  <xs:element name="PushToDeviceMasterResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="PushToDeviceMasterResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="LicenseResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ErrorMessage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Result" nillable="true" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LicenseResponse" nillable="true" type="tns:LicenseResponse" />
+  <xs:element name="PushToLicenseFeatures">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="licenseFeature" nillable="true" type="tns:LicenseFeature" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="LicenseFeature">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Amount" nillable="true" type="xs:decimal" />
+      <xs:element minOccurs="0" name="AscId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AscName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AscSAPId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="AuthCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="BillToCountry" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="BundleLFId" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="CPQQuoteNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Country" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CreatedBy" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CreatedFor" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CreatedOn" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DeviceId" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="Discount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="EffectiveDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="ExpirationDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Grace" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="IsActive" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsNetSuiteSynched" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="LastModified" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="LicenseKey" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Notes" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ParentId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="PartId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PurchaseType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RegisterDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="SaasQuantity" type="xs:int" />
+      <xs:element minOccurs="0" name="SaleOrderNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SerialNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ShipDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="ShipNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SiteCompany" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="SupportAccountId" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="TenantId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Term" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Tokens" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="UseCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="VmParentId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="VmQuantity" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="VmStubId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Vsys" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Zip" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LicenseFeature" nillable="true" type="tns:LicenseFeature" />
+  <xs:element name="PushToLicenseFeaturesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="PushToLicenseFeaturesResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PushSalesOrderInformation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="salesOrderInformation" nillable="true" type="tns:SalesOrderInformation" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="SalesOrderInformation">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Address1" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Address2" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CountryCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="OrderType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PhoneNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PostalCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PublicSector" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PurchaseOrderNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Region" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SAPCustomerId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SalesDate" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SalesForceAccountId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SalesOrderNumber" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SalesOrderInformation" nillable="true" type="tns:SalesOrderInformation" />
+  <xs:element name="PushSalesOrderInformationResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="PushSalesOrderInformationResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetSourceDevice">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="who" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetSourceDeviceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="SetSourceDeviceResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UnsetSourceDevice">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="who" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UnsetSourceDeviceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="UnsetSourceDeviceResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TerminateLicense">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="authCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="procDate" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="who" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TerminateLicenseResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="TerminateLicenseResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RMA">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="authCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="who" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RMAResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="RMAResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateASC">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="authCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="oldASCid" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="newASCid" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="newASCname" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="newASCSapId" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="whoChanged" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateASCResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="UpdateASCResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetIBCAuthCodes">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetIBCAuthCodesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetIBCAuthCodesResult" nillable="true" type="tns:Finalresponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="Finalresponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="BatchResponses" nillable="true" type="tns:ArrayOfBatchResponse" />
+      <xs:element minOccurs="0" name="Errormessage" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Finalresponse" nillable="true" type="tns:Finalresponse" />
+  <xs:complexType name="ArrayOfBatchResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="BatchResponse" nillable="true" type="tns:BatchResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfBatchResponse" nillable="true" type="tns:ArrayOfBatchResponse" />
+  <xs:complexType name="BatchResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AuthCodeInfo" nillable="true" type="tns:ArrayOfLicenseInformation" />
+      <xs:element minOccurs="0" name="ShipmentNumber" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BatchResponse" nillable="true" type="tns:BatchResponse" />
+  <xs:complexType name="ArrayOfLicenseInformation">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LicenseInformation" nillable="true" type="tns:LicenseInformation" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLicenseInformation" nillable="true" type="tns:ArrayOfLicenseInformation" />
+  <xs:complexType name="LicenseInformation">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AuthorizationCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EndDate" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Grace" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RevRecFlag" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SerialNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StartDate" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TermInDays" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TermInMonths" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LicenseInformation" nillable="true" type="tns:LicenseInformation" />
+  <xs:element name="UpdateSAPSyncFlag">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="sapRequest" nillable="true" type="q1:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateSAPSyncFlagResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="UpdateSAPSyncFlagResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="EvalRMA">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="who" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="EvalRMAResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="EvalRMAResult" type="xs:long" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RestoreDevice">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="backUpId" type="xs:long" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="who" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RestoreDeviceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="RestoreDeviceResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Delete">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="DeleteResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsValidPartnerEval">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="partnerLoginId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="key" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsValidPartnerEvalResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="IsValidPartnerEvalResult" nillable="true" type="tns:ArrayOfDeviceDetails" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfDeviceDetails">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="DeviceDetails" nillable="true" type="tns:DeviceDetails" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfDeviceDetails" nillable="true" type="tns:ArrayOfDeviceDetails" />
+  <xs:complexType name="DeviceDetails">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Country" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DeviceCat" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="DeviceExpiration" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DeviceTag" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DeviceType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Error" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Info" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RegistrationDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="SerialNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SupportAccountId" nillable="true" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DeviceDetails" nillable="true" type="tns:DeviceDetails" />
+  <xs:element name="GetDeviceLicenses">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDeviceLicensesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetDeviceLicensesResult" nillable="true" type="tns:DeviceLicensesResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="DeviceLicensesResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Device" nillable="true" type="tns:DeviceResult" />
+      <xs:element minOccurs="0" name="ErrorMessage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IsSuccess" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DeviceLicensesResult" nillable="true" type="tns:DeviceLicensesResult" />
+  <xs:complexType name="DeviceResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AccountId" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="DeviceName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:long" />
+      <xs:element minOccurs="0" name="IsActive" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsRegistered" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsRmaReturn" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Licenses" nillable="true" type="tns:ArrayOfLicenseResult" />
+      <xs:element minOccurs="0" name="PartId" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="RegisteredDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="RegisteredUser" nillable="true" type="tns:RegisteredUserResult" />
+      <xs:element minOccurs="0" name="SalesForceAccountId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SerialNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ShipmentDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="ShipmentNumber" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DeviceResult" nillable="true" type="tns:DeviceResult" />
+  <xs:complexType name="ArrayOfLicenseResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LicenseResult" nillable="true" type="tns:LicenseResult" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLicenseResult" nillable="true" type="tns:ArrayOfLicenseResult" />
+  <xs:complexType name="LicenseResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AuthorizationCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EffectiveDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="ExpirationDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Id" type="xs:long" />
+      <xs:element minOccurs="0" name="IsActive" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsRenewable" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PartId" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="RegistrationDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="ShipmentDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Type" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UseCount" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LicenseResult" nillable="true" type="tns:LicenseResult" />
+  <xs:complexType name="RegisteredUserResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Address1" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Address2" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Country" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EmailAddress" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PhoneNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PostalCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Region" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RegisteredUserResult" nillable="true" type="tns:RegisteredUserResult" />
+  <xs:element name="DeviceLicenseMatch">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="authCode" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeviceLicenseMatchResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="DeviceLicenseMatchResult" nillable="true" type="tns:ArrayOfDeviceLicenseMatchRet" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfDeviceLicenseMatchRet">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="DeviceLicenseMatchRet" nillable="true" type="tns:DeviceLicenseMatchRet" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfDeviceLicenseMatchRet" nillable="true" type="tns:ArrayOfDeviceLicenseMatchRet" />
+  <xs:complexType name="DeviceLicenseMatchRet">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AuthCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AuthInactiveIndicator" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Remarks" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SerialNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SnInactiveIndicator" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DeviceLicenseMatchRet" nillable="true" type="tns:DeviceLicenseMatchRet" />
+  <xs:element name="UpdateDecommisionedReasonCode">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="authcode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="reasoncode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="who" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateDecommisionedReasonCodeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="UpdateDecommisionedReasonCodeResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallDevOpsApi">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="cloudAuthcode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="region" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallDevOpsApiResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallDevOpsApiDuringOrderFulfillment">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="cloudAuthcode" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallDevOpsApiDuringOrderFulfillmentResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Decommission">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="authCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="who" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DecommissionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="DecommissionResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallDevOpsApiForTenant">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="cloudAuthcode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="region" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="tenantId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="primaryPan" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallDevOpsApiForTenantResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallMagnifierDevOpsApi">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="magnifierTenantId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="lcaasSerialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="magnifierSerialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="magnifierAuthcode" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallMagnifierDevOpsApiResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RevokeCertificate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts" minOccurs="0" name="certRevokeInfo" nillable="true" type="q2:RevokeCertificate" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RevokeCertificateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="RevokeCertificateResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallAppportalDevOpsApi">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts.License" minOccurs="0" name="devOpsInfo" nillable="true" type="q3:AppportalDevOps" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallAppportalDevOpsApiResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CallAppportalDevOpsApiResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallAppportalDevOpsAPISecured">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts.License" minOccurs="0" name="devOpsInfo" nillable="true" type="q4:AppportalDevOps" />
+        <xs:element minOccurs="0" name="authKey" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallAppportalDevOpsAPISecuredResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CallAppportalDevOpsAPISecuredResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ProvisionCdl">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts.License" minOccurs="0" name="payload" nillable="true" type="q5:LgsPayLoad" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ProvisionCdlResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ProvisionCdlResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetHeaderToken">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="supporAccountId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetHeaderTokenResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetHeaderTokenResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GenerateTenantSignature">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="supporAccountId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="notOnOrAfter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="tenantIds" nillable="true" type="q6:ArrayOfstring" />
+        <xs:element minOccurs="0" name="userEmail" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="authKey" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GenerateTenantSignatureResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GenerateTenantSignatureResult" nillable="true" type="tns:TenantSignatureInfo" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="TenantSignatureInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Cert" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ErrorMessage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IsSuccess" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MessageFormat" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NotOnOrAfter" type="xs:int" />
+      <xs:element minOccurs="0" name="SupportAccountId" type="xs:long" />
+      <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts" minOccurs="0" name="TenantSignatures" nillable="true" type="q7:ArrayOfTenantSignature" />
+      <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TenantSignatureInfo" nillable="true" type="tns:TenantSignatureInfo" />
+  <xs:element name="CallAppportalForBundleTenant">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts.License" minOccurs="0" name="devOpsInfo" nillable="true" type="q8:AppportalDevOps" />
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallAppportalForBundleTenantResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CallAppportalForBundleTenantResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LicenseTransfer">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts.License" minOccurs="0" name="devOpsInfo" nillable="true" type="q9:LicenseTransferDevOps" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LicenseTransferResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="LicenseTransferResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DecommissionForRefresh">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="decommissionDate" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="who" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DecommissionForRefreshResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="DecommissionForRefreshResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetActivationTokenId">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="prodRequest" nillable="true" type="tns:ProductActivationRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ProductActivationRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="salesOrderNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="salesforceAccountId" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ProductActivationRequest" nillable="true" type="tns:ProductActivationRequest" />
+  <xs:element name="GetActivationTokenIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetActivationTokenIdResult" nillable="true" type="tns:ProdActivationResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ProdActivationResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="isSuccess" type="xs:boolean" />
+      <xs:element minOccurs="0" name="licenses" nillable="true" type="tns:ArrayOfProduct" />
+      <xs:element minOccurs="0" name="message" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ProdActivationResponse" nillable="true" type="tns:ProdActivationResponse" />
+  <xs:complexType name="ArrayOfProduct">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Product" nillable="true" type="tns:Product" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProduct" nillable="true" type="tns:ArrayOfProduct" />
+  <xs:complexType name="Product">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="activationLink" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="authorizationCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="displayName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="expirationDate" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="productGroup" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="productSubGroup" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="sku" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Product" nillable="true" type="tns:Product" />
+  <xs:element name="GetActivationLinkByAuthcode">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="authcode" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetActivationLinkByAuthcodeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetActivationLinkByAuthcodeResult" nillable="true" type="tns:LinkByAuthcodeResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="LinkByAuthcodeResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="activation_link" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="is_success" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LinkByAuthcodeResponse" nillable="true" type="tns:LinkByAuthcodeResponse" />
+  <xs:element name="ProvisionPanorama">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="createdBy" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ProvisionPanoramaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ProvisionPanoramaResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeletePanorama">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumber" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="createdBy" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeletePanoramaResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="DeletePanoramaResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ProcessPrismaAccessEdition">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="licenseFeature" nillable="true" type="tns:ArrayOfPrismaAccessEditionLicenseFeature" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfPrismaAccessEditionLicenseFeature">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PrismaAccessEditionLicenseFeature" nillable="true" type="tns:PrismaAccessEditionLicenseFeature" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPrismaAccessEditionLicenseFeature" nillable="true" type="tns:ArrayOfPrismaAccessEditionLicenseFeature" />
+  <xs:complexType name="PrismaAccessEditionLicenseFeature">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="LinkAuthCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="OldAuthCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProcessDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="PurchaseType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SerialNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="license" nillable="true" type="tns:LicenseFeature" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PrismaAccessEditionLicenseFeature" nillable="true" type="tns:PrismaAccessEditionLicenseFeature" />
+  <xs:element name="ProcessPrismaAccessEditionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ProcessPrismaAccessEditionResult" nillable="true" type="tns:ArrayOfLicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfLicenseResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LicenseResponse" nillable="true" type="tns:LicenseResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLicenseResponse" nillable="true" type="tns:ArrayOfLicenseResponse" />
+  <xs:element name="PrismaAccessDevOpsApi">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="auth_code" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PrismaAccessDevOpsApiResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="PrismaAccessDevOpsApiResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ExtendPrismaAccessEdition">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="serialNumbers" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="evaldays" type="xs:int" />
+        <xs:element minOccurs="0" name="extentionReason" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="who" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="licenseType" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ExtendPrismaAccessEditionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ExtendPrismaAccessEditionResult" nillable="true" type="tns:LicenseResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

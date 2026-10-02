@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="SD.TemplateBindings.SharedTemplates.DDLSQL" description="Template bindings for the templates shared among all databases for generating DDL SQL" 
+					precedenceLevel="9" databaseDriverID="" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+	<supportedPlatforms>
+		<platform name="RDBMS"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="DDL SQL" />
+	</supportedFrameworks>
+	<language name="SQL">
+		<templateBinding templateID="SD_DDLSQL_UpdateScript_Main" filename="SharedTemplates\UpdateScript.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_DDLSQL_CreateScript_Main" filename="SharedTemplates\CreateScript.lpt" templateLanguage="C#" />
+	</language>
+</templateBindings>

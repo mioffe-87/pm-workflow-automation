@@ -1,0 +1,82 @@
+﻿@model Csp.Web.DataTransferObjects.ElaTokensGrantDto
+
+
+<script type="text/javascript">
+    function AcceptTokensGrant(e) {
+        var item = this.dataItem($(e.currentTarget).closest("tr"));        
+        sendResult(item.VmElaTokenGrantId, item.AuthorizationCode, item.GrantDate, true, item.SourceUser);
+    }    
+
+    function RejectTokensGrant(e) {
+        var item = this.dataItem($(e.currentTarget).closest("tr"));
+        sendResult(item.VmElaTokenGrantId, item.AuthorizationCode, item.GrantDate, false, item.SourceUser);
+    }
+
+    function sendResult(vmElaTokenGrantId, authcode, grantDate, accepted, grantedBy) {
+        SupportPortal.BlockUI();
+        var postData = {
+            "vmElaTokenGrantId": vmElaTokenGrantId,
+            "authCode": authcode,
+            "grantDate": grantDate,
+            "accepted": accepted,
+            "grantedBy": grantedBy
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/SiteLicense/AcceptElaTokensGrant",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(postData),
+            success: function (result) {
+                //refresh datasource
+                var grid = $('#@UniqueId.ElaAcceptTokensGrantGrid').data('kendoGrid');
+                grid.dataSource.read();
+                grid.refresh();
+                SupportPortal.UnBlockUI();
+                if (result.ErrorMsg != null && result.ErrorMsg.length > 0) {
+                    SupportPortal.Message("Encountered an error: " + result.ErrorMsg, { height: 130, width: 350 });
+                } 
+            },
+            error: function (xhr) {
+                var grid = $('#@UniqueId.ElaAcceptTokensGrantGrid').data('kendoGrid');
+                grid.dataSource.read();
+                grid.refresh();
+                SupportPortal.UnBlockUI();
+                SupportPortal.Message("Encountered an error: " + xhr.responseText, { height: 130, width: 350 });
+            }
+        });
+    }
+</script>
+
+<div>
+    <fieldset>
+        By clicking "Agree and Accept" button below, you agree to the terms and conditions of our <a href="@Model.Eula.DefaultEula.EulaDownloadUrl" target="_blank" title="@Model.Eula.DefaultEula.EulaFileName">END USER LICENSE AGREEMENT</a> and
+        <a href="@Model.Eula.DefaultEula.EusaDownloadUrl" target="_blank" title="@Model.Eula.DefaultEula.EusaFileName">SUPPORT AGREEMENT</a>.
+    </fieldset>
+    <fieldset>
+        <div class="grid-content">
+            @(Html.Kendo().Grid(Model.ElaTokensGrantItems)
+              .Name((string) UniqueId.ElaAcceptTokensGrantGrid)
+              .DataSource(dataSource => dataSource
+                  .Ajax()
+                  .Read(read => read.Action("GetPendingElaTokensGrantItemsData", "SiteLicense"))
+                  .PageSize(Model.ElaTokensGrantItems.Count())
+              )
+              .Columns(columns =>
+              {
+                  columns.Bound(p => p.AuthorizationCode).Title("Token Auth Code").Width(120);
+                  columns.Bound(p => p.SupportAccountId).Title("Account ID").Width(75);
+                  columns.Bound(p => p.AccountName).Title("Account Name");
+                  columns.Bound(p => p.GrantDate).Title("Grant Date").ClientTemplate("#= kendo.toString(GrantDate,'MM/dd/yyyy') #").Width(75);
+                  columns.Bound(p => p.SourceUser).Title("Source User").Width(130);
+                  columns.Bound(p => p.VmElaTokenGrantId).Hidden();
+                  columns.Command(command =>
+                  {
+                      command.Custom("Agree and Accept").Click("AcceptTokensGrant");
+                      command.Custom("Reject").Click("RejectTokensGrant");
+                  }).Width(220);
+              })
+            )
+        </div>
+    </fieldset>
+</div>

@@ -1,0 +1,71 @@
+﻿@using System.Configuration
+@model Csp.Web.DataTransferObjects.DefaultDto
+@{
+    var supportCookie = Request.Cookies[Constants.SUPPORT_COOKIE];
+    var userInfo = UserHelper.GetSsoToken();
+    var resourceRevisionNumber = SiteHelper.GetResourceRevisionNumber();
+    var portalAssetsCdnUrl = SiteHelper.GetPortalAssetsCdnUrl();
+    var appEumKey = ConfigurationManager.AppSettings["APP_EUM_KEY"];
+}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <base href="/">
+
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta name="google-site-verification" content="T2cVf6A12TgFaNLkMGF0229M8wmw3zE_BLNJqQ8FbdY" />
+
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico?@(resourceRevisionNumber)">
+    <!-- Adobe Lato Fonts defered -->
+    <link rel="preload" href="https://use.typekit.net/exn3eyx.css" as="style"
+          onload="this.onload=null;this.rel='stylesheet'">   
+
+    <link href="@(portalAssetsCdnUrl)/css/layout.css?@(resourceRevisionNumber)" rel="stylesheet" />
+    <link href="@(portalAssetsCdnUrl)/static/css/main.css?@(resourceRevisionNumber)" rel="stylesheet" />
+
+    @Omniture.AddOmniture("HEAD")
+</head>
+
+<body class="comfortable logging">
+
+    <div id="overlay"></div>
+    <div id="loading-screen"></div>
+    <div id="amber-app-container" data-id="csp-ethos">
+        <div id="header-container" data-id="header-container"></div>
+        <div id="sidenav-container" data-id="sidenav-container"></div>
+        <div id="wrap">
+            <main>
+                <div class="page-body-site">
+                    @RenderBody()
+                </div>
+            </main>
+        </div>
+        <div id="footer-container" data-id='footer-container'></div>
+    </div>
+
+    @PortalContext.AddContext()
+
+    <script type="text/javascript" src="@(portalAssetsCdnUrl)/static/js/main.js?@(resourceRevisionNumber)"></script>
+
+    @if (supportCookie == null || userInfo == null)
+    {
+        <script type="text/javascript">
+            var webData = {
+                "portalAccessed": "CustomerSupportPortal"
+            };
+        </script>
+    }
+    else
+    {
+        @Omniture.AddOmniture("INIT")
+    }
+    @RenderSection("OmniturePageVariables", required: false)
+    @HotJar.AddScript()
+</body>
+
+</html>

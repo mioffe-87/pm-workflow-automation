@@ -1,0 +1,29 @@
+﻿@using System.Configuration
+
+@{
+    Layout = null;
+    var caseCommunitiesLogoutUrl = ConfigurationManager.AppSettings["SalesforceCaseCommunitiesLogoutUrl"];
+    var knowledgeBaseLogoutUrl = ConfigurationManager.AppSettings["SalesforceKnowledgeBaseLogoutUrl"];
+    var returnUrl = ViewBag.ReturnUrl as string ?? Url.Action("Logout", "Home");
+}
+<script>
+    function ssoLogout(url) {
+        var logoutFrame = document.createElement('iframe');
+
+        logoutFrame.style.display = 'none';
+        logoutFrame.onload = function () {
+            logoutFrame.parentNode.removeChild(logoutFrame);
+        };
+
+        logoutFrame.src = url;
+
+        document.body.appendChild(logoutFrame);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        ssoLogout('@caseCommunitiesLogoutUrl');
+        ssoLogout('@knowledgeBaseLogoutUrl');
+
+        window.top.location.href = '@returnUrl';
+    });
+</script>

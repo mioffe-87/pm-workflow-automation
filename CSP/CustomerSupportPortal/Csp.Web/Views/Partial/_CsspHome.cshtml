@@ -1,0 +1,38 @@
+﻿@model Csp.Web.DataTransferObjects.CsspInfoDto
+
+<script>
+    
+    var csspHome = {
+        initialize: (function (){}),
+        moveTo: (function(id) {
+            $("#CsspTabStrip").data("kendoTabStrip").select(id);
+        })
+    }
+
+</script>
+<div id="csspHomeDiv" style="min-height: 300px; margin-top: 20px;">          
+        <div class="csp-content-sections-parent static-sized-content">
+@Html.Partial("../Partial/_CsspHeader", Model)
+        <div class="horizontal-form-element" style="margin-left: 50px; display: none">
+            <div class="fieldset">
+                <fieldset>
+                    <legend>Tools </legend>
+                    <div>&nbsp;</div>
+                    <div style="padding-bottom: 20px">
+                        <a href="#" onclick="" class="marketing-font">Shopping Cart ></a>
+                    </div>
+                    <div style="padding-bottom: 20px">
+                        <a href="#" onclick="csspHome.moveTo(CsspTabs.VmProvisioningAuthCodes)" class="marketing-font">VM Provisioning Auth Codes ></a>
+                    </div>
+                    <div style="padding-bottom: 20px">
+                        <a href="#" onclick="csspHome.moveTo(CsspTabs.ProvisionedDevices)" class="marketing-font">Provisioned Devices ></a>
+                    </div>
+                    <div style="padding-bottom: 20px">
+                         <a href="#" onclick="csspHome.moveTo(CsspTabs.OrderHistory)" class="marketing-font">Order History ></a>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        </div>
+</div>
+

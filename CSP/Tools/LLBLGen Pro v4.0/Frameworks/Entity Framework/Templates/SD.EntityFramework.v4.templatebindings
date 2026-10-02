@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="SD.EntityFramework.v4" description="Template bindings for the templates specific for Entity Framework v4 support for LLBLGen Pro" precedenceLevel="10" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+	<supportedPlatforms>
+		<platform name=".NET 4.0" />
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="Entity Framework v4" />
+	</supportedFrameworks>
+	<supportedDrivers>
+		<driver id="2D18D138-1DD2-467E-86CC-4838250611AE"/>	
+		<driver id="3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA"/> 
+		<driver id="758A392F-06F3-498b-AED9-D85A4C795BDA"/> 
+		<driver id="88EBFD8C-CBDD-4452-88AF-1C99E41A123F"/> 
+		<driver id="BB438EBA-A0B5-4236-A2B8-64D828A138AF"/>	
+		<driver id="BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A"/> 
+	</supportedDrivers>
+	<language name="C#">
+		<templateBinding templateID="SD_EF_Edmx" filename="V4\Shared\edmxFile.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_Context" filename="V4\Shared\contextClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_Entity" filename="V4\Shared\entityClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_CommonTypedViewBase" filename="V4\C#\commonTypedViewBaseClass.lpt" templateLanguage="C#"/>
+		<!-- Self tracking entity classes -->
+		<templateBinding templateID="SD_EF_STE_CommonEntityBase" filename="V4\C#\steCommonEntityBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_STE_CommonValueTypeBase" filename="V4\C#\steCommonValueTypeBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_STE_CommonTypedViewBase" filename="V4\C#\steCommonTypedViewBaseClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_STE_Context" filename="V4\Shared\steContextClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_STE_ContextExtensions" filename="V4\C#\steContextExtensionsClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_STE_Entity" filename="V4\C#\steEntityClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_STE_HelperClasses" filename="V4\C#\steHelperClasses.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_STE_TypedView" filename="V4\C#\steTypedViewClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_STE_ValueType" filename="V4\C#\steValueTypeClass.lpt" templateLanguage="C#"/>
+		<!-- POCO entity classes -->
+		<templateBinding templateID="SD_EF_POCO_CommonEntityBase" filename="V4\C#\pocoCommonEntityBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_POCO_CommonValueTypeBase" filename="V4\C#\pocoCommonValueTypeBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_POCO_CommonTypedViewBase" filename="V4\C#\pocoCommonTypedViewBaseClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_POCO_Context" filename="V4\Shared\pocoContextClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_POCO_Entity" filename="V4\C#\pocoEntityClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_POCO_HelperClasses" filename="V4\C#\pocoHelperClasses.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_POCO_TypedView" filename="V4\C#\pocoTypedViewClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_POCO_ValueType" filename="V4\C#\pocoValueTypeClass.lpt" templateLanguage="C#"/>
+		<!-- DbContext classes -->
+		<templateBinding templateID="SD_EF_DbContext_Context" filename="V4\Shared\dbContextContextClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_DbContext_CommonEntityBase" filename="V4\C#\dbContextCommonEntityBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_DbContext_Entity" filename="V4\C#\dbContextEntityClass.lpt" templateLanguage="C#"/>
+		
+		<!-- POCO type info list html page -->
+		<templateBinding templateID="SD_EF_POCO_TypeInfoList" filename="V4\Shared\typeInfoListPage.lpt" templateLanguage="C#"/>
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_EF_Edmx" filename="V4\Shared\edmxFile.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_Context" filename="V4\Shared\contextClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_Entity" filename="V4\Shared\entityClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_CommonTypedViewBase" filename="V4\VB.NET\commonTypedViewBaseClass.lpt" templateLanguage="C#"/>
+		<!-- Self tracking entity classes -->
+		<templateBinding templateID="SD_EF_STE_CommonEntityBase" filename="V4\VB.NET\steCommonEntityBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_STE_CommonValueTypeBase" filename="V4\VB.NET\steCommonValueTypeBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_STE_CommonTypedViewBase" filename="V4\VB.NET\steCommonTypedViewBaseClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_STE_Context" filename="V4\Shared\steContextClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_STE_ContextExtensions" filename="V4\VB.NET\steContextExtensionsClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_STE_Entity" filename="V4\VB.NET\steEntityClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_STE_HelperClasses" filename="V4\VB.NET\steHelperClasses.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_STE_TypedView" filename="V4\VB.NET\steTypedViewClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_STE_ValueType" filename="V4\VB.NET\steValueTypeClass.lpt" templateLanguage="C#"/>
+		<!-- POCO entity classes -->
+		<templateBinding templateID="SD_EF_POCO_CommonEntityBase" filename="V4\VB.NET\pocoCommonEntityBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_POCO_CommonValueTypeBase" filename="V4\VB.NET\pocoCommonValueTypeBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_POCO_CommonTypedViewBase" filename="V4\VB.NET\pocoCommonTypedViewBaseClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_POCO_Context" filename="V4\Shared\pocoContextClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_POCO_Entity" filename="V4\VB.NET\pocoEntityClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_POCO_HelperClasses" filename="V4\VB.NET\pocoHelperClasses.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_POCO_TypedView" filename="V4\VB.NET\pocoTypedViewClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_POCO_ValueType" filename="V4\VB.NET\pocoValueTypeClass.lpt" templateLanguage="C#"/>
+		<!-- DbContext classes -->
+		<templateBinding templateID="SD_EF_DbContext_Context" filename="V4\Shared\dbContextContextClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_DbContext_CommonEntityBase" filename="V4\VB.NET\dbContextCommonEntityBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_DbContext_Entity" filename="V4\VB.NET\dbContextEntityClass.lpt" templateLanguage="C#"/>
+
+		<!-- POCO type info list html page -->
+		<templateBinding templateID="SD_EF_POCO_TypeInfoList" filename="V4\Shared\typeInfoListPage.lpt" templateLanguage="C#"/>
+	</language>
+</templateBindings>

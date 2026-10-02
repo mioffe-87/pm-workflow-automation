@@ -1,0 +1,16 @@
+﻿<%	// the name of the catalog is in the variable 'catalogName', the name of the schema is in the variable 'schemaName'. The table name
+   	// is in the variable 'tableName', the DBTableField object is in the variable 'field'.
+	
+	// PostgreSql can't set multiple changes to the same column in the same ALTER COLUMN command, so this is done with 1 ALTER TABLE/ALTER COLUMN combo per
+	// change for the field. 
+	if(field.HasChangeFlagsSet((int)(DBTableFieldChangeType.DBType | DBTableFieldChangeType.Length | DBTableFieldChangeType.Precision | DBTableFieldChangeType.Scale)))
+	{
+%>ALTER TABLE "<%=schemaName%>"."<%=tableName%>" 
+	ALTER COLUMN "<%=field.FieldName%>" TYPE <%=CreateFieldTypeDefinitionString(field)%>;
+<%	}
+
+	if(field.HasChangeFlagsSet((int)DBTableFieldChangeType.IsNullable))
+	{
+%>ALTER TABLE "<%=schemaName%>"."<%=tableName%>" 
+	ALTER COLUMN "<%=field.FieldName%>" <% if(field.IsNullable) { %>DROP<% } else { %>SET<% } %> NOT NULL;
+<%	}%>

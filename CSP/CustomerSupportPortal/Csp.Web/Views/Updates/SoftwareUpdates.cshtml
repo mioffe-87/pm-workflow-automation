@@ -1,0 +1,16 @@
+﻿@model Csp.Web.DataTransferObjects.SoftwareUpdateListDto
+@using Kendo.Mvc.UI
+@{
+    ViewBag.Title = "Software Updates - Customer Support - Palo Alto Networks";
+    ViewBag.IsGlobal = true;
+    Layout = "~/Views/Shared/_SiteLayout.cshtml";
+   // var actionHelper = Model.ActionHelper;
+   // var filterOptions = new SelectList(Model.FilterOptions.OrderBy(x => Convert.ToInt32(x.Key)), "Key", "Value");
+}
+
+@Html.Partial("../Partial/_CompanyLogoName")
+
+<div class="contextTitle">Software Updates</div>
+
+<div id="software-updates">
+</div>

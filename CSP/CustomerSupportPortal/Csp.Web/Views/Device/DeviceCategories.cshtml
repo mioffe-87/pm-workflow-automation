@@ -1,0 +1,24 @@
+﻿@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.DeviceCategoryListDto
+
+@{
+    ViewBag.Title = "Device Tags - Customer Support - Palo Alto Networks";
+    ViewBag.IsGlobal = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+
+    @Html.Partial("../Partial/_CompanyLogoName")
+
+    <div class="contextTitle">Device Tags</div>
+
+    <div class="k-tabstrip">
+        <div class="k-content k-state-active">
+
+            @Html.Partial("../Partial/_DeviceCategories", Model)
+
+        </div>
+    </div>
+
+</div>

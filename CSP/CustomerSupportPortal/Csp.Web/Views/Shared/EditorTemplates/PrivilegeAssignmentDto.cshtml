@@ -1,0 +1,38 @@
+﻿@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.PrivilegeAssignmentDto
+@Html.HiddenFor(model => model.SelectedPrivilegeIds, new { @Id = UniqueId.SelectedPrivileges })
+<div style="height: 350px; overflow-y: auto; overflow-x: hidden">
+@(Html.Kendo().Grid(Model.Privileges)
+    .Name((string)UniqueId.Roles)
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.Privilege.Id).Hidden();
+            columns.Bound(c => c.Privilege.Name).Title("Available Privileges").Width(200);
+            columns.Template(@<text><input type="checkbox" @(item.IsSelected ? "checked" : "") value="@item.Privilege.Id" class="checkbox" /></text>).Title("Assigned Privileges").Width(100);
+        })
+      )
+</div>
+<script>
+    $("#@UniqueId.Roles").closest('form').submit(function () {
+        document.getElementById("@UniqueId.SelectedPrivileges").value = "";
+
+        $("#@UniqueId.Roles").find("input:checkbox[class=checkbox]:checked").each(function () {
+            if (this.checked) {
+                if (document.getElementById("@UniqueId.SelectedPrivileges").value == "") {
+                    document.getElementById("@UniqueId.SelectedPrivileges").value = this.value;
+                } else {
+                    document.getElementById("@UniqueId.SelectedPrivileges").value += "," + this.value;
+                }
+            }
+        });
+
+        if (document.getElementById("@UniqueId.SelectedPrivileges").value == "") {
+            SupportPortal.ClearNotification();
+            SupportPortal.Notification("At least one privilege is required.", SupportPortal.NotificationType.Error);
+            return false;
+        }
+
+        SupportPortal.ClearNotification();
+        return true;
+    });
+</script>  

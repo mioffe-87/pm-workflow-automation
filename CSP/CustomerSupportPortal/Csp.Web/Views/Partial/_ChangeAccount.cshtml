@@ -1,0 +1,250 @@
+﻿@using Csp.Api.Security
+@using Csp.Infrastructure.Data.DBs.CSP
+@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.ChangeAccountDto
+
+
+@Html.AntiForgeryToken()
+<script>
+    var gridName = "#SupportAccountGrid";
+    var isRedirect = '@Model.IsRedirect';
+    var targetResource = '@Model.TargetResource';
+
+    function SearchAccountsData() {
+        var selectedValue = document.getElementById("cmbSupportAccountaccountsSearchEntity").value;
+
+        if (selectedValue == "CreatedOn") {
+            if (document.getElementById("dtpSupportAccountaccountsSearchValue").value != '') {
+                var dt = new Date(document.getElementById("dtpSupportAccountaccountsSearchValue").value);
+                var dtString = dt.getFullYear() + "-" + ((dt.getMonth() + 1) > 9 ? (dt.getMonth() + 1) : "0" + (dt.getMonth() + 1)) + "-" + (dt.getDate() > 9 ? dt.getDate() : "0" + dt.getDate());
+                document.getElementById("txtSupportAccountaccountsSearchValue").value = dtString;
+            }
+            else {
+                document.getElementById("txtSupportAccountaccountsSearchValue").value = "";
+            }
+        }
+
+        var grid = $(gridName).data("kendoGrid").dataSource;
+
+        grid.filter(
+            {
+                field: document.getElementById("cmbSupportAccountaccountsSearchEntity").value,
+                operator: "eq",
+                value: document.getElementById("txtSupportAccountaccountsSearchValue").value
+            }
+        );
+
+        grid.sync();
+    }
+
+    function OnSupportAccountsCmbChange() {
+        var cmbId = "#cmbSupportAccountaccountsSearchEntity";
+        document.getElementById("txtSupportAccountaccountsSearchValue").value = "";
+        var selectedValue = $(cmbId).data("kendoDropDownList").value();
+        if (selectedValue == "CreatedOn") {
+            document.getElementById('txt_SupportAccount').style.display = 'none';
+            document.getElementById('dtp_SupportAccount').style.display = 'block';
+
+        } else {
+            document.getElementById('txt_SupportAccount').style.display = 'block';
+            document.getElementById('dtp_SupportAccount').style.display = 'none';
+
+
+        }
+    }
+
+    function onAccountsGridDataBound(e) {
+        if (document.getElementById("hdnaccountsgridcountcheck").value == "") {
+            var tempgridName = "#SupportAccountGrid";
+            $(tempgridName).data("kendoGrid").dataSource._total = "@Convert.ToInt32(Model.DataParameters.TotalRecordCount)";
+            document.getElementById("hdnaccountsgridcountcheck").value = "1";
+        }
+    }
+
+    function onAccountSearchEnterPress(e) {
+        if (e.keyCode == 13) {
+            SearchAccountsData();
+            return false;
+        }
+    }
+
+    $(function () {
+        $('#txtSupportAccountaccountsSearchValue').focus();
+
+        @{
+            var isTac = User.RoleSecurities.Any(x => x.SecurityClassification == RoleSecurity.SecurityClassifications.Tac);
+            if (!isTac) {
+                <text>hideColumn();</text>
+            }
+        }
+    });
+
+    function hideColumn() {
+        var grid = $(gridName).data("kendoGrid");
+        if (grid)
+            grid.hideColumn('Type');
+        else
+            setTimeout(hideColumn, 100);
+    }
+    
+    function exportSupportAccountsToCsv() {
+
+        var searchField = document.getElementById("cmbSupportAccountaccountsSearchEntity").value;
+        var searchValue = document.getElementById("txtSupportAccountaccountsSearchValue").value;
+
+        location.href = '@Url.Action("ChangeAccountReport", "SupportAccount")?searchField=' + searchField + '&searchValue=' + searchValue;
+    }
+
+    function OnCompanySelect(id) {
+        if (isRedirect && isRedirect.toUpperCase() === 'TRUE') {
+            if (targetResource) {
+                SupportPortal.BlockUI();
+
+                $.ajax({
+                    url: '/SupportAccount/HasCaseManagementAccess?supportAccountId=' + id,
+                    type: 'GET',
+                    cache: false
+                }).fail(function (e) {
+                    SupportPortal.Notification("Failed to verify case management access. Please contact support.", SupportPortal.NotificationType.Error);
+                }).done(function (response) {
+                    if (response.Data.Success) {
+                        location.href = '/SupportAccount/MyAccounts/' + id + '?isRedirect=' + isRedirect + '&targetResource=' + targetResource;
+                    }
+                    else {
+                        SupportPortal.Message('You do not have access to case management. Please contact a super user on your account.', { height: 130, width: 350, actions: {} }, function () { });
+                    }
+                }).always(function () {
+                    SupportPortal.UnBlockUI();
+                });
+            } else {
+                location.href = '/SupportAccount/MyAccounts/' + id + '/' + isRedirect;
+            }
+        } else {
+            location.href = '/SupportAccount/MyAccounts/' + id;
+        }
+    }
+</script>
+@Html.Hidden("hdnaccountsgridcountcheck", "")
+
+@if (Model != null && Model.IsRedirect)
+{
+    <div class="contextTitle">Please select the account to which this support case applies:</div>
+}
+else
+{
+    <div class="contextTitle">My Accounts</div>
+}
+
+@if (!Model.IsUserAcctValid)
+{
+    <div>
+        Your ‘default’ account membership is expired. Please select another account to login
+    </div>
+}
+
+<div class="grid-header" id="gridFilterOptions">
+    <div class="grid-right">
+
+        <div class="grid-filter">
+            @(Html.Kendo().DropDownList()
+                .Name("cmbSupportAccountaccountsSearchEntity")
+                .Events(events => events.Change("OnSupportAccountsCmbChange"))
+                .OptionLabel("Filter By")
+                .OptionLabelTemplate("<span class='grid-filter__dropdown-placeholder'>Filter By</span>")
+                .HtmlAttributes(new {
+                    Class = "k-dropdown grid-filter__dropdown"
+                })
+                .DataTextField("Text")
+                .DataValueField("Value")
+                .BindTo(new List<SelectListItem>() {
+                    new SelectListItem() {
+                        Text = "Account Name",
+                        Value = "CompanyName"
+                    },
+                    new SelectListItem() {
+                        Text = "Account Id",
+                        Value = "SupportAccountId"
+                    }
+                })
+            )
+        </div>
+
+        <div class="grid-filter">
+            <div class="grid-filter" id="txt_SupportAccount">
+                @Html.TextBox("txtSupportAccountaccountsSearchValue", null, new {
+                    onkeypress = "return onAccountSearchEnterPress(event)",
+                    @class = "grid-filter__search-input",
+                    placeholder = "Search",
+                    aria_label = "Search"
+                })
+                <button aria-label="search" type="button" class="grid-filter__search-button" onclick="SearchAccountsData()">
+                    <span aria-hidden="true" class="fa fa-search" />
+                </button>
+            </div>
+            <div class="filter-datepicker" id="dtp_SupportAccount">
+                @(Html.Kendo().DatePicker()
+                  .Name("dtpSupportAccountaccountsSearchValue")
+                  .HtmlAttributes(new {
+                        onkeypress = "return onAccountSearchEnterPress(event)",
+                        @class = "grid-filter__date-input",
+                    })
+                )
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-content">
+    <div id="divaccountslistgrid">
+        @{
+            if (Model != null && Model.Accounts != null) {
+                var maxPageSizeForms = Convert.ToInt32(Model.Accounts.Count());
+                var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+                if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                    pageSizeOptionsForms.Add(maxPageSizeForms);
+                }
+                
+            @(Html.Kendo().Grid(Model.Accounts)
+                .Name("SupportAccountGrid")
+                .Columns(columns => {
+                    columns.Bound(p => p.SupportAccountId).Title("Account Id").Width("100px").Sortable(true);
+                    columns.Bound(p => p.CompanyName)
+                           .Filterable(false).Sortable(true)
+                           .Template(@<text></text>)
+                           .ClientTemplate("<a href='javascript:void(0);' onclick='OnCompanySelect(#=SupportAccountId#);'>#=CompanyName#</a>")
+                           .Title("Account Name");
+                    columns.Bound(p => p.Roles).Sortable(false);
+                    columns.Bound(p => p.Type);
+                    if (string.IsNullOrEmpty(Model.TargetResource))
+                    {
+                        columns.Bound(p => p.IsMfaEnabled).Width(35).Filterable(false).Sortable(true)
+                            .ClientTemplate("<input type='checkbox' disabled='disabled' #= IsMfaEnabled ? checked='checked' :'' # />")
+                            .Title("2 Factor Authentication");
+                    }
+                })
+                        .Events(e => e.DataBound("onAccountsGridDataBound"))
+                        .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()).Numeric(false))
+                        .Sortable(sortable => sortable.SortMode(GridSortMode.SingleColumn))
+                        .ToolBar(toolBar =>
+                        {
+                            if (Model != null && string.IsNullOrEmpty(Model.TargetResource)) {
+                                toolBar.Custom()
+                                    .Text("Export To CSV")
+                                    .HtmlAttributes(new { id = "export" })
+                                    .Url("javascript: exportSupportAccountsToCsv();");
+                            }
+                        })
+                        .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                            .Model(model => model.Id(p => p.SupportAccountId))
+                            .PageSize(Model.DataParameters.PaginationCount)
+                            .Read(read => read.Action("ChangeAccount", "SupportAccount").Data("SetAntiForgery"))
+                        ))
+            }
+        }
+
+    </div>
+</div>
+
+

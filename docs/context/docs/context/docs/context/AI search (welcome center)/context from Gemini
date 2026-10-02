@@ -1,0 +1,56 @@
+AI Assistant - Welcome Center
+1. Feature Core Intent & Value Proposition
+Feature Name: CSP Welcome Center AI Assistant (In-Portal Support Copilot)
+
+Target Users: All new Palo Alto Networks Customer Support Portal (CSP) users (including migrated CyberArk/Idira accounts).
+
+Primary Objective: Enable newly onboarded customers to ask administrative questions in their native language, receiving instant, conversational responses backed directly by verified Knowledge Base (KB) articles, Onboarding FAQs, and documentation.
+
+Core KPI: Self-service enablement, immediate time-to-answer for new users, and admin case deflection.
+
+2. Technical Scope & Data Sources
+Knowledge Ingestion Base:
+
+Official Palo Alto Networks Knowledge Base (KB) articles.
+
+CSP Onboarding Walkthrough Guides & FAQ documentation.
+
+System operational status and known portal sync behavior (e.g., 24–48 hour case access sync window).
+
+Key Functional Capabilities:
+
+Multilingual Input & Output: Natural language processing allowing users to query in any language and receive answers in that same language.
+
+Direct Source Citation: Every generated answer must cite and link to the source KB article(s) or FAQ page.
+
+
+3. Eamples to User Queries (Training & Prompt Scenarios)
+
+User Query: "Why can't I see my support cases right now?" / "I just logged in, where are my cases?"
+
+Expected AI Response: Explain the standard 24–48 hour system sync window for new/provisioned accounts, reassure the user their profile is active, and link to KB Article: How to Access Support Cases After CSP Provisioning.
+
+Account & Role Management:
+
+User Query: "How do I add a new user to the account?"
+
+Expected AI Response: Outline Super User steps (Members ➔ Manage Users), explain role types (Super User vs. Standard), and note activation link requirements.
+
+Asset Discovery & License Management:
+
+User Query: "Where are my migrated Idira entitlements?"
+
+Expected AI Response: Direct user to Products ➔ Assets and highlight the Idira tab or Account Selector.
+
+Migration & Vault Analysis Tool (VAT):
+
+User Query: "How do I submit my VAT .VHC file for migration?"
+
+Expected AI Response: Detail the steps to download from Idira Marketplace, run the assessment, create an Admin Case under Upgrades and Extensions, and upload the encrypted .VHC file.
+
+4. Design & Guardrail Guidelines for Cursor
+Response Tone: Clear, concise, helpful, and professional. Avoid fluffy intro phrases or robotic meta-announcements.
+
+Citation Rule: Always require explicit Markdown link references to source articles in generated responses.
+
+Safety & Escalation Guardrail: If an issue relates to a critical production outage (S1 Critical) or unresolvable technical bug, immediately instruct the user to navigate to Create a Case ➔ Technical Case.

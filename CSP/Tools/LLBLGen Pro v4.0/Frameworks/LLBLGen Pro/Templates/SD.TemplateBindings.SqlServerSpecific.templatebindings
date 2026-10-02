@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="SD.TemplateBindings.SqlServerSpecific" description="Template bindings for the templates which are specific for SqlServer based databases." precedenceLevel="10" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+	<supportedPlatforms>
+		<platform name=".NET 3.5" />
+		<platform name=".NET 4.0" />
+		<platform name=".NET 4.5"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="LLBLGen Pro Runtime Framework" />
+	</supportedFrameworks>
+	<supportedDrivers>
+		<driver id="2D18D138-1DD2-467E-86CC-4838250611AE" />
+	</supportedDrivers>
+	<language name="C#">
+		<templateBinding templateID="SD_DbSpecificDataAccessIncludeTemplate" filename="SqlServerSpecific\C#\daaSpecificInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DQENamespaceIncludeTemplate" filename="SqlServerSpecific\C#\dqeNamespaceInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DQEReferenceXmlIncludeTemplate" filename="SqlServerSpecific\Shared\dqeReferenceXmlInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ProcedureNameIncludeTemplate" filename="SqlServerSpecific\C#\procedureNameInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DbSpecificDataAccessAdapterIncludeTemplate" filename="SqlServerSpecific\C#\daaAdapterInclude.template" templateLanguage="TDL" />
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_DbSpecificDataAccessIncludeTemplate" filename="SqlServerSpecific\VB.NET\daaSpecificInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DQENamespaceIncludeTemplate" filename="SqlServerSpecific\VB.NET\dqeNamespaceInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DQEReferenceXmlIncludeTemplate" filename="SqlServerSpecific\Shared\dqeReferenceXmlInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ProcedureNameIncludeTemplate" filename="SqlServerSpecific\VB.NET\procedureNameInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DbSpecificDataAccessAdapterIncludeTemplate" filename="SqlServerSpecific\VB.NET\daaAdapterInclude.template" templateLanguage="TDL" />
+	</language>
+</templateBindings>

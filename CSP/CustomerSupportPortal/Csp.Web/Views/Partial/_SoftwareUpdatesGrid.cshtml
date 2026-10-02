@@ -1,0 +1,136 @@
+﻿@model Csp.Web.DataTransferObjects.SoftwareUpdateListDto
+<script type="text/javascript">
+
+    function RenderGroupHeaderText(srcId, destId, value) {
+        var grid = $("#Grid").data("kendoGrid").dataSource.data();
+
+        var rowItem = $.grep(
+            grid,
+            function (item, index) {
+                return (item[srcId] == value);
+            }
+        )[0];
+
+        return (rowItem != undefined) ? rowItem[destId] : "";
+    }
+
+
+    function OnGridDataBound(e) {
+        var grid = $("#Grid").data("kendoGrid");
+        grid.collapseGroup(grid.tbody.find(">tr.k-grouping-row"));
+        $('tr[role*="row"]').hide();
+
+        if (e.sender._data.length == 0) {
+            var colspan = e.sender.columns.length - 1;
+            $(e.sender.tbody).append("<td colspan ='" + colspan + "'><span> No items to display.</span></td>");
+        }
+    }
+
+    function OpenWinAndShowChecksum(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+           
+        console.log(dataItem);
+        var direction = "/@ControllerFields.UpdatesController/ShowChecksum?md5Key=" + dataItem.Md5Key + '&sha=' + dataItem.Sha256Key + '&FileSize=' + dataItem.FileSize + '&fileName=' + dataItem.DisplayFileName + '&version=' + dataItem.VersionNumber;
+        var window = $("#@UniqueId.CheckSumWindowId").data("kendoWindow");
+        window.content(" ");
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+
+    function onOpenChecksumWindow() {
+        SupportPortal.OnWindowOpen("@UniqueId.CheckSumWindowId");
+    }
+
+    function onCloseChecksumWindow() {
+        var window = $("#@UniqueId.CheckSumWindowId").data("kendoWindow");
+        window.content("");
+        window.refresh();
+    }
+
+</script>
+
+<div class="grid-content">
+    <div id="softwareUpdates">
+        @(Html.Kendo().Grid(Model.SoftwareUpdates)
+              .Name("Grid")
+              .Sortable()
+              .Columns(columns =>
+              {
+                  columns.Bound(c => c.SoftwareUpdateId).Hidden();
+                  columns.Bound(c => c.Product).Hidden();
+                  columns.Bound(c => c.Id).Hidden()
+                      .ClientGroupHeaderTemplate("#= RenderGroupHeaderText('Id', 'DisplayName',value) #");
+                  columns.Bound(c => c.VersionNumber).Title("Version").Width(60);                  
+                  columns.Bound(c => c.ReleaseDate).Format(SiteHelper.DateFormatString).Title("Release Date").Width(80);
+                  columns.Bound(p => p.ReleaseNotesUrl)
+                      .Template(@<text><a href="@item.ReleaseNotesUrl" target="_blank">@item.ReleaseNotesFileName</a></text>)
+                      .ClientTemplate("# if(ReleaseNotesType=='File') { if(PolicyFile != null && PolicyFile != '') {# <div><input type=\"button\" class=\"btnupdates\" onclick=\"SupportPortal.DownloadContent(\'notes\', \'#:FolderName #\',\'#:ReleaseNotesFileName #\');return false;\"  value = #:ReleaseNotesFileName # /></div><div><a href=\"javascript:void(0);\" onclick=\"return SupportPortal.DownloadContent(\'notes\', \'#:FolderName #\',\'#:PolicyFile #\');\">#=PolicyFile#</a></div>#} else {# <div><input type=\"button\" class=\"btnupdates\" onclick=\"SupportPortal.DownloadContent(\'notes\', \'#:FolderName #\',\'#:ReleaseNotesFileName #\');return false;\"  value = #:ReleaseNotesFileName # /></div># }} else { if(PolicyFile != null){# <div><a href=\"#: ReleaseNotesUrl #\" target=\"_blank\">#=ReleaseNotesFileName#</a></div><div><a href=\"#: PolicyFileUrl #\" target=\"_blank\">#=PolicyFile#</a></div>#} else {# <div><a href=\"#: ReleaseNotesUrl #\" target=\"_blank\">#=ReleaseNotesFileName#</a></div># } } #").Sortable(false).Title("Release Notes").Width(130);
+                  columns.Bound(p => p.DownloadUrl).Template(@<text><a href="@item.DownloadUrl" target="_blank">@item.DisplayFileName</a></text>).ClientTemplate("<a href=\"javascript:void(0);\" onclick=\"return SupportPortal.DownloadContent(\'\', \'#:FolderName #\',\'#:FileName #\');\">#: DisplayFileName #</a>").Sortable(false).Title("Download").Width(50);
+                  columns.Bound(p => p.FileSize).Title("Size").Width(50);
+                  columns.Bound(c => c.Md5Key).Hidden();
+                  columns.Bound(c => c.Sha256Key).Hidden();
+                  columns.Command(command =>
+                  {
+                      command.Custom(" Checksum ").Click("OpenWinAndShowChecksum");
+                  }).Title("Checksum").Width(30);
+              })
+              .DataSource(dataSource => dataSource
+                  .Ajax()
+                  .ServerOperation(false)
+                  .Sort(s => s.Add("ReleaseDate").Descending())
+                  .Group(groups => groups.Add(c => c.Id))
+                  .Events(e => e.RequestEnd("SupportPortal.kendoGridTimezoneToPst"))
+              )
+              )
+    </div>
+
+    <div id="panoramaUpdates" style="display:none">
+        @(Html.Kendo().Grid(Model.PanoramaPluginUpdates)
+              .Name("PanoramaGrid")
+              .Sortable()
+              .Columns(columns =>
+              {
+                  columns.Bound(c => c.SoftwareUpdateId).Hidden();
+                  columns.Bound(c => c.Product).Hidden();
+                  columns.Bound(c => c.Platform).Hidden()
+                      .ClientGroupHeaderTemplate("#= value #");
+                  columns.Bound(c => c.VersionNumber).Title("Version").Width(60);                  
+                  columns.Bound(c => c.ReleaseDate).Format(SiteHelper.DateFormatString).Title("Release Date").Width(80);
+                  columns.Bound(p => p.ReleaseNotesUrl)
+                      .Template(@<text><a href="@item.ReleaseNotesUrl" target="_blank">@item.ReleaseNotesFileName</a></text>)
+                      .ClientTemplate("# if(ReleaseNotesType=='File') { if(PolicyFile != null) {# <div><input class=\"btnupdates\" type=\"button\" onclick=\"return SupportPortal.DownloadContent(\'notes\', \'#:FolderName #\',\'#:ReleaseNotesFileName #\');return false;\" value= #:ReleaseNotesFileName# /></div><div><a href=\"javascript:void(0);\" onclick=\"return SupportPortal.DownloadContent(\'notes\', \'#:FolderName #\',\'#:PolicyFile #\');\">#=PolicyFile#</a></div>#} else {# <div><input type=\"button\" class=\"btnupdates\" onclick=\"SupportPortal.DownloadContent(\'notes\', \'#:FolderName #\',\'#:ReleaseNotesFileName #\');return false;\"  value = #:ReleaseNotesFileName # /></div># }} else { if(PolicyFile != null){# <div><a href=\"#: ReleaseNotesUrl #\" target=\"_blank\">#=ReleaseNotesFileName#</a></div><div><a href=\"#: PolicyFileUrl #\" target=\"_blank\">#=PolicyFile#</a></div>#} else {# <div><a href=\"#: ReleaseNotesUrl #\" target=\"_blank\">#=ReleaseNotesFileName#</a></div># } } #").Sortable(false).Title("Release Notes").Width(130);
+                  columns.Bound(p => p.DownloadUrl).Template(@<text><a href="@item.DownloadUrl" target="_blank">@item.DisplayFileName</a></text>).ClientTemplate("<a href=\"javascript:void(0);\" onclick=\"return SupportPortal.DownloadContent(\'iFrmDownload\', \'#:FolderName #\',\'#:FileName #\');\">#: DisplayFileName #</a>").Sortable(false).Title("Download").Width(50);
+                  columns.Bound(p => p.FileSize).Title("Size").Width(50);
+                  columns.Command(command =>
+                  {
+                      command.Custom(" Checksum ").Click("OpenWinAndShowChecksum");
+                  }).Title("Checksum").Width(30);
+              })
+              .DataSource(dataSource => dataSource
+                  .Ajax()
+                  .ServerOperation(false)
+                  .Sort(s => s.Add("ReleaseDate").Descending())
+                  .Group(groups => groups.Add(c => c.Platform))
+                  .Events(e => e.RequestEnd("SupportPortal.kendoGridTimezoneToPst"))
+              )
+              )
+    </div>
+    <div>
+    @(
+        Html.Kendo().Window()
+        .Name((string)UniqueId.CheckSumWindowId)
+        .Events(events => events
+                              .Close("onCloseChecksumWindow")
+                              .Open("onOpenChecksumWindow")
+        )
+        .Modal(true)
+        .Width(600)
+        .Visible(false)
+        .Draggable()
+        .Title("Checksum")
+        )
+</div>
+</div>
+

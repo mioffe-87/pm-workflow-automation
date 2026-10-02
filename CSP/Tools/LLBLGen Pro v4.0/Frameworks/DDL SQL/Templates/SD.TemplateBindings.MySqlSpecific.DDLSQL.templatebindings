@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="SD.TemplateBindings.MySqlSpecific.DDLSQL" description="MySql specific template bindings for DDL SQL generation" 
+						precedenceLevel="10" databaseDriverID="758A392F-06F3-498b-AED9-D85A4C795BDA" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+	<supportedPlatforms>
+		<platform name="RDBMS"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="DDL SQL" />
+	</supportedFrameworks>
+	<language name="SQL">
+		<templateBinding templateID="SD_DDLSQL_AlterTableFieldInclude" filename="MySqlSpecific\AlterTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateForeignKeyConstraintInclude" filename="MySqlSpecific\CreateForeignKeyConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreatePrimaryKeyConstraintInclude" filename="MySqlSpecific\CreatePrimaryKeyConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateTableFieldInclude" filename="MySqlSpecific\CreateTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateTableInclude" filename="MySqlSpecific\CreateTableInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateUniqueConstraintInclude" filename="MySqlSpecific\CreateUniqueConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropForeignKeyConstraintInclude" filename="MySqlSpecific\DropForeignKeyConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropPrimaryKeyConstraintInclude" filename="MySqlSpecific\DropPrimaryKeyConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropTableFieldInclude" filename="MySqlSpecific\DropTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropTableInclude" filename="MySqlSpecific\DropTableInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropUniqueConstraintInclude" filename="MySqlSpecific\DropUniqueConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_FieldCreationInclude" filename="MySqlSpecific\FieldCreationInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_RenameTableFieldInclude" filename="MySqlSpecific\RenameTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_RenameTableInclude" filename="MySqlSpecific\RenameTableInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_SetActiveCatalogInclude" filename="MySqlSpecific\SetActiveCatalogInclude.lpt" templateLanguage="C#" includeOnly="true" />
+	</language>
+</templateBindings>

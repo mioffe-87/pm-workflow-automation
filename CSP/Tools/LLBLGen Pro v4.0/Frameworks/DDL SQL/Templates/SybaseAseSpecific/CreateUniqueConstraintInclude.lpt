@@ -1,0 +1,8 @@
+﻿<% // the name of the catalog is in the variable 'catalogName', the name of the schema is in the variable 'schemaName'. The DBTable object
+   // is in the variable 'table', the constraint name is in the variable 'constraintName'. The DBUniqueConstraint object is in the variable
+   // 'uniqueConstraint'.%>
+alter table <%=schemaName%>.<%=tableName%> 
+	add constraint <%=constraintName%> unique nonclustered
+	(
+		<%=string.Join(", ", uniqueConstraint.Fields.Select(f=>string.Format("{0}", f.FieldName)).ToArray())%> 
+	);

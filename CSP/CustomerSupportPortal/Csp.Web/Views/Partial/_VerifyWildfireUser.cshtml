@@ -1,0 +1,72 @@
+﻿@model Csp.Web.DataTransferObjects.WildfireUserAccountVerificationDto
+
+@{
+    ActionHelper actionHelper = Model.ActionHelper;
+}
+<script type="text/javascript">
+    function CloseCreateWildfireUserWindow() {
+        $("#CreateWildfireUserWindow").closest(".k-window-content").data("kendoWindow").close();
+    }
+
+    function VerifyWildfireUser() {
+        if (!$("#CreateWildfireUserForm").valid()) return;
+
+        $('#errorDiv').empty();
+
+        var email = $("#Email").val();
+
+        if (email == "") {
+            $("<label class='error'>Email is required</label><br/>").appendTo('#errorDiv');
+            return;
+        }
+
+        var direction = "/@ControllerFields.UserAccountController/@actionHelper.CreateWildfireUser";
+
+        $.ajax({
+            url: direction,
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({ email: email }),
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function (result) {
+                if (result.Success) {
+                    CloseCreateWildfireUserWindow();
+                    ShowWildfireUserDetails(result.Message, email);
+                } else {
+                    $("<label class='error'>" + result.Message + "</label><br/>").appendTo('#errorDiv');
+                }
+            },
+            error: function () {
+                $("<label class='error'>Failed to verify wildfire user. Please contact customer support</label><br/>").appendTo('#errorDiv');
+            }
+        });
+    }
+
+    $.validator.unobtrusive.parse("#CreateWildfireUserForm");
+    $.validator.setDefaults({
+        onkeyup: false,
+        ignore: ""
+    });
+</script>
+<div id="containerVerifyWildfireUserAccount">
+    <form id="CreateWildfireUserForm" name="CreateWildfireUserForm">
+        <div id="errorDiv" class="error"></div>
+
+        <div class="fieldset">
+            <div>
+                <div class="csp-label">@Html.Label("Email Address: ")</div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.Email)
+                    @Html.TextBoxFor(model => model.Email)
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+        </div>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input type="button" class="k-button csp-submit" value="Submit" onclick="VerifyWildfireUser();" />
+            <input type="button" class="k-button" value="Cancel" onclick="CloseCreateWildfireUserWindow();" />
+        </div>
+    </form>
+</div>

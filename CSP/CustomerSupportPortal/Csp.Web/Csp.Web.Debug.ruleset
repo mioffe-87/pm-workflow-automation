@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="SonarQube - CSP Sonar way" ToolsVersion="14.0">
+  <Include Path="..\.sonarlint\csp-sonarqubecsharp.ruleset" Action="Default" />
+  <Include Path="allrules.ruleset" Action="Default" />
+</RuleSet>

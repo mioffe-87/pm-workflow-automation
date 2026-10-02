@@ -1,0 +1,61 @@
+﻿///////////////////////////////////////////////////////////////
+// This is generated code. 
+//////////////////////////////////////////////////////////////
+// Code is generated using LLBLGen Pro version: <[LLBLGenVersion]>
+// Code is generated on: <[Time]>
+// Code is generated using templates: <[TemplateName]>
+// Templates vendor: Solutions Design.
+//////////////////////////////////////////////////////////////
+using System;
+using System.Data;
+using System.Data.Common;
+using <[RootNamespace]>.HelperClasses;
+using SD.LLBLGen.Pro.ORMSupportClasses;
+<# SD_DQENamespaceIncludeTemplate #>
+
+namespace <[RootNamespace]>.DaoClasses
+{
+	/// <summary>DAO base class, used for all generated DAO classes.</summary>
+	public partial class CommonDaoBase : DaoBase
+	{
+		#region Class Member Definitions
+		/// <summary>The connection string to use in the SelfServicing code. This is a global setting and is automatically set with the value read from the config file.</summary>
+		public static string ActualConnectionString = string.Empty;
+		#endregion
+	
+		#region Constants
+		private const string connectionKeyString = "<[ConnectionStringKeyName]>";
+		#endregion
+		
+		/// <summary>CTor</summary>
+		/// <remarks>CTor to use for non-entity specific dao usage</remarks>
+		public CommonDaoBase() : this(InheritanceHierarchyType.None, string.Empty, null)
+		{
+		}
+	
+		/// <summary>CTor</summary>
+		/// <param name="typeOfInheritance">Type of inheritance the entity which owns this Dao is in.</param>
+		/// <param name="entityName">Name of the entity owning this Dao</param>
+		/// <param name="entityFactory">Entity factory for the entity owning this Dao.</param>
+		public CommonDaoBase(InheritanceHierarchyType typeOfInheritance, string entityName, IEntityFactory entityFactory)
+				: base(InheritanceInfoProviderSingleton.GetInstance(), new DynamicQueryEngine(), typeOfInheritance, entityName, entityFactory)
+		{
+		}
+		
+<# SD_DbSpecificDataAccessIncludeTemplate #>
+		/// <summary>Gets the connection string.</summary>
+		/// <returns>the connection string as set by code or in the config file.</returns>
+		protected override string GetConnectionString()
+		{
+			if(String.IsNullOrEmpty(ActualConnectionString))
+			{
+				ActualConnectionString = ConfigFileHelper.ReadConnectionStringFromConfig(connectionKeyString);
+			}
+			return ActualConnectionString;
+		}
+		
+		#region Included Code
+<# Custom_CommonDAOBaseTemplate #>
+		#endregion
+	}
+}

@@ -1,0 +1,4 @@
+﻿<%
+	Project currentProject = _executingGenerator.ProjectDefinition;
+	bool emitForeignKeyFields = false;
+%><# SD_EF_EntityInclude #>

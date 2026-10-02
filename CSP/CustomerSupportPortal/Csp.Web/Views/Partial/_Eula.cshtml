@@ -1,0 +1,84 @@
+﻿@using Csp.Api.DataAccess.HelperClasses.Literals
+@using Csp.Api.Model
+@model Csp.Api.Model.EulaModel
+<style>
+    #@UniqueId.eulaText {
+        width: 96%;
+        font-size: 11px;
+        background-color: #ececec;
+    }
+
+    .eula-agreement-text {
+        font-size: 12px;
+        color: #333333 !important;
+        font-weight: normal;
+        line-height: 20px;
+    }
+
+    #fsEula {
+        padding-bottom: 0px;
+    }
+
+    #selEulaLanguages {
+        width: 100px !important;
+    }
+</style>
+<div class="fieldset">
+    <fieldset id="fsEula">
+        <legend>EULA</legend>
+        @if (Model.IsEulaInMultipleLanguages)
+        {
+            <div class="pull-right" id="eulaLanguages">
+                <span>Language:</span>&nbsp;&nbsp;
+                <span>
+                    <select id="selEulaLanguages" name="selEulaLanguages" onchange="ChangeEula(this.value)">
+                        <option value="1" selected="selected">&nbsp;English&nbsp;</option>
+                        <option value="2">&nbsp;Japanese&nbsp;</option>
+                    </select></span>
+                &nbsp;
+            </div>
+        }
+
+        <div class="eula-agreement-text" id="eulaAgreementText">
+            &nbsp;@if (Model.Context == EulaContext.AcceptDeviceTransfer)
+                  {
+                <span id="contextText">By clicking "Agree and Accept"</span>
+                  }
+                  else if (Model.Context == EulaContext.BulkRegistration)
+                  {
+                <span id="contextText">By clicking "Confirm and Finalize Bulk Activation"</span>
+            }
+            else
+            {
+                <span id="contextText">By clicking "Agree and Submit"</span>
+            } below, you agree to the terms and conditions of our End User License Agreement(EULA), End User Support Agreement (EUSA), and all other applicable terms published at
+            <a href="https://www.paloaltonetworks.com/legal" target="_blank">https://www.paloaltonetworks.com/legal</a> that apply to the Product.
+        </div>
+    </fieldset>
+</div>
+<script>
+    function ChangeEula(id) {
+        //var id = $("#selEulaLanguages").val();
+        // fetch Eula text and update text area.
+        var urlReq = "/EULA/GetEulaText?languageId=" + id;
+        $("#@UniqueId.eulaText").val("");
+        console.log(urlReq);
+        $.ajax({
+            url: urlReq,
+            async: false,
+            type: 'GET',
+            cache: false,
+            success: function (result) {
+                console.log(result);
+                $("#@UniqueId.eulaText").val(result.Eula);
+                $("#@UniqueId.eulaFile").attr("href", result.EulaDownloadUrl);
+                $("#@UniqueId.eulaFile").attr("title", result.EulaFileName);
+                $("#SelectedEulaId").val(result.Id);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                alert(thrownError);
+            }
+        });
+    }
+</script>

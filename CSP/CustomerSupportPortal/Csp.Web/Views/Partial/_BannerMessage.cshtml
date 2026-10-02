@@ -1,0 +1,61 @@
+﻿<style type="text/css">
+    .banner-content {
+        display:inline-block;
+        max-height: 175px;overflow: auto;padding: 10px;
+        vertical-align: top;
+        background-color: white;
+        width: 100%
+    }
+
+    .banner-detail-button {
+        padding-bottom:25px;
+        vertical-align: bottom;
+    }
+</style>
+<div id="outermaintainblock" class="csp-hidden">
+    <div class="banner-content">
+        <div id="maintainblock">
+        </div>
+        <input type="button" value="Details..." class="k-button" id="btnDetails"/>
+   </div>
+</div>
+
+
+<div id="bannerContent"></div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var win = $('#bannerContent').kendoWindow({
+            actions: ['close', 'Maximize'],
+            modal: true,
+            visible: false,
+            minWidth: 550,
+            minHeight: 500,
+            scrollable: true,
+            title: 'Details'
+        });
+
+        $.ajax({
+            url: '@Url.Action("GetBanner", "SupportAccount")',
+            type: "GET",
+            dataType: 'JSON',
+            success: function (data) {
+                if (data && data.IsActive) {
+                    $('#maintainblock').html(data.MessageHeader);
+                    $('#bannerContent').html(data.MessageDetails);
+
+                    $("#outermaintainblock").show();
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+
+    });
+
+    $('#btnDetails').click(function () {
+        $('#bannerContent').data('kendoWindow').open().center();
+    });
+</script>

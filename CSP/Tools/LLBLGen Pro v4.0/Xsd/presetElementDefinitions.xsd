@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- preset Schema definitions for the preset type
+     Used for verification of preset nodes in .preset files. -->
+<xs:schema id="presetDefinition" targetNamespace="http://sd/llblgen/pro/presetElementDefinitions.xsd" 
+		elementFormDefault="qualified" xmlns="http://sd/llblgen/pro/presetElementDefinitions.xsd" 
+		xmlns:mstns="http://sd/llblgen/pro/presetElementDefinitions.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="preset">
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs ="1">
+				<xs:sequence minOccurs="0" maxOccurs ="1">
+					<xs:element name="supportedPlatforms">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="platform">
+									<xs:complexType>
+										<xs:attribute name="name" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs ="1">
+					<xs:element name="supportedFrameworks">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="framework">
+									<xs:complexType>
+										<xs:attribute name="name" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs ="1">
+						<xs:element name="supportedTemplateGroups">
+					<xs:complexType>
+						<xs:sequence minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="templateGroup">
+								<xs:complexType>
+									<xs:attribute name="name" use="required"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs ="1">
+					<xs:element name="taskPresets">
+						<xs:complexType>
+							<xs:choice minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="taskPreset" type="taskPresetType"/>
+								<xs:element name="taskGroupPreset" type="taskGroupPresetType"/>
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required" />
+			<xs:attribute name="lastModifiedOn" type="xs:dateTime" use="required"/>
+			<xs:attribute name="createdBy" type="xs:string" use="required"/>
+			<xs:attribute name="isSealed" type="xs:boolean" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="performRuleType">
+		<xs:attribute name="enabled" type="xs:boolean" use="required"/>
+		<xs:attribute name="settingName" type="xs:string" use="required"/>
+		<xs:attribute name="operator" type="xs:integer" use="required"/>
+		<xs:attribute name="operand" type="xs:string" use="required"/>
+    </xs:complexType>
+	
+	<xs:complexType name ="taskGroupPresetType">
+		<xs:sequence minOccurs="1">
+			<xs:sequence minOccurs="0" maxOccurs="1">
+				<xs:element name="performRule" type="performRuleType"/>
+            </xs:sequence>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="taskPreset" type="taskPresetType"/>
+				<xs:element name="taskGroupPreset" type="taskGroupPresetType"/>
+			</xs:choice>
+        </xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="requiresCleanCache" type="xs:boolean" use="optional"/>
+		<xs:attribute name="displayName" type="xs:string" use="optional"/>
+		<xs:attribute name="additionalRootNamespace" type="xs:string" use="optional"/>
+		<xs:attribute name="additionalDestinationFolder" type="xs:string" use="optional"/>
+		<xs:attribute name="forSpecificDatabase" type="xs:string" use="optional"/>
+		<xs:attribute name="isEnabled" type="xs:boolean" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name ="taskPresetType">
+		<xs:sequence minOccurs="1">
+			<xs:sequence minOccurs="0" maxOccurs="1">
+				<xs:element name="performRule" type="performRuleType"/>
+            </xs:sequence>
+			<xs:element name="parameters">
+				<xs:complexType>
+					<xs:sequence minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="parameter">
+							<xs:complexType>
+								<xs:attribute name="name" use="required"/>
+								<xs:attribute name="value" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="requiresCleanCache" type="xs:boolean" use="optional" />
+		<xs:attribute name="displayName" type="xs:string" use="optional"/>
+		<xs:attribute name="forSpecificDatabase" type="xs:string" use="optional"/>
+		<xs:attribute name="isEnabled" type="xs:boolean" use="optional"/>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,424 @@
+﻿@using System.Configuration
+@using Csp.Infrastructure.Data.DBs.CSP
+@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.UserAccountDto
+
+@{ 
+    var actionHelper = Model.ActionHelper;
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+
+    string modelAddress = "UserAccount.Address.";
+    var uniqueId = (string)UniqueId.UserAccount + modelAddress.Replace(".", "");
+    var countryDropDownId = uniqueId + "CountryDropDownId";
+    var countryDropDownName = modelAddress + "CountryID";
+    var regionDropDownId = uniqueId + "RegionDropDownId";
+    var regionTextId = uniqueId + "RegionTextId";
+    var regionTextHiddenId = uniqueId + "RegionTextHiddenId";
+    var regionTextDivId = uniqueId + "RegionTextDivId";
+    var regionDropDownDivId = uniqueId + "RegionDropDownDivId";
+    var setDefaultAddressId = uniqueId + "SetDefaultAddress";
+    var manageUserUrl = ConfigurationManager.AppSettings["ApplicationUrl"]+ "/SupportAccount/AccountUsers/" + CurrentState.GetCurrentAccountId();
+}
+
+<script>
+    $.validator.unobtrusive.parse("#@UniqueId.userAccountForm");
+    $.validator.setDefaults({
+        onkeyup: false,
+        ignore: ""
+    });
+
+    
+    function @(uniqueId)OnCountryDropdownChange() {
+        SupportPortal.OnCountryDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionTextDivId", "@regionDropDownDivId", "@countryDropDownId");
+    }
+
+    function @(uniqueId)OnRegionDropdownChange() {
+        SupportPortal.OnRegionDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionDropDownId", "@regionDropDownDivId", "@Constants.DropDownRegionSelect");
+    }
+
+    function @(uniqueId)OnRegionTextChange() {
+        SupportPortal.OnRegionTextChange("@regionTextHiddenId", "@regionTextId");
+    }
+
+    function @(uniqueId)FilterCountry() {
+        return { countryId: $("#@countryDropDownId").val() };
+    }
+
+    (function($) {
+        $.fn.turnOffValidation = function(form) {
+            var settings = form.validate().settings;
+
+            for (var ruleIndex in settings.rules) {
+                delete settings.rules[ruleIndex];
+            }
+        };
+    })(jQuery);
+
+    function @(uniqueId)loadDefaultAddress() {
+        $('#@setDefaultAddressId').val(true);
+        $(this).turnOffValidation(jQuery('#@UniqueId.userAccountForm'));
+        $('#@UniqueId.okButtonId').click();
+    }
+
+        function DisplayIdpWarning(selector) {
+            $('#idpWarning').hide();
+            var isEnabled = false;
+
+                var email = $(selector).val().trim();
+                if (email === "") {
+                    return;
+                }
+                
+                var validateIdpUrl = '@Url.Action("IsThirdPartyIdpConfigured", "Membership")';
+
+                $.ajax({
+                    url: validateIdpUrl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        email: email
+                    }),
+                    contentType: 'application/json; charset=utf-8',
+                    global: true,
+                    success: function(result) {
+                        isEnabled = result.isThirdPartyIdpConfigured;
+                        if (isEnabled === true || isEnabled === 'True')
+                            $('#idpWarning').show();
+                    },
+                    error: function (request, error) {
+                    }
+                });
+        }
+    
+
+</script>
+
+<div id="@UniqueId.userAccountDivId">
+    @using (Ajax.BeginForm(actionHelper.FormAction, ControllerFields.UserAccountController, new AjaxOptions { OnBegin = "SupportPortal.BlockUI();", OnComplete = "SupportPortal.UnBlockUI();", UpdateTargetId = UniqueId.userAccountDivId }, new { id = UniqueId.userAccountForm, autocomplete = "off" })) {
+        @Html.AntiForgeryToken()
+        <div class="csp-content-sections-parent">
+        <div id="idpWarning" style="display: none">
+            <span class="csp-required">Your domain is configured for third-party IDP. Please click the "Add Members" button under <a href="@manageUserUrl">"Manage Users"</a> to add a new member to your account </span>
+        </div>
+        <div class="horizontal-form-element">
+            <div class="fieldset fieldset-upper">
+                <fieldset>
+                    <legend>User Account Information</legend>
+                    @Html.HiddenFor(model => model.UserAccount.Id)
+                    @Html.HiddenFor(model => model.UserAccount.LastUpdateByUserAccountId)
+                    @Html.HiddenFor(model => model.UserAccount.CreatedByUserAccountId)
+                    @Html.HiddenFor(model => model.UserAccount.LastUpdate)
+                    @Html.HiddenFor(model => model.UserAccount.CreatedOn)
+                    @Html.HiddenFor(model => model.UserAccount.IsTempMessageViewed)
+                    @if (actionHelper.FormAction != ActionHelper.EntityAction.Create.ToString())
+                    {
+                        @Html.HiddenFor(model => model.UserAccount.Email)
+                    }
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Email:")
+                        </div>
+
+                        <div class="csp-field">
+                            @if (actionHelper.FormAction == ActionHelper.EntityAction.Create.ToString())
+                            {
+                                @Html.ValidationMessageFor(model => model.UserAccount.Email)
+                                @Html.TextBoxFor(model => model.UserAccount.Email, new
+                                {
+                                    maxlength = 201, @onchange = "DisplayIdpWarning(this);"
+                                })
+                                <span class="csp-required">*</span>
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(model => model.UserAccount.Email, new
+                                {
+                                    maxlength = 201
+                                })
+                            }
+                        </div>
+                    </div>
+
+                    @if (actionHelper.FormAction == ActionHelper.EntityAction.Create.ToString())
+                    {
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Password:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Password)
+                                @Html.PasswordFor(model => model.Password, new
+                                {
+                                    maxlength = 101
+                                })
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label"></div>
+                            <div class="csp-field" style="color: gray; width: 220px; white-space: normal;">
+                                (Use at least 11 characters and 1 each of the following - uppercase, lowercase, numbers, and special characters. Do not use a password from another site.)
+                            </div>
+                        </div>
+                    }
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Display Name:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.DisplayName, string.Empty, new
+                            {
+                                @style = "white-space: normal; width: 250px;"
+                            })
+                            @Html.TextBoxFor(model => model.UserAccount.DisplayName, new
+                            {
+                                maxlength = 46
+                            })
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Title:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.Title)
+                            @Html.TextBoxFor(model => model.UserAccount.Title, new
+                            {
+                                maxlength = 61
+                            })
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("First Name:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.FirstName)
+                            @Html.TextBoxFor(model => model.UserAccount.FirstName, new
+                            {
+                                maxlength = 51
+                            })
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Last Name:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.LastName)
+                            @Html.TextBoxFor(model => model.UserAccount.LastName, new
+                            {
+                                maxlength = 51
+                            })
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            @if (!Model.CreateMembership)
+            {
+                <div class="create-user-message">
+                    <b>Please Note: </b>To add a user to a group, select Add Member and enter email address of new user.
+                </div>
+            }
+            <div class="fieldset">
+                <fieldset>
+                    <legend>Receive Notifications</legend>
+                    <br/>
+                    <div>
+                        <div class="csp-label" style="width: 346px;">
+                            @Html.LabelFor(model => model.UserAccount.IsOptInEmail, "Subscribe to Content Update Emails:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.IsOptInEmail)
+                            @Html.EditorFor(model => model.UserAccount.IsOptInEmail)
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label" style="width: 346px;">
+                            @Html.LabelFor(model => model.UserAccount.IsOptInSecurityEmail, "Subscribe to Security Advisories:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.IsOptInSecurityEmail)
+                            @Html.EditorFor(model => model.UserAccount.IsOptInSecurityEmail)
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label" style="width: 346px;">
+                            @Html.LabelFor(model => model.UserAccount.IsOptInPanOsUpdateEmail, "Subscribe to Software Update Emails:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.EditorFor(model => model.UserAccount.IsOptInPanOsUpdateEmail)
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+        </div>
+        <div class="horizontal-form-element">
+            <div class="fieldset" style="height: 100%">
+                <fieldset>
+                    <legend>Contact Information</legend>
+
+                    <div style="text-align: right; margin-right: 75px;">
+                        <a href="javascript: void(0);" onclick="@(uniqueId)loadDefaultAddress();">Load Default Address</a>
+                        @Html.HiddenFor(x => x.SetDefaultAddress, new
+                        {
+                            @id = setDefaultAddressId
+                        })
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Address 1:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.Address.Address1)
+                            @Html.TextBoxFor(model => model.UserAccount.Address.Address1, new
+                            {
+                                maxlength = 256
+                            })
+
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Address 2:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.Address.Address2)
+                            @Html.TextBoxFor(model => model.UserAccount.Address.Address2, new
+                            {
+                                maxlength = 256
+                            })
+
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("City:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.Address.City)
+                            @Html.TextBoxFor(model => model.UserAccount.Address.City, new
+                            {
+                                maxlength = 101
+                            })
+
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Country: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => Model.UserAccount.Address.CountryId)
+                            @(Html.Kendo().DropDownListFor(model => Model.UserAccount.Address.CountryId)
+                                  .HtmlAttributes(new
+                                  {
+                                      @class = "k-dropdown", @id = countryDropDownId, @name = countryDropDownName
+                                  })
+                                  .Events(e => e.Change(@uniqueId + "OnCountryDropdownChange").DataBound(@uniqueId + "OnCountryDropdownChange"))
+                                  .OptionLabel(Constants.DropDownCountrySelect)
+                                  .DataValueField("Id")
+                                  .DataTextField("Name")
+                                  .DataSource(source => source.Read(read =>
+                                  {
+
+                                      if (read != null)
+                                      {
+
+                                          read.Action("GetCountries", "Base");
+                                      }
+                                  })).Value(Model.UserAccount.Address.CountryId.ToString()))
+
+                        </div>
+                    </div>
+                    <div>
+
+                        <div class="csp-label">
+                            @Html.Label("Region/State: ")
+                        </div>
+                        <div class="csp-field">
+                            <div id="@regionTextDivId">
+                                @Html.ValidationMessageFor(model => Model.UserAccount.Address.Region)
+                                @Html.TextBoxFor(model => Model.UserAccount.Address.Region, new
+                                {
+                                    @id = regionTextId, onchange = @uniqueId + "OnRegionTextChange()", maxlength = 46
+                                })
+
+                            </div>
+                            <div id="@regionDropDownDivId" style="display: none;">
+                                @Html.ValidationMessageFor(model => Model.UserAccount.Address.Region)
+                                @(Html.Kendo().DropDownListFor(model => Model.UserAccount.Address.Region)
+                                      .OptionLabel(Constants.DropDownRegionSelect)
+                                      .HtmlAttributes(new
+                                      {
+                                          @class = "k-dropdown", @id = @regionDropDownId, @name = ""
+                                      })
+                                      .Events(e => e.Change(@uniqueId + "OnRegionDropdownChange").DataBound(@uniqueId + "OnRegionDropdownChange"))
+                                      .DataValueField("Name")
+                                      .DataTextField("Name")
+                                      .DataSource(source => source.Read(read => read.Action("GetRegions", "Base").Data(@uniqueId + "FilterCountry")).ServerFiltering(true))
+                                      .Value(Model.UserAccount.Address.Region)
+                                      .AutoBind(false)
+                                      .CascadeFrom(@countryDropDownId)
+                                      )
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Postal Code:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.Address.PostalCode)
+                            @Html.TextBoxFor(model => model.UserAccount.Address.PostalCode, new
+                            {
+                                maxlength = 26
+                            })
+
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Phone Number:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.UserAccount.PhoneNumber)
+                            @Html.TextBoxFor(model => model.UserAccount.PhoneNumber, new
+                            {
+                                maxlength = 41
+                            })
+
+
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        </div>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input id="@UniqueId.okButtonId" type="submit" value="Submit" class="k-button csp-submit" disableValidation="true" />
+        </div>
+        
+    }
+</div>

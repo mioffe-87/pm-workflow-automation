@@ -1,0 +1,1628 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--LLBLGen Pro v3.1 project file. Do not manually edit this file. Incorrect references could lead to an unloadable project file.-->
+<Project Version="3.1" TargetFrameworkName="LLBLGen Pro Runtime Framework">
+  <Properties>
+    <Abbreviations />
+    <Property Name="AdditionalTaskPerformerFolder" Value="" />
+    <Property Name="AdditionalTasksFolder" Value="C:\Myprojects\VS.NET Projects\LLBLGen Pro TestProjects\QuerySpecApi\Templates\Tasks" />
+    <Property Name="AdditionalTemplatesFolder" Value="C:\Myprojects\VS.NET Projects\LLBLGen Pro TestProjects\QuerySpecApi\Templates\Templates" />
+    <Property Name="AdditionalTypeConverterFolder" Value=".\" />
+    <Property Name="AddNewElementsAfterRefresh" Value="0" />
+    <Property Name="AddNewFieldsAfterRefresh" Value="0" />
+    <Property Name="AddNewViewsAsEntitiesAfterRefresh" Value="0" />
+    <Property Name="AutoAddManyToManyRelationships" Value="false" />
+    <Property Name="AutoAssignSequencesToIntegerPks" Value="true" />
+    <Property Name="AutoAssignTypeConverterToFieldMapping" Value="false" />
+    <Property Name="CleanUpVsNetProjects" Value="true" />
+    <Property Name="ConnectionStringKeyNamePattern" Value="Main.ConnectionString.{$ProviderName}" />
+    <Property Name="EncodingToUse" Value="0" />
+    <Property Name="EnforcePascalCasingAlways" Value="true" />
+    <Property Name="EntityFieldNameStripPattern" Value="{}{}" />
+    <Property Name="EntityNameStripPattern" Value="{tbl_}{}" />
+    <Property Name="ExcludableOrphanedElementDetectedAction" Value="3" />
+    <Property Name="FailCodeGenerationOnWriteError" Value="false" />
+    <Property Name="FieldMappedOntoRelatedFieldPattern" Value="{$RelatedFieldName}" />
+    <Property Name="FkFieldsAreNamedAfterTargetField" Value="true" />
+    <Property Name="ForeignKeyFieldPattern" Value="{$NavigatorName}{$RelatedFieldName}" />
+    <Property Name="GroupUsage" Value="0" />
+    <Property Name="IdentifyingFieldsFollowDBPrimaryKeyConstraints" Value="0" />
+    <Property Name="InsertUnderscoreAtWordBreakCaseSensitiveDBs" Value="false" />
+    <Property Name="LengthPrecisionScaleFollowDBLengthPrecisionScale" Value="0" />
+    <Property Name="MakeElementNamePascalCasing" Value="true" />
+    <Property Name="NavigatorMappedOntoManyToManyPattern" Value="{$EndEntityName}CollectionVia{$IntermediateEntityName$S}" />
+    <Property Name="NavigatorMappedOntoOneManyToOnePattern" Value="{$EndEntityName$S}" />
+    <Property Name="NavigatorMappedOntoOneToManyPattern" Value="{$EndEntityName$P}" />
+    <Property Name="NonExcludableOrphanedElementDetectedAction" Value="3" />
+    <Property Name="PreferDecimalOverCurrencyTypes" Value="true" />
+    <Property Name="PreferNaturalCharacterTypes" Value="true" />
+    <Property Name="PreferVariableLengthTypes" Value="true" />
+    <Property Name="ProjectCreator" Value="FB" />
+    <Property Name="ProjectName" Value="Northwind26" />
+    <Property Name="RelationalModelDataElementNameCasingCaseSensitiveDBs" Value="3" />
+    <Property Name="RelationshipsFollowDBForeignKeyConstraints" Value="0" />
+    <Property Name="RemoveUnderscoresFromElementName" Value="true" />
+    <Property Name="RemoveUnmappedElementsAfterRefresh" Value="0" />
+    <Property Name="ResetFieldOrderBasedOnTargetOrderAtRefresh" Value="false" />
+    <Property Name="RetrieveDBCustomProperties" Value="false" />
+    <Property Name="RootNamespace" Value="" />
+    <Property Name="SequencePattern" Value="SEQ_{$EntityName}" />
+    <Property Name="SetGroupNameAfterSchemaName" Value="true" />
+    <Property Name="SetSchemaNameAfterGroupName" Value="true" />
+    <Property Name="StoredProcNameStripPattern" Value="{pr_, sp_}{}" />
+    <Property Name="StoreTimeLastGeneratedIntoProject" Value="false" />
+    <Property Name="SyncMappedElementNamesAfterRefresh" Value="0" />
+    <Property Name="SyncRelationalModelDataElementNameAfterRename" Value="0" />
+    <Property Name="SyncRenamedMappedElementNamesAfterRefresh" Value="0" />
+    <Property Name="TargetPerEntityEdgesRequireBackingFkConstraint" Value="true" />
+    <Property Name="TypedViewFieldNameStripPattern" Value="{}{}" />
+    <Property Name="TypedViewNameStripPattern" Value="{vw_}{}" />
+    <Property Name="UniqueConstraintsFollowDBUniqueConstraints" Value="0" />
+    <Property Name="UpdateCustomPropertiesAfterRefresh" Value="0" />
+    <Property Name="UseCustomFieldOrderingOnNewElements" Value="false" />
+  </Properties>
+  <TypeShortcuts>
+    <TypeShortcut Shortcut="CategoryType" Type="EnumTypes.CategoryType, EnumTypes" />
+  </TypeShortcuts>
+  <CodeGenerationCyclePreferences>
+    <OutputType Value="3">
+      <LastUsedPreferences>
+        <DestinationRootFolder Value="C:\Myprojects\VS.NET Projects\LLBLGen Pro TestProjects\QuerySpecApi\Tests\AdapterDAL" />
+        <FrameworkName Value="LLBLGen Pro Runtime Framework" />
+        <LanguageName Value="C#" />
+        <PlatformName Value=".NET 4.0" />
+        <PresetName Value="SD.Presets.Adapter.QuerySpec" />
+        <RootNamespace Value="NW26.Adapter" />
+        <TemplateGroup Value="Adapter" />
+        <TemplateBindings>
+          <Binding Name="SD.TemplateBindings.SharedTemplates.NET40" />
+          <Binding Name="SD.TemplateBindings.SqlServerSpecific.NET20" />
+          <Binding Name="SD.TemplateBindings.QuerySpecTemplates" />
+          <Binding Name="SD.TemplateBindings.SharedTemplates.NET35" />
+          <Binding Name="SD.TemplateBindings.SharedTemplates.NET20" />
+          <Binding Name="SD.TemplateBindings.General" />
+        </TemplateBindings>
+      </LastUsedPreferences>
+    </OutputType>
+  </CodeGenerationCyclePreferences>
+  <OutputSettingValues>
+    <SettingValues>
+      <SettingValue Name="1:AdapterDbGenericProjectFileSuffix" Value="" Type="18" />
+      <SettingValue Name="1:AdapterDbGenericSubFolderName" Value="DatabaseGeneric" Type="18" />
+      <SettingValue Name="1:AdapterDbSpecificNamespaceSuffix" Value="DatabaseSpecific" Type="18" />
+      <SettingValue Name="1:AdapterDbSpecificProjectFileSuffix" Value="DBSpecific" Type="18" />
+      <SettingValue Name="1:AdapterDbSpecificSubFolderName" Value="DatabaseSpecific" Type="18" />
+      <SettingValue Name="1:ConvertNulledReferenceTypesToDefaultValue" Value="true" Type="3" />
+      <SettingValue Name="1:GenerateAsNullableTypeDefault" Value="true" Type="3" />
+      <SettingValue Name="1:LazyLoadingWithoutResultReturnsNew" Value="true" Type="3" />
+      <SettingValue Name="1:TdlEmitTimeDateInOutputFiles" Value="true" Type="3" />
+    </SettingValues>
+  </OutputSettingValues>
+  <CodeGenerationMetaDataDefaults>
+    <TargetElement Type="256">
+      <Defaults>
+        <Attributes>
+          <Attribute Value="Browsable($true)" />
+        </Attributes>
+      </Defaults>
+    </TargetElement>
+  </CodeGenerationMetaDataDefaults>
+  <EntityModel>
+    <ValueTypeDefinitions />
+    <EntityDefinitions>
+      <EntityDefinition Name="Category">
+        <Fields>
+          <Field Name="CategoryId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="CategoryName" Type="string" MaxLength="15" />
+          <Field Name="Description" Type="string" IsOptional="true" MaxLength="1073741823" />
+          <Field Name="Picture" Type="byte[]" IsOptional="true" MaxLength="2147483647" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Customer">
+        <Fields>
+          <Field Name="Address" Type="string" IsOptional="true" MaxLength="60" />
+          <Field Name="City" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="CompanyName" Type="string" MaxLength="40" />
+          <Field Name="ContactName" Type="string" IsOptional="true" MaxLength="30" />
+          <Field Name="ContactTitle" Type="string" IsOptional="true" MaxLength="30" />
+          <Field Name="Country" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="CustomerId" Type="string" MaxLength="5" IsPrimaryKey="true" />
+          <Field Name="Fax" Type="string" IsOptional="true" MaxLength="24" />
+          <Field Name="Phone" Type="string" IsOptional="true" MaxLength="24" />
+          <Field Name="PostalCode" Type="string" IsOptional="true" MaxLength="10" />
+          <Field Name="Region" Type="string" IsOptional="true" MaxLength="15" />
+        </Fields>
+        <UniqueConstraints>
+          <UniqueConstraint Name="CompanyName">
+            <Field Name="CompanyName" />
+          </UniqueConstraint>
+        </UniqueConstraints>
+      </EntityDefinition>
+      <EntityDefinition Name="CustomerCustomerDemo">
+        <Fields>
+          <Field Name="CustomerId" Type="string" MaxLength="5" IsPrimaryKey="true" IsAutoCreated="true" />
+          <Field Name="CustomerTypeId" Type="string" MaxLength="10" IsPrimaryKey="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="CustomerDemographic">
+        <Fields>
+          <Field Name="CustomerDesc" Type="string" IsOptional="true" MaxLength="1073741823" />
+          <Field Name="CustomerTypeId" Type="string" MaxLength="10" IsPrimaryKey="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Employee">
+        <Fields>
+          <Field Name="Address" Type="string" IsOptional="true" MaxLength="60" />
+          <Field Name="BirthDate" Type="datetime" IsOptional="true" />
+          <Field Name="City" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="Country" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="EmployeeId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="Extension" Type="string" IsOptional="true" MaxLength="4" />
+          <Field Name="FirstName" Type="string" MaxLength="10" />
+          <Field Name="HireDate" Type="datetime" IsOptional="true" />
+          <Field Name="LastName" Type="string" MaxLength="20" />
+          <Field Name="Notes" Type="string" IsOptional="true" MaxLength="1073741823" />
+          <Field Name="Phone" Type="string" IsOptional="true" MaxLength="24" />
+          <Field Name="Photo" Type="byte[]" IsOptional="true" MaxLength="2147483647" />
+          <Field Name="PhotoPath" Type="string" IsOptional="true" MaxLength="255" />
+          <Field Name="PostalCode" Type="string" IsOptional="true" MaxLength="10" />
+          <Field Name="Region" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="RegionId" Type="int" IsOptional="true" IsAutoCreated="true" />
+          <Field Name="ReportsTo" Type="int" IsOptional="true" IsAutoCreated="true" />
+          <Field Name="Title" Type="string" IsOptional="true" MaxLength="30" />
+          <Field Name="TitleOfCourtesy" Type="string" IsOptional="true" MaxLength="25" />
+        </Fields>
+        <Forfs>
+          <Forf Name="ManagerFirstName" MappedField=":Employee:FirstName" RelationshipName="Employee.Employee-Employee.Employees" ViaStartNavigator="true" IsReadOnly="true" />
+          <Forf Name="ManagerLastName" MappedField=":Employee:LastName" RelationshipName="Employee.Employee-Employee.Employees" ViaStartNavigator="true" IsReadOnly="true" />
+        </Forfs>
+      </EntityDefinition>
+      <EntityDefinition Name="EmployeeTerritory">
+        <Fields>
+          <Field Name="EmployeeId" Type="int" IsPrimaryKey="true" IsAutoCreated="true" />
+          <Field Name="TerritoryId" Type="string" MaxLength="20" IsPrimaryKey="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="FksideCompoundKey">
+        <Fields>
+          <Field Name="Amount" Type="int" IsOptional="true" />
+          <Field Name="Id" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="Idfield1" Type="int" IsOptional="true" IsAutoCreated="true" />
+          <Field Name="Idfield2" Type="int" IsOptional="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Order">
+        <Fields>
+          <Field Name="CustomerId" Type="string" IsOptional="true" MaxLength="5" IsAutoCreated="true" />
+          <Field Name="EmployeeId" Type="int" IsOptional="true" IsAutoCreated="true" />
+          <Field Name="Freight" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
+          <Field Name="OrderDate" Type="datetime" IsOptional="true" />
+          <Field Name="OrderId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="RequiredDate" Type="datetime" IsOptional="true" />
+          <Field Name="ShipAddress" Type="string" IsOptional="true" MaxLength="60" />
+          <Field Name="ShipCity" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="ShipCountry" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="ShipName" Type="string" IsOptional="true" MaxLength="40" />
+          <Field Name="ShippedDate" Type="datetime" IsOptional="true" />
+          <Field Name="ShipPostalCode" Type="string" IsOptional="true" MaxLength="10" />
+          <Field Name="ShipRegion" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="ShipVia" Type="int" IsOptional="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="OrderAuditInfo">
+        <Fields>
+          <Field Name="AuditInfoId" Type="int" IsPrimaryKey="true" />
+          <Field Name="OrderId" Type="int" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="OrderDetail">
+        <Fields>
+          <Field Name="Discount" Type="single" />
+          <Field Name="OrderId" Type="int" IsPrimaryKey="true" IsAutoCreated="true" />
+          <Field Name="ProductId" Type="int" IsPrimaryKey="true" IsAutoCreated="true" />
+          <Field Name="Quantity" Type="short" />
+          <Field Name="UnitPrice" Type="decimal" Precision="19" Scale="4" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="PksideCompoundKey">
+        <Fields>
+          <Field Name="Idfield1" Type="int" IsPrimaryKey="true" />
+          <Field Name="Idfield2" Type="int" IsPrimaryKey="true" />
+          <Field Name="Name" Type="string" MaxLength="50" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Product">
+        <Fields>
+          <Field Name="CategoryId" Type="int" IsOptional="true" IsAutoCreated="true" />
+          <Field Name="Discontinued" Type="bool" />
+          <Field Name="ProductId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="ProductName" Type="string" MaxLength="40" />
+          <Field Name="QuantityPerUnit" Type="string" IsOptional="true" MaxLength="20" />
+          <Field Name="ReorderLevel" Type="short" IsOptional="true" />
+          <Field Name="SupplierId" Type="int" IsOptional="true" IsAutoCreated="true" />
+          <Field Name="UnitPrice" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
+          <Field Name="UnitsInStock" Type="short" IsOptional="true" />
+          <Field Name="UnitsOnOrder" Type="short" IsOptional="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="ProductEnumTest">
+        <Fields>
+          <Field Name="CategoryId" Type="CategoryType" IsOptional="true" Precision="10" />
+          <Field Name="Discontinued" Type="bool" />
+          <Field Name="ProductId" Type="int" IsReadOnly="true" Precision="10" IsPrimaryKey="true" />
+          <Field Name="ProductName" Type="string" MaxLength="40" />
+          <Field Name="QuantityPerUnit" Type="string" IsOptional="true" MaxLength="20" />
+          <Field Name="ReorderLevel" Type="short" IsOptional="true" Precision="5" />
+          <Field Name="SupplierId" Type="int" IsOptional="true" Precision="10" />
+          <Field Name="UnitPrice" Type="decimal" IsOptional="true" Precision="19" Scale="4" />
+          <Field Name="UnitsInStock" Type="short" IsOptional="true" Precision="5" />
+          <Field Name="UnitsOnOrder" Type="short" IsOptional="true" Precision="5" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Region">
+        <Fields>
+          <Field Name="RegionDescription" Type="string" MaxLength="50" />
+          <Field Name="RegionId" Type="int" IsPrimaryKey="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Shipper">
+        <Fields>
+          <Field Name="CompanyName" Type="string" MaxLength="40" />
+          <Field Name="Phone" Type="string" IsOptional="true" MaxLength="24" />
+          <Field Name="ShipperId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Supplier">
+        <Fields>
+          <Field Name="Address" Type="string" IsOptional="true" MaxLength="60" />
+          <Field Name="City" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="CompanyName" Type="string" MaxLength="40" />
+          <Field Name="ContactName" Type="string" IsOptional="true" MaxLength="30" />
+          <Field Name="ContactTitle" Type="string" IsOptional="true" MaxLength="30" />
+          <Field Name="Country" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="Fax" Type="string" IsOptional="true" MaxLength="24" />
+          <Field Name="HomePage" Type="string" IsOptional="true" MaxLength="1073741823" />
+          <Field Name="Phone" Type="string" IsOptional="true" MaxLength="24" />
+          <Field Name="PostalCode" Type="string" IsOptional="true" MaxLength="10" />
+          <Field Name="Region" Type="string" IsOptional="true" MaxLength="15" />
+          <Field Name="SupplierId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Territory">
+        <Fields>
+          <Field Name="RegionId" Type="int" IsAutoCreated="true" />
+          <Field Name="TerritoryDescription" Type="string" MaxLength="50" />
+          <Field Name="TerritoryId" Type="string" MaxLength="20" IsPrimaryKey="true" />
+          <Field Name="Test" Type="byte[]" IsOptional="true" MaxLength="50" />
+        </Fields>
+      </EntityDefinition>
+    </EntityDefinitions>
+    <Relationships>
+      <NormalRelationship Name="CustomerCustomerDemo.Customer-Customer.CustomerCustomerDemos" Start=":CustomerCustomerDemo" End=":Customer" StartNavigator="Customer" EndNavigator="CustomerCustomerDemos" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="CustomerId" PkField="CustomerId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="CustomerCustomerDemo.CustomerDemographic-CustomerDemographic.CustomerCustomerDemos" Start=":CustomerCustomerDemo" End=":CustomerDemographic" StartNavigator="CustomerDemographic" EndNavigator="CustomerCustomerDemos" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="CustomerTypeId" PkField="CustomerTypeId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Employee.Employee-Employee.Employees" Start=":Employee" End=":Employee" StartNavigator="Employee" EndNavigator="Employees" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="ReportsTo" PkField="EmployeeId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Employee.Region_-Region.Employees" Start=":Employee" End=":Region" StartNavigator="Region_" EndNavigator="Employees" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="RegionId" PkField="RegionId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="EmployeeTerritory.Employee-Employee.EmployeeTerritories" Start=":EmployeeTerritory" End=":Employee" StartNavigator="Employee" EndNavigator="EmployeeTerritories" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="EmployeeId" PkField="EmployeeId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="EmployeeTerritory.Territory-Territory.EmployeeTerritories" Start=":EmployeeTerritory" End=":Territory" StartNavigator="Territory" EndNavigator="EmployeeTerritories" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="TerritoryId" PkField="TerritoryId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="FksideCompoundKey.PksideCompoundKey-PksideCompoundKey.FksideCompoundKeys" Start=":FksideCompoundKey" End=":PksideCompoundKey" StartNavigator="PksideCompoundKey" EndNavigator="FksideCompoundKeys" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="Idfield1" PkField="Idfield1" />
+          <FieldFieldRelationship FkField="Idfield2" PkField="Idfield2" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Order.Customer-Customer.Orders" Start=":Order" End=":Customer" StartNavigator="Customer" EndNavigator="Orders" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="CustomerId" PkField="CustomerId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Order.Employee-Employee.Orders" Start=":Order" End=":Employee" StartNavigator="Employee" EndNavigator="Orders" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="EmployeeId" PkField="EmployeeId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Order.Shipper-Shipper.Orders" Start=":Order" End=":Shipper" StartNavigator="Shipper" EndNavigator="Orders" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="ShipVia" PkField="ShipperId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="OrderAuditInfo.Order-Order.OrderAuditInfos" Start=":OrderAuditInfo" End=":Order" StartNavigator="Order" EndNavigator="OrderAuditInfos" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="OrderId" PkField="OrderId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="OrderDetail.Order-Order.OrderDetails" Start=":OrderDetail" End=":Order" StartNavigator="Order" EndNavigator="OrderDetails" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="OrderId" PkField="OrderId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="OrderDetail.Product-Product.OrderDetails" Start=":OrderDetail" End=":Product" StartNavigator="Product" EndNavigator="OrderDetails" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="ProductId" PkField="ProductId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Product.Category-Category.Products" Start=":Product" End=":Category" StartNavigator="Category" EndNavigator="Products" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="CategoryId" PkField="CategoryId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Product.Supplier-Supplier.Products" Start=":Product" End=":Supplier" StartNavigator="Supplier" EndNavigator="Products" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="SupplierId" PkField="SupplierId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Territory.Region-Region.Territories" Start=":Territory" End=":Region" StartNavigator="Region" EndNavigator="Territories" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="RegionId" PkField="RegionId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <IndirectRelationship Start=":Category" End=":Supplier" StartNavigator="SupplierCollectionViaProduct" EndNavigator="CategoryCollectionViaProduct" Relationship1="Product.Category-Category.Products" Relationship2="Product.Supplier-Supplier.Products" />
+      <IndirectRelationship Start=":Customer" End=":CustomerDemographic" StartNavigator="CustomerDemographicCollectionViaCustomerCustomerDemo" EndNavigator="CustomerCollectionViaCustomerCustomerDemo" Relationship1="CustomerCustomerDemo.Customer-Customer.CustomerCustomerDemos" Relationship2="CustomerCustomerDemo.CustomerDemographic-CustomerDemographic.CustomerCustomerDemos" />
+      <IndirectRelationship Start=":Customer" End=":Shipper" StartNavigator="ShipperCollectionViaOrder" EndNavigator="CustomerCollectionViaOrder" Relationship1="Order.Customer-Customer.Orders" Relationship2="Order.Shipper-Shipper.Orders" />
+      <IndirectRelationship Start=":Employee" End=":Customer" StartNavigator="CustomerCollectionViaOrder" EndNavigator="EmployeeCollectionViaOrder" Relationship1="Order.Employee-Employee.Orders" Relationship2="Order.Customer-Customer.Orders" />
+      <IndirectRelationship Start=":Employee" End=":Region" StartNavigator="RegionCollectionViaEmployee" EndNavigator="EmployeeCollectionViaEmployee" Relationship1="Employee.Employee-Employee.Employees" Relationship2="Employee.Region_-Region.Employees" />
+      <IndirectRelationship Start=":Employee" End=":Shipper" StartNavigator="ShipperCollectionViaOrder" EndNavigator="EmployeeCollectionViaOrder" Relationship1="Order.Employee-Employee.Orders" Relationship2="Order.Shipper-Shipper.Orders" />
+      <IndirectRelationship Start=":Employee" End=":Territory" StartNavigator="TerritoryCollectionViaEmployeeTerritory" EndNavigator="EmployeeCollectionViaEmployeeTerritory" Relationship1="EmployeeTerritory.Employee-Employee.EmployeeTerritories" Relationship2="EmployeeTerritory.Territory-Territory.EmployeeTerritories" />
+      <IndirectRelationship Start=":Product" End=":Order" StartNavigator="OrderCollectionViaOrderDetail" EndNavigator="ProductCollectionViaOrderDetail" Relationship1="OrderDetail.Product-Product.OrderDetails" Relationship2="OrderDetail.Order-Order.OrderDetails" />
+    </Relationships>
+    <InheritanceHierarchies />
+  </EntityModel>
+  <TypedListDefinitions>
+    <TypedListDefinition Name="OrderCustomer">
+      <EntityAliases>
+        <EntityAlias Entity=":Customer" />
+        <EntityAlias Entity=":Employee" />
+        <EntityAlias Entity=":Order" />
+      </EntityAliases>
+      <Fields>
+        <Field FieldAlias="OrderId" TargetField="Order.OrderId" />
+        <Field FieldAlias="CustomerId" TargetField="Order.CustomerId" />
+        <Field FieldAlias="EmployeeId" TargetField="Order.EmployeeId" />
+        <Field FieldAlias="OrderDate" TargetField="Order.OrderDate" />
+        <Field FieldAlias="RequiredDate" TargetField="Order.RequiredDate" />
+        <Field FieldAlias="ShippedDate" TargetField="Order.ShippedDate" />
+        <Field FieldAlias="ContactName" TargetField="Customer.ContactName" />
+        <Field FieldAlias="CompanyName" TargetField="Customer.CompanyName" />
+        <Field FieldAlias="FirstName" TargetField="Employee.FirstName" />
+        <Field FieldAlias="LastName" TargetField="Employee.LastName" />
+      </Fields>
+      <Relationships>
+        <Relationship Name="Order.Customer-Customer.Orders" StartAlias="Order" EndAlias="Customer" JoinHint="1" StartAliasIsStartVertex="true" />
+        <Relationship Name="Order.Employee-Employee.Orders" StartAlias="Order" EndAlias="Employee" JoinHint="1" StartAliasIsStartVertex="true" />
+      </Relationships>
+    </TypedListDefinition>
+  </TypedListDefinitions>
+  <TypedViewDefinitions>
+    <TypedViewDefinition Name="Invoices">
+      <Fields>
+        <Field Name="Address" Type="string" MaxLength="60" />
+        <Field Name="City" Type="string" MaxLength="15" />
+        <Field Name="Country" Type="string" MaxLength="15" />
+        <Field Name="CustomerId" Type="string" MaxLength="5" />
+        <Field Name="CustomerName" Type="string" MaxLength="40" />
+        <Field Name="Discount" Type="single" />
+        <Field Name="ExtendedPrice" Type="decimal" Precision="19" Scale="4" />
+        <Field Name="Freight" Type="decimal" Precision="19" Scale="4" />
+        <Field Name="OrderDate" Type="datetime" />
+        <Field Name="OrderId" Type="int" />
+        <Field Name="PostalCode" Type="string" MaxLength="10" />
+        <Field Name="ProductId" Type="int" />
+        <Field Name="ProductName" Type="string" MaxLength="40" />
+        <Field Name="Quantity" Type="short" />
+        <Field Name="Region" Type="string" MaxLength="15" />
+        <Field Name="RequiredDate" Type="datetime" />
+        <Field Name="Salesperson" Type="string" MaxLength="31" />
+        <Field Name="ShipAddress" Type="string" MaxLength="60" />
+        <Field Name="ShipCity" Type="string" MaxLength="15" />
+        <Field Name="ShipCountry" Type="string" MaxLength="15" />
+        <Field Name="ShipName" Type="string" MaxLength="40" />
+        <Field Name="ShippedDate" Type="datetime" />
+        <Field Name="ShipperName" Type="string" MaxLength="40" />
+        <Field Name="ShipPostalCode" Type="string" MaxLength="10" />
+        <Field Name="ShipRegion" Type="string" MaxLength="15" />
+        <Field Name="UnitPrice" Type="decimal" Precision="19" Scale="4" />
+      </Fields>
+    </TypedViewDefinition>
+    <TypedViewDefinition Name="QuarterlyOrders">
+      <Fields>
+        <Field Name="City" Type="string" MaxLength="15" />
+        <Field Name="CompanyName" Type="string" MaxLength="40" />
+        <Field Name="Country" Type="string" MaxLength="15" />
+        <Field Name="CustomerId" Type="string" MaxLength="5" />
+      </Fields>
+    </TypedViewDefinition>
+  </TypedViewDefinitions>
+  <SPCallDefinitions>
+    <SPCallDefinition Name="CustOrdersDetail">
+      <Parameters>
+        <Parameter Name="OrderId" Type="int" />
+      </Parameters>
+    </SPCallDefinition>
+    <SPCallDefinition Name="CustOrdersOrders">
+      <Parameters>
+        <Parameter Name="CustomerId" Type="string" MaxLength="5" />
+      </Parameters>
+    </SPCallDefinition>
+    <SPCallDefinition Name="EmployeeSalesByCountry">
+      <Parameters>
+        <Parameter Name="BeginningDate" Type="datetime" />
+        <Parameter Name="EndingDate" Type="datetime" />
+      </Parameters>
+    </SPCallDefinition>
+    <SPCallDefinition Name="OutputTest">
+      <Parameters>
+        <Parameter Name="Var" Type="string" MaxLength="50" Direction="3" />
+      </Parameters>
+    </SPCallDefinition>
+    <SPCallDefinition Name="SalesByCategory">
+      <Parameters>
+        <Parameter Name="CategoryName" Type="string" MaxLength="15" />
+        <Parameter Name="OrdYear" Type="string" MaxLength="4" />
+      </Parameters>
+    </SPCallDefinition>
+    <SPCallDefinition Name="SalesByYear">
+      <Parameters>
+        <Parameter Name="BeginningDate" Type="datetime" />
+        <Parameter Name="EndingDate" Type="datetime" />
+      </Parameters>
+    </SPCallDefinition>
+  </SPCallDefinitions>
+  <TargetDatabases>
+    <TargetDatabase Type="2D18D138-1DD2-467E-86CC-4838250611AE">
+      <ConnectionElements>
+        <ConnectionElement Name="ServerName" Value="nerd" />
+        <ConnectionElement Name="CatalogName" Value="Northwind" />
+        <ConnectionElement Name="UseWindowsAuthentication" Value="True" />
+        <ConnectionElement Name="UserID" Value="" />
+        <ConnectionElement Name="Password" Value="" />
+      </ConnectionElements>
+      <SystemSequences>
+        <Sequence Name="SCOPE_IDENTITY()" />
+        <Sequence Name="@@IDENTITY" />
+      </SystemSequences>
+      <Catalogs>
+        <Catalog Name="Northwind">
+          <Schemas>
+            <Schema Name="dbo">
+              <Tables>
+                <Table Name="AuditActionType">
+                  <Fields>
+                    <Field Name="AuditActionTypeID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_994ea8849069f6705b4a572a93a" DbType="8" Precision="10" />
+                    <Field Name="Name" Ordinal="2" DbType="24" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="AuditInfo">
+                  <Fields>
+                    <Field Name="AuditInfoID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_e5a4f8c431ba96c2860b943939b" DbType="8" Precision="10" />
+                    <Field Name="ActionDateTime" Ordinal="2" DbType="4" />
+                    <Field Name="AffectedEntityName" Ordinal="3" DbType="24" Length="100" />
+                    <Field Name="AuditActionTypeID" Ordinal="4" DbType="8" Precision="10" />
+                    <Field Name="ActionData" Ordinal="5" IsOptional="true" DbType="24" Length="250" />
+                    <Field Name="UserID" Ordinal="6" DbType="24" Length="15" />
+                  </Fields>
+                </Table>
+                <Table Name="Categories">
+                  <Fields>
+                    <Field Name="CategoryID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_6118a2e4ecf85c8457954ff4d78" DbType="8" Precision="10" />
+                    <Field Name="CategoryName" Ordinal="2" DbType="12" Length="15" />
+                    <Field Name="Description" Ordinal="3" IsOptional="true" DbType="11" Length="1073741823" />
+                    <Field Name="Picture" Ordinal="4" IsOptional="true" DbType="7" Length="2147483647" />
+                  </Fields>
+                </Table>
+                <Table Name="CustomerCustomerDemo">
+                  <Fields>
+                    <Field Name="CustomerID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_0b0ef1c422f9a4e905dbc70c622" DbType="10" Length="5" />
+                    <Field Name="CustomerTypeID" Ordinal="2" IsPrimaryKey="true" PkConstraintName="PK_0b0ef1c422f9a4e905dbc70c622" DbType="10" Length="10" />
+                  </Fields>
+                </Table>
+                <Table Name="CustomerDemographics">
+                  <Fields>
+                    <Field Name="CustomerTypeID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_6901f3541c2b7fd45776c9cedf8" DbType="10" Length="10" />
+                    <Field Name="CustomerDesc" Ordinal="2" IsOptional="true" DbType="11" Length="1073741823" />
+                  </Fields>
+                </Table>
+                <Table Name="Customers">
+                  <Fields>
+                    <Field Name="CustomerID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_8781fa44f30812142118e3c6019" DbType="10" Length="5" />
+                    <Field Name="CompanyName" Ordinal="2" DbType="12" Length="40" />
+                    <Field Name="ContactName" Ordinal="3" IsOptional="true" DbType="12" Length="30" />
+                    <Field Name="ContactTitle" Ordinal="4" IsOptional="true" DbType="12" Length="30" />
+                    <Field Name="Address" Ordinal="5" IsOptional="true" DbType="12" Length="60" />
+                    <Field Name="City" Ordinal="6" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="Region" Ordinal="7" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="PostalCode" Ordinal="8" IsOptional="true" DbType="12" Length="10" />
+                    <Field Name="Country" Ordinal="9" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="Phone" Ordinal="10" IsOptional="true" DbType="12" Length="24" />
+                    <Field Name="Fax" Ordinal="11" IsOptional="true" DbType="12" Length="24" />
+                  </Fields>
+                  <UniqueConstraints>
+                    <UniqueConstraint Name="CompanyName">
+                      <Field Name="CompanyName" />
+                    </UniqueConstraint>
+                  </UniqueConstraints>
+                </Table>
+                <Table Name="Customers_TS">
+                  <Fields>
+                    <Field Name="CustomerID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_b84e80f486aaa85ecf0bba77913" DbType="10" Length="5" />
+                    <Field Name="CompanyName" Ordinal="2" DbType="12" Length="40" />
+                    <Field Name="ContactName" Ordinal="3" IsOptional="true" DbType="12" Length="30" />
+                    <Field Name="ContactTitle" Ordinal="4" IsOptional="true" DbType="12" Length="30" />
+                    <Field Name="Address" Ordinal="5" IsOptional="true" DbType="12" Length="60" />
+                    <Field Name="City" Ordinal="6" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="Region" Ordinal="7" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="PostalCode" Ordinal="8" IsOptional="true" DbType="12" Length="10" />
+                    <Field Name="Country" Ordinal="9" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="Phone" Ordinal="10" IsOptional="true" DbType="12" Length="24" />
+                    <Field Name="Fax" Ordinal="11" IsOptional="true" DbType="12" Length="24" />
+                    <Field Name="TStamp" Ordinal="12" IsTimestamp="true" DbType="21" Length="8" />
+                  </Fields>
+                  <UniqueConstraints>
+                    <UniqueConstraint Name="CompanyName_TS">
+                      <Field Name="CompanyName" />
+                    </UniqueConstraint>
+                  </UniqueConstraints>
+                </Table>
+                <Table Name="Employees">
+                  <Fields>
+                    <Field Name="EmployeeID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_6e33a294ba3a60e8f9a2d9a0230" DbType="8" Precision="10" />
+                    <Field Name="LastName" Ordinal="2" DbType="12" Length="20" />
+                    <Field Name="FirstName" Ordinal="3" DbType="12" Length="10" />
+                    <Field Name="Title" Ordinal="4" IsOptional="true" DbType="12" Length="30" />
+                    <Field Name="TitleOfCourtesy" Ordinal="5" IsOptional="true" DbType="12" Length="25" />
+                    <Field Name="BirthDate" Ordinal="6" IsOptional="true" DbType="4" />
+                    <Field Name="HireDate" Ordinal="7" IsOptional="true" DbType="4" />
+                    <Field Name="Address" Ordinal="8" IsOptional="true" DbType="12" Length="60" />
+                    <Field Name="City" Ordinal="9" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="Region" Ordinal="10" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="PostalCode" Ordinal="11" IsOptional="true" DbType="12" Length="10" />
+                    <Field Name="Country" Ordinal="12" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="HomePhone" Ordinal="13" IsOptional="true" DbType="12" Length="24" />
+                    <Field Name="Extension" Ordinal="14" IsOptional="true" DbType="12" Length="4" />
+                    <Field Name="Photo" Ordinal="15" IsOptional="true" DbType="7" Length="2147483647" />
+                    <Field Name="Notes" Ordinal="16" IsOptional="true" DbType="11" Length="1073741823" />
+                    <Field Name="ReportsTo" Ordinal="17" IsOptional="true" DbType="8" Precision="10" />
+                    <Field Name="PhotoPath" Ordinal="18" IsOptional="true" DbType="12" Length="255" />
+                    <Field Name="RegionID" Ordinal="19" IsOptional="true" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="Employees2">
+                  <Fields>
+                    <Field Name="EmployeeID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_95e749f4080b0fb5b7119da3204" DbType="8" Precision="10" />
+                    <Field Name="LastName" Ordinal="2" DbType="12" Length="20" />
+                    <Field Name="FirstName" Ordinal="3" DbType="12" Length="10" />
+                    <Field Name="Title" Ordinal="4" IsOptional="true" DbType="12" Length="30" />
+                    <Field Name="TitleOfCourtesy" Ordinal="5" DbType="12" Length="25" />
+                    <Field Name="BirthDate" Ordinal="6" IsOptional="true" DbType="4" />
+                    <Field Name="HireDate" Ordinal="7" IsOptional="true" DbType="4" />
+                    <Field Name="Address" Ordinal="8" IsOptional="true" DbType="12" Length="60" />
+                    <Field Name="City" Ordinal="9" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="Region" Ordinal="10" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="PostalCode" Ordinal="11" IsOptional="true" DbType="12" Length="10" />
+                    <Field Name="Country" Ordinal="12" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="HomePhone" Ordinal="13" IsOptional="true" DbType="12" Length="24" />
+                    <Field Name="Extension" Ordinal="14" IsOptional="true" DbType="12" Length="4" />
+                    <Field Name="Photo" Ordinal="15" IsOptional="true" DbType="7" Length="2147483647" />
+                    <Field Name="Notes" Ordinal="16" IsOptional="true" DbType="11" Length="1073741823" />
+                    <Field Name="ReportsTo" Ordinal="17" IsOptional="true" DbType="8" Precision="10" />
+                    <Field Name="PhotoPath" Ordinal="18" IsOptional="true" DbType="12" Length="255" />
+                    <Field Name="RegionID" Ordinal="19" IsOptional="true" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="EmployeeTerritories">
+                  <Fields>
+                    <Field Name="EmployeeID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_0828ca542a9b5b5dc02737b3963" DbType="8" Precision="10" />
+                    <Field Name="TerritoryID" Ordinal="2" IsPrimaryKey="true" PkConstraintName="PK_0828ca542a9b5b5dc02737b3963" DbType="12" Length="20" />
+                  </Fields>
+                </Table>
+                <Table Name="FKSideCompoundKey">
+                  <Fields>
+                    <Field Name="ID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_853bed241f79435e9d3f12822e6" DbType="8" Precision="10" />
+                    <Field Name="Amount" Ordinal="2" IsOptional="true" DbType="8" Precision="10" />
+                    <Field Name="IDField1" Ordinal="3" IsOptional="true" DbType="8" Precision="10" />
+                    <Field Name="IDField2" Ordinal="4" IsOptional="true" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="Group">
+                  <Fields>
+                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_0863b21435ca5ebc62769240d71" DbType="8" Precision="10" />
+                    <Field Name="Name" Ordinal="2" IsOptional="true" DbType="12" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="Order Details">
+                  <Fields>
+                    <Field Name="OrderID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_1ddf5c3403dab9b0ac9ea956ca4" DbType="8" Precision="10" />
+                    <Field Name="ProductID" Ordinal="2" IsPrimaryKey="true" PkConstraintName="PK_1ddf5c3403dab9b0ac9ea956ca4" DbType="8" Precision="10" />
+                    <Field Name="UnitPrice" Ordinal="3" DefaultValue="(0)" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="Quantity" Ordinal="4" DefaultValue="(1)" DbType="16" Precision="5" />
+                    <Field Name="Discount" Ordinal="5" DefaultValue="(0)" DbType="14" Precision="24" />
+                  </Fields>
+                </Table>
+                <Table Name="OrderAuditInfo">
+                  <Fields>
+                    <Field Name="AuditInfoID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_b06b9a4435a8ecdf5f42277d38f" DbType="8" Precision="10" />
+                    <Field Name="OrderID" Ordinal="2" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="Orders">
+                  <Fields>
+                    <Field Name="OrderID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_73a8d5a4be1aac49629f6404b4e" DbType="8" Precision="10" />
+                    <Field Name="CustomerID" Ordinal="2" IsOptional="true" DbType="10" Length="5" />
+                    <Field Name="EmployeeID" Ordinal="3" IsOptional="true" DbType="8" Precision="10" />
+                    <Field Name="OrderDate" Ordinal="4" IsOptional="true" DbType="4" />
+                    <Field Name="RequiredDate" Ordinal="5" IsOptional="true" DbType="4" />
+                    <Field Name="ShippedDate" Ordinal="6" IsOptional="true" DbType="4" />
+                    <Field Name="ShipVia" Ordinal="7" IsOptional="true" DbType="8" Precision="10" />
+                    <Field Name="Freight" Ordinal="8" IsOptional="true" DefaultValue="(0)" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="ShipName" Ordinal="9" IsOptional="true" DbType="12" Length="40" />
+                    <Field Name="ShipAddress" Ordinal="10" IsOptional="true" DbType="12" Length="60" />
+                    <Field Name="ShipCity" Ordinal="11" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="ShipRegion" Ordinal="12" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="ShipPostalCode" Ordinal="13" IsOptional="true" DbType="12" Length="10" />
+                    <Field Name="ShipCountry" Ordinal="14" IsOptional="true" DbType="12" Length="15" />
+                  </Fields>
+                </Table>
+                <Table Name="PKSideCompoundKey">
+                  <Fields>
+                    <Field Name="IDField1" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_4b0d287421c8f9145ca83f454f1" DbType="8" Precision="10" />
+                    <Field Name="IDField2" Ordinal="2" IsPrimaryKey="true" PkConstraintName="PK_4b0d287421c8f9145ca83f454f1" DbType="8" Precision="10" />
+                    <Field Name="Name" Ordinal="3" DbType="24" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="Products">
+                  <Fields>
+                    <Field Name="ProductID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_b7181354bd1b54b30610897eb6b" DbType="8" Precision="10" />
+                    <Field Name="ProductName" Ordinal="2" DbType="12" Length="40" />
+                    <Field Name="SupplierID" Ordinal="3" IsOptional="true" DbType="8" Precision="10" />
+                    <Field Name="CategoryID" Ordinal="4" IsOptional="true" DbType="8" Precision="10" />
+                    <Field Name="QuantityPerUnit" Ordinal="5" IsOptional="true" DbType="12" Length="20" />
+                    <Field Name="UnitPrice" Ordinal="6" IsOptional="true" DefaultValue="(0)" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="UnitsInStock" Ordinal="7" IsOptional="true" DefaultValue="(0)" DbType="16" Precision="5" />
+                    <Field Name="UnitsOnOrder" Ordinal="8" IsOptional="true" DefaultValue="(0)" DbType="16" Precision="5" />
+                    <Field Name="ReorderLevel" Ordinal="9" IsOptional="true" DefaultValue="(0)" DbType="16" Precision="5" />
+                    <Field Name="Discontinued" Ordinal="10" DefaultValue="(0)" DbType="2" />
+                  </Fields>
+                </Table>
+                <Table Name="Region">
+                  <Fields>
+                    <Field Name="RegionID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_7a828d8438d973a7e01d791f22d" DbType="8" Precision="10" />
+                    <Field Name="RegionDescription" Ordinal="2" DbType="10" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="Shippers">
+                  <Fields>
+                    <Field Name="ShipperID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_c659c4d4242a12ad0510f8ba00b" DbType="8" Precision="10" />
+                    <Field Name="CompanyName" Ordinal="2" DbType="12" Length="40" />
+                    <Field Name="Phone" Ordinal="3" IsOptional="true" DefaultValue="(5551313)" DbType="12" Length="24" />
+                  </Fields>
+                </Table>
+                <Table Name="Suppliers">
+                  <Fields>
+                    <Field Name="SupplierID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_285b22b4f688373189921c86a1f" DbType="8" Precision="10" />
+                    <Field Name="CompanyName" Ordinal="2" DbType="12" Length="40" />
+                    <Field Name="ContactName" Ordinal="3" IsOptional="true" DbType="12" Length="30" />
+                    <Field Name="ContactTitle" Ordinal="4" IsOptional="true" DbType="12" Length="30" />
+                    <Field Name="Address" Ordinal="5" IsOptional="true" DbType="12" Length="60" />
+                    <Field Name="City" Ordinal="6" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="Region" Ordinal="7" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="PostalCode" Ordinal="8" IsOptional="true" DbType="12" Length="10" />
+                    <Field Name="Country" Ordinal="9" IsOptional="true" DbType="12" Length="15" />
+                    <Field Name="Phone" Ordinal="10" IsOptional="true" DbType="12" Length="24" />
+                    <Field Name="Fax" Ordinal="11" IsOptional="true" DbType="12" Length="24" />
+                    <Field Name="HomePage" Ordinal="12" IsOptional="true" DbType="11" Length="1073741823" />
+                  </Fields>
+                </Table>
+                <Table Name="Territories">
+                  <Fields>
+                    <Field Name="TerritoryID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_8e257c34b64b4fc25b5e4836e2d" DbType="12" Length="20" />
+                    <Field Name="TerritoryDescription" Ordinal="2" DbType="10" Length="50" />
+                    <Field Name="RegionID" Ordinal="3" DbType="8" Precision="10" />
+                    <Field Name="test" Ordinal="4" IsOptional="true" DbType="1" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="User">
+                  <Fields>
+                    <Field Name="UserID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_6879fa942acad1e2664940a245e" DbType="24" Length="15" />
+                    <Field Name="Password" Ordinal="2" DbType="24" Length="15" />
+                    <Field Name="FullName" Ordinal="3" IsOptional="true" DbType="24" Length="150" />
+                  </Fields>
+                </Table>
+                <Table Name="User2">
+                  <Fields>
+                    <Field Name="UserID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_3a84a4245abbc6dca056697e63a" DbType="24" Length="15" />
+                    <Field Name="Password" Ordinal="2" DbType="24" Length="15" />
+                    <Field Name="FullName" Ordinal="3" IsOptional="true" DbType="24" Length="150" />
+                    <Field Name="RowStamp" Ordinal="4" IsTimestamp="true" DbType="21" Length="8" />
+                  </Fields>
+                </Table>
+                <Table Name="UserGroup">
+                  <Fields>
+                    <Field Name="UserId" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_2f4d3f54d71b23eb5d0e25ae2b8" DbType="24" Length="15" />
+                    <Field Name="GroupId" Ordinal="2" IsPrimaryKey="true" PkConstraintName="PK_2f4d3f54d71b23eb5d0e25ae2b8" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+              </Tables>
+              <Views>
+                <View Name="Alphabetical list of products">
+                  <Fields>
+                    <Field Name="ProductID" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="ProductName" Ordinal="2" DbType="12" Length="40" />
+                    <Field Name="SupplierID" Ordinal="3" DbType="8" Precision="10" />
+                    <Field Name="CategoryID" Ordinal="4" DbType="8" Precision="10" />
+                    <Field Name="QuantityPerUnit" Ordinal="5" DbType="12" Length="20" />
+                    <Field Name="UnitPrice" Ordinal="6" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="UnitsInStock" Ordinal="7" DbType="16" Precision="5" />
+                    <Field Name="UnitsOnOrder" Ordinal="8" DbType="16" Precision="5" />
+                    <Field Name="ReorderLevel" Ordinal="9" DbType="16" Precision="5" />
+                    <Field Name="Discontinued" Ordinal="10" DbType="2" />
+                    <Field Name="CategoryName" Ordinal="11" DbType="12" Length="15" />
+                  </Fields>
+                </View>
+                <View Name="Category Sales for 1997">
+                  <Fields>
+                    <Field Name="CategoryName" Ordinal="1" DbType="12" Length="15" />
+                    <Field Name="CategorySales" Ordinal="2" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </View>
+                <View Name="Current Product List">
+                  <Fields>
+                    <Field Name="ProductID" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="ProductName" Ordinal="2" DbType="12" Length="40" />
+                  </Fields>
+                </View>
+                <View Name="Customer and Suppliers by City">
+                  <Fields>
+                    <Field Name="City" Ordinal="1" DbType="12" Length="15" />
+                    <Field Name="CompanyName" Ordinal="2" DbType="12" Length="40" />
+                    <Field Name="ContactName" Ordinal="3" DbType="12" Length="30" />
+                    <Field Name="Relationship" Ordinal="4" DbType="24" Length="9" />
+                  </Fields>
+                </View>
+                <View Name="Invoices">
+                  <Fields>
+                    <Field Name="ShipName" Ordinal="1" DbType="12" Length="40" />
+                    <Field Name="ShipAddress" Ordinal="2" DbType="12" Length="60" />
+                    <Field Name="ShipCity" Ordinal="3" DbType="12" Length="15" />
+                    <Field Name="ShipRegion" Ordinal="4" DbType="12" Length="15" />
+                    <Field Name="ShipPostalCode" Ordinal="5" DbType="12" Length="10" />
+                    <Field Name="ShipCountry" Ordinal="6" DbType="12" Length="15" />
+                    <Field Name="CustomerID" Ordinal="7" DbType="10" Length="5" />
+                    <Field Name="CustomerName" Ordinal="8" DbType="12" Length="40" />
+                    <Field Name="Address" Ordinal="9" DbType="12" Length="60" />
+                    <Field Name="City" Ordinal="10" DbType="12" Length="15" />
+                    <Field Name="Region" Ordinal="11" DbType="12" Length="15" />
+                    <Field Name="PostalCode" Ordinal="12" DbType="12" Length="10" />
+                    <Field Name="Country" Ordinal="13" DbType="12" Length="15" />
+                    <Field Name="Salesperson" Ordinal="14" DbType="12" Length="31" />
+                    <Field Name="OrderID" Ordinal="15" DbType="8" Precision="10" />
+                    <Field Name="OrderDate" Ordinal="16" DbType="4" />
+                    <Field Name="RequiredDate" Ordinal="17" DbType="4" />
+                    <Field Name="ShippedDate" Ordinal="18" DbType="4" />
+                    <Field Name="ShipperName" Ordinal="19" DbType="12" Length="40" />
+                    <Field Name="ProductID" Ordinal="20" DbType="8" Precision="10" />
+                    <Field Name="ProductName" Ordinal="21" DbType="12" Length="40" />
+                    <Field Name="UnitPrice" Ordinal="22" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="Quantity" Ordinal="23" DbType="16" Precision="5" />
+                    <Field Name="Discount" Ordinal="24" DbType="14" Precision="24" />
+                    <Field Name="ExtendedPrice" Ordinal="25" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="Freight" Ordinal="26" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </View>
+                <View Name="Invoices2">
+                  <Fields>
+                    <Field Name="ShipName" Ordinal="1" DbType="12" Length="40" />
+                    <Field Name="ShipAddress" Ordinal="2" DbType="12" Length="60" />
+                    <Field Name="ShipCity" Ordinal="3" DbType="12" Length="15" />
+                    <Field Name="ShipRegion" Ordinal="4" DbType="12" Length="15" />
+                    <Field Name="ShipPostalCode" Ordinal="5" DbType="12" Length="10" />
+                    <Field Name="ShipCountry" Ordinal="6" DbType="12" Length="15" />
+                    <Field Name="CustomerID" Ordinal="7" DbType="10" Length="5" />
+                    <Field Name="CustomerName" Ordinal="8" DbType="12" Length="40" />
+                    <Field Name="Address" Ordinal="9" DbType="12" Length="60" />
+                    <Field Name="City" Ordinal="10" DbType="12" Length="15" />
+                    <Field Name="Region" Ordinal="11" DbType="12" Length="15" />
+                    <Field Name="PostalCode" Ordinal="12" DbType="12" Length="10" />
+                    <Field Name="Country" Ordinal="13" DbType="12" Length="15" />
+                    <Field Name="Salesperson" Ordinal="14" DbType="12" Length="31" />
+                    <Field Name="OrderID" Ordinal="15" DbType="8" Precision="10" />
+                    <Field Name="OrderDate" Ordinal="16" DbType="4" />
+                    <Field Name="RequiredDate" Ordinal="17" DbType="4" />
+                    <Field Name="ShippedDate" Ordinal="18" DbType="4" />
+                    <Field Name="ShipperName" Ordinal="19" DbType="12" Length="40" />
+                    <Field Name="ProductID" Ordinal="20" DbType="8" Precision="10" />
+                    <Field Name="ProductName" Ordinal="21" DbType="12" Length="40" />
+                    <Field Name="UnitPrice" Ordinal="22" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="Quantity" Ordinal="23" DbType="16" Precision="5" />
+                    <Field Name="Discount" Ordinal="24" DbType="14" Precision="24" />
+                    <Field Name="ExtendedPrice" Ordinal="25" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </View>
+                <View Name="ODPView">
+                  <Fields>
+                    <Field Name="OrderID" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="ProductID" Ordinal="2" DbType="8" Precision="10" />
+                    <Field Name="Foo" Ordinal="3" DbType="8" Precision="10" />
+                  </Fields>
+                </View>
+                <View Name="Order Details Extended">
+                  <Fields>
+                    <Field Name="OrderID" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="ProductID" Ordinal="2" DbType="8" Precision="10" />
+                    <Field Name="ProductName" Ordinal="3" DbType="12" Length="40" />
+                    <Field Name="UnitPrice" Ordinal="4" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="Quantity" Ordinal="5" DbType="16" Precision="5" />
+                    <Field Name="Discount" Ordinal="6" DbType="14" Precision="24" />
+                    <Field Name="ExtendedPrice" Ordinal="7" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </View>
+                <View Name="Order Subtotals">
+                  <Fields>
+                    <Field Name="OrderID" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="Subtotal" Ordinal="2" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </View>
+                <View Name="Orders Qry">
+                  <Fields>
+                    <Field Name="OrderID" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="CustomerID" Ordinal="2" DbType="10" Length="5" />
+                    <Field Name="EmployeeID" Ordinal="3" DbType="8" Precision="10" />
+                    <Field Name="OrderDate" Ordinal="4" DbType="4" />
+                    <Field Name="RequiredDate" Ordinal="5" DbType="4" />
+                    <Field Name="ShippedDate" Ordinal="6" DbType="4" />
+                    <Field Name="ShipVia" Ordinal="7" DbType="8" Precision="10" />
+                    <Field Name="Freight" Ordinal="8" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="ShipName" Ordinal="9" DbType="12" Length="40" />
+                    <Field Name="ShipAddress" Ordinal="10" DbType="12" Length="60" />
+                    <Field Name="ShipCity" Ordinal="11" DbType="12" Length="15" />
+                    <Field Name="ShipRegion" Ordinal="12" DbType="12" Length="15" />
+                    <Field Name="ShipPostalCode" Ordinal="13" DbType="12" Length="10" />
+                    <Field Name="ShipCountry" Ordinal="14" DbType="12" Length="15" />
+                    <Field Name="CompanyName" Ordinal="15" DbType="12" Length="40" />
+                    <Field Name="Address" Ordinal="16" DbType="12" Length="60" />
+                    <Field Name="City" Ordinal="17" DbType="12" Length="15" />
+                    <Field Name="Region" Ordinal="18" DbType="12" Length="15" />
+                    <Field Name="PostalCode" Ordinal="19" DbType="12" Length="10" />
+                    <Field Name="Country" Ordinal="20" DbType="12" Length="15" />
+                  </Fields>
+                </View>
+                <View Name="Product Sales for 1997">
+                  <Fields>
+                    <Field Name="CategoryName" Ordinal="1" DbType="12" Length="15" />
+                    <Field Name="ProductName" Ordinal="2" DbType="12" Length="40" />
+                    <Field Name="ProductSales" Ordinal="3" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </View>
+                <View Name="Products Above Average Price">
+                  <Fields>
+                    <Field Name="ProductName" Ordinal="1" DbType="12" Length="40" />
+                    <Field Name="UnitPrice" Ordinal="2" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </View>
+                <View Name="Products by Category">
+                  <Fields>
+                    <Field Name="CategoryName" Ordinal="1" DbType="12" Length="15" />
+                    <Field Name="ProductName" Ordinal="2" DbType="12" Length="40" />
+                    <Field Name="QuantityPerUnit" Ordinal="3" DbType="12" Length="20" />
+                    <Field Name="UnitsInStock" Ordinal="4" DbType="16" Precision="5" />
+                    <Field Name="Discontinued" Ordinal="5" DbType="2" />
+                  </Fields>
+                </View>
+                <View Name="Quarterly Orders">
+                  <Fields>
+                    <Field Name="CustomerID" Ordinal="1" DbType="10" Length="5" />
+                    <Field Name="CompanyName" Ordinal="2" DbType="12" Length="40" />
+                    <Field Name="City" Ordinal="3" DbType="12" Length="15" />
+                    <Field Name="Country" Ordinal="4" DbType="12" Length="15" />
+                  </Fields>
+                </View>
+                <View Name="Sales by Category">
+                  <Fields>
+                    <Field Name="CategoryID" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="CategoryName" Ordinal="2" DbType="12" Length="15" />
+                    <Field Name="ProductName" Ordinal="3" DbType="12" Length="40" />
+                    <Field Name="ProductSales" Ordinal="4" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </View>
+                <View Name="Sales Totals by Amount">
+                  <Fields>
+                    <Field Name="SaleAmount" Ordinal="1" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="OrderID" Ordinal="2" DbType="8" Precision="10" />
+                    <Field Name="CompanyName" Ordinal="3" DbType="12" Length="40" />
+                    <Field Name="ShippedDate" Ordinal="4" DbType="4" />
+                  </Fields>
+                </View>
+                <View Name="Summary of Sales by Quarter">
+                  <Fields>
+                    <Field Name="ShippedDate" Ordinal="1" DbType="4" />
+                    <Field Name="OrderID" Ordinal="2" DbType="8" Precision="10" />
+                    <Field Name="Subtotal" Ordinal="3" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </View>
+                <View Name="Summary of Sales by Year">
+                  <Fields>
+                    <Field Name="ShippedDate" Ordinal="1" DbType="4" />
+                    <Field Name="OrderID" Ordinal="2" DbType="8" Precision="10" />
+                    <Field Name="Subtotal" Ordinal="3" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </View>
+                <View Name="sysconstraints">
+                  <Fields>
+                    <Field Name="constid" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="id" Ordinal="2" DbType="8" Precision="10" />
+                    <Field Name="colid" Ordinal="3" DbType="16" Precision="5" />
+                    <Field Name="spare1" Ordinal="4" DbType="22" Precision="3" />
+                    <Field Name="status" Ordinal="5" DbType="8" Precision="10" />
+                    <Field Name="actions" Ordinal="6" DbType="8" Precision="10" />
+                    <Field Name="error" Ordinal="7" DbType="8" Precision="10" />
+                  </Fields>
+                </View>
+                <View Name="syssegments">
+                  <Fields>
+                    <Field Name="segment" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="name" Ordinal="2" DbType="24" Length="10" />
+                    <Field Name="status" Ordinal="3" DbType="8" Precision="10" />
+                  </Fields>
+                </View>
+              </Views>
+              <StoredProcedures>
+                <StoredProcedure Name="CustOrderHist" NumberOfResultsets="1">
+                  <Parameters>
+                    <Parameter Name="@CustomerID" Direction="1" Ordinal="1" DbType="10" Length="5" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="CustOrdersDetail" NumberOfResultsets="1">
+                  <Parameters>
+                    <Parameter Name="@OrderID" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="CustOrdersOrders" NumberOfResultsets="1">
+                  <Parameters>
+                    <Parameter Name="@CustomerID" Direction="1" Ordinal="1" DbType="10" Length="5" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_addtosourcecontrol" NumberOfResultsets="2">
+                  <Parameters>
+                    <Parameter Name="@vchSourceSafeINI" Direction="1" Ordinal="1" DbType="24" Length="255" />
+                    <Parameter Name="@vchProjectName" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="24" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_addtosourcecontrol_u" NumberOfResultsets="2">
+                  <Parameters>
+                    <Parameter Name="@vchSourceSafeINI" Direction="1" Ordinal="1" DbType="12" Length="255" />
+                    <Parameter Name="@vchProjectName" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="12" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="12" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_adduserobject" />
+                <StoredProcedure Name="dt_adduserobject_vcs">
+                  <Parameters>
+                    <Parameter Name="@vchProperty" Direction="1" Ordinal="1" DbType="24" Length="64" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_checkinobject">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="24" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="24" Length="255" />
+                    <Parameter Name="@iVCSFlags" Direction="1" Ordinal="6" DbType="8" Precision="10" />
+                    <Parameter Name="@iActionFlag" Direction="1" Ordinal="7" DbType="8" Precision="10" />
+                    <Parameter Name="@txStream1" Direction="1" Ordinal="8" DbType="20" Length="2147483647" />
+                    <Parameter Name="@txStream2" Direction="1" Ordinal="9" DbType="20" Length="2147483647" />
+                    <Parameter Name="@txStream3" Direction="1" Ordinal="10" DbType="20" Length="2147483647" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_checkinobject_u">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="12" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="12" Length="255" />
+                    <Parameter Name="@iVCSFlags" Direction="1" Ordinal="6" DbType="8" Precision="10" />
+                    <Parameter Name="@iActionFlag" Direction="1" Ordinal="7" DbType="8" Precision="10" />
+                    <Parameter Name="@txStream1" Direction="1" Ordinal="8" DbType="20" Length="2147483647" />
+                    <Parameter Name="@txStream2" Direction="1" Ordinal="9" DbType="20" Length="2147483647" />
+                    <Parameter Name="@txStream3" Direction="1" Ordinal="10" DbType="20" Length="2147483647" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_checkoutobject">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="24" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="24" Length="255" />
+                    <Parameter Name="@iVCSFlags" Direction="1" Ordinal="6" DbType="8" Precision="10" />
+                    <Parameter Name="@iActionFlag" Direction="1" Ordinal="7" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_checkoutobject_u">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="12" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="12" Length="255" />
+                    <Parameter Name="@iVCSFlags" Direction="1" Ordinal="6" DbType="8" Precision="10" />
+                    <Parameter Name="@iActionFlag" Direction="1" Ordinal="7" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_displayoaerror">
+                  <Parameters>
+                    <Parameter Name="@iObject" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@iresult" Direction="1" Ordinal="2" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_displayoaerror_u">
+                  <Parameters>
+                    <Parameter Name="@iObject" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@iresult" Direction="1" Ordinal="2" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_droppropertiesbyid">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_dropuserobjectbyid">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_generateansiname">
+                  <Parameters>
+                    <Parameter Name="@name" Direction="3" Ordinal="1" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getobjwithprop">
+                  <Parameters>
+                    <Parameter Name="@property" Direction="1" Ordinal="1" DbType="24" Length="30" />
+                    <Parameter Name="@value" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getobjwithprop_u">
+                  <Parameters>
+                    <Parameter Name="@property" Direction="1" Ordinal="1" DbType="24" Length="30" />
+                    <Parameter Name="@uvalue" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getpropertiesbyid" NumberOfResultsets="2">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getpropertiesbyid_u" NumberOfResultsets="2">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getpropertiesbyid_vcs">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                    <Parameter Name="@value" Direction="3" Ordinal="3" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getpropertiesbyid_vcs_u">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                    <Parameter Name="@value" Direction="3" Ordinal="3" DbType="12" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_isundersourcecontrol">
+                  <Parameters>
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="1" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                    <Parameter Name="@iWhoToo" Direction="1" Ordinal="3" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_isundersourcecontrol_u">
+                  <Parameters>
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="1" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                    <Parameter Name="@iWhoToo" Direction="1" Ordinal="3" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_removefromsourcecontrol" />
+                <StoredProcedure Name="dt_setpropertybyid">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                    <Parameter Name="@value" Direction="1" Ordinal="3" DbType="24" Length="255" />
+                    <Parameter Name="@lvalue" Direction="1" Ordinal="4" DbType="7" Length="2147483647" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_setpropertybyid_u">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                    <Parameter Name="@uvalue" Direction="1" Ordinal="3" DbType="12" Length="255" />
+                    <Parameter Name="@lvalue" Direction="1" Ordinal="4" DbType="7" Length="2147483647" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_validateloginparams">
+                  <Parameters>
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="1" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_validateloginparams_u">
+                  <Parameters>
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="1" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_vcsenabled" />
+                <StoredProcedure Name="dt_verstamp006" NumberOfResultsets="1" />
+                <StoredProcedure Name="dt_verstamp007" NumberOfResultsets="1" />
+                <StoredProcedure Name="dt_whocheckedout" NumberOfResultsets="1">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="3" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="4" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_whocheckedout_u" NumberOfResultsets="1">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="3" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="4" DbType="12" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="Employee Sales by Country" NumberOfResultsets="1">
+                  <Parameters>
+                    <Parameter Name="@Beginning_Date" Direction="1" Ordinal="1" DbType="4" />
+                    <Parameter Name="@Ending_Date" Direction="1" Ordinal="2" DbType="4" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="pr_CustomersAndOrdersOnCountry" NumberOfResultsets="2">
+                  <Parameters>
+                    <Parameter Name="@country" Direction="1" Ordinal="1" DbType="24" Length="50" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="pr_OutputTest">
+                  <Parameters>
+                    <Parameter Name="@var" Direction="3" Ordinal="1" DbType="24" Length="50" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="pr_Test1.2.3" NumberOfResultsets="1" />
+                <StoredProcedure Name="Sales by Year" NumberOfResultsets="1">
+                  <Parameters>
+                    <Parameter Name="@Beginning_Date" Direction="1" Ordinal="1" DbType="4" />
+                    <Parameter Name="@Ending_Date" Direction="1" Ordinal="2" DbType="4" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="SalesByCategory" NumberOfResultsets="1">
+                  <Parameters>
+                    <Parameter Name="@CategoryName" Direction="1" Ordinal="1" DbType="12" Length="15" />
+                    <Parameter Name="@OrdYear" Direction="1" Ordinal="2" DbType="12" Length="4" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="Ten Most Expensive Products" NumberOfResultsets="1" />
+              </StoredProcedures>
+            </Schema>
+            <Schema Name="TestUser1.2.3.4">
+              <StoredProcedures>
+                <StoredProcedure Name="pr_Test1.2.3" NumberOfResultsets="1" />
+              </StoredProcedures>
+            </Schema>
+          </Schemas>
+          <ForeignKeyConstraints>
+            <ForeignKeyConstraint Name="dbo:AuditInfo:FK_AuditInfo_AuditActionType">
+              <FieldPairs>
+                <FieldPair PkField="dbo:AuditActionType:AuditActionTypeID" FkField="dbo:AuditInfo:AuditActionTypeID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:AuditInfo:FK_AuditInfo_User">
+              <FieldPairs>
+                <FieldPair PkField="dbo:User:UserID" FkField="dbo:AuditInfo:UserID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:CustomerCustomerDemo:FK_CustomerCustomerDemo">
+              <FieldPairs>
+                <FieldPair PkField="dbo:CustomerDemographics:CustomerTypeID" FkField="dbo:CustomerCustomerDemo:CustomerTypeID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:CustomerCustomerDemo:FK_CustomerCustomerDemo_Customers">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Customers:CustomerID" FkField="dbo:CustomerCustomerDemo:CustomerID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Employees:FK_Employees_Employees">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Employees:EmployeeID" FkField="dbo:Employees:ReportsTo" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Employees:FK_Employees_Region">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Region:RegionID" FkField="dbo:Employees:RegionID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Employees2:FK_Employees2_Employees2">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Employees2:EmployeeID" FkField="dbo:Employees2:ReportsTo" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Employees2:FK_Employees2_Region">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Region:RegionID" FkField="dbo:Employees2:RegionID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:EmployeeTerritories:FK_EmployeeTerritories_Employees">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Employees:EmployeeID" FkField="dbo:EmployeeTerritories:EmployeeID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:EmployeeTerritories:FK_EmployeeTerritories_Territories">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Territories:TerritoryID" FkField="dbo:EmployeeTerritories:TerritoryID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:FKSideCompoundKey:FK_FKSideCompoundKey_PKSideCompoundKey">
+              <FieldPairs>
+                <FieldPair PkField="dbo:PKSideCompoundKey:IDField1" FkField="dbo:FKSideCompoundKey:IDField1" />
+                <FieldPair PkField="dbo:PKSideCompoundKey:IDField2" FkField="dbo:FKSideCompoundKey:IDField2" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Order Details:FK_Order_Details_Orders">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Orders:OrderID" FkField="dbo:Order Details:OrderID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Order Details:FK_Order_Details_Products">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Products:ProductID" FkField="dbo:Order Details:ProductID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:OrderAuditInfo:FK_OrderAuditInfo_AuditInfo">
+              <FieldPairs>
+                <FieldPair PkField="dbo:AuditInfo:AuditInfoID" FkField="dbo:OrderAuditInfo:AuditInfoID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:OrderAuditInfo:FK_OrderAuditInfo_Orders">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Orders:OrderID" FkField="dbo:OrderAuditInfo:OrderID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Orders:FK_Orders_Customers">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Customers:CustomerID" FkField="dbo:Orders:CustomerID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Orders:FK_Orders_Employees">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Employees:EmployeeID" FkField="dbo:Orders:EmployeeID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Orders:FK_Orders_Shippers">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Shippers:ShipperID" FkField="dbo:Orders:ShipVia" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Products:FK_Products_Categories">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Categories:CategoryID" FkField="dbo:Products:CategoryID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Products:FK_Products_Suppliers">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Suppliers:SupplierID" FkField="dbo:Products:SupplierID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Territories:FK_Territories_Region">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Region:RegionID" FkField="dbo:Territories:RegionID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:UserGroup:FK_UserGroup_Group">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Group:Id" FkField="dbo:UserGroup:GroupId" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:UserGroup:FK_UserGroup_User">
+              <FieldPairs>
+                <FieldPair PkField="dbo:User:UserID" FkField="dbo:UserGroup:UserId" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+          </ForeignKeyConstraints>
+        </Catalog>
+      </Catalogs>
+    </TargetDatabase>
+  </TargetDatabases>
+  <MappingStores>
+    <MappingStore Type="2D18D138-1DD2-467E-86CC-4838250611AE">
+      <EntityMappings>
+        <EntityMapping EntityName=":Category" TargetName="Northwind:dbo:Categories">
+          <FieldMappings>
+            <FieldMapping FieldName="CategoryId" TargetFieldName="CategoryID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="CategoryName" TargetFieldName="CategoryName" />
+            <FieldMapping FieldName="Description" TargetFieldName="Description" />
+            <FieldMapping FieldName="Picture" TargetFieldName="Picture" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Customer" TargetName="Northwind:dbo:Customers">
+          <FieldMappings>
+            <FieldMapping FieldName="Address" TargetFieldName="Address" />
+            <FieldMapping FieldName="City" TargetFieldName="City" />
+            <FieldMapping FieldName="CompanyName" TargetFieldName="CompanyName" />
+            <FieldMapping FieldName="ContactName" TargetFieldName="ContactName" />
+            <FieldMapping FieldName="ContactTitle" TargetFieldName="ContactTitle" />
+            <FieldMapping FieldName="Country" TargetFieldName="Country" />
+            <FieldMapping FieldName="CustomerId" TargetFieldName="CustomerID" />
+            <FieldMapping FieldName="Fax" TargetFieldName="Fax" />
+            <FieldMapping FieldName="Phone" TargetFieldName="Phone" />
+            <FieldMapping FieldName="PostalCode" TargetFieldName="PostalCode" />
+            <FieldMapping FieldName="Region" TargetFieldName="Region" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":CustomerCustomerDemo" TargetName="Northwind:dbo:CustomerCustomerDemo">
+          <FieldMappings>
+            <FieldMapping FieldName="CustomerId" TargetFieldName="CustomerID" />
+            <FieldMapping FieldName="CustomerTypeId" TargetFieldName="CustomerTypeID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":CustomerDemographic" TargetName="Northwind:dbo:CustomerDemographics">
+          <FieldMappings>
+            <FieldMapping FieldName="CustomerDesc" TargetFieldName="CustomerDesc" />
+            <FieldMapping FieldName="CustomerTypeId" TargetFieldName="CustomerTypeID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Employee" TargetName="Northwind:dbo:Employees">
+          <FieldMappings>
+            <FieldMapping FieldName="Address" TargetFieldName="Address" />
+            <FieldMapping FieldName="BirthDate" TargetFieldName="BirthDate" />
+            <FieldMapping FieldName="City" TargetFieldName="City" />
+            <FieldMapping FieldName="Country" TargetFieldName="Country" />
+            <FieldMapping FieldName="EmployeeId" TargetFieldName="EmployeeID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="Extension" TargetFieldName="Extension" />
+            <FieldMapping FieldName="FirstName" TargetFieldName="FirstName" />
+            <FieldMapping FieldName="HireDate" TargetFieldName="HireDate" />
+            <FieldMapping FieldName="LastName" TargetFieldName="LastName" />
+            <FieldMapping FieldName="Notes" TargetFieldName="Notes" />
+            <FieldMapping FieldName="Phone" TargetFieldName="HomePhone" />
+            <FieldMapping FieldName="Photo" TargetFieldName="Photo" />
+            <FieldMapping FieldName="PhotoPath" TargetFieldName="PhotoPath" />
+            <FieldMapping FieldName="PostalCode" TargetFieldName="PostalCode" />
+            <FieldMapping FieldName="Region" TargetFieldName="Region" />
+            <FieldMapping FieldName="RegionId" TargetFieldName="RegionID" />
+            <FieldMapping FieldName="ReportsTo" TargetFieldName="ReportsTo" />
+            <FieldMapping FieldName="Title" TargetFieldName="Title" />
+            <FieldMapping FieldName="TitleOfCourtesy" TargetFieldName="TitleOfCourtesy" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":EmployeeTerritory" TargetName="Northwind:dbo:EmployeeTerritories">
+          <FieldMappings>
+            <FieldMapping FieldName="EmployeeId" TargetFieldName="EmployeeID" />
+            <FieldMapping FieldName="TerritoryId" TargetFieldName="TerritoryID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":FksideCompoundKey" TargetName="Northwind:dbo:FKSideCompoundKey">
+          <FieldMappings>
+            <FieldMapping FieldName="Amount" TargetFieldName="Amount" />
+            <FieldMapping FieldName="Id" TargetFieldName="ID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="Idfield1" TargetFieldName="IDField1" />
+            <FieldMapping FieldName="Idfield2" TargetFieldName="IDField2" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Order" TargetName="Northwind:dbo:Orders">
+          <FieldMappings>
+            <FieldMapping FieldName="CustomerId" TargetFieldName="CustomerID" />
+            <FieldMapping FieldName="EmployeeId" TargetFieldName="EmployeeID" />
+            <FieldMapping FieldName="Freight" TargetFieldName="Freight" />
+            <FieldMapping FieldName="OrderDate" TargetFieldName="OrderDate" />
+            <FieldMapping FieldName="OrderId" TargetFieldName="OrderID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="RequiredDate" TargetFieldName="RequiredDate" />
+            <FieldMapping FieldName="ShipAddress" TargetFieldName="ShipAddress" />
+            <FieldMapping FieldName="ShipCity" TargetFieldName="ShipCity" />
+            <FieldMapping FieldName="ShipCountry" TargetFieldName="ShipCountry" />
+            <FieldMapping FieldName="ShipName" TargetFieldName="ShipName" />
+            <FieldMapping FieldName="ShippedDate" TargetFieldName="ShippedDate" />
+            <FieldMapping FieldName="ShipPostalCode" TargetFieldName="ShipPostalCode" />
+            <FieldMapping FieldName="ShipRegion" TargetFieldName="ShipRegion" />
+            <FieldMapping FieldName="ShipVia" TargetFieldName="ShipVia" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":OrderAuditInfo" TargetName="Northwind:dbo:OrderAuditInfo">
+          <FieldMappings>
+            <FieldMapping FieldName="AuditInfoId" TargetFieldName="AuditInfoID" />
+            <FieldMapping FieldName="OrderId" TargetFieldName="OrderID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":OrderDetail" TargetName="Northwind:dbo:Order Details">
+          <FieldMappings>
+            <FieldMapping FieldName="Discount" TargetFieldName="Discount" />
+            <FieldMapping FieldName="OrderId" TargetFieldName="OrderID" />
+            <FieldMapping FieldName="ProductId" TargetFieldName="ProductID" />
+            <FieldMapping FieldName="Quantity" TargetFieldName="Quantity" />
+            <FieldMapping FieldName="UnitPrice" TargetFieldName="UnitPrice" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":PksideCompoundKey" TargetName="Northwind:dbo:PKSideCompoundKey">
+          <FieldMappings>
+            <FieldMapping FieldName="Idfield1" TargetFieldName="IDField1" />
+            <FieldMapping FieldName="Idfield2" TargetFieldName="IDField2" />
+            <FieldMapping FieldName="Name" TargetFieldName="Name" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Product" TargetName="Northwind:dbo:Products">
+          <FieldMappings>
+            <FieldMapping FieldName="CategoryId" TargetFieldName="CategoryID" />
+            <FieldMapping FieldName="Discontinued" TargetFieldName="Discontinued" />
+            <FieldMapping FieldName="ProductId" TargetFieldName="ProductID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="ProductName" TargetFieldName="ProductName" />
+            <FieldMapping FieldName="QuantityPerUnit" TargetFieldName="QuantityPerUnit" />
+            <FieldMapping FieldName="ReorderLevel" TargetFieldName="ReorderLevel" />
+            <FieldMapping FieldName="SupplierId" TargetFieldName="SupplierID" />
+            <FieldMapping FieldName="UnitPrice" TargetFieldName="UnitPrice" />
+            <FieldMapping FieldName="UnitsInStock" TargetFieldName="UnitsInStock" />
+            <FieldMapping FieldName="UnitsOnOrder" TargetFieldName="UnitsOnOrder" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":ProductEnumTest" TargetName="Northwind:dbo:Products">
+          <FieldMappings>
+            <FieldMapping FieldName="CategoryId" TargetFieldName="CategoryID" />
+            <FieldMapping FieldName="Discontinued" TargetFieldName="Discontinued" />
+            <FieldMapping FieldName="ProductId" TargetFieldName="ProductID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="ProductName" TargetFieldName="ProductName" />
+            <FieldMapping FieldName="QuantityPerUnit" TargetFieldName="QuantityPerUnit" />
+            <FieldMapping FieldName="ReorderLevel" TargetFieldName="ReorderLevel" />
+            <FieldMapping FieldName="SupplierId" TargetFieldName="SupplierID" />
+            <FieldMapping FieldName="UnitPrice" TargetFieldName="UnitPrice" />
+            <FieldMapping FieldName="UnitsInStock" TargetFieldName="UnitsInStock" />
+            <FieldMapping FieldName="UnitsOnOrder" TargetFieldName="UnitsOnOrder" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Region" TargetName="Northwind:dbo:Region">
+          <FieldMappings>
+            <FieldMapping FieldName="RegionDescription" TargetFieldName="RegionDescription" />
+            <FieldMapping FieldName="RegionId" TargetFieldName="RegionID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Shipper" TargetName="Northwind:dbo:Shippers">
+          <FieldMappings>
+            <FieldMapping FieldName="CompanyName" TargetFieldName="CompanyName" />
+            <FieldMapping FieldName="Phone" TargetFieldName="Phone" />
+            <FieldMapping FieldName="ShipperId" TargetFieldName="ShipperID" SequenceToUse="SCOPE_IDENTITY()" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Supplier" TargetName="Northwind:dbo:Suppliers">
+          <FieldMappings>
+            <FieldMapping FieldName="Address" TargetFieldName="Address" />
+            <FieldMapping FieldName="City" TargetFieldName="City" />
+            <FieldMapping FieldName="CompanyName" TargetFieldName="CompanyName" />
+            <FieldMapping FieldName="ContactName" TargetFieldName="ContactName" />
+            <FieldMapping FieldName="ContactTitle" TargetFieldName="ContactTitle" />
+            <FieldMapping FieldName="Country" TargetFieldName="Country" />
+            <FieldMapping FieldName="Fax" TargetFieldName="Fax" />
+            <FieldMapping FieldName="HomePage" TargetFieldName="HomePage" />
+            <FieldMapping FieldName="Phone" TargetFieldName="Phone" />
+            <FieldMapping FieldName="PostalCode" TargetFieldName="PostalCode" />
+            <FieldMapping FieldName="Region" TargetFieldName="Region" />
+            <FieldMapping FieldName="SupplierId" TargetFieldName="SupplierID" SequenceToUse="SCOPE_IDENTITY()" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Territory" TargetName="Northwind:dbo:Territories">
+          <FieldMappings>
+            <FieldMapping FieldName="RegionId" TargetFieldName="RegionID" />
+            <FieldMapping FieldName="TerritoryDescription" TargetFieldName="TerritoryDescription" />
+            <FieldMapping FieldName="TerritoryId" TargetFieldName="TerritoryID" />
+            <FieldMapping FieldName="Test" TargetFieldName="test" />
+          </FieldMappings>
+        </EntityMapping>
+      </EntityMappings>
+      <TypedViewMappings>
+        <TypedViewMapping TypedViewName=":Invoices" TargetName="Northwind:dbo:Invoices">
+          <FieldMappings>
+            <FieldMapping FieldName="Address" TargetFieldName="Address" />
+            <FieldMapping FieldName="City" TargetFieldName="City" />
+            <FieldMapping FieldName="Country" TargetFieldName="Country" />
+            <FieldMapping FieldName="CustomerId" TargetFieldName="CustomerID" />
+            <FieldMapping FieldName="CustomerName" TargetFieldName="CustomerName" />
+            <FieldMapping FieldName="Discount" TargetFieldName="Discount" />
+            <FieldMapping FieldName="ExtendedPrice" TargetFieldName="ExtendedPrice" />
+            <FieldMapping FieldName="Freight" TargetFieldName="Freight" />
+            <FieldMapping FieldName="OrderDate" TargetFieldName="OrderDate" />
+            <FieldMapping FieldName="OrderId" TargetFieldName="OrderID" />
+            <FieldMapping FieldName="PostalCode" TargetFieldName="PostalCode" />
+            <FieldMapping FieldName="ProductId" TargetFieldName="ProductID" />
+            <FieldMapping FieldName="ProductName" TargetFieldName="ProductName" />
+            <FieldMapping FieldName="Quantity" TargetFieldName="Quantity" />
+            <FieldMapping FieldName="Region" TargetFieldName="Region" />
+            <FieldMapping FieldName="RequiredDate" TargetFieldName="RequiredDate" />
+            <FieldMapping FieldName="Salesperson" TargetFieldName="Salesperson" />
+            <FieldMapping FieldName="ShipAddress" TargetFieldName="ShipAddress" />
+            <FieldMapping FieldName="ShipCity" TargetFieldName="ShipCity" />
+            <FieldMapping FieldName="ShipCountry" TargetFieldName="ShipCountry" />
+            <FieldMapping FieldName="ShipName" TargetFieldName="ShipName" />
+            <FieldMapping FieldName="ShippedDate" TargetFieldName="ShippedDate" />
+            <FieldMapping FieldName="ShipperName" TargetFieldName="ShipperName" />
+            <FieldMapping FieldName="ShipPostalCode" TargetFieldName="ShipPostalCode" />
+            <FieldMapping FieldName="ShipRegion" TargetFieldName="ShipRegion" />
+            <FieldMapping FieldName="UnitPrice" TargetFieldName="UnitPrice" />
+          </FieldMappings>
+        </TypedViewMapping>
+        <TypedViewMapping TypedViewName=":QuarterlyOrders" TargetName="Northwind:dbo:Quarterly Orders">
+          <FieldMappings>
+            <FieldMapping FieldName="City" TargetFieldName="City" />
+            <FieldMapping FieldName="CompanyName" TargetFieldName="CompanyName" />
+            <FieldMapping FieldName="Country" TargetFieldName="Country" />
+            <FieldMapping FieldName="CustomerId" TargetFieldName="CustomerID" />
+          </FieldMappings>
+        </TypedViewMapping>
+      </TypedViewMappings>
+      <SPCallMappings>
+        <SPCallMapping SPCallName=":CustOrdersDetail" TargetName="Northwind:dbo:CustOrdersDetail">
+          <FieldMappings>
+            <FieldMapping FieldName="OrderId" TargetFieldName="@OrderID" />
+          </FieldMappings>
+        </SPCallMapping>
+        <SPCallMapping SPCallName=":CustOrdersOrders" TargetName="Northwind:dbo:CustOrdersOrders">
+          <FieldMappings>
+            <FieldMapping FieldName="CustomerId" TargetFieldName="@CustomerID" />
+          </FieldMappings>
+        </SPCallMapping>
+        <SPCallMapping SPCallName=":EmployeeSalesByCountry" TargetName="Northwind:dbo:Employee Sales by Country">
+          <FieldMappings>
+            <FieldMapping FieldName="BeginningDate" TargetFieldName="@Beginning_Date" />
+            <FieldMapping FieldName="EndingDate" TargetFieldName="@Ending_Date" />
+          </FieldMappings>
+        </SPCallMapping>
+        <SPCallMapping SPCallName=":OutputTest" TargetName="Northwind:dbo:pr_OutputTest">
+          <FieldMappings>
+            <FieldMapping FieldName="Var" TargetFieldName="@var" />
+          </FieldMappings>
+        </SPCallMapping>
+        <SPCallMapping SPCallName=":SalesByCategory" TargetName="Northwind:dbo:SalesByCategory">
+          <FieldMappings>
+            <FieldMapping FieldName="CategoryName" TargetFieldName="@CategoryName" />
+            <FieldMapping FieldName="OrdYear" TargetFieldName="@OrdYear" />
+          </FieldMappings>
+        </SPCallMapping>
+        <SPCallMapping SPCallName=":SalesByYear" TargetName="Northwind:dbo:Sales by Year">
+          <FieldMappings>
+            <FieldMapping FieldName="BeginningDate" TargetFieldName="@Beginning_Date" />
+            <FieldMapping FieldName="EndingDate" TargetFieldName="@Ending_Date" />
+          </FieldMappings>
+        </SPCallMapping>
+      </SPCallMappings>
+      <TypeConversionDefinitions>
+        <TypeConversionDefinition TypeConverter="SD.LLBLGen.Pro.TypeConverters.BooleanNumericConverter" DbDotNetType="System.Int32" FilterDbType="8" />
+      </TypeConversionDefinitions>
+    </MappingStore>
+  </MappingStores>
+  <ModelViews />
+</Project>

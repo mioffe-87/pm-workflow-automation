@@ -1,0 +1,74 @@
+﻿@model Csp.Web.DataTransferObjects.ReviewDeviceTransferDto
+@using Kendo.Mvc.UI
+
+<script>
+    var deviceTransferId = $('#@UniqueId.DeviceTransferId');
+    var isApproved = $('#@UniqueId.IsApproved');
+
+    function @(UniqueId.PendingDeviceTransfers)onAcceptPendingDeviceTransfer(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        sendDecision(dataItem.DeviceTransferId, true);
+    }
+
+    function @(UniqueId.PendingDeviceTransfers)onRejectPendingDeviceTransfer(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        sendDecision(dataItem.DeviceTransferId, false);
+    }
+
+    function sendDecision(deviceTransferId, isApproved) {
+
+        var deviceTransferIdField = $('#@UniqueId.DeviceTransferId');
+        var isApprovedField = $('#@UniqueId.IsApproved');
+
+        deviceTransferIdField.val(deviceTransferId);
+        isApprovedField.val(isApproved);
+
+        $('#@UniqueId.ReviewDeviceTransfer form').submit();
+    }
+</script>
+
+
+<div id="@UniqueId.ReviewDeviceTransfer">
+
+    @{ Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications); }
+    
+    @Html.Partial("../Partial/_Eula", Model.Eula)
+    <fieldset>
+        <legend>Device Transfers</legend>
+        @(Html.Kendo().Grid(Model.DeviceTransfer)
+              .Name((string)UniqueId.PendingDeviceTransfers)
+              .Columns(col => {
+                                  col.Bound(c => c.SerialNumber).Title("Serial Number").Width(130);
+                                  col.Bound(c => c.DeviceName).Title("Device Name").Width(130);
+                                  col.Bound(c => c.PartNumber).Title("Part Number").Width(110);
+                                  col.Bound(c => c.DeviceTransferBeginDate).Title("Transfer Start Date").Format("{0:MM/dd/yyyy}").Width(130);
+                                  col.Bound(c => c.FromUserDisplayName).Title("Source User").Width(110);
+                                  col.Command(command => {
+                                                             command.Custom("Agree and Accept").Click((string)UniqueId.PendingDeviceTransfers + "onAcceptPendingDeviceTransfer");
+                                                             command.Custom("Reject").Click((string)UniqueId.PendingDeviceTransfers + "onRejectPendingDeviceTransfer");
+                                  });
+              })
+              .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                            .ServerOperation(false)
+                                            .Model(x => x.Id(id => id.DeviceTransferId))
+                                            .Events(e => e.RequestEnd("SupportPortal.kendoGridTimezoneToPst"))
+              )
+              .Sortable()
+              )
+    </fieldset>
+    @using (Ajax.BeginForm("ReviewTransfers", "DeviceTransfer", null, new AjaxOptions {
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();",
+        UpdateTargetId = (string)UniqueId.ReviewDeviceTransfer
+    })) {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("deviceTransferId", null, new { id = UniqueId.DeviceTransferId })
+        @Html.Hidden("isApproved", null, new { id = UniqueId.IsApproved })
+        <input type="hidden" id="SelectedEulaId" name="SelectedEulaId" value="@Model.Eula.SelectedEulaId"/>
+    }
+</div>

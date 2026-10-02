@@ -1,0 +1,32 @@
+﻿﻿@model Csp.Web.DataTransferObjects.DeactivateLicensesDto
+
+<script>
+    function uploadSuccess(e) {
+        var data = e.response;
+        $('#DeactivationTokenText').val(data);
+    }
+</script>
+
+<div id="DeativateLicensesDiv">
+    @{ 
+        Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+    }
+    @using (Ajax.BeginForm(new AjaxOptions {
+        UpdateTargetId = "DeativateLicensesDiv",
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();"
+    })) {
+        <h1>Deactivate Licenses</h1>
+        <p>This feature is available for CN and hardware running PAN-OS 7.0 or higher</p>
+        <p>It applies to hardware feature licensing and  to CN feature licensing and support entitlements.</p>
+        <p>Please upload the license removal token created from Panorama or PAN-OS for the device.  If you do not have this file, please log into Panorama or PAN-OS for the device to initiate the de-activation process.</p>
+        <p>Upload your license removal token</p>
+        @(Html.Kendo().Upload().Name("DeativationTokenFile").Multiple(false).Async(async => async.Save("DeactivateLicenseFile", "License")).Events(e => e.Success("uploadSuccess")))
+        <br/>
+        <p>or manually enter the token text</p>
+        @Html.TextAreaFor(x => x.DeactivationTokenText, new {style="width: 470px"})
+        <div class="csp-submit-container">
+            <input type="submit" class="k-button csp-submit" value="Submit" />
+        </div>
+    }
+</div>

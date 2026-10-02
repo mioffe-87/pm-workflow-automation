@@ -1,0 +1,252 @@
+﻿@using Csp.Web.DataTransferObjects
+@using Kendo.Mvc.UI;
+@using Csp.Api.Security;
+@using Newtonsoft.Json
+
+@model SupportAccountTabsDto
+
+@{
+    Layout = (Model.SelectedTab == SupportAccountTabs.Users) ? "~/Views/Shared/_SiteLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@*@Html.Partial("../Partial/_CompanyLogoName")*@
+@{
+
+    if (Model.SelectedTab == SupportAccountTabs.Home)
+    {
+        Html.RenderAction("Home", new { id = Model.PartialId });
+    }
+    else if (Model.SelectedTab == SupportAccountTabs.Users)
+    {
+        ViewBag.Title = "Manage Users - Customer Support - Palo Alto Networks";
+        Html.RenderAction("Users", new { id = Model.PartialId });
+    }
+
+    else if (Model.SelectedTab == SupportAccountTabs.Account)
+    {
+        if (Model.PartialId.HasValue && (!User.RoleSecurities.IsSupportAccountAdmin(Model.PartialId.Value) || !User.RoleSecurities.IsAscUser(Model.PartialId.Value)))
+        {
+            ViewBag.Title = "Company Information - Customer Support - Palo Alto Networks";
+            if (User.HasPermission(Permission.EditSupportAccount))
+            {
+                Html.RenderAction("Edit", new { id = Model.PartialId });
+            }
+            else if (User.HasPermission(Permission.ViewSupportAccount))
+            {
+                Html.RenderAction("View", new { id = Model.PartialId });
+
+            }
+
+        }
+        else
+        {
+            if (Model.PartialId.HasValue && User.HasPermission(Permission.ViewSupportAccount))
+            {
+                // accountTab.Selected(true).Content(Html.Action("AccountInfo", "SupportAccount", new { id = Model.PartialId }).ToString());
+                Html.RenderAction("AccountInfo", "SupportAccount", new { id = Model.PartialId });
+            }
+        }
+    }
+    else if (Model.SelectedTab == SupportAccountTabs.Devices)
+    {
+        if (Model.PartialId.HasValue && User.HasPermission(Permission.ViewSupportAccountDevices))
+        {
+            // deviceTab.Selected(true).Content(Html.Action("Devices", "SupportAccount", new { id = Model.PartialId, assettype = Model.DefaultAssetType, devicecode = Model.DefaultDevicecode }).ToString());
+            // Html.Red("Devices", "SupportAccount", new {id = Model.PartialId, assettype = Model.DefaultAssetType, devicecode = Model.DefaultDevicecode});
+
+        }
+    }
+    else if (Model.SelectedTab == SupportAccountTabs.Groups)
+    {
+        if (Model.PartialId.HasValue && (User.HasPermission(Permission.CreateGroup) || (User.HasPermission(Permission.ViewSupportAccountGroups) && Model.HasGroups)))
+        {
+            // groupTab.Selected(true).Content(Html.Action("Groups", Model.PartialId).ToString());
+            ViewBag.Title = "Groups - Customer Support - Palo Alto Networks";
+            Html.RenderAction("Groups", new { id = Model.PartialId });
+        }
+    }
+
+    else if (Model.IsCsspAccount && Model.SelectedTab == SupportAccountTabs.Cssp)
+    {
+        if (string.IsNullOrEmpty(Model.FirstQueryStringValue))
+        {
+            // csspTab.Selected(true).Content(Html.Action("Cssp", "SupportAccount", new {id = Model.PartialId}).ToString());
+            Html.RenderAction("Cssp", "SupportAccount", new { id = Model.PartialId });
+        }
+        else
+        {
+            // csspTab.Selected(true).Content(Html.Action("Cssp", "SupportAccount", new { id = Model.PartialId, prelicenseId  = Model.FirstQueryStringValue}).ToString());
+            Html.RenderAction("Cssp", "SupportAccount", new { id = Model.PartialId, prelicenseId = Model.FirstQueryStringValue });
+        }
+    }
+}
+
+
+
+
+
+@*@( Html.Kendo().TabStrip()
+                .Animation(false)
+                .Name("supportAccountTabStrip")
+                .Events(e => e.Select("onSupportAccountTabStripSelect"))
+                .Items(tabstrip => {
+
+                    //for ViewSupportAscAccounts
+                    var homeTab = tabstrip.Add().Text(Constants.HOME);
+
+                    homeTab.ToItem().LinkHtmlAttributes.Add("data-link-type", "csp-navigation");
+                    homeTab.ToItem().LinkHtmlAttributes.Add("data-link-location", "header");
+
+                    if (Model.SelectedTab == SupportAccountTabs.Home) {
+                        homeTab.Selected(true).Content(Html.Action("Home", new { id = Model.PartialId }).ToString());
+                    }
+
+                    //for support account edit or view, edit if permission exists, then view if edit does not exist
+                    var accountTab = tabstrip.Add().Text(Constants.ACCOUNT);
+
+                    accountTab.ToItem().LinkHtmlAttributes.Add("data-link-type", "csp-navigation");
+                    accountTab.ToItem().LinkHtmlAttributes.Add("data-link-location", "header");
+
+                    if (Model.PartialId.HasValue && (!User.RoleSecurities.IsSupportAccountAdmin(Model.PartialId.Value) || !User.RoleSecurities.IsAscUser(Model.PartialId.Value))) {
+                        if (Model.PartialId.HasValue && User.HasPermission(Permission.EditSupportAccount)) {
+                            if (Model.SelectedTab == SupportAccountTabs.Account) {
+                                accountTab.Selected(true).Content(Html.Action("Edit", Model.PartialId).ToString());
+                            }
+                        }
+                        else if (Model.PartialId.HasValue && User.HasPermission(Permission.ViewSupportAccount)) {
+                            if (Model.SelectedTab == SupportAccountTabs.Account) {
+                                accountTab.Selected(true).Content(Html.Action("View", Model.PartialId).ToString());
+                            }
+                        }
+                        else {
+                            accountTab.Enabled(false);
+                        }
+                    }
+                    else {
+                        if (Model.PartialId.HasValue && User.HasPermission(Permission.ViewSupportAccount)) {
+                            if (Model.SelectedTab == SupportAccountTabs.Account) {
+                                accountTab.Selected(true).Content(Html.Action("AccountInfo", "SupportAccount", new { id = Model.PartialId }).ToString());
+                            }
+                        }
+                        else {
+                            accountTab.Enabled(false);
+                        }
+                    }
+
+                    //for ViewSupportAccountMemberships
+                    var memberTab = tabstrip.Add().Text(Constants.MEMBERS);
+
+                    memberTab.ToItem().LinkHtmlAttributes.Add("data-link-type", "csp-navigation");
+                    memberTab.ToItem().LinkHtmlAttributes.Add("data-link-location", "header");
+
+                    if (Model.PartialId.HasValue && User.HasPermission(Permission.ViewSupportAccountMemberships)) {
+
+                        if (Model.SelectedTab == SupportAccountTabs.Users) {
+                            memberTab.Selected(true).Content(Html.Action("Users", Model.PartialId).ToString());
+                        }
+                    } else {
+                        memberTab.Enabled(false);
+                    }
+
+                    //for ViewSupportAccountDevices
+                    var deviceTab = tabstrip.Add().Text(Constants.DEVICES);
+
+                    deviceTab.ToItem().LinkHtmlAttributes.Add("data-link-type", "csp-navigation");
+                    deviceTab.ToItem().LinkHtmlAttributes.Add("data-link-location", "header");
+
+                    if (Model.PartialId.HasValue && User.HasPermission(Permission.ViewSupportAccountDevices)) {
+
+                        if (Model.SelectedTab == SupportAccountTabs.Devices) {
+                            deviceTab.Selected(true).Content(Html.Action("Devices", "SupportAccount", new { id = Model.PartialId, assettype = Model.DefaultAssetType, devicecode = Model.DefaultDevicecode }).ToString());
+                        }
+                    } else {
+                        deviceTab.Enabled(false);
+                    }
+
+                    //for ViewSupportAccountGroups
+                    var groupTab = tabstrip.Add().Text(Constants.GROUPS);
+
+                    groupTab.ToItem().LinkHtmlAttributes.Add("data-link-type", "csp-navigation");
+                    groupTab.ToItem().LinkHtmlAttributes.Add("data-link-location", "header");
+
+                    if (Model.PartialId.HasValue
+                        && (
+                        User.HasPermission(Permission.CreateGroup)
+                        || (
+                            User.HasPermission(Permission.ViewSupportAccountGroups)
+                            && Model.HasGroups
+                        )
+                        )) {
+
+                        if (Model.SelectedTab == SupportAccountTabs.Groups) {
+                            groupTab.Selected(true).Content(Html.Action("Groups", Model.PartialId).ToString());
+                        }
+                    } else {
+                        groupTab.Enabled(false);
+                    }
+
+                     //for CSSP Page
+                    if (Model.IsCsspAccount)
+                    {
+                        var csspTab = tabstrip.Add().Text(Constants.CSSP);
+                        if (Model.SelectedTab == SupportAccountTabs.Cssp)
+                        {
+                            if (string.IsNullOrEmpty(Model.FirstQueryStringValue))
+                            {
+                                csspTab.Selected(true).Content(Html.Action("Cssp", "SupportAccount", new {id = Model.PartialId}).ToString());
+                            }
+                            else
+                            {
+                                csspTab.Selected(true).Content(Html.Action("Cssp", "SupportAccount", new { id = Model.PartialId, prelicenseId  = Model.FirstQueryStringValue}).ToString());
+                            }
+                        }
+                    }
+                })
+    )*@
+
+<script>
+
+    //$(document).ready(function() {
+    //    loadInitialBreadcrumbs();
+    //});
+
+    function onSupportAccountTabStripSelect(e) {
+
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+        var url = '';
+
+        var selectedTab = ''; //$(e.item).text();
+        switch (selectedTab) {
+        case '@Constants.HOME':
+            url = '@(Url.Action("MyAccounts", "SupportAccount", new {id = Model.PartialId}))';
+            break;
+
+        case '@Constants.ACCOUNT':
+            url = '@(Url.Action("LoadAccountPage", "SupportAccount", new {id = Model.PartialId}))';
+            break;
+
+        case '@Constants.GROUPS':
+            url = '@(Url.Action("AccountGroups", "SupportAccount", new {id = Model.PartialId}))';
+            break;
+
+        case '@Constants.DEVICES':
+            url = '@(Url.Action("AccountDevices", "SupportAccount", new {id = Model.PartialId}))';
+            break;
+
+        case '@Constants.MEMBERS':
+            url = '@(Url.Action("AccountUsers", "SupportAccount", new {id = Model.PartialId}))';
+            break;
+
+        case '@Constants.CSSP':
+            url = '@(Url.Action("CsspInfo", "SupportAccount", new {id = Model.PartialId}))';
+            break;
+        }
+
+        if (url != '') {
+            location.href = url;
+        }
+    }
+
+</script>

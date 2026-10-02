@@ -1,0 +1,409 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SD.LLBLGen.Pro.RiaSupportClasses</name>
+    </assembly>
+    <members>
+        <member name="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2">
+            <summary>
+            General base class for the Ria Services domain service class using Adapter LLBLGen Pro Runtime Framework entities
+            </summary>
+            <remarks>Adapter specific</remarks>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase">
+            <summary>
+            General base class for a Ria Services domain service class using LLBLGen Pro Runtime Framework entities
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase"/> class.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase.InsertEntity(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Adds the entity specified to the active unit of work object as an entity which has to be inserted
+            </summary>
+            <param name="toSave">The entity to save/insert.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase.UpdateEntity(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Adds the entity specified to the active unit of work object as an entity which has to be updated
+            </summary>
+            <param name="toSave">The entity to save/update.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase.DeleteEntity(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Adds the entity specified to the active unit of work object as an entity which has to be deleted.
+            </summary>
+            <param name="toDelete">The entity to delete.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase.CommitUnitOfWork">
+            <summary>
+            Commits the active Unit of Work object
+            </summary>
+            <returns>the return value of the Commit method on the unit of work</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase.ResetStateFlags(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Resets the state flags of the entity specified (isDirty, IsNew, State)
+            </summary>
+            <param name="entity">entity to reset the state flags of</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase.SetValuesInNewEntity(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Makes sure that the entity toSave has the values of the original and the changed values set, so the proper update query can be produced
+            as well as proper concurrency factories can be produced. 
+            </summary>
+            <param name="toSave">To save.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase.PersistChangeSet">
+            <summary>
+            This method is called to finalize changes after all the operations in the current <see cref="P:System.ServiceModel.DomainServices.Server.DomainService.ChangeSet"/>
+            have been invoked. This method should commit the changes as necessary to the data store.
+            Any errors should be set on the individual <see cref="T:System.ServiceModel.DomainServices.Server.ChangeSetEntry"/>s in the <see cref="P:System.ServiceModel.DomainServices.Server.DomainService.ChangeSet"/>.
+            </summary>
+            <returns>
+            True if the <see cref="P:System.ServiceModel.DomainServices.Server.DomainService.ChangeSet"/> was persisted successfully, false otherwise.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceBase.Count``1(System.Linq.IQueryable{``0})">
+            <summary>
+            Gets the number of rows in an <see cref="T:System.Linq.IQueryable`1"/>.
+            </summary>
+            <typeparam name="T">The element Type of the query.</typeparam>
+            <param name="query">The query for which the count should be returned.</param>
+            <returns>The total number of rows.</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2"/> class.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2.CreateDataAccessAdapter">
+            <summary>
+            Creates the IDataAccessAdapter instance to use for persistence
+            </summary>
+            <returns>ready to use IDataAccessAdapter instance</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2.CreateUnitOfWork">
+            <summary>
+            Creates a new UnitOfWork2 instance with default work order
+            </summary>
+            <returns>ready to use UnitOfWork instance</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2.CommitUnitOfWork">
+            <summary>
+            Commits the active Unit of Work object
+            </summary>
+            <returns>
+            the return value of the Commit method on the unit of work
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2.ResetStateFlags(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Resets the state flags of the entity specified (isDirty, IsNew, State)
+            </summary>
+            <param name="entity">entity to reset the state flags of</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2.InsertEntity(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Adds the entity specified to the active unit of work object as an entity which has to be inserted
+            </summary>
+            <param name="toSave">The entity to save/insert.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2.DeleteEntity(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Adds the entity specified to the active unit of work object as an entity which has to be deleted.
+            </summary>
+            <param name="toDelete">The entity to delete.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2.UpdateEntity(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Adds the entity specified to the active unit of work object as an entity which has to be updated
+            </summary>
+            <param name="toSave">The entity to save/update.</param>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService2.UnitOfWorkToUse">
+            <summary>
+            Gets the UnitOfWork2 instance to use.
+            </summary>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService">
+            <summary>
+            General base class for the Ria Services domain service class using SelfServicing LLBLGen Pro Runtime Framework entities
+            </summary>
+            <remarks>SelfServicing specific</remarks>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService"/> class.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService.CreateTransaction">
+            <summary>
+            Creates the ITransaction instance to use for persistence
+            </summary>
+            <returns>ready to use ITransaction instance</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService.CreateUnitOfWork">
+            <summary>
+            Creates a new UnitOfWork instance with default work order
+            </summary>
+            <returns>ready to use UnitOfWork instance</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService.CommitUnitOfWork">
+            <summary>
+            Commits the active Unit of Work object
+            </summary>
+            <returns>
+            the return value of the Commit method on the unit of work
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService.ResetStateFlags(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Resets the state flags of the entity specified (isDirty, IsNew, State)
+            </summary>
+            <param name="entity">entity to reset the state flags of</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService.InsertEntity(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Adds the entity specified to the active unit of work object as an entity which has to be inserted
+            </summary>
+            <param name="toSave">The entity to save/insert.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService.DeleteEntity(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Adds the entity specified to the active unit of work object as an entity which has to be deleted.
+            </summary>
+            <param name="toDelete">The entity to delete.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService.UpdateEntity(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore)">
+            <summary>
+            Adds the entity specified to the active unit of work object as an entity which has to be updated
+            </summary>
+            <param name="toSave">The entity to save/update.</param>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainService.UnitOfWorkToUse">
+            <summary>
+            Gets the UnitOfWork instance to use.
+            </summary>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProvider">
+            <summary>
+            The domain service description provider for a Ria Domain service using LLBLGen Pro Runtime Library entities.
+            </summary>
+        </member>
+        <member name="F:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProvider.CallGetEntityFactoryDelegate">
+            <summary>
+            Delegate to call the GetFactory method on the EntityFactoryFactory class in the generated code.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProvider.#ctor(System.Type,System.ServiceModel.DomainServices.Server.DomainServiceDescriptionProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProvider"/> class.
+            </summary>
+            <param name="domainServiceType">Type of the domain service.</param>
+            <param name="parent">The parent.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProvider.LookupIsEntityType(System.Type)">
+            <summary>
+            Determines if the specified <see cref="T:System.Type"/> should be considered an entity <see cref="T:System.Type"/>.
+            The base implementation returns <c>false</c>.
+            </summary>
+            <param name="type">The <see cref="T:System.Type"/> to check.</param>
+            <returns>
+            Returns <c>true</c> if the <see cref="T:System.Type"/> should be considered an entity,
+            <c>false</c> otherwise.
+            </returns>
+            <remarks>Effectively, the return from this method is this provider's vote as to whether the specified
+            Type is an entity. The votes from this provider and all other providers in the chain are used
+            by <see cref="M:System.ServiceModel.DomainServices.Server.DomainServiceDescriptionProvider.IsEntityType(System.Type)"/> to make it's determination.</remarks>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProvider.GetTypeDescriptor(System.Type,System.ComponentModel.ICustomTypeDescriptor)">
+            <summary>
+            Gets the <see cref="T:System.ComponentModel.TypeDescriptor"/> for the specified Type, using the specified parent descriptor
+            as the base. Overrides should call base to ensure the <see cref="T:System.ComponentModel.TypeDescriptor"/>s are chained properly.
+            </summary>
+            <param name="elementType">The Type to return a descriptor for.</param>
+            <param name="parent">The parent descriptor.</param>
+            <returns>
+            The <see cref="T:System.ComponentModel.TypeDescriptor"/> for the specified Type.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProvider.GetFactory(System.Type)">
+            <summary>
+            Gets the factory for the entity with the type specified.
+            </summary>
+            <param name="elementType">Type of the element.</param>
+            <returns>the factory for the element specified, or null if not found</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProvider.ProduceEntityFactoryDelegate(System.Type)">
+            <summary>
+            Produces the entity factory delegate and sets the 
+            </summary>
+            <param name="elementType">Type of the element.</param>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProviderAttribute">
+            <summary>
+            Attribute for defining the description provider for the domain service class.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProviderAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProviderAttribute"/> class.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProDomainServiceDescriptionProviderAttribute.CreateProvider(System.Type,System.ServiceModel.DomainServices.Server.DomainServiceDescriptionProvider)">
+            <summary>
+            This method creates an instance of the <see cref="T:System.ServiceModel.DomainServices.Server.DomainServiceDescriptionProvider"/>. Subclasses can override this
+            method to provide their own construction logic.
+            </summary>
+            <param name="domainServiceType">The <see cref="T:System.ServiceModel.DomainServices.Server.DomainService"/> type to create a description provider for.</param>
+            <param name="parent">The parent description provider. May be null.</param>
+            <returns>The description provider</returns>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProEntityTypeDescriptor">
+            <summary>
+            Custom type descriptor for producing meta-data for an entity type.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProEntityTypeDescriptor.#ctor(System.Type,System.ComponentModel.ICustomTypeDescriptor)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProEntityTypeDescriptor"/> class.
+            </summary>
+            <param name="elementType">Type of the element.</param>
+            <param name="parent">The parent.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProEntityTypeDescriptor.GetProperties">
+            <summary>
+            Returns a collection of property descriptors for the object represented by this type descriptor.
+            </summary>
+            <returns>
+            A <see cref="T:System.ComponentModel.PropertyDescriptorCollection"/> containing the property descriptions for the object represented by this type descriptor. The default is <see cref="F:System.ComponentModel.PropertyDescriptorCollection.Empty"/>.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProEntityTypeDescriptor.GetEntityMemberAttributes(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Gets the entity member attributes to specify for the member represented by the descriptor specified.
+            </summary>
+            <param name="descriptor">The descriptor which represents the member.</param>
+            <returns>enumerable with 0 or more attributes to append to the member for ria-services usage</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProEntityTypeDescriptor.CreateAssociationAttribute(SD.LLBLGen.Pro.ORMSupportClasses.IEntityCore,SD.LLBLGen.Pro.ORMSupportClasses.RelationCollection,System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Creates the association attribute from the relationship(s) which are specified for the member represented by the descriptor
+            </summary>
+            <param name="entityInstance">The entity instance.</param>
+            <param name="relationshipsForMember">The relationships for member.</param>
+            <param name="descriptor">The descriptor.</param>
+            <returns>the association attribute which represents the descriptor specified</returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.LLBLGenProEntityTypeDescriptor.IsNavigator(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Determines whether the specified descriptor represents a navigator.
+            </summary>
+            <param name="descriptor">The descriptor.</param>
+            <returns><c>true</c> if the specified descriptor represents a navigator; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="T:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper">
+            <summary>
+            Wrapper for a normal descriptor obtained from a type in the domain model. The wrapper is needed so additional attributes
+            can be added to the property at runtime.
+            </summary>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.#ctor(System.ComponentModel.PropertyDescriptor,System.Attribute[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper"/> class.
+            </summary>
+            <param name="descriptor">The descriptor.</param>
+            <param name="attributes">The attrs.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.AddValueChanged(System.Object,System.EventHandler)">
+            <summary>
+            Enables other objects to be notified when this property changes.
+            </summary>
+            <param name="component">The component to add the handler for.</param>
+            <param name="handler">The delegate to add as a listener.</param>
+            <exception cref="T:System.ArgumentNullException">
+            	<paramref name="component"/> or <paramref name="handler"/> is null.</exception>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.CanResetValue(System.Object)">
+            <summary>
+            When overridden in a derived class, returns whether resetting an object changes its value.
+            </summary>
+            <param name="component">The component to test for reset capability.</param>
+            <returns>
+            true if resetting the component changes its value; otherwise, false.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.GetValue(System.Object)">
+            <summary>
+            When overridden in a derived class, gets the current value of the property on a component.
+            </summary>
+            <param name="component">The component with the property for which to retrieve the value.</param>
+            <returns>
+            The value of a property for a given component.
+            </returns>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.RemoveValueChanged(System.Object,System.EventHandler)">
+            <summary>
+            Enables other objects to be notified when this property changes.
+            </summary>
+            <param name="component">The component to remove the handler for.</param>
+            <param name="handler">The delegate to remove as a listener.</param>
+            <exception cref="T:System.ArgumentNullException">
+            	<paramref name="component"/> or <paramref name="handler"/> is null.</exception>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.ResetValue(System.Object)">
+            <summary>
+            When overridden in a derived class, resets the value for this property of the component to the default value.
+            </summary>
+            <param name="component">The component with the property value that is to be reset to the default value.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.SetValue(System.Object,System.Object)">
+            <summary>
+            When overridden in a derived class, sets the value of the component to a different value.
+            </summary>
+            <param name="component">The component with the property value that is to be set.</param>
+            <param name="value">The new value.</param>
+        </member>
+        <member name="M:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.ShouldSerializeValue(System.Object)">
+            <summary>
+            When overridden in a derived class, determines a value indicating whether the value of this property needs to be persisted.
+            </summary>
+            <param name="component">The component with the property to be examined for persistence.</param>
+            <returns>
+            true if the property should be persisted; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.ComponentType">
+            <summary>
+            When overridden in a derived class, gets the type of the component this property is bound to.
+            </summary>
+            <value></value>
+            <returns>A <see cref="T:System.Type"/> that represents the type of component this property is bound to. When the <see cref="M:System.ComponentModel.PropertyDescriptor.GetValue(System.Object)"/> or <see cref="M:System.ComponentModel.PropertyDescriptor.SetValue(System.Object,System.Object)"/> methods are invoked, the object specified might be an instance of this type.</returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.IsReadOnly">
+            <summary>
+            When overridden in a derived class, gets a value indicating whether this property is read-only.
+            </summary>
+            <value></value>
+            <returns>true if the property is read-only; otherwise, false.</returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.PropertyType">
+            <summary>
+            When overridden in a derived class, gets the type of the property.
+            </summary>
+            <value></value>
+            <returns>A <see cref="T:System.Type"/> that represents the type of the property.</returns>
+        </member>
+        <member name="P:SD.LLBLGen.Pro.RiaSupportClasses.MetaDataPropertyDescriptorWrapper.SupportsChangeEvents">
+            <summary>
+            Gets a value indicating whether value change notifications for this property may originate from outside the property descriptor.
+            </summary>
+            <value></value>
+            <returns>true if value change notifications may originate from outside the property descriptor; otherwise, false.</returns>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,443 @@
+@using Kendo.Mvc.UI
+@using Csp.Api.Model
+@model Csp.Web.DataTransferObjects.SecaasViewModelDto
+
+<style type="text/css">
+    body .k-master-row.even, body .k-master-row.even:hover, body .k-detail-row.even, body .k-detail-row.even:hover, body .k-detail-row.even th.k-header, body .k-detail-row.even td[role="gridcell"] { background-color: rgba(52, 52, 52, 0.15) !important; }
+    .rbold { font-weight: bold; }
+</style>
+<script>
+    var SecaasGrid = (function () {
+
+        function exportSaasToCsv() {
+            var supportAccountId = "@Model.SupportAccountId";
+            var searchBy = $('#SearchBy').val();
+            var searchValue = $('#SearchValue').val();
+            location.href = '@Url.Action("SearchAvailableReport", "Saas")?supportAccountId=' + supportAccountId +"&searchBy=" + searchBy +"&searchValue=" + searchValue;
+        }
+
+        // Get the parameters to search the grid
+        function getSearchParams() {
+            var params = SetAntiForgery();
+            params.supportAccountId = "@Model.SupportAccountId";
+            params.searchBy = $('#SearchBy').val();
+            params.searchValue = $('#SearchValue').val();
+            return params;
+        }
+
+        // On Activate Auth Code window open
+        function onActSaasAuthCodeWindowOpen() {
+            SupportPortal.OnWindowOpen('@UniqueId.ActivateSaasAuthCodeWindow');
+        }
+
+        //On Generate OTP window open 
+        function onGenerateOTPWindowOpen() {
+            SupportPortal.OnWindowOpen('@UniqueId.GenerateOTPWindow');
+        }
+        // On download window open
+        function onDownloadsWindowOpen() {
+            SupportPortal.OnWindowOpen('@UniqueId.DownloadsWindow');
+        }
+        // On download window open
+        function onAssoicationWindowOpen() {
+            SupportPortal.OnWindowOpen('@UniqueId.ActivateSaasAuthCodeWindow');
+        }
+        // on Activate auth cod Window Close
+        function onWindowClose() {
+            SupportPortal.OnWindowClose("@UniqueId.SaaSGrid");
+        }
+
+        // on download window close
+        function onDownloadsWindowClose() {
+        }
+
+        //On Generate OTP window Close 
+        function onGenerateOTPWindowClose() {
+            var window = $('#@UniqueId.GenerateOTPWindow').data("kendoWindow");
+            window.content(" ");
+            window.refresh();
+        }
+
+        //on download's button click
+        function Download(e) {
+
+            e.preventDefault ? e.preventDefault() : e.returnValue = false;
+            var downloadsWindow = $('#@UniqueId.DownloadsWindow').data('kendoWindow');
+            downloadsWindow.refresh('/updates/softwareupdates?saasActivations=true');
+            downloadsWindow.setOptions({
+                minHeight: 200
+            });
+
+            downloadsWindow.open();
+            downloadsWindow.center();
+            return false;
+        }
+
+        function AssociatePanorama(e) {
+            e.preventDefault ? e.preventDefault() : e.returnValue = false;
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            SecaasGrid.ActivateAuthCode(dataItem.AuthorizationCode, dataItem.Region);
+        }
+
+        function OnDataBound(e) {
+            var grid = $('#@UniqueId.SaaSGrid').data("kendoGrid");
+            var gridData = grid.dataSource.view();
+            var pattern = new RegExp('^(REN)*TRAPSMA(L|LUS|LLAB|LNFR)');
+            for (var i = 0; i < gridData.length; i++) {
+                var currenData = gridData[i];
+                var currentUid = gridData[i].uid;
+                var currenRow = $(grid.table.find("tr[data-uid='" + currentUid + "']"));
+                currenRow.attr("gid", currenData.GroupId);
+                if (currenData
+                    && currenData.Children
+                    && currenData.Children.length > 0) {
+                    // $('.k-grid tr.k-master-row[gid="' + currenData.GroupId + '"]').addClass('rbold');
+                } else {
+                    currenRow.find('.k-icon').remove();
+                    currenRow.parent().find('.k-detail-row').remove();
+                }
+                if (gridData[i].ModelName == "Magnifier" || gridData[i].ModelName == "Magnifier Device" || gridData[i].ModelName == "CGX"
+                        || pattern.test(gridData[i].PanDbIdentification)) {
+                    var downloadButton = currenRow.find(".k-grid-csp-download");
+                    downloadButton.hide();
+                }
+                if (gridData[i].ShowPanoramaAssociation == false) {
+                    var editButton = currenRow.find(".k-grid-csp-edit");
+                    editButton.hide();
+                }
+                if (currenData.GroupId % 2 !== 0) {
+                    currenRow.addClass('even');
+                    currenRow.find('tr').addClass('even');
+                }
+            }
+            /*
+            var groups = Array.from(new Set($.map($('.k-grid tr.k-master-row[gid]'), function (i) { return $(i).attr('gid'); })));
+            for (var i = 0; i < groups.length; i++) {
+                var group = $('.k-grid tr.k-master-row[gid="' + groups[i] + '"]');
+                if (group.size() > 1) {
+                    //$((group).first().find('td').get(0)).prepend($(group).last().find('.k-icon'));
+                }
+            }
+            */
+            setTimeout(function () {
+                setRowsState();
+            }, 25);
+        }
+
+        function LicenseDescription(description) {           
+            var index = description.split(' ', 8).join(' ').length +1;
+            return description.slice(0, index) + "<br/>" + description.slice(index);
+        }
+        function ModelName(name) {
+            var index = name.split(' ', 3).join(' ').length + 1;
+            return name.slice(0, index) + "<br/>" + name.slice(index);
+        }
+        function ActivateAuthCode(authcode,region) {
+            var direction = '/Saas/AddSaasAuthCode?supportAccountID=' + "@Model.SupportAccountId"+"&authCode="+authcode+"&region="+region;
+            var window = $('#@UniqueId.ActivateSaasAuthCodeWindow').data("kendoWindow");
+            window.refresh(direction);
+            window.setOptions({
+                minHeight: 400,
+                minWidth: 500
+            });
+            window.open();
+            window.center();
+        }
+
+        return {
+            exportSaasToCsv : exportSaasToCsv,
+            getSearchParams : getSearchParams,
+            onActSaasAuthCodeWindowOpen : onActSaasAuthCodeWindowOpen,
+            onDownloadsWindowOpen : onDownloadsWindowOpen,
+            onWindowClose : onWindowClose,
+            onDownloadsWindowClose: onDownloadsWindowClose,
+            onGenerateOTPWindowClose : onGenerateOTPWindowClose,
+            Download: Download,
+            AssociatePanorama:AssociatePanorama,
+            LicenseDescription: LicenseDescription,
+            ModelName:ModelName,
+            OnDataBound: OnDataBound,
+            ActivateAuthCode:ActivateAuthCode
+        }
+    })();
+
+        $(function () {
+            $('#@UniqueId.ActivateSaasAuthCode').click(function () {
+                SecaasGrid.ActivateAuthCode("","");
+            });
+
+            $('#@UniqueId.GenerateOTP').click(function () {
+                var direction = '/Saas/ViewGenerateOTP?supportAccountID=' + "@Model.SupportAccountId";
+                 var window = $('#@UniqueId.GenerateOTPWindow').data("kendoWindow");
+                 window.refresh(direction);
+                 window.setOptions({
+                     minHeight: 300,
+                     minWidth: 500
+                 });
+                 window.open();
+                 window.center();
+             });
+    });
+
+    function onSearchEnterPress(e) {
+        if (e.keyCode == 13) {
+            findSAAS();
+            return false;
+        }
+
+        return true;
+    }
+
+    function findSAAS() {
+        var grid = $('#@UniqueId.SaaSGrid').data("kendoGrid");
+        if (grid.dataSource.page() !== 1) {
+            grid.dataSource.page(1);
+        } else {
+            grid.dataSource.read();
+        }
+        return false;
+    }
+
+    
+</script>
+<style>
+    #gridId table {
+    width: auto;
+}
+</style>
+
+@Html.AntiForgeryToken()
+
+@Html.Hidden((string)UniqueId.isPostBackId, "")
+
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)@UniqueId.ActivateSaasAuthCodeWindow)
+          .Visible(false)
+          .Width(450)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+                                .Open("SecaasGrid.onActSaasAuthCodeWindowOpen")
+                                .Close("SecaasGrid.onWindowClose"))
+          .Title("Cloud Services") 
+          )
+</div>
+<div>
+    @(Html.Kendo().Window() 
+          .Name((string)@UniqueId.GenerateOTPWindow) 
+          .Visible(false) 
+          .Width(450) 
+          .Modal(true) 
+          .Draggable() 
+          .Events(events => events 
+                                .Open("SecaasGrid.OnGenerateOTPWindowOpen") 
+                                .Close("SecaasGrid.onGenerateOTPWindowClose")) 
+          .Title("Generate One Time Password")
+          ) 
+</div>
+<div>
+    @(
+    Html.Kendo().Window()
+        .Name((string)@UniqueId.DownloadsWindow)
+        .Visible(false)
+        .Events(events => events
+            .Open("SecaasGrid.onDownloadsWindowOpen")
+            .Close("SecaasGrid.onDownloadsWindowClose"))
+        .Modal(true)
+        .Width(1080)
+        .Draggable()
+ 
+        .Title("Downloads")
+          )
+</div>
+
+<div class="contextTitle">Cloud Services</div>
+
+<div class="grid-header">
+    <div class="grid-left">
+        <button type="button" class="k-button" data-link-type="saas-activate-auth-code" id="@UniqueId.ActivateSaasAuthCode">Activate Cloud Services Auth-Code</button> 
+        @if (Model.hasOTPAccess != null && Model.hasOTPAccess)
+        {
+            <button type="button" class="k-button" data-link-type="OTP Generation" id="@UniqueId.GenerateOTP">Generate OTP</button>
+         }
+    </div>
+   
+    <div class="grid-right">
+
+            <div class="grid-filter">
+                @{
+                    @(Html.Kendo().DropDownList()
+                        .Name("SearchBy")
+                        .OptionLabel("Filter By")
+                        .OptionLabelTemplate("<span class='grid-filter__dropdown-placeholder'>Filter By</span>")
+                        .DataTextField("Text")
+                        .DataValueField("Value")
+                        .BindTo(new List<SelectListItem>
+                            {
+                                new SelectListItem
+                                    {
+                                        Text = "Auth Code",
+                                        Value = "AuthCode"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Serial Number",
+                                        Value = "SerialNumber"
+                                    },
+                                
+                                new SelectListItem
+                                    {
+                                        Text = @"Associated Services/Devices",
+                                        Value = "AssociatedServicesorDevices"
+                                    },
+                                
+                                new SelectListItem
+                                    {
+                                        Text = @"Model Name",
+                                        Value = "ModelName"
+                                    }
+                            })
+                        )                    
+                }
+            </div>
+
+            <div class="grid-filter" id="@UniqueId.textDivId">
+                @Html.TextBox("SearchValue", null, new {
+                    onkeypress = "return onSearchEnterPress(event)",
+                    @class = "grid-filter__search-input",
+                    placeholder = "Search",
+                    aria_label = "Search"
+                })
+                <button aria-label="search" type="button" id="@UniqueId.FindSaas" class="grid-filter__search-button" onclick="findSAAS()">
+                    <span aria-hidden="true" class="fa fa-search" />
+                </button>
+            </div>
+        </div>
+</div>
+<div class="grid-right" style="z-index: 1;position: relative;">
+    <div class="grid-actions">
+        <input type="button" value="Expand All Available Details" id="expand-all" class="k-button" style="display:none;" />
+        <input type="button" value="Collapse All Available Details" id="collapse-all" class="k-button" style="display:none;" />
+    </div>
+</div>
+<div>
+@{
+    var maxPageSizeForms = Convert.ToInt32(Convert.ToInt32(Model.DataParameters.TotalRecordCount));
+    var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+    if (maxPageSizeForms > pageSizeOptionsForms.Max())
+    {
+        pageSizeOptionsForms.Add(maxPageSizeForms);
+    }
+    @(Html.Kendo().Grid(Model.AvailableSaas)
+        .Name((string)UniqueId.SaaSGrid)
+        .Columns(cols => {
+            cols.Bound(x => x.AuthorizationCode).Title("Auth Code");
+            cols.Bound(x => x.SerialNumber).ClientTemplate("#= SerialNumber #").Encoded(false).Title("Serial Number").Width(150);
+            cols.Bound(x => x.ModelName).ClientTemplate("#= ModelName #").Encoded(false).Title("Model Name").HtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(310);
+            cols.Bound(x => x.Quantity).ClientTemplate("#= Quantity #").Encoded(false).Title("Quantity").Width(70);
+            cols.Bound(x => x.Capacity).ClientTemplate("#= Capacity #").Encoded(false).Title("Capacity").Width(100);
+            cols.Bound(x => x.Description).Title("License Description").Encoded(false).HtmlAttributes(new { style = "overflow: visible; white-space: normal" }).Width(400);
+            cols.Bound(x => x.ExpirationDate).ClientTemplate("#= ExpirationDate #").Encoded(false).Title("Expiration<br/> Date").Format("{0:d}");
+            cols.Bound(x => x.AssoicatedDevices).Encoded(false).Title("Associated Services/ <br/>Devices ").Width(110);
+            cols.Bound(x => x.Region).Title("Region");
+            cols.Command(command => {
+                command.Custom("csp-download").Text(" ").Click("SecaasGrid.Download").HtmlAttributes(new { title = "Download", href = "javascript:void(0);" });     
+                command.Custom("csp-edit").Text(" ").Click("SecaasGrid.AssociatePanorama").HtmlAttributes(new {title = "Associate Panorama",href = "javascript:void(0);"});
+            }).Width(100).Title("Actions");
+        })
+        .ToolBar(toolBar => {
+            toolBar.Custom()
+            .Text("Export To CSV")
+            .HtmlAttributes(new { id = "export", data_link_type = "export-csv-assets" })
+            .Url("javascript: SecaasGrid.exportSaasToCsv();");
+        })
+        .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+        .ClientDetailTemplateId("template")
+        .Events(e => { e.DataBound("SecaasGrid.OnDataBound");  e.DetailInit("initDetail"); })
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Model(model => {
+                model.Id(p => p.SerialNumber);
+            }
+        )
+        .Read(read => read.Action("SearchAvailable", "Saas").Data("SecaasGrid.getSearchParams")))
+    )
+    <script id="template" type="text/kendo-tmpl">
+        @((Html.Kendo().Grid<BundleLicenseItemBase>()
+            .Name("ChildrenGrid_#=SerialNumber#")
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.AuthorizationCode).Title("Auth Code");
+                columns.Bound(o => o.ModelName).Title("Model Name");
+                columns.Bound(o => o.Quantity).Title("Quantity");
+                columns.Bound(o => o.Capacity).Title("Capacity");
+                columns.Bound(o => o.Description).Title("Description");
+                columns.Bound(o => o.ExpirationDate).Title("ExpirationDate");
+            })
+            .ToClientTemplate())
+        )
+    </script>
+    <script>
+        function initDetail(e) {
+            $("#ChildrenGrid_" + e.data.SerialNumber).data("kendoGrid").dataSource.data(e.data.Children);
+            if (e.data.GroupId % 2 !== 0) {
+                $("#ChildrenGrid_" + e.data.SerialNumber).parent().parent().addClass('even');
+            }
+        }
+
+        function setButtonsState() {
+            var total = $('.k-master-row').length;
+            var selected = $('.k-master-row.rbold').length;
+
+            if (total === selected) { // all collapsed
+                $('#expand-all').addClass('selected');
+                $('#collapse-all').removeClass('selected');
+            } else if (selected === 0) { // all expanded
+                $('#expand-all').removeClass('selected');
+                $('#collapse-all').addClass('selected');
+            } else {
+                $('#expand-all').removeClass('selected');
+                $('#collapse-all').removeClass('selected');
+            }
+        }
+
+        function setRowsState() {
+            if ($('.k-master-row .k-icon').size() === 0) {
+                $('#expand-all').hide();
+                $('#collapse-all').hide();
+                return;
+            }
+            $('#expand-all').show();
+            $('#collapse-all').show();
+            $('.k-master-row > td.k-hierarchy-cell a').click(function flipMasterRow(e) {
+                var el = $(this).parent().parent();
+                var gid = el.attr('gid');
+                var els = $('tr.k-master-row[gid="' + gid + '"]');
+                if (el.hasClass('rbold')) {
+                    els.removeClass('rbold');
+                } else {
+                    els.addClass('rbold');
+                }
+                setButtonsState();
+            });
+            $('.k-master-row > td.k-hierarchy-cell a').click();
+            $('#expand-all').click(function () {
+                $('.k-master-row:not(.rbold) > td.k-hierarchy-cell a').click();
+            });
+            $('#collapse-all').click(function () {
+                $('.k-master-row.rbold > td.k-hierarchy-cell a').click();
+            });
+            setButtonsState();
+        }
+
+        $('#SearchValue').keyup(function (e) {
+            if (e.keyCode == 13) {
+                var grid = $('#@UniqueId.SaaSGrid').data("kendoGrid");
+                grid.dataSource.page(1);
+                grid.dataSource.read();
+            }
+        });
+    </script>
+}
+</div>

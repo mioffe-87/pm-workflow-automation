@@ -1,0 +1,675 @@
+﻿<[If HasForeignKeyField]>		
+		/// <summary>Performs the desync setup when an FK field has been changed. The entity referenced based on the FK field will be dereferenced and sync info will be removed.</summary>
+		/// <param name="fieldIndex">The fieldindex.</param>
+		protected override void PerformDesyncSetupFKFieldChange(int fieldIndex)
+		{
+			switch((<[ CurrentEntityName ]>FieldIndex)fieldIndex)
+			{<[ Foreach EntityField ]><[ If IsForeignKey ]>
+				case <[ CurrentEntityName ]>FieldIndex.<[ EntityFieldName ]>:
+<[ Foreach RelationFieldIsInFkSide CrLf]><[If Not MappedFieldRelationIsHidden]>					DesetupSync<[MappedFieldNameRelation]>(true, false);<[EndIf]><[ NextForeach ]>
+					break;<[ EndIf ]><[ NextForeach ]>
+				default:
+					base.PerformDesyncSetupFKFieldChange(fieldIndex);
+					break;
+			}
+		}
+<[EndIf]>
+		/// <summary> Sets the related entity property to the entity specified. If the property is a collection, it will add the entity specified to that collection.</summary>
+		/// <param name="propertyName">Name of the property.</param>
+		/// <param name="entity">Entity to set as an related entity</param>
+		/// <remarks>Used by prefetch path logic.</remarks>
+		protected override void SetRelatedEntityProperty(string propertyName, IEntityCore entity)
+		{
+			switch(propertyName)
+			{
+<[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					this.<[MappedFieldNameRelation]> = (<[RelatedEntityName]>Entity)entity;
+					break;
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					this.<[MappedFieldNameRelation]>.Add((<[RelatedEntityName]>Entity)entity);
+					break;
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					this.<[MappedFieldNameRelation]>.IsReadOnly = false;
+					this.<[MappedFieldNameRelation]>.Add((<[RelatedEntityName]>Entity)entity);
+					this.<[MappedFieldNameRelation]>.IsReadOnly = true;
+					break;
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					this.<[MappedFieldNameRelation]> = (<[RelatedEntityName]>Entity)entity;
+					break;
+<[EndIf]><[NextForeach]>				default:
+<[If IsSubType]>					base.SetRelatedEntityProperty(propertyName, entity);<[Else]>					this.OnSetRelatedEntityProperty(propertyName, entity);<[EndIf]>
+					break;
+			}
+		}
+		
+		/// <summary>Gets the relation objects which represent the relation the fieldName specified is mapped on. </summary>
+		/// <param name="fieldName">Name of the field mapped onto the relation of which the relation objects have to be obtained.</param>
+		/// <returns>RelationCollection with relation object(s) which represent the relation the field is maped on</returns>
+		protected override RelationCollection GetRelationsForFieldOfType(string fieldName)
+		{
+			return GetRelationsForField(fieldName);
+		}
+
+		/// <summary>Gets the relation objects which represent the relation the fieldName specified is mapped on. </summary>
+		/// <param name="fieldName">Name of the field mapped onto the relation of which the relation objects have to be obtained.</param>
+		/// <returns>RelationCollection with relation object(s) which represent the relation the field is maped on</returns>
+		internal static <[If IsSubType]>new <[EndIf]>RelationCollection GetRelationsForField(string fieldName)
+		{
+			RelationCollection toReturn = new RelationCollection();
+			switch(fieldName)
+			{
+<[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					toReturn.Add(Relations.<[RelatedEntityName]>EntityUsing<[If Not RelatedEntityIsOtherEntity]><[Foreach RelationField]><[RelatedEntityRelationFieldName]><[NextForeach]><[EndIf]><[Foreach RelationField]><[RelationFieldName]><[NextForeach]>);
+					break;
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					toReturn.Add(Relations.<[RelatedEntityName]>EntityUsing<[Foreach RelationField]><[RelatedEntityRelationFieldName]><[NextForeach]>);
+					break;
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					toReturn.Add(Relations.<[IntermediateEntityName]>EntityUsing<[Foreach RelationField OneToMany]><[RelatedEntityRelationFieldName]><[NextForeach]>, "<[CurrentEntityName]>Entity__", "<[IntermediateEntityName]>_", JoinHint.None);
+					toReturn.Add(<[IntermediateEntityName]>Entity.Relations.<[RelatedEntityName]>EntityUsing<[Foreach RelationField ManyToOne]><[RelationFieldName]><[NextForeach]>, "<[IntermediateEntityName]>_", string.Empty, JoinHint.None);
+					break;
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					toReturn.Add(Relations.<[RelatedEntityName]>EntityUsing<[Foreach RelationField]><[If IsOneToOnePkPk FkSide]><[RelationFieldName]><[EndIf]><[If Not IsOneToOnePkPk FkSide]><[RelatedEntityRelationFieldName]><[EndIf]><[If IsOneToOnePkFkUc FkSide]><[If RelatedEntityIsOtherEntity]><[RelationFieldName]><[EndIf]><[If Not RelatedEntityIsOtherEntity]><[RelatedEntityRelationFieldName]><[EndIf]><[EndIf]><[If Not IsOneToOnePkFkUc FkSide]><[RelatedEntityRelationFieldName]><[EndIf]><[NextForeach]>);
+					break;
+<[EndIf]><[NextForeach]>				default:
+<[If IsSubType]>					toReturn = <[SuperTypeName]>Entity.GetRelationsForField(fieldName);
+<[EndIf]>					break;				
+			}
+			return toReturn;
+		}
+#if !CF
+		/// <summary>Checks if the relation mapped by the property with the name specified is a one way / single sided relation. If the passed in name is null, it/ will return true if the entity has any single-sided relation</summary>
+		/// <param name="propertyName">Name of the property which is mapped onto the relation to check, or null to check if the entity has any relation/ which is single sided</param>
+		/// <returns>true if the relation is single sided / one way (so the opposite relation isn't present), false otherwise</returns>
+		protected override bool CheckOneWayRelations(string propertyName)
+		{
+			int numberOfOneWayRelations = 0<[Foreach RelatedEntity ManyToOne]><[If Not OppositeRelationPresent]><[ If Not MappedFieldRelationIsHidden ]>+1<[EndIf]><[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not OppositeRelationPresent]><[ If Not MappedFieldRelationIsHidden ]>+1<[EndIf]><[EndIf]><[NextForeach]>;
+			switch(propertyName)
+			{
+				case null:
+					return ((numberOfOneWayRelations > 0) || base.CheckOneWayRelations(null));
+<[Foreach RelatedEntity ManyToOne]><[If Not OppositeRelationPresent]><[ If Not MappedFieldRelationIsHidden ]>				case "<[MappedFieldNameRelation]>":
+					return true;
+<[ EndIf ]><[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not OppositeRelationPresent]><[ If Not MappedFieldRelationIsHidden ]>				case "<[MappedFieldNameRelation]>":
+					return true;
+<[ EndIf ]><[EndIf]><[NextForeach]>				default:
+					return base.CheckOneWayRelations(propertyName);
+			}
+		}
+#endif
+		/// <summary> Sets the internal parameter related to the fieldname passed to the instance relatedEntity. </summary>
+		/// <param name="relatedEntity">Instance to set as the related entity of type entityType</param>
+		/// <param name="fieldName">Name of field mapped onto the relation which resolves in the instance relatedEntity</param>
+		protected override void SetRelatedEntity(IEntityCore relatedEntity, string fieldName)
+		{
+			switch(fieldName)
+			{
+<[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					SetupSync<[MappedFieldNameRelation]>(relatedEntity);
+					break;
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]><[If OppositeRelationPresent]>				case "<[MappedFieldNameRelation]>":
+					this.<[MappedFieldNameRelation]>.Add((<[RelatedEntityName]>Entity)relatedEntity);
+					break;
+<[EndIf]><[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					SetupSync<[MappedFieldNameRelation]>(relatedEntity);
+					break;
+<[EndIf]><[NextForeach]>				default:
+<[If IsSubType]>					base.SetRelatedEntity(relatedEntity, fieldName);
+<[EndIf]>					break;
+			}
+		}
+
+		/// <summary> Unsets the internal parameter related to the fieldname passed to the instance relatedEntity. Reverses the actions taken by SetRelatedEntity() </summary>
+		/// <param name="relatedEntity">Instance to unset as the related entity of type entityType</param>
+		/// <param name="fieldName">Name of field mapped onto the relation which resolves in the instance relatedEntity</param>
+		/// <param name="signalRelatedEntityManyToOne">if set to true it will notify the manytoone side, if applicable.</param>
+		protected override void UnsetRelatedEntity(IEntityCore relatedEntity, string fieldName, bool signalRelatedEntityManyToOne)
+		{
+			switch(fieldName)
+			{
+<[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					DesetupSync<[MappedFieldNameRelation]>(false, true);
+					break;
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]><[If OppositeRelationPresent]>				case "<[MappedFieldNameRelation]>":
+					this.PerformRelatedEntityRemoval(this.<[MappedFieldNameRelation]>, relatedEntity, signalRelatedEntityManyToOne);
+					break;
+<[EndIf]><[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]>				case "<[MappedFieldNameRelation]>":
+					DesetupSync<[MappedFieldNameRelation]>(false, true);
+					break;
+<[EndIf]><[NextForeach]>				default:
+<[If IsSubType]>					base.UnsetRelatedEntity(relatedEntity, fieldName, signalRelatedEntityManyToOne);
+<[EndIf]>					break;
+			}
+		}
+
+		/// <summary> Gets a collection of related entities referenced by this entity which depend on this entity (this entity is the PK side of their FK fields). These entities will have to be persisted after this entity during a recursive save.</summary>
+		/// <returns>Collection with 0 or more IEntity2 objects, referenced by this entity</returns>
+		protected override List<IEntity2> GetDependingRelatedEntities()
+		{
+			List<IEntity2> toReturn = new List<IEntity2>();
+<[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]><[ If Not IsOneToOnePkPk FkSide ]>			if(_<[CaseCamel MappedFieldNameRelation]>!=null)
+			{
+				toReturn.Add(_<[CaseCamel MappedFieldNameRelation]>);
+			}<[EndIf]>
+<[ If Not IsOneToOnePkFkUc FkSide ]>			if(_<[CaseCamel MappedFieldNameRelation]>!=null)
+			{
+				toReturn.Add(_<[CaseCamel MappedFieldNameRelation]>);
+			}<[EndIf]>
+<[EndIf]><[NextForeach]><[If IsSubType]>			toReturn.AddRange(base.GetDependingRelatedEntities());
+<[EndIf]>			return toReturn;
+		}
+		
+		/// <summary> Gets a collection of related entities referenced by this entity which this entity depends on (this entity is the FK side of their PK fields). These
+		/// entities will have to be persisted before this entity during a recursive save.</summary>
+		/// <returns>Collection with 0 or more IEntity2 objects, referenced by this entity</returns>
+		protected override List<IEntity2> GetDependentRelatedEntities()
+		{
+			List<IEntity2> toReturn = new List<IEntity2>();
+<[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>			if(_<[CaseCamel MappedFieldNameRelation]>!=null)
+			{
+				toReturn.Add(_<[CaseCamel MappedFieldNameRelation]>);
+			}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]><[ If IsOneToOnePkPk FkSide ]>			if(_<[CaseCamel MappedFieldNameRelation]>!=null)
+			{
+				toReturn.Add(_<[CaseCamel MappedFieldNameRelation]>);
+			}<[EndIf]>
+<[ If IsOneToOnePkFkUc FkSide ]>			if(_<[CaseCamel MappedFieldNameRelation]>!=null)
+			{
+				toReturn.Add(_<[CaseCamel MappedFieldNameRelation]>);
+			}<[EndIf]>
+<[EndIf]><[NextForeach]><[If IsSubType]>			toReturn.AddRange(base.GetDependentRelatedEntities());
+<[EndIf]>			return toReturn;
+		}
+		
+		/// <summary>Gets a list of all entity collections stored as member variables in this entity. Only 1:n related collections are returned.</summary>
+		/// <returns>Collection with 0 or more IEntityCollection2 objects, referenced by this entity</returns>
+		protected override List<IEntityCollection2> GetMemberEntityCollections()
+		{
+			List<IEntityCollection2> toReturn = new List<IEntityCollection2>();
+<[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>			toReturn.Add(this.<[MappedFieldNameRelation]>);
+<[EndIf]><[NextForeach]><[If IsSubType]>			toReturn.AddRange(base.GetMemberEntityCollections());
+<[EndIf]>			return toReturn;
+		}
+<[If Not IsInHierarchyType None]>
+		/// <summary>Gets a predicateexpression which filters on this entity</summary>
+		/// <returns>ready to use predicateexpression</returns>
+		/// <remarks>Only useful in entity fetches.</remarks>
+		public <[If IsSubType]>new<[EndIf]> static IPredicateExpression GetEntityTypeFilter()
+		{
+			return InheritanceInfoProviderSingleton.GetInstance().GetEntityTypeFilter("<[CurrentEntityName]>Entity", false);
+		}
+		
+		/// <summary>Gets a predicateexpression which filters on this entity</summary>
+		/// <param name="negate">Flag to produce a NOT filter, (true), or a normal filter (false). </param>
+		/// <returns>ready to use predicateexpression</returns>
+		/// <remarks>Only useful in entity fetches.</remarks>
+		public <[If IsSubType]>new<[EndIf]> static IPredicateExpression GetEntityTypeFilter(bool negate)
+		{
+			return InheritanceInfoProviderSingleton.GetInstance().GetEntityTypeFilter("<[CurrentEntityName]>Entity", negate);
+		}
+<[EndIf]>
+		/// <summary>ISerializable member. Does custom serialization so event handlers do not get serialized. Serializes members of this entity class and uses the base class' implementation to serialize the rest.</summary>
+		/// <param name="info"></param>
+		/// <param name="context"></param>
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		protected override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			if (SerializationHelper.Optimization != SerializationOptimization.Fast) 
+			{
+<[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>				info.AddValue("_<[CaseCamel MappedFieldNameRelation]>", ((_<[CaseCamel MappedFieldNameRelation]>!=null) && (_<[CaseCamel MappedFieldNameRelation]>.Count>0) && !this.MarkedForDeletion)?_<[CaseCamel MappedFieldNameRelation]>:null);
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>				info.AddValue("_<[CaseCamel MappedFieldNameRelation]>", ((_<[CaseCamel MappedFieldNameRelation]>!=null) && (_<[CaseCamel MappedFieldNameRelation]>.Count>0) && !this.MarkedForDeletion)?_<[CaseCamel MappedFieldNameRelation]>:null);
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>				info.AddValue("_<[CaseCamel MappedFieldNameRelation]>", (!this.MarkedForDeletion?_<[CaseCamel MappedFieldNameRelation]>:null));
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]>				info.AddValue("_<[CaseCamel MappedFieldNameRelation]>", (!this.MarkedForDeletion?_<[CaseCamel MappedFieldNameRelation]>:null));
+<[EndIf]><[NextForeach]>			}<[ UserCodeRegion "GetObjectInfo" ]>
+			// __LLBLGENPRO_USER_CODE_REGION_START GetObjectInfo
+			// __LLBLGENPRO_USER_CODE_REGION_END
+			<[ EndUserCodeRegion ]>
+			base.GetObjectData(info, context);
+		}
+<[Foreach UniqueConstraint]>
+		/// <summary> Method which will construct a filter (predicate expression) for the unique constraint defined on the fields:
+		/// <[Foreach UniqueConstraintEntityField Comma]><[EntityFieldName]> <[NextForeach]>.</summary>
+		/// <returns>true if succeeded and the contents is read, false otherwise</returns>
+		public IPredicateExpression ConstructFilterForUC<[Foreach UniqueConstraintEntityField]><[EntityFieldName]><[NextForeach]>()
+		{
+			IPredicateExpression filter = new PredicateExpression();
+<[Foreach UniqueConstraintEntityField]>			filter.Add(<[RootNamespace]>.HelperClasses.<[CurrentEntityName]>Fields.<[EntityFieldName]> == this.Fields.GetCurrentValue((int)<[CurrentEntityName]>FieldIndex.<[EntityFieldName]>));
+<[NextForeach]> 			return filter;
+		}
+<[NextForeach]>
+<[ If Not IsInHierarchyType None]>		
+		/// <summary>Determines whether this entity is a subType of the entity represented by the passed in enum value, which represents a value in the <[RootNamespace]>.EntityType enum</summary>
+		/// <param name="typeOfEntity">Type of entity.</param>
+		/// <returns>true if the passed in type is a supertype of this entity, otherwise false</returns>
+		protected override bool CheckIfIsSubTypeOf(int typeOfEntity)
+		{
+			return InheritanceInfoProviderSingleton.GetInstance().CheckIfIsSubTypeOf("<[CurrentEntityName]>Entity", ((<[RootNamespace]>.EntityType)typeOfEntity).ToString());
+		}<[EndIf]>
+				
+		/// <summary>Gets a list of all the EntityRelation objects the type of this instance has.</summary>
+		/// <returns>A list of all the EntityRelation objects the type of this instance has. Hierarchy relations are excluded.</returns>
+		protected override List<IEntityRelation> GetAllRelations()
+		{
+			return new <[CurrentEntityName]>Relations().GetAllRelations();
+		}
+<[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Creates a new IRelationPredicateBucket object which contains the predicate expression and relation collection to fetch the related entities of type '<[RelatedEntityName]>' to this entity.</summary>
+		/// <returns></returns>
+		public virtual IRelationPredicateBucket GetRelationInfo<[MappedFieldNameRelation]>()
+		{
+			IRelationPredicateBucket bucket = new RelationPredicateBucket();
+<[Foreach RelationField CrLf]>			bucket.PredicateExpression.Add(new FieldCompareValuePredicate(<[RelatedEntityName]>Fields.<[RelatedEntityRelationFieldName]>, null, ComparisonOperator.Equal, this.<[RelationFieldName]>));<[NextForeach]>
+			return bucket;
+		}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Creates a new IRelationPredicateBucket object which contains the predicate expression and relation collection to fetch the related entities of type '<[RelatedEntityName]>' to this entity.</summary>
+		/// <returns></returns>
+		public virtual IRelationPredicateBucket GetRelationInfo<[MappedFieldNameRelation]>()
+		{
+			IRelationPredicateBucket bucket = new RelationPredicateBucket();
+			bucket.Relations.AddRange(GetRelationsForFieldOfType("<[MappedFieldNameRelation]>"));
+<[Foreach PrimaryKeyEntityField CrLf]>			bucket.PredicateExpression.Add(new FieldCompareValuePredicate(<[CurrentEntityName]>Fields.<[EntityFieldName]>, null, ComparisonOperator.Equal, this.<[EntityFieldName]>, "<[CurrentEntityName]>Entity__"));<[NextForeach]>
+			return bucket;
+		}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Creates a new IRelationPredicateBucket object which contains the predicate expression and relation collection to fetch the related entity of type '<[RelatedEntityName]>' to this entity.</summary>
+		/// <returns></returns>
+		public virtual IRelationPredicateBucket GetRelationInfo<[MappedFieldNameRelation]>()
+		{
+			IRelationPredicateBucket bucket = new RelationPredicateBucket();
+<[Foreach RelationField CrLf]>			bucket.PredicateExpression.Add(new FieldCompareValuePredicate(<[RelatedEntityName]>Fields.<[RelatedEntityRelationFieldName]>, null, ComparisonOperator.Equal, this.<[RelationFieldName]>));<[NextForeach]>
+			return bucket;
+		}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Creates a new IRelationPredicateBucket object which contains the predicate expression and relation collection to fetch the related entity of type '<[RelatedEntityName]>' to this entity.</summary>
+		/// <returns></returns>
+		public virtual IRelationPredicateBucket GetRelationInfo<[MappedFieldNameRelation]>()
+		{
+			IRelationPredicateBucket bucket = new RelationPredicateBucket();
+<[Foreach RelationField CrLf]>			bucket.PredicateExpression.Add(new FieldCompareValuePredicate(<[RelatedEntityName]>Fields.<[RelatedEntityRelationFieldName]>, null, ComparisonOperator.Equal, this.<[RelationFieldName]>));<[NextForeach]>
+			return bucket;
+		}
+<[EndIf]><[NextForeach]>		
+
+		/// <summary>Creates a new instance of the factory related to this entity</summary>
+		protected override IEntityFactory2 CreateEntityFactory()
+		{
+			return EntityFactoryCache2.GetEntityFactory(typeof(<[CurrentEntityName]>EntityFactory));
+		}
+#if !CF
+		/// <summary>Adds the member collections to the collections queue (base first)</summary>
+		/// <param name="collectionsQueue">The collections queue.</param>
+		protected override void AddToMemberEntityCollectionsQueue(Queue<IEntityCollection2> collectionsQueue) 
+		{
+			base.AddToMemberEntityCollectionsQueue(collectionsQueue);
+<[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>			collectionsQueue.Enqueue(this._<[CaseCamel MappedFieldNameRelation]>);
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>			collectionsQueue.Enqueue(this._<[CaseCamel MappedFieldNameRelation]>);
+<[EndIf]><[NextForeach]>		}
+		
+		/// <summary>Gets the member collections queue from the queue (base first)</summary>
+		/// <param name="collectionsQueue">The collections queue.</param>
+		protected override void GetFromMemberEntityCollectionsQueue(Queue<IEntityCollection2> collectionsQueue)
+		{
+			base.GetFromMemberEntityCollectionsQueue(collectionsQueue);
+<[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>			this._<[CaseCamel MappedFieldNameRelation]> = (EntityCollection<<[RelatedEntityName]>Entity>) collectionsQueue.Dequeue();
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>			this._<[CaseCamel MappedFieldNameRelation]> = (EntityCollection<<[RelatedEntityName]>Entity>) collectionsQueue.Dequeue();
+<[EndIf]><[NextForeach]>
+		}
+		
+		/// <summary>Determines whether the entity has populated member collections</summary>
+		/// <returns>true if the entity has populated member collections.</returns>
+		protected override bool HasPopulatedMemberEntityCollections()
+		{
+			bool toReturn = false;
+<[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>			toReturn |=(this._<[CaseCamel MappedFieldNameRelation]> != null);
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>			toReturn |= (this._<[CaseCamel MappedFieldNameRelation]> != null);
+<[EndIf]><[NextForeach]>			return toReturn ? true : base.HasPopulatedMemberEntityCollections();
+		}
+		
+		/// <summary>Creates the member entity collections queue.</summary>
+		/// <param name="collectionsQueue">The collections queue.</param>
+		/// <param name="requiredQueue">The required queue.</param>
+		protected override void CreateMemberEntityCollectionsQueue(Queue<IEntityCollection2> collectionsQueue, Queue<bool> requiredQueue) 
+		{
+			base.CreateMemberEntityCollectionsQueue(collectionsQueue, requiredQueue);
+<[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>			collectionsQueue.Enqueue(requiredQueue.Dequeue() ? new EntityCollection<<[RelatedEntityName]>Entity>(EntityFactoryCache2.GetEntityFactory(typeof(<[RelatedEntityName]>EntityFactory))) : null);
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>			collectionsQueue.Enqueue(requiredQueue.Dequeue() ? new EntityCollection<<[RelatedEntityName]>Entity>(EntityFactoryCache2.GetEntityFactory(typeof(<[RelatedEntityName]>EntityFactory))) : null);
+<[EndIf]><[NextForeach]>		}
+#endif
+		/// <summary>Gets all related data objects, stored by name. The name is the field name mapped onto the relation for that particular data element.</summary>
+		/// <returns>Dictionary with per name the related referenced data element, which can be an entity collection or an entity or null</returns>
+		protected override Dictionary<string, object> GetRelatedData()
+		{
+<[ If IsSubType]>			Dictionary<string, object> toReturn = base.GetRelatedData();<[Else]>			Dictionary<string, object> toReturn = new Dictionary<string, object>();<[EndIf]>
+<[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>			toReturn.Add("<[MappedFieldNameRelation]>", _<[CaseCamel MappedFieldNameRelation]>);
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>			toReturn.Add("<[MappedFieldNameRelation]>", _<[CaseCamel MappedFieldNameRelation]>);
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>			toReturn.Add("<[MappedFieldNameRelation]>", _<[CaseCamel MappedFieldNameRelation]>);
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]>			toReturn.Add("<[MappedFieldNameRelation]>", _<[CaseCamel MappedFieldNameRelation]>);
+<[EndIf]><[NextForeach]>			return toReturn;
+		}
+
+		/// <summary> Initializes the class members</summary>
+		private void InitClassMembers()
+		{
+<[If Not IsSubType]>			PerformDependencyInjection();
+<[EndIf]>			<[ UserCodeRegion "InitClassMembers" ]>
+			// __LLBLGENPRO_USER_CODE_REGION_START InitClassMembers
+			// __LLBLGENPRO_USER_CODE_REGION_END
+			<[ EndUserCodeRegion ]>
+<[If Not IsSubType]>			OnInitClassMembersComplete();
+<[EndIf]>		}
+
+
+		#region Custom Property Hashtable Setup
+		/// <summary> Initializes the hashtables for the entity type and entity field custom properties. </summary>
+		private static void SetupCustomPropertyHashtables()
+		{
+			_customProperties = new Dictionary<string, string>();
+			_fieldsCustomProperties = new Dictionary<string, Dictionary<string, string>>();
+<[Foreach CustomProperty Entity]>			_customProperties.Add("<[CustomPropertyName]>", @"<[CustomPropertyValue]>");
+<[NextForeach]><[If HasFields]>			Dictionary<string, string> fieldHashtable;
+<[Foreach EntityField]>			fieldHashtable = new Dictionary<string, string>();
+<[Foreach CustomProperty EntityField]>			fieldHashtable.Add("<[CustomPropertyName]>", @"<[CustomPropertyValue]>");
+<[NextForeach]>			_fieldsCustomProperties.Add("<[EntityFieldName]>", fieldHashtable);
+<[NextForeach]><[EndIf]>		}
+		#endregion
+<[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Removes the sync logic for member _<[CaseCamel MappedFieldNameRelation]></summary>
+		/// <param name="signalRelatedEntity">If set to true, it will call the related entity's UnsetRelatedEntity method</param>
+		/// <param name="resetFKFields">if set to true it will also reset the FK fields pointing to the related entity</param>
+		private void DesetupSync<[MappedFieldNameRelation]>(bool signalRelatedEntity, bool resetFKFields)
+		{
+			this.PerformDesetupSyncRelatedEntity( _<[CaseCamel MappedFieldNameRelation]>, new PropertyChangedEventHandler( On<[MappedFieldNameRelation]>PropertyChanged ), "<[MappedFieldNameRelation]>", <[RootNamespace]>.RelationClasses.Static<[CurrentEntityName]>Relations.<[RelatedEntityName]>EntityUsing<[If Not RelatedEntityIsOtherEntity]><[Foreach RelationField]><[RelatedEntityRelationFieldName]><[NextForeach]><[EndIf]><[Foreach RelationField]><[RelationFieldName]><[NextForeach]>Static, true, signalRelatedEntity, "<[ If OppositeRelationPresent ]><[RelatedMappedFieldNameRelation]><[ EndIf ]>", resetFKFields, new int[] { <[ Foreach RelationField Comma]>(int)<[ CurrentEntityName ]>FieldIndex.<[ RelationFieldName ]><[NextForeach]> } );
+			_<[CaseCamel MappedFieldNameRelation]> = null;
+		}
+
+		/// <summary> setups the sync logic for member _<[CaseCamel MappedFieldNameRelation]></summary>
+		/// <param name="relatedEntity">Instance to set as the related entity of type entityType</param>
+		private void SetupSync<[MappedFieldNameRelation]>(IEntityCore relatedEntity)
+		{
+			if(_<[CaseCamel MappedFieldNameRelation]>!=relatedEntity)
+			{
+				DesetupSync<[MappedFieldNameRelation]>(true, true);
+				_<[CaseCamel MappedFieldNameRelation]> = (<[RelatedEntityName]>Entity)relatedEntity;
+				this.PerformSetupSyncRelatedEntity( _<[CaseCamel MappedFieldNameRelation]>, new PropertyChangedEventHandler( On<[MappedFieldNameRelation]>PropertyChanged ), "<[MappedFieldNameRelation]>", <[RootNamespace]>.RelationClasses.Static<[CurrentEntityName]>Relations.<[RelatedEntityName]>EntityUsing<[If Not RelatedEntityIsOtherEntity]><[Foreach RelationField]><[RelatedEntityRelationFieldName]><[NextForeach]><[EndIf]><[Foreach RelationField]><[RelationFieldName]><[NextForeach]>Static, true, new string[] { <[ Foreach RelatedEntityField CurrentRelatedEntity Comma]>"<[MappedFieldNameRelatedField]>"<[NextForeach]> } );
+			}
+		}
+		
+		/// <summary>Handles property change events of properties in a related entity.</summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void On<[MappedFieldNameRelation]>PropertyChanged( object sender, PropertyChangedEventArgs e )
+		{
+			switch( e.PropertyName )
+			{<[ Foreach RelatedEntityField CurrentRelatedEntity]>
+				case "<[RelatedEntityFieldName]>":
+					this.OnPropertyChanged("<[MappedFieldNameRelatedField]>");
+					break;<[NextForeach]>
+				default:
+					break;
+			}
+		}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Removes the sync logic for member _<[CaseCamel MappedFieldNameRelation]></summary>
+		/// <param name="signalRelatedEntity">If set to true, it will call the related entity's UnsetRelatedEntity method</param>
+		/// <param name="resetFKFields">if set to true it will also reset the FK fields pointing to the related entity</param>
+		private void DesetupSync<[MappedFieldNameRelation]>(bool signalRelatedEntity, bool resetFKFields)
+		{
+			this.PerformDesetupSyncRelatedEntity( _<[CaseCamel MappedFieldNameRelation]>, new PropertyChangedEventHandler( On<[MappedFieldNameRelation]>PropertyChanged ), "<[MappedFieldNameRelation]>", <[RootNamespace]>.RelationClasses.Static<[CurrentEntityName]>Relations.<[RelatedEntityName]>EntityUsing<[Foreach RelationField]><[If IsOneToOnePkPk FkSide]><[RelationFieldName]><[EndIf]><[If Not IsOneToOnePkPk FkSide]><[RelatedEntityRelationFieldName]><[EndIf]><[If IsOneToOnePkFkUc FkSide]><[RelationFieldName]><[EndIf]><[If Not IsOneToOnePkFkUc FkSide]><[RelatedEntityRelationFieldName]><[EndIf]><[NextForeach]>Static, <[If IsOnPkSide]>false<[Else]>true<[EndIf]>, signalRelatedEntity, "<[ If OppositeRelationPresent ]><[RelatedMappedFieldNameRelation]><[ EndIf ]>", <[If IsOneToOnePkFkUc FkSide]>resetFKFields<[Else]>false<[EndIf]>, new int[] { <[ Foreach RelationField Comma]>(int)<[ CurrentEntityName ]>FieldIndex.<[ RelationFieldName ]><[NextForeach]> } );
+			_<[CaseCamel MappedFieldNameRelation]> = null;
+		}
+		
+		/// <summary> setups the sync logic for member _<[CaseCamel MappedFieldNameRelation]></summary>
+		/// <param name="relatedEntity">Instance to set as the related entity of type entityType</param>
+		private void SetupSync<[MappedFieldNameRelation]>(IEntityCore relatedEntity)
+		{
+			if(_<[CaseCamel MappedFieldNameRelation]>!=relatedEntity)
+			{
+				DesetupSync<[MappedFieldNameRelation]>(true, true);
+				_<[CaseCamel MappedFieldNameRelation]> = (<[RelatedEntityName]>Entity)relatedEntity;
+				this.PerformSetupSyncRelatedEntity( _<[CaseCamel MappedFieldNameRelation]>, new PropertyChangedEventHandler( On<[MappedFieldNameRelation]>PropertyChanged ), "<[MappedFieldNameRelation]>", <[RootNamespace]>.RelationClasses.Static<[CurrentEntityName]>Relations.<[RelatedEntityName]>EntityUsing<[Foreach RelationField]><[If IsOneToOnePkPk FkSide]><[RelationFieldName]><[EndIf]><[If Not IsOneToOnePkPk FkSide]><[RelatedEntityRelationFieldName]><[EndIf]><[If IsOneToOnePkFkUc FkSide]><[RelationFieldName]><[EndIf]><[If Not IsOneToOnePkFkUc FkSide]><[RelatedEntityRelationFieldName]><[EndIf]><[NextForeach]>Static, <[If IsOnPkSide]>false<[Else]>true<[EndIf]>, new string[] { <[ Foreach RelatedEntityField CurrentRelatedEntity Comma]>"<[MappedFieldNameRelatedField]>"<[NextForeach]> } );
+			}
+		}
+		
+		/// <summary>Handles property change events of properties in a related entity.</summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void On<[MappedFieldNameRelation]>PropertyChanged( object sender, PropertyChangedEventArgs e )
+		{
+			switch( e.PropertyName )
+			{<[ Foreach RelatedEntityField CurrentRelatedEntity]>
+				case "<[RelatedEntityFieldName]>":
+					this.OnPropertyChanged("<[MappedFieldNameRelatedField]>");
+					break;<[NextForeach]>
+				default:
+					break;
+			}
+		}
+<[EndIf]><[NextForeach]><[If IsSubType]>
+		/// <summary> Initializes the class with empty data, as if it is a new Entity.</summary>
+		/// <param name="validator">The validator object for this <[CurrentEntityName]>Entity</param>
+		private void InitClassEmpty()
+		{
+<[Else]>
+		/// <summary> Initializes the class with empty data, as if it is a new Entity.</summary>
+		/// <param name="validator">The validator object for this <[CurrentEntityName]>Entity</param>
+		/// <param name="fields">Fields of this entity</param>
+		private void InitClassEmpty(IValidator validator, IEntityFields2 fields)
+		{
+			OnInitializing();
+			this.Fields = fields ?? CreateFields();
+			this.Validator = validator;
+<[EndIf]>			InitClassMembers();
+<[If IsInHierarchyType TargetPerEntityHierarchy]>			if(this.Fields.State==EntityState.New)
+			{
+				this.Fields.ForcedValueWrite((int)<[CurrentEntityName]>FieldIndex.<[DiscriminatorColumnName]>, <[DiscriminatorValue]>);
+			}<[EndIf]><[ UserCodeRegion "InitClassEmpty" ]>
+			// __LLBLGENPRO_USER_CODE_REGION_START InitClassEmpty
+			// __LLBLGENPRO_USER_CODE_REGION_END
+			<[ EndUserCodeRegion ]>
+<# Custom_EntityInitializationTemplate #>
+<[If Not IsSubType]>			OnInitialized();
+<[EndIf]>
+		}
+
+		#region Class Property Declarations
+		/// <summary> The relations object holding all relations of this entity with other entity classes.</summary>
+		public <[If IsSubType]>new<[EndIf]> static <[CurrentEntityName]>Relations Relations
+		{
+			get	{ return new <[CurrentEntityName]>Relations(); }
+		}
+		
+		/// <summary> The custom properties for this entity type.</summary>
+		/// <remarks>The data returned from this property should be considered read-only: it is not thread safe to alter this data at runtime.</remarks>
+		public <[If IsSubType]>new<[EndIf]> static Dictionary<string, string> CustomProperties
+		{
+			get { return _customProperties;}
+		}
+<[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Creates a new PrefetchPathElement2 object which contains all the information to prefetch the related entities of type '<[RelatedEntityName]>' for this entity.</summary>
+		/// <returns>Ready to use IPrefetchPathElement2 implementation.</returns>
+		public static IPrefetchPathElement2 PrefetchPath<[MappedFieldNameRelation]>
+		{
+			get	{ return new PrefetchPathElement2( new EntityCollection<<[RelatedEntityName]>Entity>(EntityFactoryCache2.GetEntityFactory(typeof(<[RelatedEntityName]>EntityFactory))), (IEntityRelation)GetRelationsForField("<[MappedFieldNameRelation]>")[0], (int)<[RootNamespace]>.EntityType.<[CurrentEntityName]>Entity, (int)<[RootNamespace]>.EntityType.<[RelatedEntityName]>Entity, 0, null, null, null, null, "<[MappedFieldNameRelation]>", SD.LLBLGen.Pro.ORMSupportClasses.RelationType.OneToMany);	}
+		}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Creates a new PrefetchPathElement2 object which contains all the information to prefetch the related entities of type '<[RelatedEntityName]>' for this entity.</summary>
+		/// <returns>Ready to use IPrefetchPathElement2 implementation.</returns>
+		public static IPrefetchPathElement2 PrefetchPath<[MappedFieldNameRelation]>
+		{
+			get
+			{
+				IEntityRelation intermediateRelation = Relations.<[IntermediateEntityName]>EntityUsing<[Foreach RelationField OneToMany]><[RelatedEntityRelationFieldName]><[NextForeach]>;
+				intermediateRelation.SetAliases(string.Empty, "<[IntermediateEntityName]>_");
+				return new PrefetchPathElement2(new EntityCollection<<[RelatedEntityName]>Entity>(EntityFactoryCache2.GetEntityFactory(typeof(<[RelatedEntityName]>EntityFactory))), intermediateRelation,
+					(int)<[RootNamespace]>.EntityType.<[CurrentEntityName]>Entity, (int)<[RootNamespace]>.EntityType.<[RelatedEntityName]>Entity, 0, null, null, GetRelationsForField("<[MappedFieldNameRelation]>"), null, "<[MappedFieldNameRelation]>", SD.LLBLGen.Pro.ORMSupportClasses.RelationType.ManyToMany);
+			}
+		}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Creates a new PrefetchPathElement2 object which contains all the information to prefetch the related entities of type '<[RelatedEntityName]>' for this entity.</summary>
+		/// <returns>Ready to use IPrefetchPathElement2 implementation.</returns>
+		public static IPrefetchPathElement2 PrefetchPath<[MappedFieldNameRelation]>
+		{
+			get	{ return new PrefetchPathElement2(new EntityCollection(EntityFactoryCache2.GetEntityFactory(typeof(<[RelatedEntityName]>EntityFactory))),	(IEntityRelation)GetRelationsForField("<[MappedFieldNameRelation]>")[0], (int)<[RootNamespace]>.EntityType.<[CurrentEntityName]>Entity, (int)<[RootNamespace]>.EntityType.<[RelatedEntityName]>Entity, 0, null, null, null, null, "<[MappedFieldNameRelation]>", SD.LLBLGen.Pro.ORMSupportClasses.RelationType.ManyToOne); }
+		}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Creates a new PrefetchPathElement2 object which contains all the information to prefetch the related entities of type '<[RelatedEntityName]>' for this entity.</summary>
+		/// <returns>Ready to use IPrefetchPathElement2 implementation.</returns>
+		public static IPrefetchPathElement2 PrefetchPath<[MappedFieldNameRelation]>
+		{
+			get { return new PrefetchPathElement2(new EntityCollection(EntityFactoryCache2.GetEntityFactory(typeof(<[RelatedEntityName]>EntityFactory))), (IEntityRelation)GetRelationsForField("<[MappedFieldNameRelation]>")[0], (int)<[RootNamespace]>.EntityType.<[CurrentEntityName]>Entity, (int)<[RootNamespace]>.EntityType.<[RelatedEntityName]>Entity, 0, null, null, null, null, "<[MappedFieldNameRelation]>", SD.LLBLGen.Pro.ORMSupportClasses.RelationType.OneToOne);	}
+		}
+<[EndIf]><[NextForeach]>
+
+		/// <summary> The custom properties for the type of this entity instance.</summary>
+		/// <remarks>The data returned from this property should be considered read-only: it is not thread safe to alter this data at runtime.</remarks>
+		[Browsable(false), XmlIgnore]
+		protected override Dictionary<string, string> CustomPropertiesOfType
+		{
+			get { return CustomProperties;}
+		}
+
+		/// <summary> The custom properties for the fields of this entity type. The returned Hashtable contains per fieldname a hashtable of name-value pairs. </summary>
+		/// <remarks>The data returned from this property should be considered read-only: it is not thread safe to alter this data at runtime.</remarks>
+		public <[If IsSubType]>new<[EndIf]> static Dictionary<string, Dictionary<string, string>> FieldsCustomProperties
+		{
+			get { return _fieldsCustomProperties;}
+		}
+
+		/// <summary> The custom properties for the fields of the type of this entity instance. The returned Hashtable contains per fieldname a hashtable of name-value pairs. </summary>
+		/// <remarks>The data returned from this property should be considered read-only: it is not thread safe to alter this data at runtime.</remarks>
+		[Browsable(false), XmlIgnore]
+		protected override Dictionary<string, Dictionary<string, string>> FieldsCustomPropertiesOfType
+		{
+			get { return FieldsCustomProperties;}
+		}
+<[Foreach EntityField]>
+		/// <summary> The <[EntityFieldName]> property of the Entity <[CurrentEntityName]><br/><br/><[Foreach CustomProperty EntityField]>
+		/// <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]><[Description]></summary>
+		/// <remarks>Mapped on  <[ CaseCamel TargetType ]> field: "<[SourceObjectName]>"."<[SourceColumnName]>"<br/>
+		/// <[ TargetType ]> field type characteristics (type, precision, scale, length): <[SourceColumnDbType]>, <[SourceColumnPrecision]>, <[SourceColumnScale]>, <[SourceColumnMaxLength]><br/>
+		/// <[ TargetType ]> field behavior characteristics (is nullable, is PK, is identity): <[SourceColumnIsNullable]>, <[IsPrimaryKey]>, <[IsIdentity]></remarks><[Foreach Attribute Field]>
+		<[Attribute]><[NextForeach]>
+		<[ If SettingValueEquals Field "FieldPropertyIsPublic" "true"]>public<[Else]>internal<[EndIf]> virtual <[If GenerateAsNullableType]>Nullable<<[TypeOfField]>><[Else]><[TypeOfField]><[EndIf]> <[EntityFieldName]>
+		{
+			get { return (<[If GenerateAsNullableType]>Nullable<<[TypeOfField]>><[Else]><[TypeOfField]><[EndIf]>)GetValue((int)<[CurrentEntityName]>FieldIndex.<[EntityFieldName]>, <[If GenerateAsNullableType]>false<[Else]>true<[EndIf]>); }
+<[If IsReadOnly ]><[If IsPrimaryKey ]>			set	{ SetValue((int)<[CurrentEntityName]>FieldIndex.<[EntityFieldName]>, value); }<[EndIf]><[Else]>			set	{ SetValue((int)<[CurrentEntityName]>FieldIndex.<[EntityFieldName]>, value); }<[EndIf]>
+		}
+<[NextForeach]><[Foreach RelatedEntity OneToMany]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Gets the EntityCollection with the related entities of type '<[RelatedEntityName]>Entity' which are related to this entity via a relation of type '1:n'. If the EntityCollection hasn't been fetched yet, the collection returned will be empty.<br/><br/><[Foreach CustomProperty MappedFieldNameRelation]>
+		/// <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary>
+		[TypeContainedAttribute(typeof(<[RelatedEntityName]>Entity))]<[Foreach Attribute MappedFieldNameRelation]>
+		<[Attribute]><[NextForeach]>
+		<[ If SettingValueEquals MappedFieldNameRelation "NavigatorPropertyIsPublic" "true"]>public<[Else]>internal<[EndIf]> virtual EntityCollection<<[RelatedEntityName]>Entity> <[MappedFieldNameRelation]>
+		{
+			get { return GetOrCreateEntityCollection<<[RelatedEntityName]>Entity, <[RelatedEntityName]>EntityFactory>("<[RelatedMappedFieldNameRelation]>", <[ If OppositeRelationPresent ]>true<[Else]>false<[EndIf]>, false, ref _<[CaseCamel MappedFieldNameRelation]>);	}
+		}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToMany]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Gets the EntityCollection with the related entities of type '<[RelatedEntityName]>Entity' which are related to this entity via a relation of type 'm:n'. If the EntityCollection hasn't been fetched yet, the collection returned will be empty.<br/><br/><[Foreach CustomProperty MappedFieldNameRelation]>
+		/// <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary>
+		[TypeContainedAttribute(typeof(<[RelatedEntityName]>Entity))]<[Foreach Attribute MappedFieldNameRelation]>
+		<[Attribute]><[NextForeach]>
+		<[ If SettingValueEquals MappedFieldNameRelation "NavigatorPropertyIsPublic" "true"]>public<[Else]>internal<[EndIf]> virtual EntityCollection<<[RelatedEntityName]>Entity> <[MappedFieldNameRelation]>
+		{
+			get { return GetOrCreateEntityCollection<<[RelatedEntityName]>Entity, <[RelatedEntityName]>EntityFactory>("<[RelatedMappedFieldNameRelation]>", false, true, ref _<[CaseCamel MappedFieldNameRelation]>);	}
+		}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity ManyToOne]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Gets / sets related entity of type '<[RelatedEntityName]>Entity' which has to be set using a fetch action earlier. If no related entity is set for this property, null is returned..<br/><br/><[Foreach CustomProperty MappedFieldNameRelation]>
+		/// <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary><[Foreach Attribute MappedFieldNameRelation]>
+		<[Attribute]><[NextForeach]>
+		<[ If SettingValueEquals MappedFieldNameRelation "NavigatorPropertyIsPublic" "true"]>public<[Else]>internal<[EndIf]> virtual <[RelatedEntityName]>Entity <[MappedFieldNameRelation]>
+		{
+			get	{ return _<[CaseCamel MappedFieldNameRelation]>; }
+			set
+			{
+				if(this.IsDeserializing)
+				{
+					SetupSync<[MappedFieldNameRelation]>(value);
+				}
+				else
+				{
+					SetSingleRelatedEntityNavigator(value, "<[RelatedMappedFieldNameRelation]>", "<[MappedFieldNameRelation]>", _<[CaseCamel MappedFieldNameRelation]>, <[If OppositeRelationPresent]>true<[Else]>false<[EndIf]>); 
+				}
+			}
+		}
+<[EndIf]><[NextForeach]><[Foreach RelatedEntity OneToOne]><[If Not MappedFieldRelationIsHidden]>
+		/// <summary> Gets / sets related entity of type '<[RelatedEntityName]>Entity' which has to be set using a fetch action earlier. If no related entity is set for this property, null is returned.<br/><br/>
+		/// <[Foreach CustomProperty MappedFieldNameRelation]>
+		/// <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary><[Foreach Attribute MappedFieldNameRelation]>
+		<[Attribute]><[NextForeach]>
+		<[ If SettingValueEquals MappedFieldNameRelation "NavigatorPropertyIsPublic" "true"]>public<[Else]>internal<[EndIf]> virtual <[RelatedEntityName]>Entity <[MappedFieldNameRelation]>
+		{
+			get { return _<[CaseCamel MappedFieldNameRelation]>; }
+			set
+			{
+				if(this.IsDeserializing)
+				{
+					SetupSync<[MappedFieldNameRelation]>(value);
+<[If OppositeRelationPresent]>					CallSetRelatedEntityDuringDeserialization(value, "<[RelatedMappedFieldNameRelation]>");
+<[EndIf]>				}
+				else
+				{
+					if(value==null)
+					{
+						bool raisePropertyChanged = (_<[CaseCamel MappedFieldNameRelation]> !=null);
+						DesetupSync<[MappedFieldNameRelation]>(<[If OppositeRelationPresent]>true<[Else]>false<[EndIf]>, true);
+						if(raisePropertyChanged)
+						{
+							OnPropertyChanged("<[MappedFieldNameRelation]>");
+						}
+					}
+					else
+					{
+						if(_<[CaseCamel MappedFieldNameRelation]>!=value)
+						{
+<[If OppositeRelationPresent]>							((IEntity2)value).SetRelatedEntity(this, "<[RelatedMappedFieldNameRelation]>");
+<[EndIf]>							SetupSync<[MappedFieldNameRelation]>(value);
+						}
+					}
+				}
+			}
+		}
+<[EndIf]><[NextForeach]><[ Foreach RelatedEntityField]> 
+		/// <summary> Gets <[ If Not IsReadOnly ]>/ Sets <[ EndIf ]>the value of the related field this.<[ MappedFieldNameRelation ]>.<[ RelatedEntityFieldName ]>.<br/><br/>
+		/// <[Foreach CustomProperty RelatedEntityField]>
+		/// <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]><[Description]></summary><[Foreach Attribute RelatedEntityField]>
+		<[Attribute]><[NextForeach]>
+		public virtual <[If GenerateAsNullableType]>Nullable<<[TypeOfField]>><[Else]><[TypeOfField]><[EndIf]> <[ MappedFieldNameRelatedField ]>
+		{
+			get { return this.<[ MappedFieldNameRelation ]>==null ? (<[If GenerateAsNullableType]>Nullable<<[TypeOfField]>><[Else]><[TypeOfField]><[EndIf]>)TypeDefaultValue.GetDefaultValue(typeof(<[If GenerateAsNullableType]>Nullable<<[TypeOfField]>><[Else]><[TypeOfField]><[EndIf]>)) : this.<[ MappedFieldNameRelation ]>.<[ RelatedEntityFieldName ]>; }
+<[ If Not IsReadOnly ]>			set
+			{
+				<[RelatedEntityName]>Entity relatedEntity = this.<[ MappedFieldNameRelation ]>;
+				if(relatedEntity!=null)
+				{
+					relatedEntity.<[ RelatedEntityFieldName ]> = value;
+				}				
+			}
+<[ EndIf ]>		}
+<[ NextForeach ]>	
+		/// <summary> Gets the type of the hierarchy this entity is in. </summary>
+		protected override InheritanceHierarchyType LLBLGenProIsInHierarchyOfType
+		{
+			get { return InheritanceHierarchyType.<[If IsInHierarchyType TargetPerEntity]>TargetPerEntity<[Else]><[If IsInHierarchyType TargetPerEntityHierarchy]>TargetPerEntityHierarchy<[Else]>None<[EndIf]><[EndIf]>;}
+		}
+		
+		/// <summary> Gets or sets a value indicating whether this entity is a subtype</summary>
+		protected override bool LLBLGenProIsSubType
+		{
+			get { return <[If IsSubType]>true<[Else]>false<[EndIf]>;}
+		}
+		
+		/// <summary>Returns the <[RootNamespace]>.EntityType enum value for this entity.</summary>
+		[Browsable(false), XmlIgnore]
+		protected override int LLBLGenProEntityTypeValue 
+		{ 
+			get { return (int)<[RootNamespace]>.EntityType.<[CurrentEntityName]>Entity; }
+		}
+<[If IsUpdateOnlyEntity]>
+		/// <summary>Gets a value indicating whether this instance is an update only entity. UpdateOnly entities are entities which are 'split off' from the main entity and only update rows in the database, never insert rows.</summary>
+		protected override bool IsUpdateOnlyEntity
+		{
+			get { return true;}
+		}
+<[EndIf]>
+		#endregion

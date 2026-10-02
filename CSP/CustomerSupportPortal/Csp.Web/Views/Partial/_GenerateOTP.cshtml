@@ -1,0 +1,269 @@
+﻿  ﻿@model Csp.Web.DataTransferObjects.GenerateOTPdto
+<style>
+    .wrap { 
+   white-space: pre-wrap;      /* CSS3 */   
+   white-space: -moz-pre-wrap; /* Firefox */    
+   white-space: -pre-wrap;     /* Opera <7 */   
+   white-space: -o-pre-wrap;   /* Opera 7 */    
+   word-wrap: break-word;      /* IE */
+}
+
+</style>
+<script>
+    $(function () {
+        $("#btnCopytoClipboard").hide();
+        $("#divPassword").hide();
+        $("#divExpires").hide();
+        $("#lblExpiryDate").html(@Html.Raw(Json.Encode(Model.OtpOutput == null?"": Model.OtpOutput.ExpiryDate)));
+        if ($("#OtpOutput_OneTimePassword").val() != "") {
+            $("#btnCopytoClipboard").show();
+            $("#divPassword").show();
+            $("#divExpires").show();
+        }
+
+        $("#OtpOutput_OneTimePassword").focusout(function () {
+            $("#OtpOutput_OneTimePassword").removeClass('input-validation-error')
+            return false;
+        });
+
+        document.querySelector("#btnCopytoClipboard").addEventListener("click", function () {           
+            var cutTextarea = document.getElementById('OtpOutput_OneTimePassword');
+            cutTextarea.focus();
+            cutTextarea.select();
+            document.execCommand("copy");
+            cutTextarea.blur();
+            $("#OtpOutput_OneTimePassword").removeClass('input-validation-error')
+            return false;
+        });
+    });
+
+
+    function GetSupportAccountId() {
+        return { SupportAccountID: $("#SupportAccountID").val() }; 
+    }
+
+
+    function PanoramaChange() {
+        var panorama = $("#PanoramaSerialNumber").val();
+        var supportAccountID = $("#SupportAccountID").val();
+        var otpType = $('#OtpType').val();
+        $("#btnCopytoClipboard").hide();
+        $("#divPassword").hide();
+        $("#divExpires").hide();
+        if (panorama != null && panorama != "") {
+            $.ajax({
+                url: "@Url.Action("GetCurrentOTP", "Saas")?supportAccountID=" + supportAccountID + "&serialNumber=" + panorama + "&otpType=" + otpType,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                success: function (data) {
+                    $("#OtpOutput_OneTimePassword").val(data.OneTimePassword);
+                    $("#lblExpiryDate").html(data.ExpiryDate);
+                    if (data.OneTimePassword != null && data.OneTimePassword != "") {
+                        $("#btnCopytoClipboard").show();
+                        $("#divPassword").show();
+                        $("#divExpires").show();
+                    }                   
+                }
+            });
+        }
+    }
+
+    function DeviceTypeChange() {
+        console.log($("#DeviceType").val());
+        var value = $("#DeviceType").val();
+
+        if (value === "PanOS") {
+            $('#divFirewallOtp').show();
+            $('#divCloudServiceOtp').hide();
+            $("#btnCopytoClipboard").hide();
+            $("#divPassword").hide();
+            $("#divExpires").hide();
+            $('#@UniqueId.okButtonId').show();
+        } else {
+            $('#divFirewallOtp').hide();
+            $('#divCloudServiceOtp').show();
+            $("#btnCopytoClipboard").hide();
+            $("#divPassword").hide();
+            $("#divExpires").hide();
+            $('#@UniqueId.okButtonId').show();
+            $('#SerialNumber').val('');
+        }
+    }
+
+    $(document).ready(function() {
+
+        var value = $("#DeviceType").val();
+        if (value === "PanOS") {
+            $('#divFirewallOtp').show();
+            $('#divCloudServiceOtp').hide();
+        } else {
+            $('#divFirewallOtp').hide();
+            $('#divCloudServiceOtp').show();
+        }
+    });
+
+
+</script> 
+<div id="containerGenerateOTPDiv"> 
+    @using (Ajax.BeginForm("GenerateOTP", "Saas", new { }, new AjaxOptions 
+        { 
+            OnBegin = "SupportPortal.BlockUI();", 
+            OnComplete = "SupportPortal.UnBlockUI();", 
+            UpdateTargetId = "containerGenerateOTPDiv" 
+        }, new { id = (string)UniqueId.GenerateOTPForm })) 
+    { 
+        @Html.AntiForgeryToken() 
+        @Html.HiddenFor(model => model.SupportAccountID,new {id="SupportAccountID",name = "SupportAccountID"}) 
+
+        <div>
+            <div class="csp-label">
+                @Html.Label("Device Type:")
+            </div>
+            <div class="csp-field">
+                @(Html.Kendo().DropDownListFor(model => model.DeviceType)
+                      .Name("DeviceType")
+                      .OptionLabel("-- Select Device Type --")
+                      .HtmlAttributes(new {@class = "k-dropdown"})
+                      .DataValueField("Value")
+                      .DataTextField("Text")
+                      .Events(e => e.Change("DeviceTypeChange"))
+                      .BindTo(new List<SelectListItem>() {
+                          new SelectListItem() {
+                              Text = "Generate OTP for Panorama",
+                              Value = "Panorama"
+                          }
+                      })
+                      .Value("Panorama")
+                      )
+                <span class="csp-required">*</span>
+            </div>
+        </div>
+
+        <div id="divFirewallOtp">
+            <fieldset> 
+                @*<legend>Generate One Time Password for a PAN-OS Firewall</legend>   *@
+                <div class="fieldset ">The OTP provides users the password to input into the PAN-OS device.  This is a required step to enable secured use of the PAN-OS device for some functions.
+                    This password is only valid for 60 minutes.  If the time has expired before you have use this password, please generate a new password.</div> 
+                <br /> 
+                <div class="fieldset ">
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.LabelFor(model => model.SerialNumber, "PAN-OS Device:")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.SerialNumber)
+                            @Html.TextBoxFor(model => model.SerialNumber)
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+
+                </div>
+            
+            </fieldset> 
+        </div>
+
+        <div id="divCloudServiceOtp">
+            <fieldset> 
+                @*<legend>Generate Cloud Services One Time Password</legend>   *@
+                <div class="fieldset ">The OTP provides users the password to input into the Cloud Services.  This is a required step to enable secure use of the cloud services.  This password is only valid for 10 minutes.  If the time has expired before you have use this password, please generate a new password.</div> 
+                <br /> 
+                <div class="fieldset ">
+                
+                    <div>
+                        <div class="csp-label">
+                            @Html.LabelFor(model => model.OtpType, "Select OTP Type:")
+                        </div>
+                        <div class="csp-field">
+                            @(Html.Kendo().DropDownListFor(model => model.OtpType)
+                                  .OptionLabel("-- Select Type --")
+                                  .HtmlAttributes(new {@class = "k-dropdown"})
+                                  .DataValueField("Value")
+                                  .DataTextField("Text")
+                                  .BindTo(new List<SelectListItem>() {
+                                      new SelectListItem() {
+                                          Text = "Logging Service",
+                                          Value = "LoggingService"
+                                      /*},
+                                      new SelectListItem() {
+                                          Text = "ZTP Service",
+                                          Value = "ZtpService"
+                                      */}
+                                  })
+                                  .Value("LoggingService")
+                                  )
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.LabelFor(model => model.PanoramaSerialNumber, "Panorama :")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.PanoramaSerialNumber)
+
+                            @(Html.Kendo().DropDownListFor(model => model.PanoramaSerialNumber)
+                                  .OptionLabel(Constants.DropDownPanoramaSelect)
+                                  .HtmlAttributes(new {@class = "k-dropdown"})
+                                  .DataValueField("SerialNumber")
+                                  .DataTextField("SerialNumber")
+                                  .Events(e =>
+                                  {
+                                      e.Change("PanoramaChange");
+                                  })
+                                  .DataSource(source => source.Read(read => read.Action("GetPanoramaSerialNumbersforOTP", "Saas").Data("GetSupportAccountId()")))
+                                  )
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+
+                </div>
+            </fieldset> 
+        </div>
+
+        <div id="divPassword" class="fieldset">
+            <div>
+                <div class="csp-label">
+                    @Html.LabelFor(model => model.OtpOutput.OneTimePassword, "Password :")
+                </div>
+                <div class="csp-field">
+                        
+                    <div  id="divOTP" >@Html.TextAreaFor(model => Model.OtpOutput.OneTimePassword, new { @readonly = true,@style="background-color: #FFF !important; font-size: 12px;",maxlength = "46" })</div>
+                </div>
+            </div>
+            <div>&nbsp;</div>
+        </div> 
+
+        <div id="divExpires" class="fieldset ">
+            <div>
+                <div class="csp-label" >
+                    @Html.Label("Expires On :")
+                </div>
+
+                <div class="csp-field">
+                    @Html.LabelFor(model => Model.OtpOutput.ExpiryDate, new {id = "lblExpiryDate",@readonly = true,@style="background-color: #FFF !important; font-size: 12px;",maxlength = "46"})
+
+                </div>
+            </div>
+        </div>
+           
+        <div class="csp-submit-container"> 
+            <input type="button" id="btnCopytoClipboard" value="Copy to Clipboard" class="k-button" />&nbsp;&nbsp;&nbsp;  
+            <input type="submit" id="@UniqueId.okButtonId" value="Generate OTP" class="k-button csp-submit"  />&nbsp;&nbsp;&nbsp; 
+            <input type="button" value="Close" name="btnClose" id="btnClose" class="k-button" onclick="CloseMe(this)" />&nbsp;&nbsp; 
+        </div> 
+    } 
+</div> 
+ 
+<script> 
+    $.validator.unobtrusive.parse("#@UniqueId.GenerateOTPForm"); 
+    
+    function CloseMe(obj) { 
+        $(obj).closest(".k-window-content").data("kendoWindow").close(); 
+    } 
+ 
+</script>

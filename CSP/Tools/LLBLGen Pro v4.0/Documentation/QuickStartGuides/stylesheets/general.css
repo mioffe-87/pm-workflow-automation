@@ -1,0 +1,341 @@
+BODY
+{
+	BORDER-RIGHT: medium none;
+	PADDING-RIGHT: 0px;
+	BORDER-TOP: medium none;
+	PADDING-LEFT: 20px;
+	FONT-SIZE: 9pt;
+	PADDING-BOTTOM: 0px;
+	MARGIN: 0px;
+	BORDER-LEFT: medium none;
+	COLOR: black;
+	PADDING-TOP: 0px;
+	BORDER-BOTTOM: medium none;
+	BACKGROUND-COLOR: white;
+	FONT-FAMILY: Verdana, Arial, 'Microsoft Sans Serif';
+	background-image : url(../pics/top.png);
+	background-repeat : no-repeat;
+
+}
+
+.entrance
+{
+	background-image : url(../pics/entrancetop.png);
+	background-repeat : no-repeat;
+}
+
+p
+{
+	margin-top: 2px;
+}
+
+TD
+{
+	FONT-SIZE: 9pt;
+	COLOR: black;
+	FONT-FAMILY: Verdana, Arial, 'Microsoft Sans Serif';
+	vertical-align : top;
+}
+
+
+
+BLOCKQUOTE
+{
+	border-right: #006486 1px solid;
+	padding-right: 2px;
+	border-top: #006486 1px solid;
+	padding-left: 2px;
+	padding-bottom: 2px;
+	margin-left: 20px;
+	border-left: #006486 1px solid;
+	text-indent: 10px;
+	padding-top: 2px;
+	border-bottom: #006486 1px solid;
+	font-style: italic;
+	background-color: #f2f9f8;
+}
+
+A:link
+{
+	COLOR: #006486;
+	TEXT-DECORATION: none;
+}
+
+A:visited
+{
+	COLOR: #004C65;
+	TEXT-DECORATION: none;
+}
+
+A:active
+{
+    COLOR: #006486;
+}
+
+A:hover
+{
+    COLOR: #006486;
+	background: #FBE39C;
+}
+
+.info:link
+{
+	COLOR: #1F667D;
+	TEXT-DECORATION: none;
+	background: #FFE283;
+	padding : 2px 5px 2px 5px;
+}
+
+.info:visited
+{
+	COLOR: #1F667D;
+	TEXT-DECORATION: none;
+	background: #FFE283;
+	padding : 2px 5px 2px 5px;
+
+}
+
+.info:active
+{
+	COLOR: #1F667D;
+	TEXT-DECORATION: none;
+	background: #FFE283;
+	padding : 2px 5px 2px 5px;
+}
+
+.info:hover
+{
+	COLOR: #1F667D;
+	TEXT-DECORATION: none;
+	background: #FFE283;
+	padding : 2px 5px 2px 5px;
+}
+
+.nohover
+{
+	font-weight : normal;
+}
+
+.nohover:hover
+{
+	color : #3599BB;
+	background: none;
+}
+
+.pathway
+{
+	font-size: 8pt;
+	font-style: italic;
+}
+
+.steps
+{
+	background-color : #2F90B0;
+	color : White;
+	font-size : 14pt;
+	font-style : italic;
+	font-variant : small-caps;
+	letter-spacing : 3px;
+	text-decoration: none;
+	padding: 5px 5px 5px 5px;
+}
+
+.steps:link
+{
+	background-color : #2F90B0;
+	color : White;
+	font-size : 14pt;
+	font-style : italic;
+	font-variant : small-caps;
+	letter-spacing : 3px;
+	text-decoration: none;
+}
+
+.steps:visited
+{
+	background-color : #2F90B0;
+	color : White;
+	font-size : 14pt;
+	font-style : italic;
+	font-variant : small-caps;
+	letter-spacing : 3px;
+	text-decoration: none;
+}
+
+.steps:active
+{
+	background-color : #2F90B0;
+	color : White;
+	font-size : 14pt;
+	font-style : italic;
+	font-variant : small-caps;
+	letter-spacing : 3px;
+	text-decoration: none;
+}
+
+.steps:hover
+{
+	background-color : #2F90B0;
+	color : White;
+	font-size : 14pt;
+	font-style : italic;
+	font-variant : small-caps;
+	letter-spacing : 3px;
+	text-decoration: none;
+}
+
+.larger
+{
+	font-size: 12pt;
+}
+
+TD.TDlargefont
+{
+    FONT-SIZE: 14pt;
+    COLOR: black;
+}
+
+PRE
+{
+	font-size: 9pt;
+	padding-bottom: 3px;
+	color: darkblue;
+	font-family: 'Courier New';
+	margin: 0px;
+	padding: 3px;
+	background-image : url(../Images/bg_pre.jpg);
+	background-repeat : repeat-y;
+}
+
+.Header
+{
+	background-image: url("../Images/background_header.jpg");
+	background-position: top left;
+	background-repeat: repeat-x;
+	background-color: #1f87aa;
+	display: block;
+}
+
+.Content
+{
+ 	line-height: 20px;
+	padding-top: 5px;
+}
+
+
+.SmallFontTOC
+{
+    FONT-SIZE: 7pt;
+    FONT-FAMILY: Tahoma, Arial;
+}
+
+H1
+{
+	color: #ffffff;
+	font-size: 12pt;
+	padding-top: 15px;
+
+}
+
+H2
+{
+	font-size: 16pt;
+	margin: 0px;
+}
+
+H3
+{
+	font-size: 14pt;
+	font-weight: normal;
+	margin: 0px;
+}
+
+H4
+{
+	font-size: 12pt;
+	color: #004C65;
+	margin-bottom:0px;
+	border-color: 1f87aa;
+}
+
+H5
+{
+	font-size: 10pt;
+	color: #004C65;
+	margin-bottom:0px;
+}
+
+.SmallHdr
+{
+	font-size: 10pt;
+	color: #004C65;
+}
+
+.SmallFontREF
+{
+    FONT-SIZE: 8pt;
+    FONT-FAMILY: Tahoma, Arial;
+}
+
+TD.TDSmallerfont
+{
+    FONT-SIZE: 9pt;
+    FONT-FAMILY: 'Microsoft Sans Serif', Tahoma, Arial;
+}
+
+UL
+{
+	margin-top : 0px;
+	margin-left : 20px;
+	line-height: 20px;
+}
+
+OL
+{
+	margin-top : 0px;
+	margin-left : 25px;
+
+}
+
+
+.tip
+{
+	color: #004C65;
+}
+
+.lighted
+{
+    FONT-SIZE: 8pt;
+    COLOR: black;
+    FONT-FAMILY: 'Courier New';
+    BACKGROUND-COLOR: #ffffcc;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding: 0px;
+}
+
+.note
+{
+	border: #77BCEC 1px solid;
+	padding-right: 9px;
+	padding-left: 9px;
+	padding-bottom: 9px;
+	padding-top: 9px;
+	background-color: #f2f9f8;
+	background-image : url(../Images/bg_note.png);
+	background-repeat : repeat-y;
+}
+
+.prenotab
+{
+	padding: 3px;
+	background-color: #ffffeb;
+	border: #AAA 1px solid;
+}
+
+.scenario
+{
+	border : 1px outset #A1CDDB;
+	background-image : url(../pics/bg_scenario.png);
+	background-repeat : repeat-y;
+}

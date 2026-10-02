@@ -1,0 +1,169 @@
+﻿@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.AscScoreCardDto
+
+
+
+@if (Model.PartnerProfile != null)
+{
+    <div class="titleRoundedDiv">
+        <div class="row">
+            <div style="width: 80%" class="tabel-cell">
+                Device Information
+            </div>
+            <div class="tabel-cell pull-right">
+                <span class="csp-white-tooltip"><i class="icon-question-sign icon-large"
+                                                             onclick="SupportPortal.Help(this,33,{ title: 'Device Information',height:140});"></i></span>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="greyRoundedDiv">
+        @*<div class="row"><a class='deviceInfoexport-img btn btn-primary pull-right' title="Export to Image"><i class="icon-download-alt"></i></a></div>*@
+
+        <div class="row" style="margin-left: 0px;">
+            @(Html.Kendo().Chart(Model.AscDeviceTheatrePartnerChart)
+                  .Name("deviceInfoBarChart")
+                  .Title("")
+                  .Legend(legend => legend
+                                        .Position(ChartLegendPosition.Bottom)
+                  )
+                  .ChartArea(chartArea => chartArea
+                                              .Background("transparent")
+                  )
+                  .Series(series =>
+                  {
+                      series.Column(model => model.DeviceCount).Color("#497DBB")
+                            .Name("Device Count")
+                            .Overlay(ChartBarSeriesOverlay.None)
+                            .Labels(l => l.Visible(false).Font("bold 13pt Pragmatica-Web,Arial,Helvetica,sans-serif").Color("#584F45"))
+                            .Tooltip(t => t.Visible(true)
+                          );
+                      series.Column(model => model.CustomerCount).Color("#BB423F")
+                            .Name("Customer Count")
+                            .Overlay(ChartBarSeriesOverlay.None)
+                            .Labels(l => l.Visible(false).Font("13pt Pragmatica-Web,Arial,Helvetica,sans-serif").Color("#584F45"))
+                            .Tooltip(t => t.Visible(true));
+
+                  })
+                  .CategoryAxis(axis => axis
+                                            .Name("series-axis")
+                                            .Line(line => line.Visible(false))
+                  )
+
+                  .CategoryAxis(axis => axis.Name("label-axis")
+                                            .Categories(model => model.Category)
+
+                  )
+
+                  .ValueAxis(axis => axis
+                                         .Numeric()
+                                         .Labels(labels => labels.Format("{0:#,##0}"))
+
+                  )
+                  .Tooltip(tooltip => tooltip
+                                          .Visible(true)
+                                          .Format("{0}")
+                                          .Template("#= value #")
+                  )
+                  )
+        </div>
+    </div>
+}
+else
+{
+    <div class="titleRoundedDiv">
+         <div class="row">
+            <div style="width: 80%" class="tabel-cell">
+               @ViewData["Title"].ToString()
+            </div>
+            <div class="tabel-cell pull-right">
+                <span class="csp-white-tooltip"><i class="icon-question-sign icon-large"
+                                                             onclick="SupportPortal.Help(this,@ViewData["HelpMessageId"].ToString(),{ title: '@ViewData["Title"].ToString()',height:100});"></i></span>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="greyRoundedDiv">
+        @*<div class="row"><a class='deviceInfoexport-img btn btn-primary pull-right' title="Export to Image"><i class="icon-download-alt"></i></a></div>*@
+
+        <div class="row" style="margin-left: 0px;">
+
+            @(Html.Kendo().Chart(Model.InternalDeviceInformationChart)
+                  .Name("deviceInfoBarChart")
+                  .Title("")
+                   .PlotArea(p => p.Margin(0, 40, 0, 0))
+                  .Legend(legend => legend
+                                        .Position(ChartLegendPosition.Bottom)
+                  )
+                  .ChartArea(chartArea => chartArea
+                                              .Background("transparent")
+                  )
+                  .Series(series =>
+                  {
+                      series.Column(model => model.AmericasCount).Color("#C0504D")
+                            .Name("Americas")
+                            .Overlay(ChartBarSeriesOverlay.None)
+                            .Labels(l => l.Visible(false).Font("bold 13pt Pragmatica-Web,Arial,Helvetica,sans-serif").Color("#584F45"))
+                            .Tooltip(t => t.Visible(true)
+                          );
+                      series.Column(model => model.EmeaCount).Color("#9BBB59")
+                            .Name("EMEA")
+                            .Overlay(ChartBarSeriesOverlay.None)
+                            .Labels(l => l.Visible(false).Font("13pt Pragmatica-Web,Arial,Helvetica,sans-serif").Color("#584F45"))
+                            .Tooltip(t => t.Visible(true));
+                      series.Column(model => model.JapanCount).Color("#8064A2")
+                            .Name("Japan")
+                            .Overlay(ChartBarSeriesOverlay.None)
+                            .Labels(l => l.Visible(false).Font("13pt Pragmatica-Web,Arial,Helvetica,sans-serif").Color("#584F45"))
+                            .Tooltip(t => t.Visible(true));
+                      series.Column(model => model.ApacCount).Color("#4BACC6")
+                            .Name("APAC")
+                            .Overlay(ChartBarSeriesOverlay.None)
+                            .Labels(l => l.Visible(false).Font("13pt Pragmatica-Web,Arial,Helvetica,sans-serif").Color("#584F45"))
+                            .Tooltip(t => t.Visible(true));
+                  })
+                  .CategoryAxis(axis => axis
+                                            .Name("series-axis")
+                                            .Line(line => line.Visible(false))
+                  )
+
+                  .CategoryAxis(axis => axis.Name("label-axis")
+                                            .Categories(model => model.Category)
+
+                  )
+
+                  .ValueAxis(axis => axis
+                                         .Numeric()
+                                         .Labels(labels => labels.Format("{0}"))
+
+                  )
+                  .Tooltip(tooltip => tooltip
+                                          .Visible(true)
+                                          .Format("{0}")
+                                          .Template("#= value #")
+                  )
+                  )
+
+        </div>
+    </div>
+        
+}
+
+
+
+
+@*<script type="text/javascript">
+    $(".deviceInfoexport-img").click(function () {
+        var chart = $("#deviceInfoBarChart").getKendoChart();
+        chart.exportImage().done(function (data) {
+            kendo.saveAs({
+                dataURI: data,
+                fileName: "deviceInfo.png",
+                proxyURL: "@Url.Action("Export_Save", "Chart_Api")"
+            });
+        });
+
+    });
+</script>*@

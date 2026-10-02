@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "UnAuthorized Access";
+    Layout = Request.IsAjaxRequest() ? null : "~/Views/Shared/_Layout.cshtml";
+    var returnUrl = System.Configuration.ConfigurationManager.AppSettings["DissimulateUrl"];
+}
+<script type="text/javascript">
+    function GoBack() {
+
+        var isImpersonated = '@Request.Cookies[Constants.PARENT_COOKIE]';
+        var redirectUrl = '@System.Configuration.ConfigurationManager.AppSettings["LoginServiceLogoutUrl"]';
+
+        if (isImpersonated != null && isImpersonated != "") {
+            redirectUrl = '@System.Configuration.ConfigurationManager.AppSettings["DissimulateUrl"]';
+        }
+
+        window.location.href = redirectUrl;
+
+        return false;
+    }
+</script>
+
+<input class="k-button" type="submit" value="Back" onclick="GoBack();" style="height: 19px; padding-top: 0px; line-height: 18px;" />
+
+<div class="Csp-error">
+    <br />
+    <br />
+    <span>UnAuthorized Access</span>
+</div>
+<div>
+    <div class="alert alert-error">
+        You do not have permission to access this content. Please contact Palo Alto Networks Support, if you believe you have reached this notification in error.
+    </div>
+</div>

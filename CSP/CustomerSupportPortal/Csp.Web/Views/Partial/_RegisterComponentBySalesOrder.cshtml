@@ -1,0 +1,319 @@
+﻿@model Csp.Web.DataTransferObjects.ChassisComponentDto
+@using Csp.Api.HelperClasses
+@using Kendo.Mvc.UI
+
+
+@{ 
+    Layout = null;
+}
+
+<style>
+    .csp-label {
+        width: 12em;
+        display: inline-block;
+        text-align: right;
+    }
+</style>
+
+<div id="@UniqueId.RegisterComponentDiv">
+    @using (Ajax.BeginForm("RegisterSalesOrderComponents", "Device", null, new AjaxOptions
+            {
+                OnBegin = "SupportPortal.BlockUI();",
+                OnComplete = "SupportPortal.UnBlockUI();",
+                UpdateTargetId = (string)UniqueId.RegisterComponentDiv
+            }, new { id = (string)UniqueId.RegisterComponentForm }))
+    {
+        
+        @Html.AntiForgeryToken()
+        
+        <div class="fieldset-upper">
+            <fieldset>
+                <legend>Device Information</legend>
+                <div>
+                    <div class="csp-label">@Html.Label("Sales Order Number: ")</div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.ChassisComponent.SalesOrderNumber)
+                        @Html.TextBoxFor(model => model.ChassisComponent.SalesOrderNumber, new { maxlength = 36, id = (string)UniqueId.SalesOrderNumber })
+                        <span class="required">*</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="csp-label">@Html.Label("Chassis Serial Number: ")</div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.ChassisComponent.ChassisSerialNumber)
+                        @Html.TextBoxFor(model => model.ChassisComponent.ChassisSerialNumber, new { maxlength = 36, id = (string)UniqueId.ChassisSerialNumber })
+                    </div>
+                </div>
+            </fieldset>
+            @if (Model.Notifications != null)
+            {
+                Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+            }
+            <div id="divLineCard" class="fieldset-upper">
+                <fieldset>
+                    <legend>COMPONENTS </legend>
+                    <div class="innernotification">
+                        Below is a list of unregistered components.
+                        <br>
+                        Please select the components you wish to register with this chassis.
+                    </div>
+                    <div id="lineCardInfo"></div>
+                    @*Grid will be loaded here*@
+                </fieldset>
+            </div>
+            <div id="@UniqueId.LocationInfo">
+                <fieldset>
+                    <legend>Location Information <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 7);"></i></span></legend>
+                    <div class="innernotification">
+                        (Inaccurate location information may impede timely RMA turnaround, in the event of hardware replacement.)
+                    </div>
+                    <div>
+                        If you have a 4 Hour RMA support contract for this product:<br />
+                        4 Hour Premium Support operates within certain geographies only. If you relocate<br /> your device from the originally-approved location, please open a support case at <br /> https://supportcases.paloaltonetworks.com to validate your new location.
+                    </div>
+                </fieldset>
+            </div>
+            
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Address 1:")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.ChassisComponent.Address1)
+                    @Html.TextBoxFor(model => model.ChassisComponent.Address1, new { id = (string)UniqueId.Address1, maxlength = 256 })
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+                    
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Address 2:")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.ChassisComponent.Address2)
+                    @Html.TextBoxFor(model => model.ChassisComponent.Address2, new {id = (string) UniqueId.Address2, maxlength = 256})
+                </div>
+            </div>
+
+            <div>
+                <div class="csp-label">
+                    @Html.Label("City: ")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.ChassisComponent.City)
+                    @Html.TextBoxFor(model => model.ChassisComponent.City, new { maxlength = 101, id = (string)UniqueId.CityId })
+                    <span class="required">*</span>
+
+                </div>
+            </div>
+
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Postal Code: ")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.ChassisComponent.PostalCode)
+                    @Html.TextBoxFor(model => model.ChassisComponent.PostalCode, new { maxlength = 16, id = (string)UniqueId.PostalCodeId })
+                    <span class="required">*</span>
+                </div>
+            </div>
+
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Country: ")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => Model.ChassisComponent.CountryId)
+                    @(Html.Kendo().DropDownListFor(model => Model.ChassisComponent.CountryId)
+                                  .HtmlAttributes(new { @class = "k-dropdown", id = (string)UniqueId.CountryId })
+                                  .OptionLabel(Constants.DropDownCountrySelect)
+                                  .DataValueField("Id")
+                                  .DataTextField("Name")
+                                  .DataSource(source => source.Read(read =>
+                                  {
+                                      if (read != null)
+                                      {
+
+                                          read.Action("GetCountries", "Base");
+                                      }
+                                  })).Value(Model.ChassisComponent.CountryId.ToString()))
+                    <span class="required">*</span>
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Region/State: ")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => Model.ChassisComponent.Region)
+                    @Html.TextBoxFor(model => Model.ChassisComponent.Region, new { maxlength = 100, id = (string)UniqueId.Region })
+                </div>
+            </div>
+        </div>
+    @Html.Partial("../Partial/_Eula", Model.Eula)
+        <div class="fieldset">
+            <div class="csp-submit-container">
+                <span class="csp-required-text"><span class="required">*</span>@Constants.RequiredField</span>
+                <input type="submit" id="@UniqueId.okButtonId" value="Agree and Submit" class="k-button csp-submit" />&nbsp;&nbsp;&nbsp;
+            <input type="button" id="btnRefuse" value="Refuse" class="k-button" />&nbsp;&nbsp;
+            </div>
+        </div>
+
+    }
+</div>
+
+<script>
+    $.validator.unobtrusive.parse("#@UniqueId.RegisterComponentDiv");
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+    $('#@UniqueId.SalesOrderNumber').val('');
+    $("#@UniqueId.SalesOrderNumber").blur(function () {
+        var salesOrderNumber = $(this).val();
+        salesOrderNumberEntered(salesOrderNumber);
+    });
+    var checkedIds = {};
+    var linecards = [];
+    $("#divLineCard").hide();
+    //we are not using this as of now.
+    //on click of the checkbox:
+    function selectRow() {
+        var checked = this.checked,
+        row = $(this).closest("tr"),
+        grid = $("#lineCardInfo").data("kendoGrid"),
+        dataItem = grid.dataItem(row);
+        checkedIds[dataItem.id] = checked;
+        if (checked) {
+            item = {}
+            item["PartNumber"] = dataItem.PartNumber;
+            linecards.push(item);
+
+        } else {
+            linecards.pop(dataItem);
+        }
+    }
+    var supportAccountId = @Model.ChassisComponent.SupportAccountId;
+
+    var form = $("#@UniqueId.RegisterComponentForm");
+    $("form").submit(function (e) {
+
+        var components = [];
+        var compactualqty = 0;
+        var formId = this.id;  // "this" is a reference to the submitted form
+        form.validate();
+        var isValid = true;
+
+        $("#lineCardInfo input[type=checkbox]").each(function () {
+            if (isValid) {
+                if (this.checked) {
+                    var row = $(this).closest("tr"),
+                    grid = $("#lineCardInfo").data("kendoGrid"),
+                    dataItem = grid.dataItem(row);
+                    if (dataItem.Quantity<=dataItem.ActualQuantity) {
+                        item = {}
+                        item["PartNumber"] = dataItem.PartNumber;
+                        item["ShipmentNumber"] = dataItem.ShipmentNumber;
+                        item["PartMasterId"] = dataItem.PartMasterId;
+                        item["Quantity"] = dataItem.Quantity;
+                        item["Address1"] = $('#@UniqueId.Address1').val();
+                        item["Address2"] = $('#@UniqueId.Address2').val();
+                        item["City"] = $('#@UniqueId.CityId').val();
+                        item["PostalCode"] = $('#@UniqueId.PostalCodeId').val();
+                        item["CountryId"] = $('#@UniqueId.CountryId').val();
+                        item["Region"] = $('#@UniqueId.Region').val();
+                        item["SupportAccountId"] = supportAccountId;
+                        item["SalesOrderNumber"] = $('#@UniqueId.SalesOrderNumber').val();
+                        item ["ChassisSerialNumber"] = $('#@UniqueId.ChassisSerialNumber').val();
+                        components.push(item);
+
+                    }
+                    else {
+                        alert("entered quantity should be less than or equal to actual quantity. " + dataItem.AclQuantity);
+                        isValid = false;
+                    }
+                }
+            }
+
+        });
+
+        if (!isValid)
+            return false;
+
+        if (form.valid()) {
+            // need ajax for calling checked registered components. 
+            $.ajax({
+                type: "POST",
+                url: "/Device/RegisterComponents",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({components:components}),
+                headers: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                success:function(result)  {
+                    return true;
+                },
+                error:function(e)
+                { return false;
+                }
+            });
+
+        }
+    });
+
+    function salesOrderNumberEntered(salesOrderNumber) {
+        if (salesOrderNumber != "") {
+            $.ajax({
+                url: "/Device/GetUnassignedComponentQuantitiesBySalesOrder/",
+                data: { salesOrderNumber: salesOrderNumber }, success: function (components) {
+                    componentsGrid(components)
+                    if (components.length == 0) {
+                        $("#divLineCard").hide();
+                    }
+                    else {
+                        $("#divLineCard").show();
+                    }
+                },
+                error: function () {
+                    $("#divLineCard").hide();
+                }
+            });
+        }
+    }
+
+    function componentsGrid(components) {
+        var linecardgrid = $("#lineCardInfo").kendoGrid({
+            dataSource: {
+                data: components,
+                schema: {
+                    model: {
+                        fields: {
+                            ShipmentNumber: { type: "number" },
+                            PartMasterId: { type: "number" },
+                            PartNumber: { type: "string", editable: false },
+                            ActualQuantity: { type: "number", editable: false },
+                            RegisteredQuantity: { type: "number", editable: true, validation: { min: 0 } },
+                            ChassisSerialNumber: { type: "string", editable: false },
+                        }
+                    }
+                },
+                pageSize: 20
+            },
+            height: 200,
+            scrollable: true,
+            sortable: true,
+            pageable: {
+                input: true,
+                numeric: false
+            },
+            editable: true,
+            columns: [
+                     { title: "Select", template: "<input type='checkbox' class='checkbox' name='chk' />", width: "100px" },
+                       { field: "PartMasterId", title: "PartMasterId", hidden: true },
+                       { field: "PartNumber", title: "Available Components", editable: false, editor: null },
+                       { field: "Quantity", title: "Quantity", editable: true, width: "100px" },
+                       { field: "ActualQuantity", title: "ActualQuantity", hidden: true },
+                       { field: "ChassisSerialNumber", title: "ChassisSerialNumber", hidden: true },
+                       { field: "ShipmentNumber", title: "ShipmentNumber", hidden: true }
+
+            ]
+        }).data("kendoGrid");
+        linecardgrid.table.on("click", ".checkbox", selectRow);
+    }
+</script>

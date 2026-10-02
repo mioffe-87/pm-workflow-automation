@@ -1,0 +1,119 @@
+﻿@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.RegisterVmDto
+
+<script>
+    function uploadSuccess(e) {
+
+        var data = e.response;
+
+        if (data.Message && data.Message.length > 0) {
+            alert(data.Message);
+        } else {
+            $('#@UniqueId.UuId').val(data.UuId);
+            $('#@UniqueId.CpuId').val(data.CpuId);
+        }
+    }
+  
+    function CompleteSubmit() {
+        SupportPortal.UnBlockUI();
+
+        var newDeviceId = $('#@UniqueId.NewDeviceId').val();
+
+        if (newDeviceId.length > 0) {
+            $('#' + globalNewVmDeviceId).val(newDeviceId);
+            $('#@UniqueId.VmRegisterArea').closest(".k-window-content").data("kendoWindow").close();
+        }
+    }
+</script>
+
+<div id="@UniqueId.VmRegisterArea">
+    @using (Ajax.BeginForm("RegisterVm", "VM", new { }, new AjaxOptions {
+        UpdateTargetId = @UniqueId.VmRegisterArea,
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "CompleteSubmit();"
+    }, new { id = "RegisterVmForm" })) {
+        
+        @Html.HiddenFor(x => x.NewDeviceId, new { id = UniqueId.NewDeviceId });
+        @Html.Partial("../Partial/_ResponseNotification", Model.Notifications)
+
+        <div class="fieldset fieldset-padded">
+            <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.Label("UploadUUIDCPUID", "Upload File for UUID & CPUID:")
+                </div>
+                <div class="csp-field">
+                    @(Html.Kendo().Upload()
+                            .Name("uploadUuIdCpuId")
+                            .Async(async => async.Save("RegisterVmFile", "VM"))
+                            .Events(e => e.Success("uploadSuccess")))
+                </div>
+            </div>
+            <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.Label((string)UniqueId.UuId, "UUID:")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(x => x.UuId)
+                    @Html.TextBoxFor(x => x.UuId, new { id = UniqueId.UuId })
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+            <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.Label((string)UniqueId.CpuId, "CPUID:")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(x => x.CpuId)
+                    @Html.TextBoxFor(x => x.CpuId, new { id = UniqueId.CpuId })
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+            <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.LabelFor(x => x.AuthCode, "Authorization Code:")
+                </div>
+                <div class="csp-field">
+                    @Html.TextBoxFor(x => x.AuthCode, new { @readonly = "readonly" })
+                </div>
+            </div>
+            
+            <div>
+                    <div class="csp-label" style="width: 200px;" >
+                        @Html.LabelFor(model => model.PanOsVersion, "OS Release:")
+                    </div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.PanOsVersion)
+                        @(Html.Kendo().DropDownListFor(model => model.PanOsVersion)
+                                         .HtmlAttributes(new { @class = "k-dropdown", id = (string)UniqueId.OsDropDown })
+                                          .OptionLabel(Constants.DropDownOsReleaseSelect)
+                                          .DataValueField("PanOsVersion")
+                                          .DataTextField("PanOsVersion")
+                                          .DataSource(source => source
+                                                .Read(read => read.Action("GetPanOsVersions", "Device")))
+
+                                    .Value(Model.PanOsVersion)
+                        )                       
+                        <span class="csp-required">*</span>
+                    </div>
+                    <div class="csp-label" style="width: 200px;">
+                        @Html.LabelFor(model => model.HyperVisorVersion, "Virtual Platform:")
+                    </div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.HyperVisorVersion)
+                        @(Html.Kendo().DropDownListFor(model => model.HyperVisorVersion)
+                                    .OptionLabel(Constants.DropDownVirtualPlatformSelect)
+                                    .HtmlAttributes(new { @class = "k-dropdown",  id = UniqueId.HyperVisorDropDown })
+                                    .DataValueField("HyperVisorVersion")
+                                    .DataTextField("DisplayValue")
+                                    .DataSource(source => source.Read(read => read.Action("GetHyperVisorVersions", "Device")))
+                                    )
+                        <span class="csp-required">*</span>
+                    </div>
+            </div>
+        </div>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input type="submit" class="k-button csp-submit" value="Submit" />
+        </div>
+    }
+</div>

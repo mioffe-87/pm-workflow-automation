@@ -1,0 +1,49 @@
+﻿@model Csp.Web.DataTransferObjects.AllPendingMembershipsDto
+
+@{
+    ViewBag.Title = "View All Pending Memberships";
+    ViewBag.IsGlobal = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function pendingMembershipAcceptClick(guid) {
+        var url = '@Url.Action("UpdateMembershipStatus", "Membership")/' + guid + '?type=Accept&options=back';
+        //alert(url);
+        location.href = url;
+    }
+
+    function pendingMembershipRejectClick(guid) {
+        var url = '@Url.Action("UpdateMembershipStatus", "Membership")/' + guid + '?type=Reject&options=back';
+        //alert(url);
+        location.href = url;
+    }
+</script>
+
+<div>
+
+    @Html.Partial("../Partial/_CompanyLogoName")
+
+    <div class="contextTitle">All Pending Memberships</div>
+
+    <div class="k-tabstrip">
+        <div class="k-content k-state-active">
+
+            @(Html.Kendo().Grid(Model.PendingMemberships)
+            .Name("PendingMembershipsGrid")
+            .Sortable()
+            .Columns(c =>
+            {
+                c.Bound(col => col.DisplayName);
+                c.Bound(col => col.Email);
+                c.Bound(col => col.CreateDate).Format("{0:d}");
+                c.Bound(col => col.MembershipResponseGuid).Title("Actions").Template(t => 
+                    "<input type='button' value='Accept' class='k-button' onclick='javascript:pendingMembershipAcceptClick(\"" + t.MembershipResponseGuid + "\")' />"
+                    + "<input type='button' value='Reject' class='k-button' onclick='javascript:pendingMembershipRejectClick(\"" + t.MembershipResponseGuid + "\")' />");
+            })
+            )
+
+        </div>
+    </div>
+
+</div>

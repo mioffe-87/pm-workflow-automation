@@ -1,0 +1,20 @@
+﻿		/// <summary>Sets the per instance compatibility level on the dqe instance specified.</summary>
+		/// <param name="dqe">The dqe.</param>
+		protected override void SetPerInstanceCompatibilityLevel(DynamicQueryEngineBase dqe)
+		{
+			if(_compatibilityLevel.HasValue)
+			{
+				((DynamicQueryEngine)dqe).CompatibilityLevel = _compatibilityLevel.Value;
+			}
+		}
+ 
+		private Nullable<SqlServerCompatibilityLevel> _compatibilityLevel = null;
+		
+		/// <summary>The per-instance compatibility level used by this DQE instance. Default is the one set globally, which is by default SqlServer2005 (for 2005+). 
+		/// Compatibility level influences the query generated for paging, sequence name (@@IDENTITY/SCOPE_IDENTITY()), and usage of newsequenceid() in inserts. 
+		/// It also influences the ado.net provider to use. This way you can switch between SqlServer server client 'SqlClient' and SqlServer CE Desktop.</summary>
+		public Nullable<SqlServerCompatibilityLevel> CompatibilityLevel
+		{
+			get { return _compatibilityLevel; }
+			set { _compatibilityLevel = value; }
+		}

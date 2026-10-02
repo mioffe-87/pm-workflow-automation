@@ -1,0 +1,250 @@
+﻿@using Csp.Api.Security
+@using Csp.Web.DataTransferObjects
+@model Csp.Web.DataTransferObjects.BeginDeviceTransferDto
+<script>
+
+    function onSubmit() {
+
+        $('#submitBtn').prop("disabled", true);
+
+        if ("@Model.HasLgsAssociated" === "True") {
+            SupportPortal.Confirmation(
+                "The serial number you are transferring is associated with logging storage.  To allow the transfer, please confirm that you wish to remove this association.",
+                function() {  $('#@UniqueId.BeginDeviceTransferForm').submit(); },
+                function() {
+                    $('#submitBtn').prop("disabled", false);
+                    return false;
+                },
+                { width: 400, height: 145 });
+
+        }
+        else {
+            $('#@UniqueId.BeginDeviceTransferForm').submit();
+        }
+    }
+
+
+
+</script>
+
+<div id="@UniqueId.BeginDeviceTransfer">
+@using (Ajax.BeginForm("BeginTransfer", "DeviceTransfer", null, new AjaxOptions
+{
+    OnBegin = "SupportPortal.BlockUI();",
+    OnComplete = "SupportPortal.UnBlockUI(); setTransferBy();",
+    UpdateTargetId = (string)UniqueId.BeginDeviceTransfer
+}, new { id = (string)UniqueId.BeginDeviceTransferForm }))
+
+
+{
+
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(x => x.DeviceId)
+
+    <fieldset>
+        <legend>Device To Transfer</legend>
+        <div class="content">
+            
+            <p style="color: darkblue;">Before transfer: Please follow <a href="https://docs.paloaltonetworks.com/common-services/device-associations/get-started/remove-device-associations">these</a> 
+            steps to review and remove product and tenant associations from the device. Note, asset transfer will automatically remove these associations if they are not removed manually. </p>
+            <p style="color: darkblue;">After transfer: Please follow <a href="https://docs.paloaltonetworks.com/common-services/device-associations/get-started/associate-apps-with-devices">these</a> 
+            steps to associate the device with new tenant and products. </p>            
+        </div>
+        <div>
+            <div class="csp-label">@Html.LabelFor(x => x.SerialNumber)</div>
+            <div class="csp-field">
+                @Html.DisplayFor(x => x.SerialNumber)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">@Html.LabelFor(x => x.DeviceName)</div>
+            <div class="csp-field">
+                @Html.DisplayFor(x => x.DeviceName)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">@Html.LabelFor(x => x.PartNumber)</div>
+            <div class="csp-field">
+                @Html.DisplayFor(x => x.PartNumber)
+            </div>
+        </div>
+
+    </fieldset>
+
+        <div class="fieldset">
+            @{
+
+                var isAsc = User.RoleSecurities.Any(x => x.SecurityClassification == RoleSecurity.SecurityClassifications.Asc);
+                if (isAsc)
+                {
+                    <fieldset>
+                        <legend>Transfer Device By:</legend>
+                        <ul class="list-style-none">
+                            <li>
+                                <label>@Html.RadioButtonFor(x => x.TransferBy, DeviceTransferBy.EmailRecipient) Recipient</label>
+                                <label>@Html.RadioButtonFor(x => x.TransferBy, DeviceTransferBy.SupportAccount) Support Account</label>
+
+                            </li>
+                        </ul>
+                    </fieldset>
+                }
+                else
+                {
+                    @Html.HiddenFor(x => x.TransferBy)
+                }
+            }
+
+        </div>
+        <div id="divByRecipient">
+            <fieldset>
+                <legend>Recipient <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 8);"></i></span></legend>
+                <div>
+                    <div class="csp-label">@Html.LabelFor(x => x.DestinationEmail)</div>
+                    <div class="csp-field">
+                        @Html.TextBoxFor(x => x.DestinationEmail)
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="csp-label">@Html.LabelFor(x => x.NotifyUser)</div>
+                    <div class="csp-field">
+                        @Html.CheckBoxFor(x => x.NotifyUser)
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div id="divBySupportAccount" style="display: none">
+            <fieldset>
+                <legend>Support Account <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 27);"></i></span></legend>
+                <div>
+                    <div class="csp-field">
+                        <div class="csp-label">
+                            @Html.Label("Support Account:")
+                        </div>
+
+                        <div class="csp-field">
+
+                            @Html.TextBoxFor(x => x.SupportAccountName, new { @readonly = true })
+                            @Html.HiddenFor(x => x.SupportAccountId)
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                    <a class="" id="ChangeDeviceAccountLink" href="#" onclick="deviceAccountSelector.openWindow(); return false; ">Select</a>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input type="button" class="k-button csp-submit" value="Submit" onclick="onSubmit()" />
+        </div>
+                }
+</div>
+
+<script>
+
+    $.validator.unobtrusive.parse("#@UniqueId.BeginDeviceTransferForm");
+
+    function setTransferBy() {
+        if ($('input[name="TransferBy"]:checked').val() === 'SupportAccount') {
+            $('div[id^=divByRecipient]').css("display", "none");
+            $('div[id^=divBySupportAccount]').css("display", "block");
+            kendo.fx($('div[id^=divBySupportAccount]')).expand("vertical").play();
+            $('input[name="SupportAccountId"]').val("");
+        };
+    }
+
+    $(function () {
+        $('#DeviceTransfer_ToUserEmailAddress').focus();
+    });
+
+    var deviceAccountSelector = (function () {
+        var isPickingAccount = false;
+        function getIsPickingAccount() {
+            return isPickingAccount;
+        }
+
+        
+
+        function openWindow() {
+
+            isPickingAccount = true;
+            var url = '/supportaccount/ChangeDeviceAccount?id=@Model.SupportAccountId';
+
+            var window = $('#DeviceAccountSelectorWindow').data("kendoWindow");
+            window.refresh();
+            window.setOptions({
+                minHeight: 500
+            });
+            window.refresh(url);
+            window.open();
+            window.center();
+        }
+
+        function onOpenWindow() {
+            SupportPortal.OnWindowOpen('DeviceAccountSelectorWindow');
+        }
+
+        function onCloseWindow() {
+            var window = $('#DeviceAccountSelectorWindow').data("kendoWindow");
+            window.content("");
+            window.refresh();
+
+            //UPDATE Window based on select...redirect?
+            //SupportPortal.OnWindowClose("@UniqueId.Groups" + "groupGrid");
+        }
+
+        function setSupportAccountId(supportAccountId, supportAccountName) {
+            $('#SupportAccountName').val(supportAccountName + " (" + supportAccountId + ")");
+            $('#SupportAccountId').val(supportAccountId);
+            var window = $('#DeviceAccountSelectorWindow').data("kendoWindow");
+            window.close();
+        }
+
+        return {
+            openWindow: openWindow,
+            onOpenWindow: onOpenWindow,
+            onCloseWindow: onCloseWindow,
+            getIsPickingAccount: getIsPickingAccount,
+            setSupportAccountId: setSupportAccountId
+        };
+    })();
+
+    $(function () {
+
+        $('input[type=radio][name=TransferBy]').change(function () {
+            switch (this.value) {
+            case "EmailRecipient":
+                $('div[id^=divByRecipient]').css("display", "block");
+                kendo.fx($('div[id^=divByRecipient]')).expand("vertical").play();
+                $('div[id^=divBySupportAccount]').css("display", "none");
+                break;
+            case "SupportAccount":
+                $('div[id^=divByRecipient]').css("display", "none");
+                $('div[id^=divBySupportAccount]').css("display", "block");
+                kendo.fx($('div[id^=divBySupportAccount]')).expand("vertical").play();
+                $('input[name="SupportAccountId"]').val("");
+                break;
+            }
+        });
+
+    });
+
+</script>
+@(Html.Kendo().Window()
+    .Name("DeviceAccountSelectorWindow")
+    .Width(700)
+    .Modal(true)
+    .Draggable()
+    .Scrollable(false)
+    .Events(events => events
+                            .Close("deviceAccountSelector.onCloseWindow")
+                            .Open("deviceAccountSelector.onOpenWindow")
+                            )
+    .Title("Select an Account")
+    .Visible(false)
+    )

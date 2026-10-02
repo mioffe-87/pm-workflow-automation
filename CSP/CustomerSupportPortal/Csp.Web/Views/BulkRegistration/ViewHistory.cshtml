@@ -1,0 +1,75 @@
+﻿@model Csp.Web.DataTransferObjects.CustomizeBulkRegistrationDto
+@{
+    var actionHelper = Model.ActionHelper;
+    
+    ViewBag.Title = "Bulk Registration History";
+    ViewBag.IsGlobal = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var divUniqueId = "ReviewBulkRegistration";
+    var resourceRevisionNumber = SiteHelper.GetResourceRevisionNumber();
+}
+
+@Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/bulkreg")
+<script>
+    function ExpandAll() {
+        var allDevices = $('.device-info-header');
+
+        if (allDevices.length > 0) {
+            allDevices.find('.toggle').removeClass('plus').addClass('minus');
+            allDevices.siblings('.device-info').slideDown("slow");
+        }
+    }
+
+    function CollapseAll() {
+        var allDevices = $('.device-info-header');
+
+        if (allDevices.length > 0) {
+            allDevices.find('.toggle').removeClass('minus').addClass('plus');
+            allDevices.siblings('.device-info').slideUp("slow");
+        }
+    }
+</script>
+<div id="@divUniqueId">
+
+    @Html.Partial("../Partial/_CompanyLogoName")
+
+    <div class="contextTitle">Bulk Registration History</div>
+
+    <div class="k-tabstrip">
+        <div class="k-content k-state-active">
+            <div class="content">
+                <div class="grid-header">
+                    <div class="grid-left">
+                        <input type="button" class="k-button" value="Expand All" onclick="ExpandAll(this);"/>&nbsp;
+                        <input type="button" class="k-button" value="Collapse All" onclick="CollapseAll(this);"/>
+                    </div>
+                    <div class="grid-right">
+                    </div>
+                </div>
+
+                <div class="grid-content">
+                    @{Html.RenderPartial("../Partial/_BulkRegistrationCustomize", Model);}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var isReviewMode = '@Model.IsReviewMode';
+        CustomizeBulkRegistrationManageUtil.Init({
+            uniqueId: '@divUniqueId',
+            isReadOnly: (isReviewMode.toUpperCase() === "TRUE"),
+            countries: function () {
+                return @Html.Raw(JsonConvert.SerializeObject(Model.Countries));
+            }(),
+            regions: function () {
+                return @Html.Raw(JsonConvert.SerializeObject(Model.Regions));
+            }(),
+            deviceCategories: function () {
+                return @Html.Raw(JsonConvert.SerializeObject(Model.DeviceCategories));
+            }(),
+            urlGetBulkRegistrationDevicesWithLicenses: '@Html.Raw(Url.Action("GetBulkRegistrationDevicesWithLicenses", "BulkRegistration", new { bulkRegistrationId = Model.BulkRegistrationId, supportAccountId = Model.SupportAccountId }))'
+        });
+    });
+</script>

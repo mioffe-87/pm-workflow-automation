@@ -1,0 +1,182 @@
+==========================================================================================
+SUPER USER DISTRIBUTION ANALYSIS - ALL ACTIVE ACCOUNTS
+(No login activity filter - includes all active accounts)
+==========================================================================================
+Generated: 2026-09-24 13:28:53
+
+SUMMARY STATISTICS
+------------------------------------------------------------------------------------------
+Total Active Accounts Analyzed:       172737
+Minimum Super Users per Account:     0
+Maximum Super Users per Account:     1785
+Mean (Average):                      2.63
+Median (Middle Value):               1.00
+Mode (Most Common):                  1
+Standard Deviation:                  6.11
+Q1 (25th Percentile):                1
+Q3 (75th Percentile):                3
+
+DISTRIBUTION ANALYSIS
+------------------------------------------------------------------------------------------
+Super Users     Count           Percentage      Cumulative %   
+------------------------------------------------------------------------------------------
+0               3                 0.00%          0.00%
+1               93289            54.01%         54.01%
+2               26182            15.16%         69.17%
+3               17790            10.30%         79.46%
+4               11059             6.40%         85.87%
+5               7165              4.15%         90.01%
+6               4758              2.75%         92.77%
+7               3124              1.81%         94.58%
+8               2159              1.25%         95.83%
+9               1537              0.89%         96.72%
+10              1180              0.68%         97.40%
+11              889               0.51%         97.91%
+12              675               0.39%         98.31%
+13              519               0.30%         98.61%
+14              393               0.23%         98.83%
+15              323               0.19%         99.02%
+16              271               0.16%         99.18%
+17              190               0.11%         99.29%
+18              165               0.10%         99.38%
+19              136               0.08%         99.46%
+20              121               0.07%         99.53%
+21              87                0.05%         99.58%
+22              73                0.04%         99.62%
+23              61                0.04%         99.66%
+24              65                0.04%         99.70%
+25              57                0.03%         99.73%
+26              43                0.02%         99.76%
+27              35                0.02%         99.78%
+28              30                0.02%         99.79%
+29              24                0.01%         99.81%
+30              26                0.02%         99.82%
+31              19                0.01%         99.83%
+32              20                0.01%         99.84%
+33              21                0.01%         99.86%
+34              24                0.01%         99.87%
+35              14                0.01%         99.88%
+36              13                0.01%         99.89%
+37              13                0.01%         99.89%
+38              13                0.01%         99.90%
+39              15                0.01%         99.91%
+40              7                 0.00%         99.91%
+41              6                 0.00%         99.92%
+42              5                 0.00%         99.92%
+43              5                 0.00%         99.92%
+44              4                 0.00%         99.93%
+45              9                 0.01%         99.93%
+46              7                 0.00%         99.93%
+47              7                 0.00%         99.94%
+48              2                 0.00%         99.94%
+49              6                 0.00%         99.94%
+50              4                 0.00%         99.95%
+51              8                 0.00%         99.95%
+52              4                 0.00%         99.95%
+54              1                 0.00%         99.95%
+55              2                 0.00%         99.95%
+56              1                 0.00%         99.95%
+58              1                 0.00%         99.96%
+59              4                 0.00%         99.96%
+60              2                 0.00%         99.96%
+61              1                 0.00%         99.96%
+62              5                 0.00%         99.96%
+63              1                 0.00%         99.96%
+64              3                 0.00%         99.96%
+66              1                 0.00%         99.97%
+67              2                 0.00%         99.97%
+68              4                 0.00%         99.97%
+69              2                 0.00%         99.97%
+70              1                 0.00%         99.97%
+72              1                 0.00%         99.97%
+73              3                 0.00%         99.97%
+74              2                 0.00%         99.97%
+75              4                 0.00%         99.98%
+76              1                 0.00%         99.98%
+77              2                 0.00%         99.98%
+78              2                 0.00%         99.98%
+80              1                 0.00%         99.98%
+82              1                 0.00%         99.98%
+84              2                 0.00%         99.98%
+85              1                 0.00%         99.98%
+87              1                 0.00%         99.98%
+94              1                 0.00%         99.98%
+95              1                 0.00%         99.98%
+98              2                 0.00%         99.98%
+103             1                 0.00%         99.99%
+105             1                 0.00%         99.99%
+107             2                 0.00%         99.99%
+110             2                 0.00%         99.99%
+112             1                 0.00%         99.99%
+113             1                 0.00%         99.99%
+118             1                 0.00%         99.99%
+121             1                 0.00%         99.99%
+125             1                 0.00%         99.99%
+126             1                 0.00%         99.99%
+136             1                 0.00%         99.99%
+161             1                 0.00%         99.99%
+172             1                 0.00%         99.99%
+182             1                 0.00%         99.99%
+193             1                 0.00%         99.99%
+227             1                 0.00%        100.00%
+243             1                 0.00%        100.00%
+275             1                 0.00%        100.00%
+308             1                 0.00%        100.00%
+319             1                 0.00%        100.00%
+402             1                 0.00%        100.00%
+412             1                 0.00%        100.00%
+620             1                 0.00%        100.00%
+1785            1                 0.00%        100.00%
+
+KEY INSIGHTS
+------------------------------------------------------------------------------------------
+1. Super User Assignment Status:
+   • 3 accounts (0.00%) have NO Super User
+   • 93289 accounts (54.01%) have exactly 1 Super User
+   • 79445 accounts (45.99%) have 2 or more Super Users
+
+2. Redundancy Analysis:
+   • 24414 accounts (14.13%) have 5+ Super Users (high redundancy)
+   • 5671 accounts (3.28%) have 10+ Super Users (very high redundancy)
+
+3. Distribution Shape:
+   • Right-skewed distribution (mean 2.63 > median 1.00)
+   • Most accounts cluster around 1 Super Users
+   • Some accounts have significantly more Super Users
+
+4. Variability:
+   • Coefficient of Variation: 232.23%
+   • High variability in Super User assignments across accounts
+
+RECOMMENDATIONS
+------------------------------------------------------------------------------------------
+1. CRITICAL - ACCOUNTS WITHOUT SUPER USERS:
+   • 3 accounts (0.00%) have NO Super User
+   • These accounts cannot perform administrative functions
+   • Action: Assign at least 1 Super User to each account
+
+2. MINIMUM REQUIREMENTS:
+   • Current minimum: 0 Super User per account
+   • Recommended minimum: 2-3 Super Users per account for redundancy
+   • Action: Review 93289 accounts with only 1 Super User
+
+3. OPTIMAL RANGE:
+   • Current median: 1 Super Users
+   • Current mean: 2.63 Super Users
+   • Recommended range: 3-7 Super Users per account
+   • Provides redundancy without excessive overhead
+
+4. HIGH-REDUNDANCY ACCOUNTS:
+   • 5671 accounts have 10+ Super Users
+   • Review these accounts for potential consolidation
+   • Consider role-based access control (RBAC) alternatives
+
+5. GOVERNANCE:
+   • Establish Super User assignment policy
+   • Define minimum and maximum Super Users per account type
+   • Implement automated alerts for policy violations
+   • Conduct quarterly reviews of Super User assignments
+
+==========================================================================================
+For detailed data, see: super_user_distribution_all_accounts.csv
+==========================================================================================

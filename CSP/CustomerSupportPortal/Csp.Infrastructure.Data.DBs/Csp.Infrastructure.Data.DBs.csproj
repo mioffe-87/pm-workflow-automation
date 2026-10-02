@@ -1,0 +1,1132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3A26EE0B-CA02-407E-BA08-A360429A0E6B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Csp.Infrastructure.Data</RootNamespace>
+    <AssemblyName>Csp.Infrastructure.Data.DBs</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SIT|AnyCPU'">
+    <OutputPath>bin\SIT\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IRIS|AnyCPU'">
+    <OutputPath>bin\IRIS\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Stage|AnyCPU'">
+    <OutputPath>bin\Stage\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DR|AnyCPU'">
+    <OutputPath>bin\DR\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.9.0.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.9.0\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.Ado, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Glimpse.Ado.1.7.3\lib\net45\Glimpse.Ado.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Glimpse.Core, Version=1.8.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Glimpse.1.8.6\lib\net45\Glimpse.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Glimpse.EF6, Version=1.6.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Glimpse.EF6.1.6.5\lib\net45\Glimpse.EF6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.31.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.31.1\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4, Version=1.3.8.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Compression.LZ4.1.3.8\lib\net462\K4os.Compression.LZ4.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4.Streams, Version=1.3.8.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Compression.LZ4.Streams.1.3.8\lib\net462\K4os.Compression.LZ4.Streams.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Hash.xxHash, Version=1.0.8.0, Culture=neutral, PublicKeyToken=32cd54395057cec3, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Hash.xxHash.1.0.8\lib\net462\K4os.Hash.xxHash.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=8.0.32.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.8.0.32.1\lib\net452\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data.EntityFramework, Version=8.0.32.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.EntityFramework.8.0.32\lib\net452\MySql.Data.EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\netstandard1.1\System.Buffers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.IO.Pipelines, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Pipelines.8.0.0\lib\net462\System.IO.Pipelines.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DBs\CSP\accounttype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\accounttypeassignablerole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\accounttypedefaultrole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\adminsiteapprovalrequest.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\adminsitefeature.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\adminsitefeatureemail.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\adminsitefeatureinputvalue.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\adminsitefeaturerolemapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\adminsitesfdcrequest.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\adminuser.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\adminuserrolesmapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\adminusersfeatureaccess.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\adminusertype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\alertmessage.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\appnamelicensetypemapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\appportalapp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\appportalappstype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\ascdata.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\ascinformationreview.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\ascreminderemaillist.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\ascscorecardreminder.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\assetactivation.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\atcmanagerseat.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\autofocustrialuser.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\autofocustrialusersaudit.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\awsaccountsupportaccountmapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\awsdevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\awslookup.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\awsregion.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\bannermessage.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\betaaccess.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\betafeature.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\betarole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\bulkdevicetransfer.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\bulkregistration.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\bulkregistrationdevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\bulkregistrationfiltertype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\bulkregistrationlicens.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\bulkregistrationstate.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\bundle.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cdlsharingaccount.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cdlsharinglog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\chassiscomponent.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cirrousercredential.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\claimedpurchas.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\claimedpurchasestate.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cloudaccountsupportaccountmapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\clouddevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cloudproductlookup.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cloudproductskumapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cloudregion.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cloudserviceusertransfer.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cloudtype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cnstubsn.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\compatibilitymatrix.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\compatible4hr.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\consentrequest.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\contentupdate.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\contentupdatesmodel.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\country.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\CSPDatabase.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CSPDatabase.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\CSPDatabase.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\CSPDatabase.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CSPDatabase.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csphelp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspautoinvoicing.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspdata.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspenduserdevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspenduserinformation.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspendusermultiplesfdcmatch.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspenduserpanaccount.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspenduserpanaccountslog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspmodel.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cssporderstatu.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\cssporderxml.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspprelicenserequest.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspprelicenserequeststatu.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspshoppingcart.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspshoppingcartitem.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspsku.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspsupporttype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspterm.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspusagereportstaging.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\csspvmusage.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\deactivatedauthcode.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\decommisonedinfo.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\device.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\devicecategory.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\devicedefaultrole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\deviceinfoztp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\deviceregistrationpin.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\deviceset.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\devicesetsdevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\devicetransfer.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\devicetransferstate.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\domain.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\duplicatesap.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\duplicatesap_total.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\eaexcludeddevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\eaquoteinfo.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\easku.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\easupportaccount.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\easyonboarding.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\easyonboardingitem.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\eatype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\elatokengrant.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\emailnotificationdetail.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\emailseedlist.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\emailsubscription.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\emailtemplate.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\endpointlicensetype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\endpointstub.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\eoled.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\epagentinfo.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\epagentinfolog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\eptelemetry.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\eula.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\eulaagreement.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\eulacontext.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\eulalanguage.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\evalaccountcreationlog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\evalextensionhistory.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\evalitem.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\evalsfdcmapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\excludedproductactivation.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\gdpraction.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\gdprrequest.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\gdprrequestrole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\gdprrole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\generictelemetry.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\getalligniteuser.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\getigniteremaininglicens.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\groupdefaultrole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\groupdevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\grouplicens.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\hardwarecomp_upgrade.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\hardware_comp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\hypervisor.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\ibclog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\jiveaggregateseventlog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\jivetemp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\lgsdeldependencycheck.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\lgssubaccount.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\license.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\licensefeature.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\licensingapikey.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\lightcyberbundledsku.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\lightcyberdevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logaccounttransfer.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logaccounttransferdetail.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logadminuser.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logadminuserrolesmapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logaftrialextension.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logautofocusapicall.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logbannermessage.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logbpa.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logcloudservicetransfer.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logdevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logdeviceregistrationapicall.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logdeviceregistrationpin.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logdevicetransfer.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logemailnotification.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logemailnotificationemaillist.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\loggingsvcdeletionexclusion.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\loglicense.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logmembership.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logmembershiprole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logmfa.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\lognewuser.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logpcprovision.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logregistration.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logsapsupportaccountmapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logsecaasbulkotp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logsecaasotp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logsedevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logservicerequest.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logsfdcsync.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logsupportaccount.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logtactoolboxapicall.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logtransaction.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\loguseraccount.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logvmelatokennotification.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logvmrenewal.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\logwildfireuseraccount.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\lookup.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\membership.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\membershiprole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\membershipstatus.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\messagepush.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\messagepushtelemetry.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\mfaapicalllog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\mfauserregistration.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\model.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\navigationlink.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\navigationlinkgroup.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\navigationlinkprivilege.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\navigationsublink.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\onlineservicesconfig.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\onlineservicessubconfig.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\pano.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\partmaster.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\partmaster_stage.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\partsubtype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\parttype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\phoenixgrandparent.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\pingcust.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\pingcustcsp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\pinglive.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\pingwildfirecust.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\presharedkey.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\privilege.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\productquantity.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\publishtarget.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rbacrole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rbacroleapp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rbacrolemapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rbacrolemappinglog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rbacrolemapping_bkp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rbacrole_bkp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\region.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\registeredapp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\registeredfrusalesorder.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\resourcelink.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\resourcelinkgroup.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\resourcesublink.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\retiredsku.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rmaapplicabledevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rmadevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rmadevicejobqueue.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rmajobstatuscode.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\role.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rolecategory.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\roleprivilege.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rolesecurityclassification.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rowgenerator.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\rowgenerator200.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\saascertificaterequest.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\salesforcelog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\salesorder.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\salesorderitem.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\salesordertemp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\sapsupportaccountmapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\secaasawscalllog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\secaasbulkotp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\secaascertrequest.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\secaascertrequestdetail.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\secaascertrequestlog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\secaascertrevokerequest.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\secaasotp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\secaaspanoramaregistration.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\secaaspanoramaregistration_bkp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\secaasskopanoramaregistration.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\sedevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\selfregistrationcode.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\sesupportaccountmapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\sfdcaccesstoken.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\single.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\sitelicensedetail.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\skusupportmapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\softwarecomp_upgrade.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\softwareupdate.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\software_comp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\subscriptionversion.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportaccount.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportaccountdefaultrole.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportaccountdomain.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportaccountgroup.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportaccountreview.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportproblemcategory.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportproblemcategorymapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportproblemsubcategory.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportproductmodel.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportproductsery.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\supportproductskumapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\swapped_accounts.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tempcompatibilitymatrix_upgrade.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\temp_compatibilitymatrix.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tenantassociation.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tenantassociation_bkp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tenantinfo.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tenantinfo_bkp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tenantlookup.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tenantlookup_bkp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tenantplatformmapping.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tenantplatformmapping_bkp.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tenant_deactivation.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tmpcompatadd_upgrade.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tmp_compat_add.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\tmp_sw.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\useraccount.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\userpreference.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\userselectedmembership.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\validauthcodetype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\virusupdate.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\vmelatokenexchangerate.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\vmeval.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\vmrenewal.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\vmrenewalstatu.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\vmrenewaltype.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\vmrenewalunprovisioned.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\vmstubsn.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\vmupgrade.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\wildfireapikey.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\wildfiredevice.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\wildfiredevicelog.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DBs\CSP\wildfireuseraccount.cs">
+      <DependentUpon>CSPDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.sonarlint\csp-sonarqubecsharp.ruleset">
+      <Link>csp-sonarqubecsharp.ruleset</Link>
+    </None>
+    <None Include="app.config" />
+    <EntityDeploy Include="DBs\CSP\CSPDatabase.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CSPDatabase.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="DBs\CSP\CSPDatabase.edmx.diagram">
+      <DependentUpon>CSPDatabase.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\.sonarlint\csp-sonarqube\CSharp\SonarLint.xml">
+      <Link>SonarLint.xml</Link>
+    </AdditionalFiles>
+    <Content Include="DBs\CSP\CSPDatabase.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CSPDatabase.edmx</DependentUpon>
+      <LastGenOutput>CSPDatabase.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="DBs\CSP\CSPDatabase.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CSPDatabase.edmx</DependentUpon>
+      <LastGenOutput>CSPDatabase.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Csp.Api\Csp.Api.csproj">
+      <Project>{cf8d9621-107e-46e7-bbdd-414c3e562aec}</Project>
+      <Name>Csp.Api</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

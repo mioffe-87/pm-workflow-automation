@@ -1,0 +1,46 @@
+﻿<!doctype HTML>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="keywords" content="">
+    <meta http-equiv="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- will eventually reference pan.css from paloaltonetworks.com -->
+    <link rel="stylesheet" type="text/css" href="Content/marketing/css/pan.css">
+
+    <!-- icons -->
+    <link rel="stylesheet" type="text/css" href="Content/marketing/css/lato.css">
+    <link rel="stylesheet" type="text/css" href="Content/marketing/css/glyphicons.css">
+    <link rel="stylesheet" type="text/css" href="Content/marketing/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="Content/marketing/css/panicons.css">
+
+    <title>Pan Dynamic Template</title>
+</head>
+
+<body>
+    <nav role="navigation" class="navbar mm navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" data-toggle="collapse" data-target="#primaryNav" class="navbar-toggle collapsed" aria-expanded="false"><i class="fa fa-navicon"></i></button>
+                <a target="_top" href="https://www.paloaltonetworks.com/" class="navbar-brand">
+                    <img src="Content/marketing/img/panlogo.png"></a>
+            </div>
+            <div id="primaryNav" class="collapse navbar-collapse" style="padding-top: 20px;">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a target="_top" href="https://www.paloaltonetworks.com/company/contact-sales">Sales: 1-866-320-4788</a></li>
+                    <li role="presentation" class="dropdown"><a target="_top" role="button" href="https://www.paloaltonetworks.com/company/contact-sales" data-toggle="dropdown" class="dropdown-toggle" aria-expanded="false"><i class="fa fa-2x fa-user"></i>CONTACT SALES<i class="fa fa-angle-double-right"></i></a>
+                    </li>
+                    <li role="presentation" class="dropdown"><a target="_top" role="button" href="https://www.paloaltonetworks.com/" data-toggle="dropdown" class="dropdown-toggle" aria-expanded="false"><i class="fa fa-2x fa-globe"></i>English<i class="fa fa-angle-double-right"></i></a>
+                    </li>
+                    <li><a target="_top" href="https://support.paloaltonetworks.com/"><i class="fa fa-2x fa-comments"></i>SUPPORT</a></li>
+                </ul>
+                @if (configValues.GetAppSetting(AppSettings.AppName) != "CSP PROD") {
+                    <div id="divEnvironment" class="divRound"><span style="color: red; font-weight: bold">@configValues.GetAppSetting(AppSettings.AppName).ToUpper()</span></div>
+                }
+            </div>
+        </div>
+    </nav>
+</body>
+</html>

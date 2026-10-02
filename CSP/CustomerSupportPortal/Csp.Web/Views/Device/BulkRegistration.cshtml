@@ -1,0 +1,24 @@
+﻿@using Kendo.Mvc.UI
+@model long
+
+@{
+    ViewBag.Title = "Bulk Registration";
+    ViewBag.IsGlobal = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+
+    @Html.Partial("../Partial/_CompanyLogoName")
+
+    <div class="contextTitle">Bulk Registration</div>
+
+    <div class="k-tabstrip">
+        <div class="k-content k-state-active">
+
+            @Html.Action("BulkDeviceRegistration", Model)
+
+        </div>
+    </div>
+
+</div>

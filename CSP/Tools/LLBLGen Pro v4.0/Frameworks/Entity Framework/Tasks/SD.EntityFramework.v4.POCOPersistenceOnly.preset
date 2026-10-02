@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preset name="SD.EntityFramework.v4 (POCO Persistence only)" lastModifiedOn="2010-04-22T13:55:29.6919509+02:00" createdBy="" isSealed="false" xmlns="http://sd/llblgen/pro/presetElementDefinitions.xsd">
+  <supportedPlatforms>
+    <platform name=".NET 4.0" />
+  </supportedPlatforms>
+  <supportedTemplateGroups>
+    <templateGroup name="General" />
+  </supportedTemplateGroups>
+  <supportedFrameworks>
+    <framework name="Entity Framework v4" />
+  </supportedFrameworks>
+  <taskPresets>
+    <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="Generate Entity Framework Domain model with proxy-friendly POCO entities" 
+						requiresCleanCache="false">
+      <performRule isEnabled="false" settingName="" operator="0" operand="" />
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate Type info list html page">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="Model" />
+          <parameter name="filenameFormat" value="ClassesToImplementManually.htm" />
+          <parameter name="templateID" value="SD_EF_POCO_TypeInfoList" />
+        </parameters>
+      </taskPreset>
+	</taskGroupPreset>
+    <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="SD.EntityFramework.v4 (POCO persistence only)" requiresCleanCache="false" forSpecificDatabase="All">
+      <performRule isEnabled="false" settingName="" operator="0" operand="" />
+      <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="Generate Entity Framework Database specific code and mapping file for POCO entities" requiresCleanCache="true">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate AssemblyInfo class">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\Persistence\Properties" />
+            <parameter name="filenameFormat" value="AssemblyInfo.[extension]" />
+            <parameter name="templateID" value="SD_EF_AssemblyInfo" />
+            <parameter name="failWhenExistent" value="true" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate Context Class">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\Persistence" />
+            <parameter name="filenameFormat" value="[containerName]DataContext.[extension]" />
+            <parameter name="templateID" value="SD_EF_POCO_Context" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate app.config file">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\Persistence" />
+            <parameter name="filenameFormat" value="app.config" />
+            <parameter name="templateID" value="SD_EF_AppConfig" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate Edmx File">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\Persistence" />
+            <parameter name="filenameFormat" value="[containerName].edmx" />
+            <parameter name="templateID" value="SD_EF_Edmx" />
+            <parameter name="templateAssemblySourceFileFormat" value="" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.GenerateVSNetProject" displayName="Generate VS.NET project file">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="[driverShortName]\Persistence" />
+            <parameter name="filenameFormat" value="[projectName].Persistence.[extension]proj" />
+            <parameter name="templateID" value="SD_EF_POCO_Persistence_VsNet" />
+            <parameter name="buildActionPerExtension" value=".config;None|.edmx;EntityDeploy|;Compile" />
+          </parameters>
+        </taskPreset>
+      </taskGroupPreset>
+    </taskGroupPreset>
+  </taskPresets>
+</preset>

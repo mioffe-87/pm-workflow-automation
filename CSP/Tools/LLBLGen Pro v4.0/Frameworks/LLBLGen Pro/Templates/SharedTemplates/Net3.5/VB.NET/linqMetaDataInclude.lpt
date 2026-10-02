@@ -1,0 +1,40 @@
+﻿ <%
+ 	var currentProject = _executingGenerator.ProjectDefinition;
+	string dataSourceType = (_executingGenerator.TemplateGroupToUse=="SelfServicing") ? "DataSource" : "DataSource2";
+	foreach(var tvfCall in _executingGenerator.TvfCalls)
+	{
+		var entity = tvfCall.ReturnElement as EntityDefinition;
+		if(entity==null)
+		{
+			continue;
+		}
+		var mapping = currentProject.GetGroupableModelElementMapping(tvfCall, _executingGenerator.DriverID);
+ 		if(mapping==null)
+		{
+			continue;
+		}
+		
+		var parameterDeclarations = new List<string>();
+		var parameterNames = new List<string>();
+		foreach(var parameterMapping in mapping.FieldMappings.OrderBy(fm=>fm.MappedTarget.OrdinalPosition))
+		{
+			var mappedParameter = parameterMapping.MappedFieldInstance as TvfCallParameterDefinition;
+			string parameterNameCamelCased = GeneratorUtils.CamelCaseString(mappedParameter.Name);
+			parameterNames.Add(parameterNameCamelCased);
+			parameterDeclarations.Add(string.Format("{0} As {1}", 
+							parameterNameCamelCased,
+							GeneratorUtils.GetDotNetTypeAsString(mappedParameter.FieldType.RepresentedType, _executingGenerator, "Nullable(Of {0})", mappedParameter.IsOptional)));
+		}
+%>
+		''' <summary>returns the datasource to use in a Linq query when targeting <%=entity.Name%>Entity instances returned by TVF call ' <%=tvfCall.Name%>'</summary>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <returns>IQueryable</returns>
+		<InMemoryCandidate()> _
+		Public Function <%=tvfCall.Name%>(<%if(parameterDeclarations.Count>0) {%><%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>) As <%=dataSourceType%>(Of <%=entity.Name%>Entity)
+			Return Me.<%=entity.Name%>.SetWrappedTvfCall(TvfCallFactory.<%=tvfCall.Name%>("TVF"<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>))
+		End Function
+<%	}
+%>

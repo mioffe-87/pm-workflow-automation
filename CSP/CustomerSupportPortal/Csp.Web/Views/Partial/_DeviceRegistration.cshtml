@@ -1,0 +1,881 @@
+﻿@using Csp.Api.HelperClasses
+@using Csp.Api.Security
+@using Kendo.Mvc.UI
+@using Csp.Web.DataTransferObjects
+@model DeviceRegistrationDto
+
+@{ 
+    ActionHelper actionHelper = Model.ActionHelper;
+    string modelAddress = "Device.";
+    var uniqueId = (string)UniqueId.DeviceRegistration + modelAddress.Replace(".", "") + "Registration";
+    var countryDropDownId = uniqueId + "CountryDropDownId";
+    var countryDropDownName = modelAddress + "CountryID";
+    var regionDropDownId = uniqueId + "RegionDropDownId";
+    var regionTextId = uniqueId + "RegionTextId";
+    var regionTextHiddenId = uniqueId + "RegionTextHiddenId";
+    var regionName = uniqueId + "RegionName";
+    var regionTextDivId = uniqueId + "RegionTextDivId";
+    var regionDropDownDivId = uniqueId + "RegionDropDownDivId";
+    var zoneOrRegionDropDownId = uniqueId + "ZoneOrRegionDropDownId";
+    var productCodeDropDownId = uniqueId + "ProductCodeDropDownId";    
+    var address1Id = uniqueId + "Address1";
+    var address2Id = uniqueId + "Address2";
+    
+}
+<script>
+
+    $("[data-val-remote]").keyup(function () { return false });
+    $("[data-val-regex-pattern]").keyup(function () { return false });
+    var snIsPanorama = false;
+    var osVersion8dot1 = false;
+    var componentsqty= 0;
+    $("#divchassislocationtext").hide();
+    function @(uniqueId)OnCountryDropdownChange() {
+        var countryName = $("#@countryDropDownId").data("kendoDropDownList").text();
+        $("#@UniqueId.countryHidden").val(countryName);
+        SupportPortal.OnCountryDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionTextDivId", "@regionDropDownDivId", "@countryDropDownId");
+    }
+
+    function @(uniqueId)OnRegionDropdownChange() {
+        SupportPortal.OnRegionDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionDropDownId", "@regionDropDownDivId", "@Constants.DropDownRegionSelect");
+    }
+
+    function @(uniqueId)OnRegionTextChange() {
+        SupportPortal.OnRegionTextChange("@regionTextHiddenId", "@regionTextId");
+    }
+
+    function @(uniqueId)FilterCountry() {
+        return { countryId: $("#@countryDropDownId").val() };
+    }
+    
+    function @(uniqueId)OnZoneOrRegionDropdownChange() {
+        var zoneOrRegionName = $("#@zoneOrRegionDropDownId").data("kendoDropDownList").text();
+        $("#@UniqueId.zoneOrRegionHidden").val(zoneOrRegionName);
+    }
+    
+    function @(uniqueId)OnProductCodeDropdownChange() {
+        var productCodeName = $("#@productCodeDropDownId").data("kendoDropDownList").text();
+        $("#@UniqueId.productCodeHidden").val(productCodeName);
+    }
+
+    function @(uniqueId)uploadSuccess(e) {
+        var data = e.response;
+        if (data.Message && data.Message.length > 0) {
+            alert(data.Message);
+        } else {
+            $('#@UniqueId.UuId').val(data.UuId);
+            $('#@UniqueId.CpuId').val(data.CpuId);
+        }
+    }
+
+    function @(uniqueId)OnPanOsSelectedItem(e) {
+        if (e.item == null) {
+            return;
+        }
+        var dataItem = this.dataItem(e.item);
+        var versions = dataItem.PanOsVersion.split(".");
+        //8.1 or above: display UUID block
+        if (versions.length > 1 && (parseInt(versions[0]) > 8 || (versions[0] === '8' && versions[1] >= '1'))) {
+            osVersion8dot1 = true;
+        } else {
+            osVersion8dot1 = false;
+        }
+        osDropdownAction();
+    }
+    
+    function osDropdownAction() {
+        if (snIsPanorama && osVersion8dot1) {
+            $('#@UniqueId.HyperVisorDropDown').rules("add", "required");
+            $('#@UniqueId.UuId').rules("add", "required");
+            $('#@UniqueId.CpuId').rules("add", "required");
+            $('#@UniqueId.GeneratePanoramaLicenseId').val(true);
+            $("#@UniqueId.PanoramaOptions").slideDown();
+        } else {
+            $('#@UniqueId.HyperVisorDropDown').rules("remove");
+            $('#@UniqueId.UuId').rules("remove");
+            $('#@UniqueId.CpuId').rules("remove");
+            $('#@UniqueId.GeneratePanoramaLicenseId').val(false);
+            $("#@UniqueId.PanoramaOptions").slideUp();
+        }    
+    }
+
+    function @(uniqueId)offlineClicked() {
+        var checked = this.checked;
+        $("#@UniqueId.OffLineOptions").toggle(checked);
+        if (checked) {
+            $("#@UniqueId.OsDropDown").rules("add", "required");
+            osDropdownAction();
+        } else {
+            $("#@UniqueId.OsDropDown").rules("remove");
+            //all are not required.
+            $('#@UniqueId.HyperVisorDropDown').rules("remove");
+            $('#@UniqueId.UuId').rules("remove");
+            $('#@UniqueId.CpuId').rules("remove");
+            $('#@UniqueId.GeneratePanoramaLicenseId').val(false);
+            $("#@UniqueId.PanoramaOptions").slideUp();
+        }        
+    }
+
+    var deviceSerialNumber;
+    var user = @Model.Device.Customer.Id;
+    var supportAccountId = @Model.Device.Customer.Id;
+    var userAccountId = @ViewBag.UserAccountId;
+    var ascCustomerRegistration;
+    var bklnSupportAuthCode;
+    var oneToManyMappingException;
+
+    // Check if user is an ASC
+    var ascAccountType= '@(CurrentState.GetSupportAccount().AccountType != null && CurrentState.GetSupportAccount().AccountType.Name  == AccountType.ASC.ToString() ? true : false)';
+    var userRoleSecurities = '@CurrentState.GetLoggedInUser().RoleSecurities.Find(x => x.SupportAccountId == Model.Device.Customer.Id && x.SecurityClassification == RoleSecurity.SecurityClassifications.Asc)' ? true : false;
+
+    var isMemberOfAsc = ascAccountType || userRoleSecurities;
+    var @(uniqueId)ascRegHelper = (function () {
+
+        function serialNumberEntered() {
+            var serialNumber = deviceSerialNumber.val();
+                                                           
+            $.getJSON('/api/DeviceValidation/ShouldShowAscCustOptions?serialNumber=' + serialNumber + '&supportAccountId=' + supportAccountId + '&isMemberofAsc='+ isMemberOfAsc , serialNumberEnteredResponse);
+            if(serialNumber != null && serialNumber.length > 0)
+            {
+                $.ajax({
+                    url: "/Device/GetUnassignedComponentQuantities/",  
+                    data: { chassisSerialNumber: serialNumber },  success:function(components)  
+                    {  
+                        componentsGrid(components);
+                        if(components.length === 0){
+                            $("#divLineCard").hide();
+                            $("#divchassislocationtext").hide();
+                        }
+                        else{
+                            $("#divLineCard").show(); 
+                            $("#divchassislocationtext").show();
+                        }
+                    },  
+                    error:function()
+                    {
+                                                            
+                        $("#divLineCard").hide();
+                        $("#divchassislocationtext").hide();
+                    }
+                });
+            }
+            //Changes End
+        }
+        function componentsGrid(components){
+            var linecardgrid = $("#lineCardInfo").kendoGrid({
+                dataSource: {
+                    data: components,
+                    schema: {
+                        model: {
+                            fields: {
+                                ShipmentNumber: { type: "number" },
+                                PartMasterId: { type: "number" },
+                                PartNumber: { type: "string" , editable: false},
+                                ActualQuantity:{ type: "number", editable: false  },
+                                RegisteredQuantity:{ type: "number", editable: true,  validation: { min: 0 }  }, 
+                                ChassisSerialNumber:{ type: "string" , editable: false},
+                            }
+                        }
+                    },
+                    pageSize: 20
+                },
+                height: 200,
+                scrollable: true,
+                sortable: true,
+                //filterable: true,
+                pageable: {
+                    input: true,
+                    numeric: false
+                },
+                editable: true,
+                //change: onChange,
+                columns: [
+                    { title: "Select", template: "<input type='checkbox' class='checkbox' name='chk' />" , width:"100px" },
+                    {field: "PartMasterId",title: "PartMasterId", hidden: true}, 
+                    {field: "PartNumber",title: "Available Components", editable: false, editor:null}, 
+                    {field: "Quantity",title: "Quantity", editable: true , width: "100px" },
+                    {field: "ActualQuantity",title: "ActualQuantity", hidden:true},
+                    {field: "ChassisSerialNumber",title: "ChassisSerialNumber", hidden:true},
+                    {field: "ShipmentNumber",title: "ShipmentNumber", hidden:true}
+
+                ]
+            }).data("kendoGrid");  
+        
+            linecardgrid.table.on("click", ".checkbox" , selectRow); 
+        }
+
+        function serialNumberEnteredResponse(data) {
+            if (data.showAscCustOptions === true) {
+                ascCustomerRegistration.find('.AscCustomer').empty();
+                ascCustomerRegistration.find('.AscCustomer').append(data.customerSupportAccountName + ' ' + data.customerSupportAccountId);
+                ascCustomerRegistration.slideDown();
+                $("#IsAscCustomerRegistration").val(true);
+            } else {
+                ascCustomerRegistration.slideUp();
+                
+                if (data.oneToManyMappingException) {
+                    oneToManyMappingException.slideDown();
+                } else {
+                    oneToManyMappingException.slideUp();
+                }
+            }
+            
+            if (data.showEvalAccountWarning === true) {
+                $('.EvalAccountWarning').slideDown();
+            } else {
+                $('.EvalAccountWarning').slideUp();
+            }
+
+            if (data.serialNumberIsPanorama) {
+                snIsPanorama = true;
+                $('#@UniqueId.IsPanoramaId').val(true);
+                                                    $('#@address1Id').rules("remove");
+                $('#@UniqueId.CityId').rules("remove");
+                $('#@UniqueId.PostalCodeId').rules("remove");
+                $('#@countryDropDownId').rules("remove");
+                $("#@UniqueId.LocationInfo").slideUp();
+            }else {
+                snIsPanorama = false;
+                $('#@UniqueId.IsPanoramaId').val(false);
+                                                    $('#@address1Id').rules("add", "required");
+                $('#@UniqueId.CityId').rules("add", "required");
+                $('#@UniqueId.PostalCodeId').rules("add", "required");
+                $('#@countryDropDownId').rules("add", "required");
+                $("#@UniqueId.LocationInfo").slideDown();
+            }
+            if (snIsPanorama && osVersion8dot1) {
+                $("#@UniqueId.PanoramaOptions").slideDown();
+            } else {
+                $("#@UniqueId.PanoramaOptions").slideUp();
+            }
+
+            //Legacy Light Cyber: disable the editbox
+            if (data.legacyLightCyberDeviceName != null && data.legacyLightCyberDeviceName.length > 0) {
+                $('#@UniqueId.DeviceName').val(data.legacyLightCyberDeviceName);
+                $('#@UniqueId.LightCyberDeviceName').val(data.legacyLightCyberDeviceName);
+                $('#@UniqueId.LightCyberDeviceName').show();
+                $('#@UniqueId.DeviceName').hide();
+                $('#@UniqueId.OffLineSection').hide();
+            } else {
+                $('#@UniqueId.LightCyberDeviceName').hide();
+                $('#@UniqueId.DeviceName').val('');
+                $('#@UniqueId.DeviceName').show();
+                $('#@UniqueId.OffLineSection').show();
+            }
+        }
+
+        function registerToCustClick() {
+            var registerToCust = $(this).val().toLowerCase() == 'true';
+            if (registerToCust) {
+                bklnSupportAuthCode.slideDown();
+            } else {
+                bklnSupportAuthCode.slideUp();
+            }
+        }
+
+        return {
+            serialNumberEntered: serialNumberEntered,
+            registerToCustClick: registerToCustClick
+        };
+    })();
+
+    $(function () {
+        //always hide Light Cyber element.
+        $('#@UniqueId.LightCyberDeviceName').hide();
+
+        deviceSerialNumber = $('#@UniqueId.DeviceSerialNumber');
+        ascCustomerRegistration = $('#@UniqueId.AscCustomerRegistration');
+        bklnSupportAuthCode = $('#@UniqueId.BklnSupportAuthCode');
+        oneToManyMappingException = $('#@UniqueId.OneToManyMappingException');
+
+        ascCustomerRegistration.hide();
+        $(deviceSerialNumber).blur(@(uniqueId)ascRegHelper.serialNumberEntered);
+
+        $('input[name="AscRegisterToCustomer"]').click(@(uniqueId)ascRegHelper.registerToCustClick);
+
+
+        $("#btnRefuse").click(function(e) {
+            $("#btnRefuse").closest(".k-window-content").data("kendoWindow").close();
+        });
+
+        $.validator.setDefaults({
+            ignore: ""
+        });
+
+    });
+    
+    var checkedIds = {};
+    var linecards = [];
+      
+    //we are not using this as of now.
+    //on click of the checkbox:
+    function selectRow() {
+        var checked = this.checked,
+        row = $(this).closest("tr"),
+        grid = $("#lineCardInfo").data("kendoGrid"),
+        dataItem = grid.dataItem(row);
+
+
+        checkedIds[dataItem.id] = checked;
+        if (checked) {
+            //-select the row
+            //row.addClass("k-state-selected");
+            item = {}
+            item ["PartNumber"] = dataItem.PartNumber;
+            item ["Quantity"] = dataItem.Quantity;
+
+            linecards.push(item);
+
+        } else {
+            //-remove selection
+            //row.removeClass("k-state-selected");
+            linecards.pop(dataItem);
+        }
+
+        console.log(checked);
+    }
+
+    $(document).ready(function() {
+        //for refreshing the page after registration
+        //$(".k-window-actions").click(function () {  location.reload(true); });
+        $("#divLineCard").hide();
+        var form = $("#@UniqueId.deviceRegistrationForm");
+            
+        $("form").submit(function (e) {
+            var components = [];
+            form.validate();
+            var isValid=true;
+            $("#lineCardInfo input[type=checkbox]").each(function() {
+                if(isValid)
+                {
+                    if(this.checked)
+                    { 
+                        var row = $(this).closest("tr"),                    
+                        grid = $("#lineCardInfo").data("kendoGrid"),
+                        dataItem = grid.dataItem(row);
+                        console.log(dataItem);
+                        if(dataItem.Quantity<=dataItem.ActualQuantity)
+                        {
+                            var item = {}
+                            item ["PartNumber"] = dataItem.PartNumber;
+                            item ["ShipmentNumber"] = dataItem.ShipmentNumber;
+                            item ["PartMasterId"] = dataItem.PartMasterId;
+                            item ["Quantity"] = dataItem.Quantity;
+                            item ["ChassisSerialNumber"] = deviceSerialNumber.val();
+                            item ["Address1"] =  $('#@address1Id').val();
+                            item ["Address2"] =  $('#@address2Id').val();
+                            item ["City"] =  $('#@UniqueId.CityId').val();
+                            item ["PostalCode"] = $('#@UniqueId.PostalCodeId').val();
+                            item ["CountryId"] = $('#@countryDropDownId').val();
+                            item ["Region"] = $('#@regionTextId').val();
+                            item ["SupportAccountId"] = supportAccountId;
+                            item ["UserAccountId"] = userAccountId;                                                                
+                            components.push(item);
+                        }
+                        else 
+                        {
+                            SupportPortal.ClearNotification();
+                            SupportPortal.Notification("Entered quantity should be less than or equal to actual quantity:  " + dataItem.ActualQuantity, 4);
+                            isValid=false; 
+                        }
+                    }
+                }
+                  
+            });
+            
+            if(!isValid)
+                return false;
+            if(form.valid())
+            {
+                // need ajax for calling checked registered components. 
+                $.ajax({
+                    type: "POST",
+                    url: "/Device/RegisterComponents",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify({components:components}),
+                    headers: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                    success:function()  {
+                        return true;
+                    },
+                    error:function() { 
+                        return false;
+                    }
+                });
+                    
+            }
+        });
+
+
+    });
+
+
+        
+</script>
+<div id="@UniqueId.registerDivId">
+    @using (Ajax.BeginForm(actionHelper.RegisterDevice, ControllerFields.DeviceController, new AjaxOptions
+    {
+        UpdateTargetId = (string)UniqueId.registerDivId,
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();"
+
+    }, new { id = (string)UniqueId.deviceRegistrationForm }))
+    {
+    
+        
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.Eula.SelectedEulaId, new { id = "SelectedEulaId", name = "SelectedEulaId" })
+        @Html.HiddenFor(model => model.Device.Customer.Id)
+        @Html.HiddenFor(model => model.CountryName, new { id = (string)UniqueId.countryHidden })    
+        @Html.HiddenFor(model => model.Device.IsAwsDevice)
+        @Html.HiddenFor(model => model.Device.IsAzureDevice)
+        @Html.HiddenFor(model => model.Device.IsGoogleCloudDevice)
+        @Html.HiddenFor(model => model.IsAscCustomerRegistration)
+        @Html.HiddenFor(model => model.Device.IsCsspProvisionedDevice)
+        @Html.HiddenFor(model => model.Device.SupportAccountHasEsa)
+        @Html.HiddenFor(model => model.Device.IsCloudDevice)
+        @Html.HiddenFor(model => model.Device.IsTraps)
+        @Html.HiddenFor(model => model.Device.IsPanorama, new { id = (string)UniqueId.IsPanoramaId })
+        @Html.HiddenFor(model => model.Device.GeneratePanoramaLicense, new { id = (string)UniqueId.GeneratePanoramaLicenseId })
+        @Html.HiddenFor(model => model.GroupId)
+        <div class="fieldset fieldset-upper">
+            <fieldset>
+                <legend>Device Information</legend>
+                @if (@Model.Device.IsCloudDevice == false)
+                {
+                    <div>
+                        <div class="csp-label">@Html.Label("Serial Number: ")</div>
+                        <div class="csp-field wrapText">
+                            @Html.ValidationMessageFor(model => model.Device.SerialNumber)
+                            @Html.TextBoxFor(model => model.Device.SerialNumber, new { maxlength = 36, id = (string)UniqueId.DeviceSerialNumber })
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                    <div class="EvalAccountWarning" style="display: none;">
+                        To register a new purchased asset, the Eval account must be converted to an active CSP account.  
+                        Please go to the <a href="/SupportAccount/LoadAccountPage/@Model.Device.Customer.Id">Company Account</a> page to activate your account.
+                    </div>
+                    <div id="@UniqueId.AscCustomerRegistration" style="display: none; margin-top: 5px;">
+                        <div style="padding: 5px; color: #333333;">
+                            <div style="margin-bottom: 5px;">This device belongs to <span style="font-weight: bold;" class="AscCustomer"></span>.</div>
+                            <div style="margin-bottom: 5px;">Palo Alto Networks recommends the device be registered under the customer's account. Refer to <a href="https://live.paloaltonetworks.com/docs/DOC-6910" target="_blank">CSP Account Management for ASC</a> for more details.</div>
+                            <label style="cursor: pointer;">
+                                <span>Register device under customer's account</span>
+                                @Html.RadioButtonFor(x => x.AscRegisterToCustomer, "true")
+                            </label>
+                            <label style="cursor: pointer;">
+                                <span>Register device under your ASC account</span>
+                                @Html.RadioButtonFor(x => x.AscRegisterToCustomer, "false")
+                            </label>
+                        </div>
+
+                        <div id="@UniqueId.BklnSupportAuthCode">
+                            <div class="csp-label">@Html.Label("Authorization Code: ")</div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.AscCustBklnSupportAuthCode)
+                                @Html.TextBoxFor(model => model.AscCustBklnSupportAuthCode)
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                    </div>
+                
+            
+                    <div id="@UniqueId.OneToManyMappingException" style="display: none; margin-top: 5px; border: solid 1px black; border-radius: 2px; padding: 5px;">
+                            This device belongs to another customer.  Palo Alto Networks recommends that you register this device to that customer's account.  To do so,
+                            use the "Home" tab to find the "Change Account" link.  Once in your client's account you can register the device and manage it for them.
+                    </div>
+                
+                }
+                else
+                {
+                    if (Model.Device.IsAwsDevice)
+                    {
+                        <div>
+                            <div class="csp-label">@Html.Label("Serial #: ")</div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Device.AwsSerialNumber)
+                                @Html.TextBoxFor(model => model.Device.AwsSerialNumber)
+                                <span class="csp-required">*</span>
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 13);"></i></span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">@Html.Label("CPU ID: ")</div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => Model.Device.AwsCpuid)
+                                @Html.TextBoxFor(model => model.Device.AwsCpuid)
+                                <span class="csp-required">*</span>
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 14);"></i></span>
+                            </div>
+                        </div>
+                    <div>
+                            <div class="csp-label">@Html.Label("UUID: ")</div>
+                            <div class="csp-field">
+                                @Html.TextBoxFor(model => model.Device.AwsUuid)
+                                <span class="csp-required">&nbsp;</span>
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 15);"></i></span>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.Device.IsAzureDevice)
+                    {
+                        <div>
+                            <div class="csp-label">@Html.Label("Serial # of VM-Series: ")</div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Device.AzureSerialNumber)
+                                @Html.TextBoxFor(model => model.Device.AzureSerialNumber)
+                                <span class="csp-required">*</span>
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 23);"></i></span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">@Html.Label("CPU ID:")</div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => Model.Device.AzureCpuid)
+                                @Html.TextBoxFor(model => model.Device.AzureCpuid)
+                                <span class="csp-required">*</span>
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 24);"></i></span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">@Html.Label("UUID:")</div>
+                            <div class="csp-field">
+                                @Html.TextBoxFor(model => model.Device.AzureUuid)
+                                <span class="csp-required">&nbsp;</span>
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 25);"></i></span>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.Device.IsGoogleCloudDevice)
+                    {
+                        <div>
+                            <div class="csp-label">@Html.Label("Serial #: ")</div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Device.GoogleCloudSerialNumber)
+                                @Html.TextBoxFor(model => model.Device.GoogleCloudSerialNumber)
+                                <span class="csp-required">*</span>
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 13);"></i></span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">@Html.Label("CPU ID: ")</div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => Model.Device.GoogleCloudCpuid)
+                                @Html.TextBoxFor(model => model.Device.GoogleCloudCpuid)
+                                <span class="csp-required">*</span>
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 14);"></i></span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">@Html.Label("UUID: ")</div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => Model.Device.GoogleCloudUuid)
+                                @Html.TextBoxFor(model => model.Device.GoogleCloudUuid)
+                                <span class="csp-required">*</span>
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 15);"></i></span>
+                            </div>
+                        </div>  
+                    }
+                    else
+                    {
+                        <div>
+                            <div class="csp-label">@Html.Label("Serial Number: ")</div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Device.CsspSerialNumber)
+                                @Html.TextBoxFor(model => model.Device.CsspSerialNumber, new { maxlength = 36, id = (string)UniqueId.CsspSerialNumber })
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                       <div>
+                            <div class="csp-label">@Html.Label("CSSP Reference Id: ")</div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Device.CustomerAccountId)
+                                @Html.TextBoxFor(model => model.Device.CustomerAccountId, new { id = (string)UniqueId.CustomerAccountId })
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                    }
+                }
+                <!--  Added Spaces-->
+                <div>
+                    <div class="csp-label">@Html.Label("Device Name: ")</div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.Device.DeviceName)
+                        <input id="@UniqueId.LightCyberDeviceName" type="text" readonly />
+                        @Html.TextBoxFor(model => model.Device.DeviceName, new { id = (string)UniqueId.DeviceName })
+                        <span class="csp-tooltip">&nbsp;&nbsp;&nbsp;<i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 26);"></i></span>
+                    </div>
+                </div>
+                <div>
+                    <div class="csp-label">
+                        @Html.Label(ApiConstants.DEVICE_CATEGORY + ": ")
+                    </div>
+                    <div class="csp-field">
+                        @(Html.Kendo().DropDownListFor(model => model.Device.DeviceCategoryId)
+                              .HtmlAttributes(new { @class = "k-dropdown", id = (string)UniqueId.DeviceTag })
+                              .OptionLabel(Constants.DropDownPleaseSelect)
+                              .DataValueField("DeviceCategoryId")
+                              .DataTextField("DeviceCategoryName")
+                              .BindTo(Model.DeviceCategories))
+                        <span class="csp-tooltip">&nbsp;&nbsp;&nbsp;<i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 12);"></i></span>
+                    </div>
+                </div>
+                <div>
+                    <div id="@UniqueId.OffLineSection">
+                        <div class="csp-label">
+                            @Html.Label((string)UniqueId.OfflineLabel, "Device will be used Offline:") 
+                        </div>
+                        <div class="csp-field">
+                            @Html.CheckBox((string)UniqueId.OfflineCheckBox, false, new Dictionary<string, object> { { "onclick", uniqueId + "offlineClicked.call(this)" }, { "Id", (string)UniqueId.OfflineCheckBox } })
+                        </div>
+                    </div>
+                    <div id="@UniqueId.OffLineOptions" style="display: none;" >
+                        <div>
+                            <div class="csp-label">
+                                @Html.LabelFor(model => model.Device.PanOsVersion, "OS Release:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Device.PanOsVersion)
+                                @(Html.Kendo().DropDownListFor(model => model.Device.PanOsVersion)
+                                        .HtmlAttributes(new { @class = "k-dropdown", id = (string)UniqueId.OsDropDown })
+                                        .OptionLabel(Constants.DropDownOsReleaseSelect)
+                                        .DataValueField("PanOsVersion")
+                                        .DataTextField("PanOsVersion")
+                                        .Events(e => e.Select(uniqueId + "OnPanOsSelectedItem"))
+                                        .DataSource(source => source.Read(read => { read.Action("GetPanOsVersions", "Device"); }))
+                                        )
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>                                        
+                        <div id="@UniqueId.PanoramaOptions" style="display: none">
+                            <div>
+                                <div class="csp-label">
+                                    @Html.LabelFor(model => model.Device.HyperVisorVersion, "Virtual Platform:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.Device.HyperVisorVersion)
+                                    @(Html.Kendo().DropDownListFor(model => model.Device.HyperVisorVersion)
+                                            .OptionLabel(Constants.DropDownVirtualPlatformSelect)
+                                            .HtmlAttributes(new { @class = "k-dropdown", id = (string)UniqueId.HyperVisorDropDown })
+                                            .DataValueField("HyperVisorVersion")
+                                            .DataTextField("DisplayValue")
+                                            .DataSource(source => source.Read(read => read.Action("GetHyperVisorVersions", "Device", new { filter = "VM" })))
+                                            )
+                                    <span class="csp-required">*</span>
+                                </div>                            
+                            </div>
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label("UploadUUIDCPUID", "Upload File for UUID & CPUID:")
+                                </div>
+                                <div class="csp-field">
+                                    @(Html.Kendo().Upload()
+                                            .Name("uploadUuIdCpuId")
+                                            .Multiple(false)
+                                            .Async(async => async.Save("RegisterVmFile", "VM"))
+                                            .Events(e => e.Success(uniqueId + "uploadSuccess"))
+                                            )
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label((string)UniqueId.UuId, "UUID:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.Device.UuId)
+                                    @Html.TextBoxFor(model => model.Device.UuId, new { id = (string)UniqueId.UuId })
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label((string)UniqueId.CpuId, "CPUID:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.Device.CpuId)
+                                    @Html.TextBoxFor(model => model.Device.CpuId, new { id = (string)UniqueId.CpuId })
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        if (Model.Notifications != null)
+        {
+            Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+        }
+        if (!Model.Device.IsCloudDevice)
+        {
+            <div id="divLineCard" class="fieldset fieldset-upper">
+                <fieldset>
+                    <legend>COMPONENTS </legend>
+                    <div class="innernotification">
+                        Below is a list of available components.
+                <br>
+                        Please select the components you wish to register with this chassis.
+                    </div>
+                    <div id="lineCardInfo"></div>
+                    @*Grid will be loaded here*@
+                </fieldset>
+            </div>
+
+                    <div id="@UniqueId.LocationInfo" class="fieldset">
+                        <fieldset>
+                <legend>Location Information <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 7);"></i></span></legend>
+                <div class="innernotification">(Inaccurate location information may impede timely RMA turnaround, in the event of hardware replacement.)</div>
+                <div id ="divchassislocationtext"> 
+                       
+                        <div>If you have a 4 Hour RMA support contract for this product: </div>
+                        <div>
+                            4 Hour Premium Support operates within certain geographies only. If you relocate<br /> your device from the originally-approved location, please open a support case at <br />https://supportcases.paloaltonetworks.com to validate your new location.
+                        </div>
+                </div>
+                    
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Address 1:")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.Device.Address1)
+                            @Html.TextBoxFor(model => model.Device.Address1, new { id = address1Id, maxlength = 256 })
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Address 2:")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.Device.Address2)
+                            @Html.TextBoxFor(model => model.Device.Address2, new {id = address2Id, maxlength = 256})
+                        </div>
+                    </div>
+
+                <div>
+                    <div class="csp-label">@Html.Label("City: ")</div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.Device.City)
+                        @Html.TextBoxFor(model => model.Device.City, new { maxlength = 101, id = (string)UniqueId.CityId })
+                        <span class="csp-required">*</span>
+
+                    </div>
+                </div>
+
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Postal Code: ")
+                    </div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.Device.PostalCode)
+                        @Html.TextBoxFor(model => model.Device.PostalCode, new { maxlength = 16, id = (string)UniqueId.PostalCodeId })
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Country: ")
+                    </div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => Model.Device.CountryId)
+                        @(Html.Kendo().DropDownListFor(model => Model.Device.CountryId)
+                                .HtmlAttributes(new { @class = "k-dropdown", id = countryDropDownId, name = countryDropDownName })
+                                .Events(e => e.Change(uniqueId + "OnCountryDropdownChange").DataBound(uniqueId + "OnCountryDropdownChange"))
+                                .OptionLabel(Constants.DropDownCountrySelect)
+                                .DataValueField("Id")
+                                .DataTextField("Name")
+                                .DataSource(source => source.Read(read =>
+                                {
+                                    if (read != null)
+                                    {
+
+                                        read.Action("GetCountries", "Base");
+                                    }
+                                })).Value(Model.Device.CountryId.ToString()))
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+                <div>
+                    <input id="@regionTextHiddenId" name="@regionName" type="hidden" value="@Model.Device.Region"/>
+
+                    <div class="csp-label">
+                        @Html.Label("Region/State: ")
+                    </div>
+                    <div class="csp-field">
+                        <div id="@regionTextDivId">
+                            @Html.ValidationMessageFor(model => Model.Device.RegionText)
+                            @Html.TextBoxFor(model => Model.Device.RegionText, new { id = regionTextId, onchange = uniqueId + "OnRegionTextChange()" })
+                        </div>
+                        <div id="@regionDropDownDivId" style="display: none;">
+                            @Html.ValidationMessageFor(model => Model.Device.Region)
+                            @(Html.Kendo().DropDownListFor(model => Model.Device.Region)
+                                    .OptionLabel(Constants.DropDownRegionSelect)
+                                    .HtmlAttributes(new { @class = "k-dropdown", id = @regionDropDownId, name = "" })
+                                    .Events(e => e.Change(uniqueId + "OnRegionDropdownChange").DataBound(uniqueId + "OnRegionDropdownChange"))
+                                    .DataValueField("Name")
+                                    .DataTextField("Name")
+                                    .DataSource(source => source.Read(read => read.Action("GetRegions", "Base").Data(uniqueId + "FilterCountry")).ServerFiltering(true))
+                                    .Value(Model.Device.Region)
+                                    .AutoBind(false)
+                                    .CascadeFrom(countryDropDownId)
+                                    )
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Remarks: ")
+                    </div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.Device.Comments)
+                        @Html.TextAreaFor(model => model.Device.Comments, new { @class = " csp-comments", maxlength = 256 })
+                    </div>
+                </div>
+            </fieldset>
+                    </div>
+                }   
+
+            
+
+        if (!Model.Device.IsCloudDevice && Model.Device.SupportAccountHasEsa)
+        {
+            <div class="fieldset">
+                <fieldset>
+                    <legend>Enterprise Support Agreement<span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 45);"></i></span></legend>
+                    <div style="margin-left: 20px">
+                        <ul class="list-style-none">
+                            <li>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.Device.ApplyEsaLicenseToDevice)
+                                </div>
+                                <div>@Html.RadioButtonFor(model => model.Device.ApplyEsaLicenseToDevice, 1, new { id = "rbApplyEsaLicenseToDevice" })<span>This device <span style="padding-bottom: 1px"><u>will be</u></span> part of the Enterprise Support Agreement</span></div>
+                            </li>
+                            <li>
+                                <div>@Html.RadioButtonFor(model => model.Device.ApplyEsaLicenseToDevice, 2, new { id = "rbDontApplyEsaLicenseToDevice" })<span>This device <span style="padding-bottom: 1px"><u>will not be</u></span> part of the Enterprise Support Agreement</span></div>
+                            </li>
+                      </ul>
+                    </div>
+                </fieldset>
+            </div>
+        }
+        @Html.Partial("../Partial/_Eula", Model.Eula)
+        <div class="fieldset">
+            <div class="csp-submit-container">
+                <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+                <input type="submit" id="@UniqueId.okButtonId" value="Agree and Submit" class="k-button csp-submit"  />&nbsp;&nbsp;&nbsp;
+            <input type="button" id="btnRefuse" value="Refuse" class="k-button" />&nbsp;&nbsp;
+            </div>
+        </div>
+    }
+
+</div>
+
+
+<script>
+    $.validator.unobtrusive.parse("#@UniqueId.deviceRegistrationForm");
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+</script>

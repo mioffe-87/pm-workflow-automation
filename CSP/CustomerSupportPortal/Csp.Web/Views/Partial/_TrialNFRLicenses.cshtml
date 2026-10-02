@@ -1,0 +1,64 @@
+﻿@using Csp.Web.DataTransferObjects
+@model DeviceLicensesDto
+
+@{
+    var hasLicenseOrDpm = (Model.AvailableLicenses.Any() || Model.IsEligibleForDpmLicense);
+}
+
+<script type="text/javascript">
+    function advUrlNotification(advChkBox) {
+        if (advChkBox.checked)
+            SupportPortal.Message("Upon expiration of the Advanced URL Filtering Trial License, you must manually delete the Advanced URL Filtering license on all relevant firewalls to reinstate normal operation of URL Filtering.<br/><br/> Failure to delete the trial license will result in connectivity issues that might compromise your URL Filtering functionality and any associated features.", 4);
+    }
+</script>
+
+@if (Model.DeviceLicenseMode != DeviceLicenseMode.None)
+{
+
+    var trialNfrTitle = Model.DeviceLicenseMode == DeviceLicenseMode.Trial ? "Trial" : "Evaluation";
+    <div id="@UniqueId.NFRTrialLicense">
+        <fieldset>
+            <legend>Available @trialNfrTitle Licenses</legend>
+
+
+            <div id="@UniqueId.AvailableLicenses">
+                @if (hasLicenseOrDpm)
+                {
+            
+                    <ul class="list-style-none">
+                        @foreach (Dictionary<string, string> obj in Model.AvailableLicenses)
+                        {
+                            var is90DayTrial = obj["Name"].Contains("DNS") || obj["Name"].Contains("SD WAN") || obj["Name"].Contains("GlobalProtect Gateway") || obj["Name"].Contains("Advanced WildFire") || obj["Name"].Contains("Advanced Threat Prevention") || obj["Name"].Contains("AIOps");
+                            var is60DayTrial = obj["Name"].Contains("SaaS Security Inline") || obj["Name"].Contains("IoT Security");
+                            var trialPeriod = is90DayTrial ? " 90 " : is60DayTrial ? " 60 " : " 30 ";
+
+                            string val = trialPeriod + (Model.DeviceLicenseMode == DeviceLicenseMode.Eval ? "day* evaluation" : "day trial") + " for " + obj["Name"];
+
+                            var advUrlNotification = obj["LicenseType"].Contains("URL4") ? " onclick=advUrlNotification(this); " : "" ;
+                            <li>
+                                <label style="cursor: pointer;">
+                                    <input type="checkbox" class="TrialLinkCheckBox"  name="@obj["LicenseType"]" @advUrlNotification value="@val">@val
+                                </label>
+                            </li>
+                        }
+                    </ul>
+            
+                }
+                else
+                {
+                    <span style="color: red">There are no licenses available for activation on this device</span>
+                }
+            </div>
+
+            @if (Model.DeviceLicenseMode == DeviceLicenseMode.Eval)
+            {
+                <div style="margin-top: 10px">
+                    <div>
+                        *30 days or until your NFR Support license expires(whichever is shorter)<br />
+                        By clicking the Activate button you will <span style="color: red">REMOVE</span> any existing eval licenses and generate new ones in their places.
+                    </div>
+                </div>
+            }
+        </fieldset>
+    </div>
+}

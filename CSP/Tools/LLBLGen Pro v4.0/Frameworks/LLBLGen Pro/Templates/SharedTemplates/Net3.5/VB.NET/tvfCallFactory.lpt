@@ -1,0 +1,60 @@
+﻿<%
+	Project _currentProject = _executingGenerator.ProjectDefinition;
+	var tvfCallsToProcess = _executingGenerator.TvfCalls.OrderBy(e=>e.GroupName).ThenBy(e=>e.Name).ToList();
+	bool selfServicing = _executingGenerator.TemplateGroupToUse=="SelfServicing";
+%>' ///////////////////////////////////////////////////////////////
+' // This is generated code. 
+' //////////////////////////////////////////////////////////////
+' // Code is generated using LLBLGen Pro version: <%=ApplicationConstants.LLBLGenProVersion%>
+' // Code is generated on: <% if(_currentProject.GetRealBoolSettingValue("TdlEmitTimeDateInOutputFiles")) {%><%=DateTime.Now.ToString("F")%><%}%>
+' // Code is generated using templates: <%=_executingGenerator.GetTemplateBindingsName(_templateID, _templateBindingDefinitionName)%>
+' // Templates vendor: Solutions Design.
+' //////////////////////////////////////////////////////////////
+Imports System
+Imports System.Collections.Generic
+Imports System.Linq
+Imports System.Text
+Imports SD.LLBLGen.Pro.ORMSupportClasses
+Imports <%=_executingGenerator.RootNamespaceToUse%>.FactoryClasses
+Imports <%=_executingGenerator.RootNamespaceToUse%>.HelperClasses
+
+Namespace <%=_executingGenerator.RootNamespaceToUse%>.FactoryClasses
+	''' <summary>Static factory class for creating TableValuedFunctionCall objects.</summary>
+	Public Class TvfCallFactory
+<%
+	foreach(var tvfCall in tvfCallsToProcess)
+	{
+%>		''' <summary>Creates a TableValuedFunctionCall object for the TvfCallDefinition '<%=tvfCall.FullName%>'. Returns a set of elements of type '<%=tvfCall.ReturnElement.FullName%>'</summary>
+<%		if(tvfCall.OutputSettingValues.CustomProperties.Count>0)
+		{
+%>		''' <remarks>Custom Properties: <br/>
+<%			foreach(var kvp in tvfCall.OutputSettingValues.CustomProperties)
+			{
+%>		''' <%=kvp.Key%>: <%=kvp.Value%><br/>
+<%			}
+%>		''' </remarks>
+<%		}
+%>		''' <param name="alias">The alias to specify for the query fetching the TVF.</param>
+<%
+		var mapping = _currentProject.GetGroupableModelElementMapping(tvfCall, _executingGenerator.DriverID);
+		string fieldsFactoryMethodCallFormatString = (tvfCall.ReturnElement is EntityDefinition) ? "CreateEntityFieldsObject({0}.EntityType.{1}Entity)"
+																								 : "CreateTypedViewEntityFieldsObject({0}.TypedViewType.{1}TypedView)";
+		List<string> parameterDeclarations = new List<string>();
+		List<string> parameterNames = new List<string>();
+		foreach(var parameterMapping in mapping.FieldMappings.OrderBy(fm=>fm.MappedTarget.OrdinalPosition))
+		{
+			var mappedParameter = parameterMapping.MappedFieldInstance as TvfCallParameterDefinition;
+			string parameterNameCamelCased = GeneratorUtils.CamelCaseString(mappedParameter.Name);
+			parameterNames.Add(parameterNameCamelCased);
+			parameterDeclarations.Add(string.Format("{0} As {1}", 
+							parameterNameCamelCased, 
+							GeneratorUtils.GetDotNetTypeAsString(mappedParameter.FieldType.RepresentedType, _executingGenerator, "Nullable(Of {0})", mappedParameter.IsOptional)));
+%>		''' <param name="<%=parameterNameCamelCased%>">parameter of the TVF</param>
+<%		}
+%>		''' <returns>ready to use TableValuedFunctionCall</returns>
+		Public Shared Function <%=tvfCall.Name%>([alias] As String<% if(parameterDeclarations.Count>0) { %>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>) As TableValuedFunctionCall 
+			Return New TableValuedFunctionCall(EntityFieldsFactory.<%=string.Format(fieldsFactoryMethodCallFormatString, _executingGenerator.RootNamespaceToUse, tvfCall.ReturnElement.Name)%>, [alias], "<%=tvfCall.Name%>"<%if(selfServicing) {%>, PersistenceInfoProviderSingleton.GetInstance().GetTvfCallInfo("<%=tvfCall.Name%>")<% } if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>)
+		End Function
+<%	}
+%>	End Class
+End Namespace

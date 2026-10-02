@@ -1,0 +1,331 @@
+﻿@using System.ComponentModel
+@using Csp.Api.Security
+@using Csp.Web.DataTransferObjects
+@using Kendo.Mvc.UI
+@model TransferLicenseDto
+
+<script>
+    var @(UniqueId.transerLicense)licenseTransferHelper = (function () {
+        function switchSrcAndDest() {
+            @{
+                var switchIsSourceTo = Model.State == TransferLicenseDto.InitialState.HasDest;
+        }
+
+            var direction = '/License/Transfer?deviceId=@Model.PreSelectedDevice.DeviceId&isSource=@switchIsSourceTo';
+
+            var window = $('#@UniqueId.LicenseTransferArea').closest(".k-window-content").data("kendoWindow");
+            window.refresh(direction);
+
+            return false;
+        }
+
+        var transferGridArea = $('#@UniqueId.TransferGridArea');
+        var selectedDevice = $('#@UniqueId.SelectedDevice');
+        var licenseTransferConfirmationArea = $('#@UniqueId.LicenseTransferConfirmationArea');
+
+        var selectedDeviceSerialNumber = $('#@UniqueId.SelectedDeviceSerialNumber');
+        var selectedDevicePartNumber = $('#@UniqueId.SelectedDevicePartNumber');
+        var userSelectedDeviceId = $('#@UniqueId.UserSelectedDeviceId');
+
+        function selectDeviceForTransfer(e) {
+            e.preventDefault ? e.preventDefault() : e.returnValue = false;
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+            selectedDeviceSerialNumber.text(dataItem.SerialNumber);
+            selectedDevicePartNumber.text(dataItem.PartNumber);
+            userSelectedDeviceId.val(dataItem.DeviceId);
+
+            selectedDevice.slideDown();
+            transferGridArea.slideUp();
+            licenseTransferConfirmationArea.slideDown();
+        }
+
+        function changeSelection() {
+            selectedDevice.slideUp();
+            licenseTransferConfirmationArea.slideUp();
+            transferGridArea.slideDown();
+        }
+
+        function confirmTransfer() {
+            SupportPortal.Confirmation('Warning! A license transfer is permanent!', function () {
+                /*CONFIRM TRANSFER YES*/
+                $('#@UniqueId.HiddenSubmit').click();
+            }, function () {/*CONFIRM TRANSFER NO - DO NOTHING*/ });
+        }
+
+        function completeSubmit() {
+            SupportPortal.UnBlockUI();
+
+            var transferResult = $('#@UniqueId.TransferResult');
+
+            $('#@UniqueId.TransferUiArea').hide();
+
+            //alert('Complete: ' + transferResult.val());
+        }
+
+        function searchArchivedDevices() {
+
+            var archiveSearchArea = $('#@UniqueId.ArchiveSearchArea');
+
+            archiveSearchArea.keypress(function (e) {
+                if (e.which == 13) {
+                    archiveSearchArea.find('input:button').click();
+                    return false;
+                }
+            });
+            archiveSearchArea.slideDown();
+            archiveSearchArea.find('input:text').focus();
+        }
+
+        function searchArchivedDevicesSubmit() {
+
+            $('#@UniqueId.Mode').val('@TransferLicenseDto.PostBackMode.SearchArchived.ToString()');
+
+            $('#@UniqueId.HiddenSubmit').click();
+        }
+
+        function onFilterKeyPress(e) {
+
+            if (e.keyCode == 13) {
+                search();
+                return false;
+            }
+        }
+
+        function search() {
+
+            var searchFilter = $('#@UniqueId.searchFilter').val();
+            var searchType = $('#@UniqueId.TransferLicenseFilterType').val();
+
+            var searchOperator = "eq";
+            if (searchType === "AccountName") {
+                searchOperator = "contains";
+            }
+            var grid = $('#@UniqueId.AvailableDevicesGrid').data("kendoGrid").dataSource;
+            if (searchFilter.length > 0) {
+                grid.filter(
+                    {
+                        field: searchType,
+                        operator: searchOperator,
+                        value: searchFilter
+                    }
+                );
+
+            } else {
+                grid.filter([]);
+            }
+
+            grid.sync();
+        }
+
+        
+
+        return {
+            switchSrcAndDest: switchSrcAndDest,
+            selectDeviceForTransfer: selectDeviceForTransfer,
+            changeSelection: changeSelection,
+            confirmTransfer: confirmTransfer,
+            completeSubmit: completeSubmit,
+            searchArchivedDevices: searchArchivedDevices,
+            searchArchivedDevicesSubmit: searchArchivedDevicesSubmit,
+            onFilterKeyPress: onFilterKeyPress,
+            search: search
+        };
+    })();
+
+</script>
+
+<style>
+    .transferGridSize {
+        width: 450px;
+    }
+
+    .sectionTitle {
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .k-dropdown.k-dropdown-widthinherit .k-input {
+        width: inherit;
+    }
+</style>
+
+<div id="@UniqueId.LicenseTransferArea">
+    @using (Ajax.BeginForm("Transfer", "License", new { }, new AjaxOptions {
+        UpdateTargetId = @UniqueId.LicenseTransferArea,
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = (string)UniqueId.transerLicense + "licenseTransferHelper.completeSubmit();"
+    }, new { id = UniqueId.TransferLicenseForm })) {
+
+
+        var maxPageSizeForms = Convert.ToInt32(Model.AvailableDevices.Count());
+        var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+        if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+            pageSizeOptionsForms.Add(maxPageSizeForms);
+        }
+
+        string gridFloat, currentSelectedFloat, gridText, currentSelectedText, defectiveDeviceSearchDisplay;
+        switch (Model.State) {
+            case TransferLicenseDto.InitialState.HasDest:
+                gridText = "Available Source Devices";
+                gridFloat = "left";
+                defectiveDeviceSearchDisplay = "block";
+                currentSelectedText = "Destination Device";
+                currentSelectedFloat = "right";
+                break;
+
+            case TransferLicenseDto.InitialState.HasSrc:
+                gridText = "Available Destination Devices";
+                gridFloat = "right";
+                defectiveDeviceSearchDisplay = "none";
+                currentSelectedText = "Source Device";
+                currentSelectedFloat = "left";
+                break;
+
+            default:
+                throw new InvalidEnumArgumentException();
+        }
+        
+        @Html.Partial("../Partial/_ResponseNotification", Model.Notifications)
+
+        @Html.HiddenFor(x => x.Mode, new { id = @UniqueId.Mode });
+
+        <div id="@UniqueId.TransferUiArea">
+            @if (Model.AllowSwap) {
+                <div style="height: 45px;">
+                    <input type="button" class="k-button" value="Swap Source and Destination" onclick="@(UniqueId.transerLicense)licenseTransferHelper.switchSrcAndDest(); " />
+                </div>
+            }
+
+            <div>
+                <div style="float: @gridFloat;">
+                    <div class="transferGridSize">
+                        <div id="@UniqueId.TransferGridArea">
+                            <div class="sectionTitle">@gridText</div>
+                            <div style="display: @defectiveDeviceSearchDisplay">
+                                <a href="#" onclick="@(UniqueId.transerLicense)licenseTransferHelper.searchArchivedDevices(); return false;">Can't find defective device?</a>
+                                <div id="@UniqueId.ArchiveSearchArea" style="display: none;">
+                                    <div class="main">
+                                        <div class="csp-label">@Html.LabelFor(x => x.SearchArchivedText)</div>
+                                        <div class="csp-field">
+                                            @Html.TextBoxFor(x => x.SearchArchivedText)
+                                            <input type="button" class="k-button" value="Search" onclick="@(UniqueId.transerLicense)licenseTransferHelper.searchArchivedDevicesSubmit(); return false;" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="">
+
+                                <div class="grid-filter">
+                                    <span class="filter_by">Filter By:</span>
+                                    @(Html.Kendo().DropDownList()
+                                          .Name((string)UniqueId.TransferLicenseFilterType)
+                                          .HtmlAttributes(new {
+                                              Class = "k-dropdown k-dropdown-widthinherit",
+                                              style = "margin: 0.25em 0.25em;width: 150px;"
+                                          })
+                                          .DataTextField("Text")
+                                          .DataValueField("Value")
+                                          .BindTo(new List<SelectListItem>
+                                              {
+                                              new SelectListItem {
+                                                  Text = "Serial Number",
+                                                  Value = "SerialNumber"
+                                              },
+                                               new SelectListItem {
+                                                  Text = "Account Id",
+                                                  Value = "AccountId"
+                                              },
+                                               new SelectListItem {
+                                                  Text = "Account Name",
+                                                  Value = "AccountName"
+                                              }
+                                          })
+                                          .Value("Name")
+                                          )
+                                </div>
+                                <div class="grid-filter">
+                                    <div class="grid-filter">
+                                        @Html.TextBox((string)UniqueId.searchFilter, "", new { onkeypress = "return " + (string)UniqueId.transerLicense + "licenseTransferHelper.onFilterKeyPress(event)", style = "width:150px;" })
+                                    </div>
+                                </div>
+                                <div class="grid-filter">
+                                    <input type="button" value="Search" onclick="@(UniqueId.transerLicense)licenseTransferHelper.search()" class="k-button" />
+                                </div>
+                            </div>
+                            @(Html.Kendo().Grid(Model.AvailableDevices)
+                                  .Name((string)UniqueId.AvailableDevicesGrid)
+                                  .Columns(col => {
+                                      col.Command(com => com.Custom("Select").Click((string)UniqueId.transerLicense + "licenseTransferHelper.selectDeviceForTransfer"));
+                                      col.Bound(c => c.SerialNumber);
+                                      col.Bound(c => c.PartNumber);
+                                      col.Bound(c => c.AccountId);
+                                      col.Bound(c => c.AccountName);
+                                      
+                                  })
+
+                                  .Pageable(pg => pg.PageSizes(pageSizeOptionsForms.ToArray()).Input(false).Numeric(false))
+                                  .Sortable()
+                                  .DataSource(ds => ds.Ajax()
+                                                      .ServerOperation(false)
+                                                      .Model(model => model.Id(x => x.DeviceId)))
+                                  )
+                        </div>
+                        <div id="@UniqueId.SelectedDevice" style="display: none;">
+                            @Html.HiddenFor(x => x.UserSelectedDeviceId, new { id = UniqueId.UserSelectedDeviceId })
+                            <div class="sectionTitle">Confirm Selected Device</div>
+                            <div>
+                                <div class="csp-label">
+                                    Serial Number:
+                                </div>
+                                <div id="@UniqueId.SelectedDeviceSerialNumber" class="csp-field"></div>
+                            </div>
+
+                            <div>
+                                <div class="csp-label">
+                                    Part Number:
+                                </div>
+                                <div id="@UniqueId.SelectedDevicePartNumber" class="csp-field muted"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="float: @currentSelectedFloat;">
+                    <div class="sectionTitle">@currentSelectedText</div>
+                    @Html.HiddenFor(x => x.PreSelectedDevice.DeviceId)
+                    @Html.HiddenFor(x => x.State)
+                    <div>
+                        <div class="csp-label">
+                            Serial Number:
+                        </div>
+                        <div class="csp-field">
+                            @Model.PreSelectedDevice.SerialNumber
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            Part Number:
+                        </div>
+                        <div class="csp-field muted">
+                            @Model.PreSelectedDevice.PartNumber
+                        </div>
+                    </div>
+                </div>
+                <br style="clear: both;" />
+            </div>
+
+            <div id="@UniqueId.LicenseTransferConfirmationArea" style="display: none; position: absolute; bottom: 0; right: 0; padding: 5px;" class="csp-submit-container">
+                <input type="button" class="k-button" value="Confirm Transfer" onclick="@(UniqueId.transerLicense)licenseTransferHelper.confirmTransfer();" />
+                <input type="submit" style="display: none;" id="@UniqueId.HiddenSubmit"/>
+                <input type="button" class="k-button" value="Change Selection" onclick="@(UniqueId.transerLicense)licenseTransferHelper.changeSelection();" />
+            </div>
+        </div>
+        
+        <script>
+            $.validator.unobtrusive.parse("#@UniqueId.TransferLicenseForm");
+        </script>
+        
+        @Html.Hidden((string)UniqueId.TransferResult, Model.TransferResult.HasValue ? Model.TransferResult.Value.ToString().ToLower() : string.Empty)
+    }
+</div>

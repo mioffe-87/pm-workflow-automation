@@ -1,0 +1,568 @@
+﻿@using Csp.Api.Services.Contracts
+@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.WildfireUserAccountDto
+
+@{
+    var actionHelper = Model.ActionHelper;
+}
+<style type="text/css">
+    
+    .selectAllDevices {
+        display: inline-block;
+  color: #333333;
+    }
+
+    #dvSelectAll {
+        margin-top: 10px;
+    }
+
+    #contentLessBottomMargin {
+          margin-bottom: 10px !important;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+        margin: 0px 0 0;
+        *margin-top: 0;
+        line-height: normal;
+    }
+
+    #WildfireDevicesList {
+        padding: 10px;
+        margin-bottom: -1px;
+        min-width: 500px;
+        min-height: 200px;
+    }
+
+    .device {
+        float: left;
+        position: relative;
+        width: 111px;
+        /*height: 170px;*/
+        margin: 0;
+        padding: 0;
+    }
+
+        .device h3 {
+            margin: 0;
+            padding: 3px 5px 0 0;
+            max-width: 96px;
+            overflow: hidden;
+            line-height: 1.1em;
+            font-size: .9em;
+            font-weight: normal;
+            text-transform: uppercase;
+            color: #999;
+        }
+
+        .k-listview:after, .device dl:after {
+            content: ".";
+            display: block;
+            height: 0;
+            clear: both;
+            visibility: hidden;
+        }
+</style>
+<script type="text/x-kendo-tmpl" id="WildfireDevicesListTemplate">
+    <div class="device">
+        <label style="cursor: pointer;"><h3><input type="checkbox" onclick="checkboxChange(this)" class="checkbox" id="#:SerialNumber#" value="#:DeviceId#" #= IsSelected ? checked="checked" : "" # /> #:SerialNumber#</h3></label>
+    </div>
+</script>
+<script type="text/javascript">
+    $.validator.unobtrusive.parse("#AddUpdateWildfireUserForm");
+    $.validator.setDefaults({
+        onkeyup: false,
+        ignore: ""
+    });
+    var uncheckedIds = [];
+    var checkedIds = [];
+    var selectedDevicesIds = [];
+    var idField = "DeviceId";
+
+    $(function () {
+        $('#cboxSelectAll').bind('click', function (e) {
+            var listView = $("#WildfireDevicesList").data("kendoListView").dataSource;
+            if ($("#cboxSelectAll").is(':checked')) {
+                console.log(listView.data().length);
+                var filters = listView.filter();
+                if (typeof filters != 'undefined') {
+                    var query = new kendo.data.Query(listView.data());
+                    var filteredData = query.filter(filters).data;
+                    $.each(filteredData, function (idx, val) {
+                        val.IsSelected = true;
+                        checkedIds[val.DeviceId] = true;
+                        var index = selectedDevicesIds.indexOf(Number(val.DeviceId));
+                        if (index < 0) {
+                            selectedDevicesIds.push(Number(val.DeviceId));
+                        }
+                    });
+                } else {
+                    console.log("There is no filter");
+                    $.each(listView.data(), function (idx, val) {
+                        val.IsSelected = true;
+                        checkedIds[val.DeviceId] = true;
+                        var index = selectedDevicesIds.indexOf(Number(val.DeviceId));
+                        if (index < 0) {
+                            selectedDevicesIds.push(Number(val.DeviceId));
+                        }
+                    });
+                }
+                $("#WildfireDevicesList").data("kendoListView").refresh();
+            }
+            else {
+                checkedIds = [];
+                selectedDevicesIds = [];
+                ClearNewDeviceSelection();
+            }
+
+            /*
+            if ($("#cboxSelectAll").is(':checked')) {
+                $('.device input:checkbox').attr('checked', 'checked');
+            } 
+            */
+        });
+    });
+
+    function CloseAddUpdateWildfireUserWindow() {
+        $("#AddUpdateWildfireUserWindow").closest(".k-window-content").data("kendoWindow").close();
+    }
+
+    function AddUpdateWildfireUser() {
+        if (!$("#AddUpdateWildfireUserForm").valid()) return;
+
+        $('#errorDiv').empty();
+
+        var userAccountId = $("#UserAccount_Id").val();
+        var email = $("#UserAccount_Email").val();
+        var phone = $("#UserAccount_PhoneNumber").val();
+        var firstName = $("#UserAccount_FirstName").val();
+        var lastName = $("#UserAccount_LastName").val();
+        var address1 = $("#UserAccount_Address_Address1").val();
+        var address2 = $("#UserAccount_Address_Address2").val();
+        var city = $("#UserAccount_Address_City").val();
+        var country = $("#UserAccount_Address_CountryId").val();
+        var postalCode = $("#UserAccount_Address_PostalCode").val();
+        var region = $("#UserAccount_Address_Region").val();
+        var otherRegion = $("#OtherRegion").val();
+        var wildfireUser = { UserAccount: { Id: userAccountId, Email: email, PhoneNumber: phone, FirstName: firstName, LastName: lastName, Address: { Address1: address1, Address2: address2, City: city, CountryId: country, PostalCode: postalCode, Region: region } }, OtherRegion: otherRegion };
+
+
+        var gridDs = $("#WildfireDevicesList").data("kendoListView").dataSource.data();
+
+        var selectedCheckBoxes = _.filter(gridDs, function (cb) { return cb.IsSelected; });
+        //var selectedDevicesIds = _.map(selectedCheckBoxes, function (cb) { return cb.DeviceId; });
+        var selectedSerialNumbers = _.map(selectedCheckBoxes, function (cb) { return cb.SerialNumber; });
+
+        if (selectedDevicesIds.length == 0) {
+            $("<label class='error'>Please select at least one device.</label><br/>").appendTo('#errorDiv');
+            return;
+        } else {
+            console.log("Count of devices : " + selectedDevicesIds.length);
+        }
+        // Show Please wait pop-up
+
+        PleaseWaitModalDialog(wildfireUser, selectedDevicesIds, selectedSerialNumbers);
+    }
+    
+    function PleaseWaitModalDialog(wildfireUser, selectedDevicesIds, selectedSerialNumbers) {
+        var window = $('#AssociateWildfireDeviceToUser').data('kendoWindow');
+        $(".no-buttons").prev(".k-window-titlebar").find(".k-window-action").hide();
+
+        window.setOptions({
+            minWidth: 400,
+            minHeight: 100
+        });
+        window.content(SupportPortal.CustomLoadingMessageWithSpinner("Processing, Please Wait.."));
+        window.open();
+        window.center();
+        
+        var direction = "/@ControllerFields.UserAccountController/@actionHelper.AddUpdateWildfireUser";
+        $.ajax({
+            url: direction,
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({ model: wildfireUser, deviceIds: selectedDevicesIds, serialNumbers: selectedSerialNumbers, changedDeviceIds: uncheckedIds }),
+            contentType: 'application/json; charset=utf-8',
+            headers: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+            cache: false,
+            success: function (result) {
+                window.close();
+                if (result.Success) {
+                    $("<label class='SuccessMessage'>" + result.Message + "</label><br/>").appendTo('#errorDiv');
+                    $("#UserAccount_Id").val(result.Id);
+                } else {
+                    $("<label class='error'>" + result.Message + "</label><br/>").appendTo('#errorDiv');
+                }
+            },
+            error: function () {
+                window.close();
+                $("<label class='error'>An error occurred while processing your request. Please contact customer support</label><br/>").appendTo('#errorDiv');
+            }
+        });
+
+    }
+
+    function filterStates() {
+        return {
+            countryId: $("#UserAccount_Address_CountryId").val()
+        };
+    }
+
+    function onCountryDropdownChange() {
+        var countryId = this.value();
+        var country = this.text();
+        var countryCode = this.dataItem().Code;
+
+        if (country == "United States" || country == "Canada") {
+            $("#OtherRegion").val("");
+
+            $("#UserAccount_Address_Region").rules("add", "required");
+            $("#OtherRegion").rules("remove", "required");
+
+            $("#divStateDropDown").show();
+            $("#divStateTextBox").hide();
+
+        } else {
+            if ($("#UserAccount_Address_Region").data("kendoDropDownList") != undefined) {
+                $("#UserAccount_Address_Region").data("kendoDropDownList").select(0);
+            }
+
+            $("#UserAccount_Address_Region").rules("remove", "required");
+            $("#OtherRegion").rules("add", "required");
+
+            $("#divStateTextBox").show();
+            $("#divStateDropDown").hide();
+        }
+    }
+
+    function checkboxChange(e) {
+        var uncheckIndex = uncheckedIds.indexOf(Number(e.value));
+        var selectIndex = selectedDevicesIds.indexOf(Number(e.value));
+        checkedIds[e.value] = e.checked;
+
+        if (e.defaultChecked && !e.checked && uncheckIndex < 0) {
+            uncheckedIds.push(Number(e.value));
+        }
+        else {
+            uncheckedIds.splice(uncheckIndex, 1);
+        }
+        
+        if (!e.checked) {
+            selectedDevicesIds.splice(selectIndex, 1);
+        }
+        else if (selectIndex < 0) {
+            selectedDevicesIds.push(Number(e.value));
+        }
+
+        if ($("#cboxSelectAll").is(':checked') && !e.checked) {
+            $("#cboxSelectAll").attr('checked', false);
+        }
+    };
+
+    function onCheckboxChange(e) {
+        var item = $(e.target).closest(".device");
+        console.log("comes here");
+        $("#WildfireDevicesList").data("kendoListView").trigger("change", onWildfireDevicesListChange({ item: item, isChecked: e.target.checked }));
+    }
+
+    function onWildfireDevicesListChange(e) {
+        var dataItem = $("#WildfireDevicesList").data("kendoListView").dataSource.getByUid(e.item.data("uid")); // this.dataSource.getByUid(e.item.data("uid"));
+        dataItem.set("IsSelected", e.isChecked);
+    }
+
+    function onWildfireDevicesListDataBound(e) {
+        this.element.find(".checkbox").on("change", onCheckboxChange);
+        var listview = e.sender;
+        var items = listview.items();
+        items.each(function (idx, row) {
+            var dataItem = listview.dataSource.getByUid(row.dataset.uid);
+            var uncheckIndex = uncheckedIds.indexOf(Number(dataItem.DeviceId));
+            if (checkedIds[dataItem[idField]]) {
+                dataItem.set("IsSelected", true);
+            }
+            else if (uncheckIndex >= 0) {
+                dataItem.set("IsSelected", false);
+            }
+            if (dataItem.IsSelected) {
+                var index = selectedDevicesIds.indexOf(Number(dataItem.DeviceId));
+                if (index < 0) {
+                    selectedDevicesIds.push(Number(dataItem.DeviceId));
+                }
+            }
+        });
+        validateSelectAll();
+    }
+
+    function onWildfireDevicesEnterPress(e) {
+        if (e.keyCode == 13) {
+            SearchWildfireDevicesList();
+            return false;
+        }
+
+        return true;
+    }
+
+    function SearchWildfireDevicesList() {
+        var listView = $("#WildfireDevicesList").data("kendoListView").dataSource;
+
+        if ($("#txtSearchValue").val() != "") {
+            //Clear all Selection
+
+            ClearNewDeviceSelection();
+
+            listView.filter(
+                {
+                    field: "SerialNumber",
+                    operator: "contains",
+                    value: $("#txtSearchValue").val()
+                }
+            );
+        } else {
+            listView.filter({});
+        }
+    }
+    
+    function ClearNewDeviceSelection() {
+        if ($("#cboxSelectAll").is(':checked')) {
+            $("#cboxSelectAll").attr('checked', false);
+        }
+
+        var listView = $("#WildfireDevicesList").data("kendoListView");
+        listView.dataSource.read();
+        listView.refresh();
+    }
+
+    function GetWildfireDeviceListCriteria() {
+        return {
+            userAccountId: $("#UserAccount_Id").val()
+        };
+    }
+
+    function onChange(e, arg) {
+        var listview = e.sender;
+        var items = listview.items();
+        items.each(function (idx, row) {
+            var dataItem = listview.dataSource.getByUid(row.dataset.uid);
+            var idValue = dataItem.DeviceId;
+            if (dataItem.IsSelected) {
+                checkedIds[idValue] = true;
+                var index = selectedDevicesIds.indexOf(Number(idValue));
+                if (index < 0) {
+                    selectedDevicesIds.push(Number(idValue));
+                }
+            } else if (checkedIds[idValue]) {
+                delete checkedIds[idValue];
+            }
+        });
+    }
+
+    function validateSelectAll() {
+        var allSelected = true;
+        var listView = $("#WildfireDevicesList").data("kendoListView").dataSource;
+        $.each(listView.data(), function (idx, row) {
+            if (!row.IsSelected) {
+                allSelected = false;
+                return false;
+            }
+        });
+        $("#cboxSelectAll").attr('checked', allSelected);
+    }
+
+
+</script>
+<div>
+    @(Html.Kendo().Window()
+          .Name("AssociateWildfireDeviceToUser")
+          .HtmlAttributes(new { @class = "no-buttons" })
+          .Actions(a => a.Clear())
+          .Scrollable(false)
+          .Visible(false)
+          .Modal(true)
+          .Title(false)
+          )
+</div>
+<div class="content" id="contentLessBottomMargin">
+    <form id="AddUpdateWildfireUserForm" name="AddUpdateWildfireUserForm">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.UserAccount.Id)
+        <div id="errorDiv" class="error" style="margin-left: 15px;"></div>
+        <div class="container" style="width: 997px;">
+            <div class="fieldset fieldset-upper">
+                <fieldset>
+                    <legend>Wildfire Devices</legend>
+                    <div>Select firewalls from the list below to grant access to WildFire data to this user. The user will be able to view all WildFire log data, download files submitted to WildFire, and set up email alerts for WildFire events pertaining to each firewall.</div>
+                    <div class="grid-header" id="gridFilterOptions">
+                        <div id="dvSelectAll" class="grid-left">
+                            <span class="selectAllDevices">@Html.CheckBox("cboxSelectAll", new { id = "cboxSelectAll"}) Select All Devices</span>
+                        </div>
+                        <div class="grid-right">
+
+                            <div class="grid-filter">
+                                <span class="filter_by">Filter By Serial Number:</span>
+                            </div>
+
+                            <div class="grid-filter">
+                                <div class="grid-filter">
+                                    @Html.TextBox("txtSearchValue", null, new { @class = "k-textbox", onkeypress = "return onWildfireDevicesEnterPress(event)" })
+                                </div>
+                            </div>
+                            <div class="grid-filter">
+                                <input type="button" value="Search" onclick="SearchWildfireDevicesList();" class="k-button" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-content">
+                        <div id="divWildfireDevicesList">
+                            @(Html.Kendo().ListView<WildfireDeviceItem>()
+                                  .Name("WildfireDevicesList")
+                                  .TagName("div")
+                                  .ClientTemplateId("WildfireDevicesListTemplate")
+                                  .DataSource(dataSource => {
+                                      dataSource.Read(read => read.Action("GetWildfireDevices", "Device").Data("GetWildfireDeviceListCriteria"));
+                                      dataSource.PageSize(80);
+                                  })
+                                  .Events(events => events.DataBound("onWildfireDevicesListChange").DataBound("onWildfireDevicesListDataBound"))
+                                  .Events(events => events.Change("onChange"))
+                                  .Pageable()
+                                  )
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            @{
+                var isPanEmployee = Model.UserAccount.Email.EndsWith("@paloaltonetworks.com");
+            }
+            <div class="horizontal-form-element" style="width: 100%" id="containerUserRegistration">
+                <div class="fieldset fieldset-upper">
+                    <fieldset>
+                        <legend>@(Model.UserAccount.Id != 0 ? "Update" : "Create") Contact Details</legend>
+                        @if (isPanEmployee) {
+                            <div class="alert alert-info" style="height: 30px;">
+                                This is a Palo Alto Networks employee.  
+                                To update contact details you must create a help desk ticket.  
+                                Please email your change request to <br />
+                                helpdesk@paloaltonetworks.com
+                            </div>
+                        }
+                        <div class="nowrap">
+                            <div class="csp-label">
+                                @Html.Label("Email Address:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.TextBoxFor(model => model.UserAccount.Email, new { @readonly = "true" })
+                            </div>
+                            <div class="csp-label" style="width: 173px;">
+                                @Html.Label("Phone:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.UserAccount.PhoneNumber)
+                                @Html.TextBoxFor(model => model.UserAccount.PhoneNumber)
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                        <div class="nowrap">
+                            <div class="csp-label">
+                                @Html.Label("First Name:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.UserAccount.FirstName)
+                                @Html.TextBoxFor(model => model.UserAccount.FirstName)
+                                <span class="csp-required">*</span>
+                            </div>
+                            <div class="csp-label" style="width: 163px;">
+                                @Html.Label("Last Name:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.UserAccount.LastName)
+                                @Html.TextBoxFor(model => model.UserAccount.LastName)
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                        <div class="nowrap">
+                            <div class="csp-label">
+                                @Html.Label("Address Line1:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.UserAccount.Address.Address1)
+                                @Html.TextBoxFor(model => model.UserAccount.Address.Address1)
+                                <span class="csp-required">*</span>
+                            </div>
+                            <div class="csp-label" style="width: 163px;">
+                                @Html.Label("Address Line2:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.UserAccount.Address.Address2)
+                                @Html.TextBoxFor(model => model.UserAccount.Address.Address2)
+                            </div>
+                        </div>
+                        <div class="nowrap">
+                            <div class="csp-label">
+                                @Html.Label("City:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.UserAccount.Address.City)
+                                @Html.TextBoxFor(model => model.UserAccount.Address.City)
+                                <span class="csp-required">*</span>
+                            </div>
+                            <div class="csp-label" style="width: 163px;">
+                                @Html.Label("Country:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.UserAccount.Address.CountryId)
+                                @(Html.Kendo().DropDownListFor(model => model.UserAccount.Address.CountryId)
+                                      .HtmlAttributes(new { @class = "k-dropdown" })
+                                      .Events(e => e.Change("onCountryDropdownChange").DataBound("onCountryDropdownChange"))
+                                      .OptionLabel(Constants.DropDownCountrySelect)
+                                      .DataValueField("Id")
+                                      .DataTextField("Name")
+                                      .BindTo(Model.Countries))
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                        <div class="nowrap">
+                            <div class="csp-label">
+                                @Html.Label("Postal Code:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.UserAccount.Address.PostalCode)
+                                @Html.TextBoxFor(model => model.UserAccount.Address.PostalCode)
+                                <span class="csp-required">*</span>
+                            </div>
+                            <div class="csp-label" style="width: 163px;">
+                                @Html.Label("Region/State:")
+                            </div>
+                            <div class="csp-field">
+                                <div id="divStateTextBox">
+                                    @Html.ValidationMessageFor(model => model.OtherRegion)
+                                    @Html.TextBoxFor(model => model.OtherRegion)
+                                    <span class="csp-required">*</span>
+                                </div>
+                                <div id="divStateDropDown" style="display: none;">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.Address.Region)
+                                    @(Html.Kendo().DropDownListFor(model => model.UserAccount.Address.Region)
+                                          .OptionLabel(Constants.DropDownRegionSelect)
+                                          .HtmlAttributes(new { @class = "k-dropdown" })
+                                          .DataValueField("Id")
+                                          .DataTextField("Name")
+                                          .DataSource(source => source.Read(read => read.Action("GetRegions", "Base").Data("filterStates"))
+                                                                      .ServerFiltering(true))
+                                          .AutoBind(false)
+                                          .CascadeFrom("UserAccount_Address_CountryId")
+                                          )
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input type="button" class="k-button csp-submit" value="Submit" onclick="AddUpdateWildfireUser();" />
+            <input type="button" class="k-button" value="Cancel" onclick="CloseAddUpdateWildfireUserWindow();" />
+        </div>
+    </form>
+</div>

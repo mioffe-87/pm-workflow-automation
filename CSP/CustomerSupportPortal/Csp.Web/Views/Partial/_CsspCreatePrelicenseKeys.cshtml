@@ -1,0 +1,81 @@
+﻿@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.GenerateKeysDto
+
+<div id="@UniqueId.VmPrelicenseArea">
+    @using (Ajax.BeginForm("CreatePrelicenseKeys", "Cssp", new { }, new AjaxOptions
+    {
+        UpdateTargetId = @UniqueId.VmPrelicenseArea,
+        OnBegin = "SupportPortal.BlockUI();"
+    }, new { id = "PrelicenseVmForm" }))
+    {
+        @Html.Partial("../Partial/_ResponseNotification", Model.Notifications)
+
+        <div class="fieldset fieldset-padded">
+            <div>Note: You are about to consume license(s) from Auth Code (@Model.AuthCode). Once the license key(s) are generated, you will need to download them and install on your VM.</div>
+            <div>&nbsp;</div>
+            <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.LabelFor(x => x.AuthCode, "Authorization Code:")
+                </div>
+                <div class="csp-field">
+                    @Html.TextBoxFor(x => x.AuthCode, new {@readonly = "readonly"})
+                </div>
+            </div>
+             <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.LabelFor(x => x.VmUseCount, "Quantity Available:")
+                </div>
+                <div class="csp-field">
+                    @Html.TextBoxFor(x => x.VmUseCount, new { @readonly = "readonly" })
+                </div>
+            </div>
+            <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.LabelFor(x => x.PreLicenseQuantity, "Quantity to Pre-License:")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(x => x.PreLicenseQuantity)
+                    @Html.TextBoxFor(x => x.PreLicenseQuantity, new {id = UniqueId.VmPrelicenseQuantity})
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+            <div class="display-notifications"></div>
+            <div>&nbsp;</div>
+            <div style="color: green">
+                @if (Model.IsPrelicenseRequestSuccess)
+                {
+                    <text>
+                     <script>
+                         $(".csp-submit").prop('disabled', true);
+                         SupportPortal.UnBlockUI();
+                     </script>
+                    </text>
+            <div class="alert alert-success fade in">
+                    <div style="padding: 10px;">
+                        @if (Model.IsAsync)
+                        {
+                            <text><span class="k-icon k-i-note">&nbsp;</span> The quantity of licenses requested will take time some time to generate. Your request ID for this transaction is <strong > @Model.BatchId </strong > <div > &nbsp;</div ><div style = "white-space: normal;" >You will receieve an email once the process has completed at <strong >@Model.RequestedBy </strong >. You will also be able to view these devices under the Pre-License Devices tab when complete.</div ></text>
+                        }
+                        else
+                        {
+                        <text> <span class="k-icon k-i-tick">&nbsp;</span> License(s) created successfully. Your request ID is <strong > @Model.BatchId </strong ><div > &nbsp;</div ><div style = "white-space: normal;" > To view the devices licensed, click <a href = "@Model.PrelicenseDeviceUrl" >here</a ></div ></text>
+                    }
+                </div>
+            </div>
+                }
+            </div>
+        </div>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input type="submit" class="k-button csp-submit" value="Submit" />&nbsp;&nbsp;&nbsp;
+                <input type="button" value="Close" name="btnClose" id="btnClose" class="k-button" onclick="CloseMe(this)"  />&nbsp;&nbsp;
+        </div>
+
+        <script>
+            $.validator.unobtrusive.parse("#PrelicenseVmForm");
+            function CloseMe(obj) {
+                $(obj).closest(".k-window-content").data("kendoWindow").close();
+            }
+        </script>
+    }
+</div>

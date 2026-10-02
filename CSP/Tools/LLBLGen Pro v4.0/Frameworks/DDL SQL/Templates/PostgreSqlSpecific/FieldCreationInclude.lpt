@@ -1,0 +1,66 @@
+﻿<~
+	// The enum definition for the Dbtypes as it is used by the PostgreSql driver. Used here to determine in readable code
+	// if a field requires a length specification emitted in the DLL and/or collation specifications. 
+	public enum PostgreSqlDbTypes:int
+	{
+		Bool,
+		Box,
+		Bytea,
+		Char,
+		Circle,
+		Date,
+		Float4,
+		Float8,
+		Int2,
+		Int4,
+		Int8,
+		Line,
+		LSeg,
+		Money,
+		Numeric,
+		Path,
+		Point,
+		Polygon,
+		RefCursor,
+		Text,
+		Time,
+		Timetz,
+		Timestamp,
+		Timestamptz,
+		Varchar,
+		Inet,
+		Bit,
+	}
+	
+	// Creates the string which defines the field, complete with name, type, identity (if applicable) and nullable/not nullable
+	private string CreateFieldDefinitionString(DBTableField field)
+	{
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.AppendFormat("\"{0}\" {1}", field.FieldName, CreateFieldTypeDefinitionString(field));
+		if(!field.IsNullable)
+		{
+			toReturn.Append(" NOT");
+		}
+		toReturn.Append(" NULL");
+		return toReturn.ToString();
+	}
+	
+	// Creates the field type definition string for the field specified. 
+	private string CreateFieldTypeDefinitionString(DBTableField field)
+	{
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.Append(field.TypeDefinition.DBTypeAsString);
+		// append sizes, precision etc.  if applicable.
+		switch((PostgreSqlDbTypes)field.TypeDefinition.DBType)
+		{
+			case PostgreSqlDbTypes.Char:
+			case PostgreSqlDbTypes.Varchar:
+				toReturn.AppendFormat("({0})", field.TypeDefinition.Length);
+				break;
+			case PostgreSqlDbTypes.Numeric:
+				toReturn.AppendFormat("({0}, {1})", field.TypeDefinition.Precision, field.TypeDefinition.Scale);
+				break;
+		}
+		return toReturn.ToString();
+	}
+~>

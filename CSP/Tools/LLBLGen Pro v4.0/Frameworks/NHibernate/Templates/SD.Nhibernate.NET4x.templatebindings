@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="SD.NHibernate.NET4x" description=".NET 4.x specific template bindings for the templates specific for NHibernate support for LLBLGen Pro" precedenceLevel="10" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+	<supportedPlatforms>
+		<platform name=".NET 4.0"/>
+		<platform name=".NET 4.5"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="NHibernate"/>
+	</supportedFrameworks>
+	<supportedDrivers>
+		<driver id="2D18D138-1DD2-467E-86CC-4838250611AE"/>	<!-- SQL Server -->
+		<driver id="3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA"/> <!-- Sybase iAnywhere / ASA -->
+		<driver id="758A392F-06F3-498b-AED9-D85A4C795BDA"/> <!-- MySql -->
+		<driver id="88EBFD8C-CBDD-4452-88AF-1C99E41A123F"/> <!-- PostgreSql -->
+		<driver id="A3076322-977C-4e28-BFF4-F25ED096D1DB"/> <!-- Sybase Advanced Server Enterprise / ASE -->
+		<driver id="A8034CB0-319D-4cdd-BC7D-1E7CFDBA3B74"/> <!-- ODP.NET Oracle -->
+		<driver id="BB438EBA-A0B5-4236-A2B8-64D828A138AF"/>	<!-- DB2 -->
+		<driver id="BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A"/> <!-- Firebird -->
+		<driver id="DE158D99-1B10-4d88-8DEA-888E7930FF40"/> <!-- MS Oracle -->
+	</supportedDrivers>
+	<language name="C#">
+		<templateBinding templateID="SD_NHibernateVsNet" filename="Net4.0\C#\vsNet2010ProjectFile.template" templateLanguage="TDL"/>
+		<templateBinding templateID="SD_NHibernatePersistenceVsNet" filename="Net4.0\C#\vsNetPersistence2010ProjectFile.template" templateLanguage="TDL"/>
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_NHibernateVsNet" filename="Net4.0\VB.NET\vsNet2010ProjectFile.template" templateLanguage="TDL"/>
+		<templateBinding templateID="SD_NHibernatePersistenceVsNet" filename="Net4.0\VB.NET\vsNetPersistence2010ProjectFile.template" templateLanguage="TDL"/>
+	</language>
+</templateBindings>

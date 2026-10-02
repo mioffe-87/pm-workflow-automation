@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>LLBLGen Pro quick start guide: Refresh relational model data</title>
+	<link rel="STYLESHEET" type="text/css" href="stylesheets/general.css">
+</head>
+
+<body>
+
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td>
+			<H1>Refresh relational model data&nbsp;&nbsp;<img src="pics/CatalogsIcon_v3.png" width="16" height="16" alt="Relational model data" border="0"></H1>
+		</td>
+		<td align="right" nowrap>
+			<br>
+			<a href="javascript:history.go(-1)" class="nohover"><img src="pics/back.gif" width="30" height="23" border="0" alt="back"></a>&nbsp;&nbsp;
+			<a href="index.htm" title="home" class="nohover"><img src="pics/home.gif" width="30" height="23" alt="home" border="0"></a>
+		</td>
+	</tr>
+</table>
+<br clear="all"><br>
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td width="40" valign="top">
+			<img src="pics/1.png" width="30" height="30" alt="1." border="0">
+		</td>
+		<td class="content">
+			Make a change to the database schema in your RDBMS, e.g. remove a field of a table which is mapped by an entity in your project.
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/2.png" width="30" height="30" alt="3." border="0">
+		</td>
+		<td class="content">
+			Right-click the Relational Model Data Storage node (expand the 'Relational Model Data' node) in Project Explorer or 
+			Catalog Explorer and select <i>Refresh Relational Model Data from a Database</i> from the context menu.<br>
+			<img src="pics/refresh3.png" width="535" height="262" alt="Refresh relational model data" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/3.png" width="30" height="30" alt="4." border="0">
+		</td>
+		<td class="content">
+			The Relational Model Data Retrieval Wizard is started. Complete the wizard's steps to obtain the relational model data from your database.<br>
+			LLBLGen Pro will now migrate your Abstract Entity Model and will show the log of the actions performed afterwards. If you for example removed a field in the 
+			database, or renamed a field in the database, it will show you that it for example has left a field unmapped as there's  no target field found, or has 
+			mapped the entity field on a different field now (the renamed field).<br>
+			<img src="pics/refresh4.png" width="544" height="519" alt="" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" height="10" style="background-image: url(pics/hline.png); background-repeat: no-repeat;">&nbsp;</td>
+	</tr>
+</table>
+<br clear="all">
+<table cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="2">
+			<img src="pics/nextstep.png" width="257" height="20" alt="next step" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td width="90">&nbsp;</td>
+		<td class="content">
+			<a href="generatecode.htm">Generate source code</a>
+		</td>
+	</tr>
+</table>
+<br><br>
+</body>
+</html>

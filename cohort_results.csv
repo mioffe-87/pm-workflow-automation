@@ -1,0 +1,1 @@
+ERROR: (bq) Unable to create private file [/Users/mioffe/.config/gcloud/credentials.db]: [Errno 1] Operation not permitted: '/Users/mioffe/.config/gcloud/credentials.db'

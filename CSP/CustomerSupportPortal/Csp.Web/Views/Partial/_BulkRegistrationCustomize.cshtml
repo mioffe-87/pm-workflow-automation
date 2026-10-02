@@ -1,0 +1,393 @@
+﻿@using Csp.Api.Model
+@model Csp.Web.DataTransferObjects.CustomizeBulkRegistrationDto
+@{ 
+    ActionHelper actionHelper = Model.ActionHelper;
+}
+<style>
+    .list-customize-bulk-activation {
+        border-color: #ffffff;
+    }
+
+    .bulk-registration-device {
+        /*padding: 3px 5px;*/
+    }
+
+    .action-links a {
+        padding: 0 5px 0 0;
+    }
+
+    div.csp-label {
+        padding: 4px;    
+    }
+
+    div.csp-field .k-widget.k-dropdown.k-header {
+        margin-left: 4px;
+    }
+
+    .select-device-message {
+        font-size: 13px;
+        font-weight: bold;
+        padding: 3px 5px;
+    }
+
+    .grid-empty-message-row {
+        height: 30px;
+        color: inherit;
+        background-color: inherit;
+        border-color: inherit;
+    }
+
+    .grid-empty-message {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .device-info-header {
+        cursor: pointer;
+    }
+    .plus:before {
+        font-family: 'FontAwesome';
+        content: "\f078";
+    }
+
+    .minus:before {
+        font-family: 'FontAwesome';
+        content: "\f054";
+    }
+    
+    span.k-widget.k-tooltip-validation {
+        display: inline-block;
+        width: 160px;
+        text-align: left;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        background: none;
+        box-shadow: none;
+        color: red;
+    }
+                
+    .k-tooltip-validation .k-warning {
+        display: none;
+    }
+
+    .content {
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="csp-content-sections-parent">
+    <div class="list-customize-bulk-activation" data-role="listview" data-bind="source: Devices" data-template="template"></div>
+    <div class="list-customize-bulk-activation-pager" data-role="pager" data-bind="source: Devices"></div>
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+      .Name("MoveLicenseWindow")
+          .Content(@<text>
+                       <div class="response-notification customize-notification"></div>
+                       <div class="content">
+                           <div class="csp-content-sections-parent bulk-registration-move-license">
+                               <div class="horizontal-form-element" style="width: 100%">
+                                   <div class="fieldset">
+                                       <fieldset>
+                                           <legend>License Information</legend>
+                                           <div>
+                                               <div class="csp-label">
+                                                   Serial Number:
+                                               </div>
+                                               <div class="csp-field">
+                                                   <span data-bind="text: SerialNumber"></span>
+                                               </div>
+                                           </div>
+                                           <div>
+                                               <div class="csp-label">
+                                                   Authorization Code:
+                                               </div>
+                                               <div class="csp-field">
+                                                   <span data-bind="text: AuthorizationCode"></span>
+                                               </div>
+                                           </div>
+                                           <div>
+                                               <div class="csp-label">
+                                                   Type:
+                                               </div>
+                                               <div class="csp-field">
+                                                   <span data-bind="text: Type"></span>
+                                               </div>
+                                           </div>
+                                       </fieldset>
+                                   </div>
+                                   <div>
+                                       <div class="select-device-message">Select device to move license to:</div>
+                                       <div class="grid-content">
+                                           <div class="grid-devices" data-role="grid"
+                                                data-scrollable="true"
+                                                data-sortable="true"
+                                                data-source="{'schema':
+                                                        {
+                                                            'model':{
+                                                               'fields':{
+                                                                  'SerialNumber': { type: 'string' }, 
+                                                                  'CustomValueDeviceName': { type: 'string' }, 
+                                                                  'CustomValueDeviceTag.Name': { type: 'string' },
+                                                                  'ShipDate': { type: 'date' },
+                                                                  'RegisteredOn': { type: 'date' }
+                                                                }
+                                                            }
+                                                        }
+                                                    }"
+                                                data-columns="[
+                                                        { title: '', template:  kendo.template($('#selectTemplate').html()) },
+                                                        { 'field': 'SerialNumber', title: 'Serial Number' },
+                                                        { 'field': 'CustomValueDeviceName', title: 'Device Name' },
+                                                        { 'field': 'CustomValueDeviceTag.Name', title: 'Device Tag' },
+                                                        { 'field': 'ShipDate', title: 'Ship Date', template: $.proxy(CustomizeBulkRegistrationManageUtil.FormatDate, { field: 'ShipDate' }) },
+                                                        { 'field': 'RegisteredOn', title: 'Registration Date', template: $.proxy(CustomizeBulkRegistrationManageUtil.FormatDate, { field: 'RegisteredOn' }) }
+                                                    ]"
+                                                data-bind="source: BulkRegistrationDevices">
+                                           </div>
+                                       </div>
+                                   </div>
+                                   <div>&nbsp;</div>
+                                   <div class="csp-submit-container">
+                                       <input class="k-button" type="button" value="Cancel" data-bind="events: { click: CloseWindow }"/>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                    </text>)
+      .Width(800)
+      .Modal(true)
+      .Draggable()
+      .Visible(false)
+      .Events(events => events
+            .Open("CustomizeBulkRegistrationManageUtil.OnWindowOpen"))
+      .Title("Move License")
+    )
+</div>
+
+<script type="text/x-kendo-template" id="selectTemplate">
+    <div class="action-links">
+        <a class="grid-devices-select" data-bind="events: { click: Select }" href="javascript:void(0);">Select</a>
+    </div>
+</script>
+<script type="text/x-kendo-template" id="actionsTemplate">
+    <div class="action-links">
+        <a class="grid-licenses-move" data-bind="events: { click: Move }" href="javascript:void(0);">Move</a>
+        <a class="grid-licenses-remove" data-bind="events: { click: Remove }" href="javascript:void(0);">Remove</a>
+    </div>
+</script>
+<script type="text/x-kendo-template" id="template">
+    <div class="bulk-registration-device">
+        <fieldset class="csp-fieldset-with-border">
+    <legend class="device-info-header" data-bind="events: { click: ToggleDisplay }"><div class="toggle plus">&nbsp;<span data-bind="text:SerialNumber"></span>&nbsp;<span data-bind="text:Model"></span></div></legend>
+
+    <div class="device-info csp-hidden">
+        <div class="row-fluid">
+            <div class="span3">
+                <div class="csp-label">
+                    Serial Number:
+                </div>
+                <div class="csp-field">
+                    <span data-bind="text:SerialNumber"></span>
+                </div>
+            </div>
+            <div class="span3">
+                <div class="csp-label">
+                    Name:
+                </div>
+                <div class="csp-field">
+                    <input id="tbCustomValueDeviceName#=Id#" name="tbCustomValueDeviceName#=Id#" class="k-textbox" data-bind="value: CustomValueDeviceName, invisible: IsReadOnly"/>
+                    <span data-bind="text:CustomValueDeviceName, visible: IsReadOnly"></span>
+                </div>
+            </div>
+            <div class="span3">
+                <div class="csp-label">
+                    City:
+                </div>
+                <div class="csp-field">
+                    <input id="tbCustomValueCity#=Id#" name="tbCustomValueCity#=Id#" class="k-textbox" data-bind="value: CustomValueCity, invisible: IsReadOnly" required data-required-msg="City is required"/>
+                    <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                    <span class="k-invalid-msg" data-for="tbCustomValueCity#=Id#"></span>
+                    <span data-bind="text:CustomValueCity, visible: IsReadOnly"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span3">
+                <div class="csp-label">
+                    Model:
+                </div>
+                <div class="csp-field">
+                    <span data-bind="text:Model"></span>
+                </div>
+            </div>
+            <div class="span3">
+                <div class="csp-label">
+                    Tag:
+                </div>
+                <div class="csp-field">
+                    <input data-role="dropdownlist"
+                            data-auto-bind="false"
+                            data-text-field="Name"
+                            data-value-field="Value"
+                            data-bind="value: CustomValueDeviceTag, 
+                                        source: DeviceCategories, 
+                                        invisible: IsReadOnly" />
+                    <span data-bind="text:CustomValueDeviceTag.Name, visible: IsReadOnly"></span>
+                </div>
+            </div>
+            <div class="span3">
+                <div class="csp-label">
+                    Country:
+                </div>
+                <div class="csp-field">
+                    <input id="ddlCustomValueCountry#=Id#" name="ddlCustomValueCountry#=Id#"
+                            data-role="dropdownlist"
+                            data-auto-bind="false"
+                            data-text-field="Name"
+                            data-value-field="Id"
+                            data-bind="value: CustomValueCountry,
+                                        source: Countries, 
+                                        invisible: IsReadOnly,
+                                        events: {
+                                            change: OnCountryChange
+                                        }" data-validcountry-msg="Country is required" />
+                    <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                    <span class="k-invalid-msg" data-for="ddlCustomValueCountry#=Id#"></span>
+                    <span data-bind="text:CustomValueCountry.Name, visible: IsReadOnly"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span3">
+                <div class="csp-label">
+                    Registration Date:
+                </div>
+                <div class="csp-field">
+                    <span data-bind="text:RegistrationDate"></span>
+                </div>
+            </div>
+            <div class="span3">
+                <div class="csp-label">
+                    Address 1:
+                </div>
+                <div class="csp-field">
+                    <input id="tbCustomValueAddress1#=Id#" name="tbCustomValueAddress1#=Id#" class="k-textbox" data-bind="value: CustomValueAddress1, invisible: IsReadOnly" required data-required-msg="Address 1 is required"/>
+                    <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                    <span class="k-invalid-msg" data-for="tbCustomValueAddress1#=Id#"></span>
+                    <span data-bind="text:CustomValueAddress1, visible: IsReadOnly"></span>
+                </div>
+            </div>
+            <div class="span3">
+                <div class="csp-label">
+                    Region:
+                </div>
+                <div class="csp-field">
+                    <span data-bind="invisible: IsReadOnly">
+                        <input id="ddlCustomValueRegion#=Id#" name="ddlCustomValueRegion#=Id#"
+                                data-role="dropdownlist"
+                                data-auto-bind="false"
+                                data-text-field="Name"
+                                data-value-field="Id"
+                                data-bind="value: CustomValueRegion, 
+                                            source: Regions, 
+                                            invisible: IsOtherRegion" data-validregion-msg="Region is required" />
+                        <input id="tbCustomValueRegion#=Id#" name="tbCustomValueRegion#=Id#" class="k-textbox" data-bind="value: CustomValueOtherRegion, visible: IsOtherRegion" data-validotherregion-msg="Region is required"/>
+                        <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                        <span class="k-invalid-msg" data-for="ddlCustomValueRegion#=Id#"></span>
+                        <span class="k-invalid-msg" data-for="tbCustomValueRegion#=Id#"></span>
+                    </span>
+                    <span data-bind="visible: IsReadOnly">
+                        <span data-bind="text:CustomValueRegion.Name, invisible: IsOtherRegion"></span>
+                        <span data-bind="text:CustomValueOtherRegion, visible: IsOtherRegion"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span3">
+                &nbsp;
+            </div>
+            <div class="span3">
+                <div class="csp-label">
+                    Address 2:
+                </div>
+                <div class="csp-field">
+                    <input id="tbCustomValueAddress2#=Id#" name="tbCustomValueAddress2#=Id#" class="k-textbox" data-bind="value: CustomValueAddress2, invisible: IsReadOnly"/>
+                    <span data-bind="text:CustomValueAddress2, visible: IsReadOnly"></span>
+                </div>
+            </div>
+            <div class="span3">
+                <div class="csp-label">
+                    Zip:
+                </div>
+                <div class="csp-field">
+                    <input id="tbCustomValuePostalCode#=Id#" name="tbCustomValuePostalCode#=Id#" class="k-textbox" data-bind="value: CustomValuePostalCode, invisible: IsReadOnly" required data-required-msg="Zip Code is required"/>
+                    <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                    <span class="k-invalid-msg" data-for="tbCustomValuePostalCode#=Id#"></span>
+                    <span data-bind="text:CustomValuePostalCode, visible: IsReadOnly"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span3">
+                &nbsp;
+            </div>
+            <div class="span3">
+                &nbsp;
+            </div>
+            <div class="span6">
+                <div class="csp-label">
+                    Remarks:
+                </div>
+                <div class="csp-field">
+                    <textarea data-bind="value: CustomValueRemarks, invisible: IsReadOnly"/></textarea>
+                    <span data-bind="text:CustomValueRemarks, visible: IsReadOnly"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span12">
+                <div >
+                    <fieldset>
+                        <legend class="csp-fieldset-legend">Licenses</legend>
+                        <div class="grid-licenses" data-role="grid"
+                             data-sortable="true"
+                             data-source="{'schema':
+                                    {
+                                        'model':{
+                                           'fields':{
+                                              'LicenseId': { type: 'number' },
+                                              'AuthorizationCode': { type: 'string' }, 
+                                              'Type': { type: 'string' }, 
+                                              'SalesOrderNumber': { type: 'string' }, 
+                                              //'ExpectedExpirationDate': { type: 'date' }
+                                            }
+                                        }
+                                    }
+                                }"
+                             data-columns="[
+                                             { 'field': 'AuthorizationCode', title: 'Authorization Code' },
+                                             { 'field': 'Type' },
+                                             { 'field': 'SalesOrderNumber', title: 'Sales Order Number' },
+                                             //{ 'field': 'ExpectedExpirationDate', title: 'Expected Expiration Date', template: $.proxy(CustomizeBulkRegistrationManageUtil.FormatDate, { field: 'ExpectedExpirationDate' }) },
+                                             { 'title': 'Actions', template: kendo.template($('\\#actionsTemplate').html()) }
+                                          ]"
+                             data-bind="source: BulkRegistrationLicenses, events:{ dataBinding: OnDataBinding, dataBound: OnDataBound }">
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+</fieldset>
+
+    </div>
+</script>

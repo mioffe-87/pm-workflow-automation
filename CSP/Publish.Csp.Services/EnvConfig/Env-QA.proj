@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	
+  <PropertyGroup>
+		
+		<PublishedWebsitesDir>_PublishedWebsites\Csp.Services\</PublishedWebsitesDir>
+		<PublishDestinationPath>\\sjcccspvw01t\QASite\Csp.Services</PublishDestinationPath>
+		<PublishDestinationPath2>\\sjcccspvw02t\QASite\Csp.Services</PublishDestinationPath2>
+		
+  </PropertyGroup>
+</Project>

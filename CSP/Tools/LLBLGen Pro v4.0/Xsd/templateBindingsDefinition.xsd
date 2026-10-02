@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- templateBindings Schema definition. Used for verification of .templatebindings files. -->
+<xs:schema id="templateGroupsDefinition" targetNamespace="http://sd/llblgen/pro/templateBindingsDefinition.xsd" 
+		   elementFormDefault="qualified" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd" xmlns:mstns="http://sd/llblgen/pro/templateBindingsDefinition.xsd" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+	<xs:element name="templateBindings">
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs="1">
+				<xs:sequence minOccurs ="0" maxOccurs="1">
+					<xs:element name="supportedPlatforms">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="platform">
+									<xs:complexType>
+										<xs:attribute name="name" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs ="0" maxOccurs="1">
+					<xs:element name="supportedFrameworks">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="framework">
+									<xs:complexType>
+										<xs:attribute name="name" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="supportedDrivers">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="driver">
+									<xs:complexType>
+										<xs:attribute name="id" type="xs:string" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="language">
+						<xs:complexType>
+							<xs:sequence minOccurs ="0" maxOccurs="unbounded">
+								<xs:element name="templateBinding">
+									<xs:complexType>
+										<xs:attribute name="templateID" type="xs:string" use="required" />
+										<xs:attribute name="filename" type="xs:string" use="required" />
+										<xs:attribute name="templateLanguage" type="xs:string" use="optional"/>
+										<xs:attribute name="includeOnly" type="xs:boolean" use="optional"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+							<xs:attribute name="name" type="xs:string" use="required" />
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required" />
+			<xs:attribute name="description" type="xs:string" use="required" />
+			<xs:attribute name="databaseDriverID" type="xs:string" />
+			<xs:attribute name="precedenceLevel" type="xs:integer" />
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

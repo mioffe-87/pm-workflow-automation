@@ -1,0 +1,377 @@
+﻿@model Csp.Web.DataTransferObjects.CsspEndUserInfoDto
+ @{
+      Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+      var uniqueId = UniqueId.CsspEndUserDeviceId;
+      var countryDropDownId = uniqueId + "CountryDropDownId";
+      var regionDropDownId = uniqueId + "RegionDropDownId";
+      var regionTextId = uniqueId + "RegionTextId";
+      var regionTextHiddenId = uniqueId + "RegionTextHiddenId";
+      var regionName = uniqueId + "RegionName";
+      var regionTextDivId = uniqueId + "RegionTextDivId";
+      var regionDropDownDivId = uniqueId + "RegionDropDownDivId";
+ }
+<script>
+    var endUser = {
+        onCsspEndUserEnterPress: (function(e) {
+            if (e.keyCode == 13) {
+                endUser.SearchCsspEndUserData();
+                return false;
+            }
+            return true;
+        }),
+
+        onEndUserSelect: (function(e) {
+            var currentSelectedItem = e.sender.dataItem(this.select());
+            console.log(currentSelectedItem);
+            $("#txtCustomerAccountId").val(currentSelectedItem.CustomerAccountId);
+            $("#txtCompanyName").val(currentSelectedItem.CompanyName);
+            $("#txtDnbNumber").val(currentSelectedItem.DnBNumber);
+            $("#txtEndUserAddress").val(currentSelectedItem.Address);
+            $("#txtEndUserCity").val(currentSelectedItem.City);
+            $("#txtPostalCode").val(currentSelectedItem.PostalCode);
+            $("#txtContactEmail").val(currentSelectedItem.EndUserContactEmail);
+            $("#txtDnbNumber").val(currentSelectedItem.DnBNumber);
+            $("#txtPhoneNumber").val(currentSelectedItem.PhoneNumber);
+            $("#txtCompanyWebsite").val(currentSelectedItem.CompanyWebsite);
+            $("#txtIndustry").val(currentSelectedItem.Industry);
+            var ddlCountry = $("#@countryDropDownId").data("kendoDropDownList");
+            ddlCountry.select(function (dataItem) {
+                return dataItem.Id === currentSelectedItem.CountryId;
+            });
+            var ddlRegion = $("#@regionDropDownId").data("kendoDropDownList");
+            ddlRegion.select(function (dataItem) {
+                return dataItem.Name === currentSelectedItem.Region;
+            });
+            $("#@regionTextId").val(currentSelectedItem.Region);
+        }),
+
+        SearchCsspEndUserData: (function () {
+            var endUserSearchResults;
+            var sField = $("#CsspCmbEndUserFilter").val();
+            var sValue = $("#txtCsspEndUserSearchValue").val();
+            var csspSupAccountid = "@Model.EndUser.CSSPSupportAccountId";
+            $.ajax({
+                url: '/Cssp/SearchEndUsers/',
+                type: 'POST',
+                data: {
+                    supAccountId: csspSupAccountid,
+                    searchField: sField,
+                    searchValue: sValue
+                },
+                success: function (result) {
+                    endUserSearchResults = result;
+                }
+            }).done(function () {
+                console.log(endUserSearchResults);
+                if (endUserSearchResults.Data[0] != null) {
+                    $('#gridCsspExistingUserInfo').data("kendoGrid").dataSource.data(endUserSearchResults.Data);
+                } else {
+                    $('#gridCsspExistingUserInfo').data("kendoGrid").dataSource.data([]);
+                }
+            });
+        })
+    }
+
+    function @(uniqueId)OnCountryDropdownChange() {
+        SupportPortal.OnCountryDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionTextDivId", "@regionDropDownDivId", "@countryDropDownId");
+    }
+
+    function @(uniqueId)OnRegionDropdownChange() {
+        SupportPortal.OnRegionDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionDropDownId", "@regionDropDownDivId", "@Constants.DropDownRegionSelect");
+    }
+
+    function @(uniqueId)OnRegionTextChange() {
+        SupportPortal.OnRegionTextChange("@regionTextHiddenId", "@regionTextId");
+    }
+
+    function @(uniqueId)FilterCountry() {
+        return { countryId: $("#@countryDropDownId").val() };
+    }
+
+    $(function() {
+        var grid = $("#gridCsspExistingUserInfo").kendoGrid({
+            selectable: "row",
+            dataSource: { pageSize: 3 },
+            scrollable: false,
+            change: endUser.onEndUserSelect,
+            pageable: true,
+            columns: [
+                {
+                    field: "CSSPEndUsersId",
+                    hidden: true
+                },
+                {
+                    field: "DnBNumber",
+                    hidden: true
+                },
+                {
+                    field: "Address",
+                    hidden: true
+                },
+                {
+                    field: "CountryId",
+                    hidden: true
+                },
+                {
+                    field: "Country",
+                    hidden: true
+                },
+                {
+                    field: "Region",
+                    hidden: true
+                },
+                {
+                    field: "City",
+                    hidden: true
+                },
+                {
+                    field: "PostalCode",
+                    hidden: true
+                },
+                {
+                    field: "EndUserContactEmail",
+                    hidden: true
+                },
+                {
+                    field: "CustomerAccountId",
+                    title: "Customer Reference Id",
+                    width: "20%"
+                },
+                {
+                    field: "CompanyName",
+                    title: "Company Name",
+                    width: "30%"
+                },
+                {
+                    field: "FullAddress",
+                    title: "Address"
+                }
+            ]
+        });
+    });
+</script>
+
+<div id="@UniqueId.containerCsspEndUserDeviceEditDiv">
+    @using (Ajax.BeginForm("AddEndUserInformation", "Cssp", null, new AjaxOptions
+    {
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();",
+        UpdateTargetId = (string)UniqueId.containerCsspEndUserDeviceEditDiv
+    }, new { id = (string)UniqueId.EndUserInfoForm }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.EndUser.ProvisionedDeviceId)
+        @Html.HiddenFor(model => model.EndUser.ProvisionedDeviceIds)
+        @Html.HiddenFor(model => model.EndUser.CSSPSupportAccountId)
+        <div class="fieldset" style="height: inherit;">
+            <fieldset>
+                <div class="grid-right">
+                    <div class="grid-filter">
+                        <span class="filter_by">Search Existing End User</span>
+                        @(Html.Kendo().DropDownList()
+                              .Name("CsspCmbEndUserFilter")
+                              .HtmlAttributes(new
+                              {
+                                  Class = "k-dropdown",
+                                  style = "margin: 0.25em 0.25em;"
+                              })
+                              .DataTextField("Text")
+                              .DataValueField("Value")
+
+                              .BindTo(new List<SelectListItem>
+                              {
+                                  new SelectListItem
+                                  {
+                                      Text = "Customer Reference Id",
+                                      Value = "AccountId"
+                                  },
+                                  new SelectListItem
+                                  {
+                                      Text = "Company Name",
+                                      Value = "CompanyName"
+                                  }
+                              })
+                              )
+                    </div>
+                    <div class="grid-filter">
+                        <div class="grid-filter">
+                            @Html.TextBox("txtCsspEndUserSearchValue", string.Empty, new {onkeypress = "return endUser.onCsspEndUserEnterPress(event)"})
+                        </div>
+                    </div>
+                    <div class="grid-filter">
+                        <input type="button" value="Search" onclick="endUser.SearchCsspEndUserData()" class="k-button"/>
+                    </div>
+                </div>
+                <div>&nbsp;</div>
+                <div>&nbsp;</div>
+                <div class="grid-content" style="margin-top: 5px;">
+                    <div id="gridCsspExistingUserInfo"></div>
+                </div>
+            </fieldset>
+        </div>
+        
+        <div class="fieldset">
+            <fieldset>
+                <legend>Account Information</legend>
+                <div style="padding-left: 50px;">
+                    <div>
+                        <div>&nbsp;</div>
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("Customer Reference Id")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.EndUser.CustomerAccountId)
+                            @Html.TextBoxFor(model => model.EndUser.CustomerAccountId, new {id = "txtCustomerAccountId"})
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("Company Name")
+                        </div>
+                        <div class="csp-field" style="width: 150px !important">
+                            @Html.ValidationMessageFor(model => model.EndUser.CompanyName)
+                            @Html.TextBoxFor(model => model.EndUser.CompanyName, new {id = "txtCompanyName"})
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("DNB #")
+                        </div>
+                        <div class="csp-field">
+                            @Html.TextBoxFor(model => model.EndUser.DnBNumber, new {id = "txtDnbNumber"})
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("Contact Email:")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.EndUser.EndUserContactEmail)
+                            @Html.TextBoxFor(model => model.EndUser.EndUserContactEmail, new {id = "txtContactEmail"})
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                     <div>
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("Contact Phone Number:")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.EndUser.PhoneNumber)
+                            @Html.TextBoxFor(model => model.EndUser.PhoneNumber, new {id = "txtPhoneNumber"})
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                    <div>
+                            <div class="csp-label" style="width: 150px !important">
+                                @Html.Label("Address")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.EndUser.Address)
+                                @Html.TextBoxFor(model => model.EndUser.Address, new { maxlength = 101, id="txtEndUserAddress" })
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                    <div>
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("City")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.EndUser.City)
+                            @Html.TextBoxFor(model => model.EndUser.City, new {maxlength = 101, id="txtEndUserCity"})
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("Country")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => Model.EndUser.CountryId)
+                            @(Html.Kendo().DropDownListFor(model => Model.EndUser.CountryId)
+                                  .HtmlAttributes(new {@class = "k-dropdown", id = countryDropDownId})
+                                  .Events(e => e.Change(uniqueId + "OnCountryDropdownChange").DataBound(uniqueId + "OnCountryDropdownChange"))
+                                  .OptionLabel(Constants.DropDownCountrySelect)
+                                  .DataValueField("Id")
+                                  .DataTextField("Name")
+                                  .DataSource(source => source.Read(read =>
+                                  {
+
+                                      if (read != null)
+                                      {
+
+                                          read.Action("GetCountries", "Base");
+                                      }
+                                  })).Value(Model.EndUser.CountryId.ToString()))
+                        </div>
+                    </div>
+                    <div>
+
+                        <input id="@regionTextHiddenId" name="@regionName" type="hidden" value="@Model.EndUser.Region"/>
+
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("Region/State")
+                        </div>
+                        <div class="csp-field">
+                            <div id="@regionTextDivId">
+                                @Html.ValidationMessageFor(model => Model.EndUser.Region)
+                                @Html.TextBoxFor(model => Model.EndUser.Region, new {id = regionTextId, onchange = uniqueId + "OnRegionTextChange()"})
+                            </div>
+                            <div id="@regionDropDownDivId" style="display: none;">
+                                @Html.ValidationMessageFor(model => Model.EndUser.Region)
+                                @(Html.Kendo().DropDownListFor(model => Model.EndUser.Region)
+                                      .OptionLabel(Constants.DropDownRegionSelect)
+                                      .HtmlAttributes(new {@class = "k-dropdown", id = regionDropDownId, name = ""})
+                                      .Events(e => e.Change(uniqueId + "OnRegionDropdownChange").DataBound(uniqueId + "OnRegionDropdownChange"))
+                                      .DataValueField("Name")
+                                      .DataTextField("Name")
+                                      .DataSource(source => source.Read(read => read.Action("GetRegions", "Base").Data(uniqueId + "FilterCountry")).ServerFiltering(true))
+                                      .Value(Model.EndUser.Region)
+                                      .AutoBind(false)
+                                      .CascadeFrom(countryDropDownId)
+                                      )
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("Postal Code")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.EndUser.PostalCode)
+                            @Html.TextBoxFor(model => model.EndUser.PostalCode, new {maxlength = 16, id = "txtPostalCode"})
+                            <span class="csp-required">*</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("Company Website:")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.EndUser.CompanyWebsite)
+                            @Html.TextBoxFor(model => model.EndUser.CompanyWebsite, new {id = "txtCompanyWebsite"})
+                        </div>
+                    </div>
+                     <div>
+                        <div class="csp-label" style="width: 150px !important">
+                            @Html.Label("Industry:")
+                        </div>
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.EndUser.Industry)
+                            @Html.TextBoxFor(model => model.EndUser.Industry, new {id = "txtIndustry"})
+                        </div>
+                    </div>
+                    <div>&nbsp;</div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span><input class="k-button csp-submit" type="submit" value="Submit" />
+        </div>
+    }
+</div>
+<script>
+    $.validator.unobtrusive.parse("#@UniqueId.EndUserInfoForm");
+</script>

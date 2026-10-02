@@ -1,0 +1,17 @@
+﻿		''' <summary>Sets the flag to signal the SqlServer DQE to generate SET ARITHABORT ON statements prior to INSERT, DELETE and UPDATE Queries.
+		''' Keep this flag to false in normal usage, but set it to true if you need to write into a table which is part of an indexed view.
+		''' It will not affect normal inserts/updates that much, leaving it on is not harmful. See Books online for details on SET ARITHABORT ON.
+		''' After each statement the setting is turned off if it has been turned on prior to that statement.</summary>
+		''' <remarks>Setting this flag is a global change.</remarks>
+		Public Shared Sub SetArithAbortFlag(value As Boolean)
+			DynamicQueryEngine.ArithAbortOn = value
+		End Sub
+		
+		''' <summary>Sets the default compatibility level used by the DQE. Default is SqlServer2005. This is a global setting.
+		''' Compatibility level influences the query generated For paging, sequence name (@@IDENTITY/SCOPE_IDENTITY()), And usage Of newsequenceid() In inserts. 
+		''' It also influences the ado.net provider To use. This way you can switch between SqlServer server client 'SqlClient' and SqlServer CE Desktop.</summary>
+		''' <remarks>Setting this Property will overrule a similar setting In the .config file. Don't set this property when queries are executed as
+		''' it might switch factories For ADO.NET elements which could result In undefined behavior so Set this Property at startup Of your application</remarks>
+		Public Shared Sub SetSqlServerCompatibilityLevel(compatibilityLevel As SqlServerCompatibilityLevel)
+			DynamicQueryEngine.DefaultCompatibilityLevel = compatibilityLevel
+		End Sub 

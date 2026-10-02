@@ -1,0 +1,127 @@
+﻿@using Csp.Web.DataTransferObjects
+@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.AddDeviceToGroupDto
+@{
+    var actionHelper = Model.ActionHelper;
+    var addDeviceToGroupSelectFilter = UniqueId.AddDeviceToGroupSelectFilter;  
+}
+
+<script>
+    function @(UniqueId.AddDeviceToGroup)GetParams() {
+        var isProd = '@Model.IsProduction'.toLowerCase() === 'true';
+
+        return {
+            isProd: isProd
+        };
+    }
+
+    function @(UniqueId.AddDeviceToGroup)OnFilterTypeClick(selector) {
+        var filterType = $(selector).val();
+
+        @(UniqueId.AddDeviceToGroup)OnFilterTypeChange(filterType);
+    }
+
+    function @(UniqueId.AddDeviceToGroup)OnFilterTypeChange(filterType) {
+        var lblSerialNumber = '@UniqueId.SelectSerialNumberLabel';
+        var lblDeviceCategory = '@UniqueId.SelectDeviceCategoryLabel';
+        var fldSerialNumber = '@UniqueId.SelectSerialNumberField';
+        var fldDeviceCategory = '@UniqueId.SelectDeviceCategoryField';
+
+        if (filterType === "@AddDeviceToGroupFilterTypes.SerialNumber") {
+            $('#' + lblSerialNumber).show();
+            $('#' + fldSerialNumber).show();
+            $('#' + lblDeviceCategory).hide();
+            $('#' + fldDeviceCategory).hide();
+        } else {
+            $('#' + lblDeviceCategory).show();
+            $('#' + fldDeviceCategory).show();
+            $('#' + lblSerialNumber).hide();
+            $('#' + fldSerialNumber).hide();
+        }
+    }
+
+    var addDeviceToGroupFilter = '@Model.AddDeviceToGroupFilter';
+
+    $(document).ready(function () {
+        //$('input[name="@addDeviceToGroupSelectFilter"]').change(@(UniqueId.AddDeviceToGroup)OnFilterTypeChange);
+
+        @(UniqueId.AddDeviceToGroup)OnFilterTypeChange(addDeviceToGroupFilter);
+    });
+</script>
+
+<div id="@UniqueId.AddDeviceToGroupDiv" class="horizontal-form-element" style="width: 100%;">
+    @using (Ajax.BeginForm("AddDeviceToGroup", "Device", null, new AjaxOptions {
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();",
+        UpdateTargetId = (string)UniqueId.AddDeviceToGroupDiv
+    }, new { id = (string)UniqueId.AddDeviceToGroupForm })) {
+        
+        <div>
+            @Html.Partial("../Partial/_ResponseNotification", Model.Notifications)
+        </div>
+        
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.GroupId)
+        @Html.HiddenFor(x => x.IsProduction)
+
+        <div class="fieldset fieldset-padded">
+            <div class="radiobuttonlist">
+                <label>@Html.RadioButtonFor(x => x.AddDeviceToGroupFilter, AddDeviceToGroupFilterTypes.SerialNumber, new {id = "SerialNumberFilter", onClick = UniqueId.AddDeviceToGroup + "OnFilterTypeClick(this);"}) By Serial Number</label>
+                <label>@Html.RadioButtonFor(x => x.AddDeviceToGroupFilter, AddDeviceToGroupFilterTypes.DeviceCategory, new {id = "DeviceCategoryFilter", onClick = UniqueId.AddDeviceToGroup + "OnFilterTypeClick(this);"}) By Device Tag</label>
+            </div>
+            <div>
+                <div class="csp-label">
+                    <span id="@UniqueId.SelectSerialNumberLabel">
+                        Select Serial Number:
+                    </span>
+                    <span id="@UniqueId.SelectDeviceCategoryLabel" class="csp-hidden">
+                        Select Device Tag:
+                    </span>
+                </div>
+                <div class="csp-field">
+                    <span id="@UniqueId.errorPartialId" class="error"></span>
+                    <span id="@UniqueId.SelectSerialNumberField">
+                    @Html.ValidationMessageFor(x => x.DeviceId)
+                    @(Html.Kendo().DropDownListFor(x => x.DeviceId)
+                          .HtmlAttributes(new {id = (string) UniqueId.DeviceSerialNumber})
+                          .OptionLabel(Constants.DropDownPleaseSelect)
+                          .DataValueField("DeviceId")
+                          .DataTextField("SerialNumber")
+                          .DataSource(source => source.Read(read => read.Action("GetAvailableDeviceSerialNumber", ControllerFields.DeviceController, new
+                          {
+                              groupId = Model.GroupId
+                          }).Data((string) UniqueId.AddDeviceToGroup + "GetParams"))
+                          )
+                          )
+                    </span>
+                    <span id="@UniqueId.SelectDeviceCategoryField" class="csp-hidden">
+                    @Html.ValidationMessageFor(x => x.DeviceCategoryId)
+                    @(Html.Kendo().DropDownListFor(x => x.DeviceCategoryId)
+                          .HtmlAttributes(new {id = (string) UniqueId.DeviceCategory})
+                          .OptionLabel(Constants.DropDownPleaseSelect)
+                          .DataValueField("DeviceCategoryId")
+                          .DataTextField("DeviceCategoryName")
+                          .DataSource(source => source.Read(read => read.Action("GetDeviceCategoriesWithDeviceCount", ControllerFields.DeviceController, new
+                          {
+                              groupId = Model.GroupId
+                          }).Data((string) UniqueId.AddDeviceToGroup + "GetParams"))
+                          )
+                          )
+                    </span>
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+        </div>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input type="submit" value="Submit" class="k-button csp-submit" id="@UniqueId.submitButtonId" />
+        </div>
+    }
+</div>
+
+<script>
+
+    $.validator.unobtrusive.parse("#@UniqueId.AddDeviceToGroupForm");
+
+</script>
+

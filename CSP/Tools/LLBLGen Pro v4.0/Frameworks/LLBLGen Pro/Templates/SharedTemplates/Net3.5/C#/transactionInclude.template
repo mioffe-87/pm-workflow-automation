@@ -1,0 +1,14 @@
+﻿		/// <summary>Creates a new DbConnection instance which will be used by all elements using this ITransaction instance. Reads ConnectionString from .config file.</summary>
+		/// <returns>new DbConnection instance</returns>
+		protected override DbConnection CreateConnection()
+		{
+			return new CommonDaoBase().CreateConnection();
+		}
+
+		/// <summary>Creates a new DbConnection instance which will be used by all elements using this ITransaction instance</summary>
+		/// <param name="connectionStringToUse">Connection string to use</param>
+		/// <returns>new DbConnection instance</returns>
+		protected override DbConnection CreateConnection(string connectionStringToUse)
+		{
+			return new CommonDaoBase().CreateConnection(connectionStringToUse);
+		}

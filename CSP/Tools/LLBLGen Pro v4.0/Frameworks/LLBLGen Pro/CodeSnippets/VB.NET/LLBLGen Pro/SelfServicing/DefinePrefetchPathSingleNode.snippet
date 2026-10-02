@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+      <Title>Defines a single node prefetch path</Title>
+      <Shortcut>llblS_DefPPath1Node</Shortcut>
+      <Description>Code snippet to define a single node prefetch path, selfservicing specific. </Description>
+      <Author>Solutions Design</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal Editable="true">
+          <ID>PathVariable</ID>
+          <ToolTip>The variable which holds the PrefetchPath instance reference</ToolTip>
+          <Default>path</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>EntityType</ID>
+          <ToolTip>The Entity name of the root entity of the path, e.g CustomerEntity</ToolTip>
+          <Default>MyEntity</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>PrefetchPathSubNode</ID>
+          <ToolTip>The name of the path node to add to the prefetch path</ToolTip>
+          <Default>PrefetchPathRelatedEntity</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="VB"><![CDATA[Dim $PathVariable$ As New PrefetchPath(CInt(EntityType.$EntityType$))
+$PathVariable$.Add($EntityType$.$PrefetchPathSubNode$)
+$end$
+]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

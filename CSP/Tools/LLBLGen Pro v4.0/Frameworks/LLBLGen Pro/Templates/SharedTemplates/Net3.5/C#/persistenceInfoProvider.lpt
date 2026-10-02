@@ -1,0 +1,207 @@
+﻿<%
+	Project _currentProject = _executingGenerator.ProjectDefinition;
+	
+	string additionalNamespace = string.Empty;
+	switch(_executingGenerator.TemplateGroupToUse)
+	{
+		case "SelfServicing":
+			additionalNamespace = "HelperClasses";
+			break;
+		case "Adapter":
+			additionalNamespace = _currentProject.GetRealStringSettingValue("AdapterDbSpecificNamespaceSuffix");
+			break;
+	}
+	var entitiesToProcess = _executingGenerator.Entities.OrderBy(e=>e.GroupName).ThenBy(e=>e.Name).ToList();
+	var typedViewsToProcess = _executingGenerator.TypedViews.OrderBy(e=>e.GroupName).ThenBy(e=>e.Name).ToList();
+	var tvfCallsToProcess = _executingGenerator.TvfCalls.OrderBy(e=>e.GroupName).ThenBy(e=>e.Name).ToList();
+	bool inlineValueTypeFields = _currentProject.GetRealBoolSettingValue("InlineValueTypedFields");
+%>///////////////////////////////////////////////////////////////
+// This is generated code. 
+//////////////////////////////////////////////////////////////
+// Code is generated using LLBLGen Pro version: <%=ApplicationConstants.LLBLGenProVersion%>
+// Code is generated on: <% if(_currentProject.GetRealBoolSettingValue("TdlEmitTimeDateInOutputFiles")) {%><%=DateTime.Now.ToString("F")%><%}%>
+// Code is generated using templates: <%=_executingGenerator.GetTemplateBindingsName(_templateID, _templateBindingDefinitionName)%>
+// Templates vendor: Solutions Design.
+//////////////////////////////////////////////////////////////
+using System;
+using System.Collections;
+using System.Data;
+using SD.LLBLGen.Pro.ORMSupportClasses;
+
+namespace <%=_executingGenerator.RootNamespaceToUse%><%if(!string.IsNullOrEmpty(additionalNamespace)) {%>.<%=additionalNamespace%><%}%>
+{
+	/// <summary>Singleton implementation of the PersistenceInfoProvider. This class is the singleton wrapper through which the actual instance is retrieved.</summary>
+	/// <remarks>It uses a single instance of an internal class. The access isn't marked with locks as the PersistenceInfoProviderBase class is threadsafe.</remarks>
+	internal static class PersistenceInfoProviderSingleton
+	{
+		#region Class Member Declarations
+		private static readonly IPersistenceInfoProvider _providerInstance = new PersistenceInfoProviderCore();
+		#endregion
+
+		/// <summary>Dummy static constructor to make sure threadsafe initialization is performed.</summary>
+		static PersistenceInfoProviderSingleton()
+		{
+		}
+
+		/// <summary>Gets the singleton instance of the PersistenceInfoProviderCore</summary>
+		/// <returns>Instance of the PersistenceInfoProvider.</returns>
+		public static IPersistenceInfoProvider GetInstance()
+		{
+			return _providerInstance;
+		}
+	}
+
+	/// <summary>Actual implementation of the PersistenceInfoProvider. Used by singleton wrapper.</summary>
+	internal class PersistenceInfoProviderCore : PersistenceInfoProviderBase
+	{
+		/// <summary>Initializes a new instance of the <see cref="PersistenceInfoProviderCore"/> class.</summary>
+		internal PersistenceInfoProviderCore()
+		{
+			Init();
+		}
+
+		/// <summary>Method which initializes the internal datastores with the structure of hierarchical types.</summary>
+		private void Init()
+		{
+			this.InitClass(<%=_executingGenerator.Entities.Count + _executingGenerator.TypedViews.Count%>);
+<%
+	foreach(var entity in entitiesToProcess)
+	{
+%>			Init<%=entity.Name%>EntityMappings();
+<%	}
+	foreach(var typedView in typedViewsToProcess)
+	{
+		var mapping = _currentProject.GetGroupableModelElementMapping(typedView, _executingGenerator.DriverID);
+		if(mapping==null)
+		{
+			// skip typedviews mapped onto tvf resultsets as they're mapped separately, with the tvf call. These mappings are automappings which are not
+			// returned by the above call. 
+			continue;
+		}
+%>			Init<%=typedView.Name%>TypedViewMappings();
+<%	}
+	foreach(var tvfCall in tvfCallsToProcess)
+	{
+%>			Init<%=tvfCall.Name%>TvfCallMappings();
+<%	}
+%>		}
+
+<%
+	foreach(var entity in entitiesToProcess)
+	{
+		var mapping = _currentProject.GetGroupableModelElementMapping(entity, _executingGenerator.DriverID);
+%>		/// <summary>Inits <%=entity.Name%>Entity's mappings</summary>
+		private void Init<%=entity.Name%>EntityMappings()
+		{
+			this.AddElementMapping("<%=entity.Name%>Entity", @"<%=mapping.MappedTarget.ContainingSchema.ParentCatalog.CatalogName%>", @"<%=mapping.MappedTarget.ContainingSchema.SchemaOwner%>", "<%=mapping.MappedTarget.Name%>", <%=entity.GetAllMappableFields().Count()%>);
+<%
+		if((entity.InheritanceType==InheritanceHierarchyType.TargetPerEntity) || entity.GetAllFieldsInElement(false, false).Any())
+		{
+			var fieldsToTraverse = new List<IFieldElementCore>();
+			if((entity.InheritanceType==InheritanceHierarchyType.TargetPerEntity) && entity.IsSubType)
+			{
+				fieldsToTraverse.AddRange(entity.IdentifyingFields.ApplyFieldOrdering().Cast<IFieldElementCore>());
+			}
+			fieldsToTraverse.AddRange(entity.GetAllFieldsInElement(false, false));
+			int index = 0;
+			foreach(var field in fieldsToTraverse)
+			{
+				var fieldMappingsToTraverse = new List<FieldMapping>();
+				var fieldMappingToEmit = mapping.GetFieldMappingOfField(field);
+				bool inlineName = false;
+				if(fieldMappingToEmit==null)
+				{
+					if(!inlineValueTypeFields)
+					{
+						continue;
+					}
+					fieldMappingsToTraverse.AddRange(mapping.FieldMappings.Where(fm => fm.MappedFieldWrapper.Path[0] == field));
+					inlineName = true;
+				}
+				else
+				{
+					fieldMappingsToTraverse.Add(fieldMappingToEmit);
+				}
+				foreach(var fieldMapping in fieldMappingsToTraverse)
+				{
+					IProjectElementFieldMapTargetElement targetField = fieldMapping.MappedTarget;
+					string fieldName = inlineName ? fieldMapping.MappedFieldWrapper.PathAsStringForTargetFieldName : fieldMapping.MappedFieldInstance.Name;
+%>			this.AddElementFieldMapping("<%=entity.Name%>Entity", "<%=fieldName%>", "<%=targetField.FieldName%>", <%=GeneratorUtils.BooleanToKeyword(_executingGenerator, targetField.IsNullable)%>, "<%=_executingGenerator.GetDBNETProviderTypeForDbType(targetField.TypeDefinition.DBType)%>", <%=GeneratorUtils.GetRealMaxLength(targetField.TypeDefinition.Length, targetField.TypeDefinition.DBTypeAsNETType)%>, <%=targetField.TypeDefinition.Precision%>, <%=targetField.TypeDefinition.Scale%>, <%=GeneratorUtils.BooleanToKeyword(_executingGenerator, fieldMapping.SequenceToUse!=null)%>, "<%=GeneratorUtils.GetSequenceName(_executingGenerator, fieldMapping)%>", <%if(fieldMapping.TypeConverterToUse==null) { %>null<% } else { %>new <%=GeneratorUtils.GetTypeConverterTypeName(_executingGenerator, fieldMapping)%>()<% } %>, typeof(<%=GeneratorUtils.GetDotNetTypeAsString(targetField.TypeDefinition.DBTypeAsNETType, _executingGenerator)%>), <%=index%>);
+<%					index++;
+				}
+			}
+		}
+%>		}
+
+<%	}
+
+	foreach(var typedView in typedViewsToProcess)
+	{
+		var mapping = _currentProject.GetGroupableModelElementMapping(typedView, _executingGenerator.DriverID);
+		if(mapping==null)
+		{
+			// skip typedviews mapped onto tvf resultsets as they're mapped separately, with the tvf call. These mappings are automappings which are not
+			// returned by the above call. 
+			continue;
+		}
+%>
+		/// <summary>Inits <%=typedView.Name%>View's mappings</summary>
+		private void Init<%=typedView.Name%>TypedViewMappings()
+		{
+			this.AddElementMapping("<%=typedView.Name%>TypedView", @"<%=mapping.MappedTarget.ContainingSchema.ParentCatalog.CatalogName%>", @"<%=mapping.MappedTarget.ContainingSchema.SchemaOwner%>", "<%=mapping.MappedTarget.Name%>", <%=typedView.GetAllMappableFields().Count()%>);
+<%
+		List<FieldElement> fields;
+		if(typedView.Fields.HasFieldOrdering && (mapping.MappedTarget.ElementType != ProjectElementMapTargetElementType.StoredProcedureResultset))
+		{
+			fields = typedView.Fields.ApplyFieldOrdering().ToList();
+		}
+		else
+		{
+			fields = mapping.FieldMappings.OrderBy(fm => fm.MappedTarget.OrdinalPosition).Select(fm => fm.MappedFieldInstance).Cast<FieldElement>().ToList();
+		}
+		int index = 0;
+		foreach(var field in fields)
+		{
+			var fieldMapping = mapping.GetFieldMappingOfField(field);
+			IProjectElementFieldMapTargetElement targetField = fieldMapping.MappedTarget;
+%>			this.AddElementFieldMapping("<%=typedView.Name%>TypedView", "<%=field.Name%>", "<%=targetField.FieldName%>", false, "<%=_executingGenerator.GetDBNETProviderTypeForDbType(targetField.TypeDefinition.DBType)%>", <%=GeneratorUtils.GetRealMaxLength(targetField.TypeDefinition.Length, targetField.TypeDefinition.DBTypeAsNETType)%>, <%=targetField.TypeDefinition.Precision%>, <%=targetField.TypeDefinition.Scale%>, false, string.Empty, <%if(fieldMapping.TypeConverterToUse==null) { %>null<%} else { %>new <%=GeneratorUtils.GetTypeConverterTypeName(_executingGenerator, fieldMapping)%>()<%}%>, typeof(<%=GeneratorUtils.GetDotNetTypeAsString(targetField.TypeDefinition.DBTypeAsNETType, _executingGenerator)%>), <%=index%>);
+<%			index++;
+		}
+%>		}
+
+<%	}
+
+	foreach(var tvfCall in tvfCallsToProcess)
+	{
+		var mapping = _currentProject.GetGroupableModelElementMapping(tvfCall, _executingGenerator.DriverID);
+		var returnElementMapping = _currentProject.GetGroupableModelElementMapping(tvfCall.ReturnElement, _executingGenerator.DriverID, true);
+%>
+		/// <summary>Inits <%=tvfCall.Name%>TvfCall's mappings</summary>
+		private void Init<%=tvfCall.Name%>TvfCallMappings()
+		{
+<%		var returnElementAsTypedView = tvfCall.ReturnElement as TypedViewDefinition;
+		if(returnElementAsTypedView!=null)
+		{
+%>			this.AddElementMapping("<%=returnElementAsTypedView.Name%>TypedView", "<%=tvfCall.Name%>");
+<%		}
+%>			this.AddTvfCallFieldPersistenceInfo(new TableValuedFunctionPersistenceInfo("<%=tvfCall.Name%>", @"<%=mapping.MappedTarget.ContainingSchema.ParentCatalog.CatalogName%>", @"<%=mapping.MappedTarget.ContainingSchema.SchemaOwner%>", "<%=mapping.MappedTarget.Name%>")<%
+		foreach(var parameterMapping in mapping.FieldMappings.OrderBy(fm=>fm.MappedTarget.OrdinalPosition))
+		{
+			IProjectElementFieldMapTargetElement targetParameter = parameterMapping.MappedTarget;
+%>
+						.AddParameter("<%=targetParameter.FieldName%>", "<%=_executingGenerator.GetDBNETProviderTypeForDbType(targetParameter.TypeDefinition.DBType)%>", <%=GeneratorUtils.GetRealMaxLength(targetParameter.TypeDefinition.Length, targetParameter.TypeDefinition.DBTypeAsNETType)%>, <%=GeneratorUtils.BooleanToKeyword(_executingGenerator, targetParameter.IsNullable)%>, <%=targetParameter.TypeDefinition.Precision%>, <%=targetParameter.TypeDefinition.Scale%>, typeof(<%=GeneratorUtils.GetDotNetTypeAsString(targetParameter.TypeDefinition.DBTypeAsNETType, _executingGenerator)%>), <%if(parameterMapping.TypeConverterToUse==null) { %>null<% } else { %>new <%=GeneratorUtils.GetTypeConverterTypeName(_executingGenerator, parameterMapping)%>()<% } %>)<%
+		}
+		foreach(var fieldMapping in returnElementMapping.FieldMappings.OrderBy(fm => fm.MappedTarget.OrdinalPosition))
+		{
+			var field = fieldMapping.MappedFieldInstance as FieldElement;
+			IProjectElementFieldMapTargetElement targetField = fieldMapping.MappedTarget;
+			var fieldName = inlineValueTypeFields && (fieldMapping.MappedFieldWrapper.Path.Count>1) ? fieldMapping.MappedFieldWrapper.PathAsStringForTargetFieldName
+																									 : field.Name;
+%>
+						.AddFieldPair("<%=fieldName%>", "<%=targetField.FieldName%>", typeof(<%=GeneratorUtils.GetDotNetTypeAsString(targetField.TypeDefinition.DBTypeAsNETType, _executingGenerator)%>), <%if(fieldMapping.TypeConverterToUse==null) { %>null<% } else { %>new <%=GeneratorUtils.GetTypeConverterTypeName(_executingGenerator, fieldMapping)%>()<% } %>)<%
+		}%>);
+		}
+		
+<%	}
+%>	}
+}

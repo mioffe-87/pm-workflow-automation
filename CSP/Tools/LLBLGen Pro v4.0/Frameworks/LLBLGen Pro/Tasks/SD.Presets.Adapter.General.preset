@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preset name="SD.Presets.Adapter.General" lastModifiedOn="2013-02-20T16:24:14.8707529+01:00" createdBy="" isSealed="false" xmlns="http://sd/llblgen/pro/presetElementDefinitions.xsd">
+  <supportedPlatforms>
+    <platform name=".NET 3.5" />
+    <platform name=".NET 4.0" />
+    <platform name=".NET 4.5" />
+  </supportedPlatforms>
+  <supportedFrameworks>
+    <framework name="LLBLGen Pro Runtime Framework" />
+  </supportedFrameworks>
+  <supportedTemplateGroups>
+    <templateGroup name="Adapter" />
+  </supportedTemplateGroups>
+  <taskPresets>
+    <taskGroupPreset name="SD.Tasks.Adapter.DatabaseGeneric" requiresCleanCache="false">
+      <taskPreset name="SD.Tasks.Adapter.DbGenericProjectDirectoryCreator" />
+      <taskPreset name="SD.Tasks.Adapter.EntityCollectionClassGenerator" />
+      <taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]" />
+          <parameter name="failWhenExistent" value="true" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.ConstantsEnumsFileGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.FieldInfoProviderClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\HelperClasses" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.TypeDefaultValueClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\HelperClasses" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.InheritanceInfoProviderClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\HelperClasses" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.LinqMetaDataClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\Linq" />
+          <parameter name="templateID" value="SD_LinqMetaDataAdapter" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.QuerySpecFactoryClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\FactoryClasses" />
+          <parameter name="templateID" value="SD_QueryFactoryAdapter" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.EntityRelationsClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\RelationClasses" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.DynamicRelationClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\RelationClasses" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Adapter.CommonBaseClassGenerator" />
+      <taskPreset name="SD.Tasks.Generic.EntityClassesGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\EntityClasses" />
+          <parameter name="templateID" value="SD_EntityAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.EntityFactoryClassesGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\FactoryClasses" />
+          <parameter name="templateID" value="SD_EntityFactoriesAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.EntityFieldFactoryClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\FactoryClasses" />
+          <parameter name="templateID" value="SD_EntityFieldFactoryAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.EntityFieldsFactoryClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\FactoryClasses" />
+          <parameter name="templateID" value="SD_EntityFieldsFactoryAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+		<taskPreset name="SD.Tasks.Generic.TvfCallFactoryClassGenerator">
+			<parameters>
+				<parameter name="destinationFolder" value="[dbgenericSubFolder]\FactoryClasses" />
+	            <parameter name="elementFilter" value="TvfCalls.Any()" />
+			</parameters>
+		</taskPreset>
+      <taskPreset name="SD.Tasks.Generic.ResultsetFieldsClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\HelperClasses" />
+          <parameter name="templateID" value="SD_ResultsetFieldsAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.FieldCreationClassesGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\HelperClasses" />
+          <parameter name="templateID" value="SD_FieldCreationClassesAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.TypedListClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\TypedListClasses" />
+          <parameter name="templateID" value="SD_TypedListAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.TypedViewClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\TypedViewClasses" />
+          <parameter name="templateID" value="SD_TypedViewAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Adapter.Webservices.WebserviceHelperClassGenerator" isEnabled="false" />
+      <taskPreset name="SD.Tasks.Generic.ValidatorClassesGenerator" isEnabled="false">
+        <parameters>
+          <parameter name="destinationFolder" value="[dbgenericSubFolder]\ValidatorClasses" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Adapter.VsNetDbGenericProjectFileCreator">
+        <parameters>
+          <parameter name="templateID" value="SD_VsNetAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+    </taskGroupPreset>
+    <taskGroupPreset name="SD.Tasks.Adapter.DatabaseSpecific" forSpecificDatabase="All" requiresCleanCache="false">
+      <taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+          <parameter name="failWhenExistent" value="true" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.PersistenceInfoProviderClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+          <parameter name="templateID" value="SD_PersistenceInfoProviderTemplate" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.AppConfigFileGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.ActionProceduresClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+          <parameter name="templateID" value="SD_ActionProceduresAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Generic.RetrievalProceduresClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+          <parameter name="templateID" value="SD_RetrievalProceduresAdapterTemplate" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Adapter.DataAccessAdapterClassGenerator">
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\[dbspecificSubFolder]" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Adapter.VsNetDbSpecificProjectFileCreator">
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]" />
+          <parameter name="filenameFormat" value="[projectName][dbspecificSuffix].[extension]proj" />
+          <parameter name="templateID" value="SD_VsNetDBSpecificAdapterTemplate" />
+          <parameter name="binRootFolder" value="[driverShortName]\[dbspecificSubFolder]\" />
+        </parameters>
+      </taskPreset>
+    </taskGroupPreset>
+    <taskGroupPreset name="SD.Tasks.Adapter.Webservices.SchemaImporter" requiresCleanCache="false">
+      <taskPreset name="SD.Tasks.Adapter.Webservices.SchemaImporter.SchemaImporterClassGenerator" isEnabled="false" />
+      <taskPreset name="SD.Tasks.Adapter.Webservices.SchemaImporter.ProjectCreator" isEnabled="false" />
+    </taskGroupPreset>
+  </taskPresets>
+</preset>

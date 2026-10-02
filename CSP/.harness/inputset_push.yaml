@@ -1,0 +1,15 @@
+inputSet:
+  identifier: push
+  name: Push
+  orgIdentifier: iad
+  projectIdentifier: csp
+  pipeline:
+    identifier: csp
+    properties:
+      ci:
+        codebase:
+          build:
+            type: branch
+            spec:
+              branch: <+trigger.branch>
+  object Object: pipeline.properties.ci.codebase

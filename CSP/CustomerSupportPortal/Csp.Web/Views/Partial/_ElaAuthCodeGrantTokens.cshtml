@@ -1,0 +1,54 @@
+﻿
+@model Csp.Web.DataTransferObjects.VmElaGrantTokenDto
+
+<script type="text/javascript">
+</script>
+
+<div id="@UniqueId.BeginTokenTransfer">
+@using (Ajax.BeginForm("BeginGrantTokenProcess", "SiteLicense", null, new AjaxOptions
+{
+    OnBegin = "SupportPortal.BlockUI();",
+    OnComplete = "SupportPortal.UnBlockUI();",
+    UpdateTargetId = (string) UniqueId.BeginTokenTransfer
+}))
+{
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.GrandParentAuthCode)
+    <div class="fieldset fieldset-upper" style="font-size: small">
+        <fieldset style="font-weight: bold;">
+            <div>Token Auth Code: @Model.GrandParentAuthCode</div>
+        </fieldset>
+        <fieldset style="font-weight: bold;">
+            Recipient
+        </fieldset>
+        <fieldset>
+            <div>
+                <div class="csp-label">
+                    @Html.LabelFor(x => x.DestinationEmail)
+                </div>
+                <div class="csp-field">
+                    @Html.TextBoxFor(x => x.DestinationEmail)
+                    <span class="csp-required">*</span>
+                    @Html.ValidationMessageFor(x => x.DestinationEmail)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.LabelFor(x => x.NotifyUser)
+                </div>
+                <div class="csp-field">
+                    @Html.CheckBoxFor(x => x.NotifyUser)
+                </div>
+            </div>
+        </fieldset>
+        <fieldset style="padding-top: 50px;">
+            <div class="csp-submit-container">
+                <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+                <input type="submit" class="k-button csp-submit" value="Submit"/>
+            </div>
+        </fieldset>
+    </div>
+}
+</div>

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" ?>
+<frameworkSettings xmlns="http://sd/llblgen/pro/frameworkSettingsDefinition.xsd">
+	<supportedFrameworks>
+		<framework name="Linq to Sql"/>
+	</supportedFrameworks>
+	<settingDefinitions>
+		<!-- project level settings -->
+		<settingDefinition name="PublicPropertyGettersAndSetters" category="General" default="true" type="bool" 
+						   description="This setting controls whether the generated entity, typed view and typed list classes have public getters and setters for properties, like the properties for entity fields. If set to false, the properties will be generated as private for entity and typed view classes and internal for typed list classes. The context class will always have public properties."
+						   targetElement="1"/>
+		<settingDefinition name="MappingsAsExternalXmlFile" category="General" default="true" type="bool" 
+						   description="This setting controls whether the mapping information for the various elements (entities, typed views, stored procedures) is generated into a separate XML file (true) or as attributes inside the generated code (false)."
+						   targetElement="1"/>
+		<settingDefinition name="PreferBinaryTypeOverByteArray" category="General" default="true" type="bool" 
+						   description="This setting controls whether the preferred type for binary types is 'System.Data.Linq.Binary' (true) or a byte array (false). System.Data.Linq.Binary has an advantage at runtime for change tracking and is therefore recommended."
+						   targetElement="1"/>
+
+		<!-- entity level settings -->
+		<settingDefinition name="EntityBaseClassName"
+						   description="The name of the base class for a generated entity class. The following macros are available: {$Name} for the entity name without group name, {$GroupName} for the name of the group the entity is in, {$FullName} for the group name plus entity name. Sub-types will always inherit from their super-type and not from the class specified."
+						   default="" category="General" type="string" targetElement="2" defaultSource="EntityBaseClassNameDefault" canBeEmpty="true"/>
+
+		<settingDefinition name="EmitKnownTypeAttributesForWCF" category="General" default="false" type="bool" 
+						   description="This setting controls whether the code generator will add KnownType attributes to the generated entity classes for all types used in the class (true) or not (false, default). KnownTypeAttribute is used for WCF serialization and should be used in combination with Data Contracts."
+						   defaultSource="EmitKnownTypeAttributesForWCFDefault" targetElement="2"/>
+		
+		<!-- field level settings -->
+
+		<!-- typed view level settings -->
+		<settingDefinition name="TypedViewRowBaseClassName"
+						   description="The name of the base class for a generated typed view class. The following macros are available: {$Name} for the typed view name without group name, {$GroupName} for the name of the group the typed view is in, {$FullName} for the group name plus typed view name."
+						   default="" category="General" type="string" targetElement="16" defaultSource="TypedViewRowBaseClassNameDefault" canBeEmpty="true"/>
+
+		<!-- typed list level settings -->
+		<settingDefinition name="TypedListRowBaseClassName"
+						   description="The name of the base class for a generated typed list class. The following macros are available: {$Name} for the typed list name without group name, {$GroupName} for the name of the group the typed list is in, {$FullName} for the group name plus typed list name."
+						   default="" category="General" type="string" targetElement="8" defaultSource="TypedListRowBaseClassNameDefault" canBeEmpty="true"/>
+		
+		<!-- defaults which control other settings -->
+		<settingDefinition name="EntityBaseClassNameDefault"
+						   description="This setting specifies the default value for the EntityBaseClassName setting of an entity."
+						   default="" category="Defaults" targetElement="1" type="string" canBeEmpty="true"/>
+
+		<settingDefinition name="TypedViewRowBaseClassNameDefault"
+						   description="This setting specifies the default value for the TypedViewRowBaseClassName setting of a typed view."
+						   default="" category="Defaults" targetElement="1" type="string" canBeEmpty="true"/>
+
+		<settingDefinition name="TypedListRowBaseClassNameDefault"
+						   description="This setting specifies the default value for the TypedListRowBaseClassName setting of a typed list."
+						   default="" category="Defaults" targetElement="1" type="string" canBeEmpty="true"/>
+		
+		<settingDefinition name="EmitKnownTypeAttributesForWCFDefault"
+						   description="This setting specifies the default value for the EmitKnownTypeAttributesForWCF setting of an entity."
+						   default="false" category="Defaults" targetElement="1" type="bool"/>		
+	</settingDefinitions>
+	<valueLists/>
+</frameworkSettings>

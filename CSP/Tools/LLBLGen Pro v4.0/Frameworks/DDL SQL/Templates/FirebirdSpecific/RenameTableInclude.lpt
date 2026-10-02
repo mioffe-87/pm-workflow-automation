@@ -1,0 +1,10 @@
+﻿<% // The table to rename is in the variable 'table'. The current schema is in the variable 'schema' %>
+-- Using System table manipulation due to the lack of a real alternative
+UPDATE RDB$RELATIONS
+	SET RDB$RELATION_NAME='<%=GetNewName(table)%>' 
+WHERE RDB$RELATION_NAME='<%=GetOriginalName(table)%>';
+
+UPDATE RDB$RELATION_FIELDS
+	SET RDB$RELATION_NAME='<%=GetNewName(table)%>' 
+WHERE RDB$RELATION_NAME='<%=GetOriginalName(table)%>' AND
+	  RDB$SYSTEM_FLAG=0;

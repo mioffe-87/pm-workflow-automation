@@ -1,0 +1,31 @@
+﻿@using Csp.Api.Logic
+@using Csp.Api.Services.Contracts
+@{
+    ViewBag.Title = "Session Expired";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    var returnUrl = System.Configuration.ConfigurationManager.AppSettings["DissimulateUrl"];
+}
+
+
+<div class="Csp-error">
+    <br />
+    <br />
+    <span>Session Expired</span>
+</div>
+<div>
+    <div class="alert alert-error">
+        Your session has expired. Please login again.
+
+        <br/><br/>
+        @{
+            var configValues = new ConfigValues();
+            var enableSsl = Convert.ToBoolean(configValues.GetAppSetting(AppSettings.EnableSsl));
+            var scheme = enableSsl ? "https" : "http";
+            
+            var loginurl = System.Configuration.ConfigurationManager.AppSettings["LoginServiceReturnUrl"] + "&TargetResource=" + scheme + "://" + Request.Url.Host +
+                           (Request.Url.IsDefaultPort ? string.Empty : ":" + Request.Url.Port) +
+                           Request.QueryString["returnurl"];
+        }
+        <a href="@loginurl">Click here</a> to login
+    </div>
+</div>

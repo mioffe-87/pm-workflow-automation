@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" ?>
+<platform xmlns="http://sd/llblgen/pro/platformDefinition.xsd" name =".NET 4.0" isDefault="true">
+	<aspects>
+		<aspect name ="supportsPartialClasses" value="true"/>
+		<aspect name ="supportsPartialMethods" value="true"/>
+	</aspects>
+</platform>

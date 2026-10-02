@@ -1,0 +1,115 @@
+﻿@using Csp.Web.DataTransferObjects
+@model DeviceLicensesDto
+
+@{ 
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+}
+
+<div id="containerActivateLicenseDiv">
+    @using (Ajax.BeginForm("ActivateLicense", "License", null, new AjaxOptions {
+
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();",
+        UpdateTargetId = "containerActivateLicenseDiv"
+    },
+        new { id = (string)UniqueId.activateLicenseForm })) {
+        @Html.HiddenFor(model => model.Eula.SelectedEulaId,new { id = "SelectedEulaId", name="SelectedEulaId" })
+        @Html.HiddenFor(model => model.ActivateLicense.SerialNumber)
+        @Html.AntiForgeryToken()
+
+        <div class="fieldset" id="@UniqueId.AuthCodeActivation">
+            <fieldset>
+                <legend>Auth-Code Activation
+                </legend>
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Authorization Code:")
+                    </div>
+
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.ActivateLicense.AuthorizationCode)
+                        @Html.TextBoxFor(model => model.ActivateLicense.AuthorizationCode, new { maxlength = "46" })
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        }
+
+</div>
+
+
+<!-- This has the partial put in a div as used for a window. 
+    The reason this is done here is that it is conditional. When the window
+    posts back for the ajax call to activate a license, the continue should automatically
+    pop up if the license is a replacement bundle, 4 hour RAM or is a site license. 
+    For reasons unknown this had problems doing it using the MVC helper classes. So it is 
+    done in this case using straight javascript. -->
+@if (Model.ActivateLicense.IsReplacementBundle || Model.ActivateLicense.Is4HourRma || Model.ActivateLicense.IsSiteLicense) {     
+    <div id="continueLicenseWindow" style="display: none">
+
+        @Html.Partial("../Partial/_ContinueLicenseActivation", Model.ActivateLicense)
+
+    </div>
+}
+
+<script>
+
+    @if (Model.ActivateLicense.ActivateSuccessful) {
+    <text>
+    $(function () {
+        SupportPortal.OnWindowClose(licenseGridId);
+    });
+    </text>
+    }
+
+    //This is used to remove the validation on a key up for remove validation to eliminate redundant calls to the server
+    $("[data-val-remote]").keyup(function () { return false });
+
+    //This is needed for unobtrusive validation to work on mvc postback ajax forms
+    $.validator.unobtrusive.parse("#@UniqueId.activateLicenseForm");
+
+    //Only include the code to cause the window to display on a post back where the license was determined to be a replacement bundle, 4 hour rma or site license. 
+    @if (Model.ActivateLicense.IsReplacementBundle || Model.ActivateLicense.Is4HourRma || Model.ActivateLicense.IsSiteLicense) {
+    
+        <text>
+    $("#continueLicenseWindow").kendoWindow({
+        width: "425px",
+        minHeight: "100px",
+        title: "Continue Activation",
+        modal: true,
+        draggable: true,
+        visible: false,
+        scrollable: false,
+        actions: [
+            "Close"
+        ],
+    });
+
+    @(UniqueId.activateLicense)openContinueLicenseWindow();
+        </text>
+        
+    }
+
+    function @(UniqueId.activateLicense)openContinueLicenseWindow() {
+        var window = $("#continueLicenseWindow");
+        window.data("kendoWindow").open();
+        window.data("kendoWindow").center();
+
+    }
+
+
+    $(function () {
+        /*
+        $("#chkAgree").click(function() {
+            if ($('#chkAgree').is(':checked')) {
+                $("#btnAddAuthCode").removeAttr("disabled");
+            } else {
+                $("#btnAddAuthCode").attr("disabled", "disabled");
+            }
+        });
+
+        $("#btnAddAuthCode").attr("disabled", "disabled");
+        */
+    });
+</script>

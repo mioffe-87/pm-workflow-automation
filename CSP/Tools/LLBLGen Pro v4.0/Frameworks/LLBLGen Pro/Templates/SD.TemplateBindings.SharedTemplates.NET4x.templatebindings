@@ -1,0 +1,25 @@
+﻿<?xml version="1.0"?>
+<templateBindings xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd" name="SD.TemplateBindings.SharedTemplates.NET4x"
+				  description ="Template bindings for the templates which are shared among all database types. Specific for .NET 4.x based platforms"
+				  precedenceLevel="10">
+	<supportedPlatforms>
+		<platform name=".NET 4.0"/>
+		<platform name=".NET 4.5"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="LLBLGen Pro Runtime Framework"/>
+	</supportedFrameworks>
+
+	<language name="C#">
+		<!-- Generic template bindings -->
+		<templateBinding templateID="SD_VsNetTemplate" filename="SharedTemplates\Net4.0\C#\vsnet2010ProjectFile.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_VsNetAdapterTemplate" filename="SharedTemplates\Net4.0\C#\vsnet2010ProjectFileAdapter.template" />
+		<templateBinding templateID="SD_VsNetDBSpecificAdapterTemplate" filename="SharedTemplates\Net4.0\C#\vsnet2010DBSpecificProjectFileAdapter.template" templateLanguage="TDL" />
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_VsNetTemplate" filename="SharedTemplates\Net4.0\VB.NET\vsnet2010ProjectFile.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_VsNetAdapterTemplate" filename="SharedTemplates\Net4.0\VB.NET\vsnet2010ProjectFileAdapter.template" />
+		<templateBinding templateID="SD_VsNetDBSpecificAdapterTemplate" filename="SharedTemplates\Net4.0\VB.NET\vsnet2010DBSpecificProjectFileAdapter.template" templateLanguage="TDL" />
+	</language>
+</templateBindings>
+

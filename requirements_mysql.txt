@@ -1,0 +1,16 @@
+# MySQL Connection Requirements
+# Install with: pip install -r requirements_mysql.txt
+
+# Core MySQL drivers (choose one or install both)
+mysql-connector-python==8.2.0      # Official MySQL connector
+pymysql==1.1.0                     # Pure Python MySQL client
+
+# Data processing
+pandas>=2.0.0
+sqlalchemy>=2.0.0                  # For ORM and connection pooling
+
+# Optional: for .env file support
+python-dotenv>=1.0.0
+
+# Optional: for connection pooling
+DBUtils>=3.0.0

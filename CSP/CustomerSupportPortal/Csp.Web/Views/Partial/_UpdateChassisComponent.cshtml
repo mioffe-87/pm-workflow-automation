@@ -1,0 +1,196 @@
+﻿@model  Csp.Web.DataTransferObjects.ChassisComponentDto
+@using Csp.Api.HelperClasses
+@using Kendo.Mvc.UI
+
+
+@{ 
+    Layout = null;
+}
+@{ 
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+}
+<div id="@UniqueId.containerLineCardEditDiv">
+    @using (Ajax.BeginForm("UpdateComponent", "Device", null, new AjaxOptions
+    {
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();",
+        UpdateTargetId = (string)UniqueId.containerLineCardEditDiv
+    }, new { id = (string)UniqueId.LineCardForm }))
+    {
+        
+        @Html.AntiForgeryToken()
+
+        <div class="fieldset-upper">
+            <fieldset>
+                @Html.HiddenFor(model => model.ChassisComponent.PartMasterId)
+                @Html.HiddenFor(model => model.ChassisComponent.PartNumber)
+                @Html.HiddenFor(model => model.ChassisComponent.ActualQuantity)
+                @Html.HiddenFor(model => model.ChassisComponent.SupportAccountId)
+                @Html.HiddenFor(model => model.ChassisComponent.RegisteredQuantity)
+                @Html.HiddenFor(model => model.ChassisComponent.OldChassisSerialNumber)
+                <div class="csp-label">
+                    @Html.Label("Component: ")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.ChassisComponent.PartNumber)
+                </div>
+
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Serial Number: ")
+                    </div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.ChassisComponent.ChassisSerialNumber)
+                        @Html.TextBoxFor(model => model.ChassisComponent.ChassisSerialNumber, new { @id = (string)UniqueId.ChassisSerialNumber })
+                    </div>
+                </div>
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Quantity: ")
+                    </div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.ChassisComponent.Quantity)
+                        @Html.EditorFor(model => model.ChassisComponent.Quantity, new { maxlength = 46 })
+                        <span class="required">*</span>
+
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    <div id="divLineCard" class="fieldset-upper">
+        <fieldset>
+            <legend>LOCATION INFORMATION <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 7);"></i></span></legend>
+            <div class="innernotification">
+                (Inaccurate location information may impede timely RMA turnaround, in the event of hardware replacement.)
+            </div>
+            <div>
+                If you have a 4 Hour RMA support contract for this product: <br />
+                4 Hour Premium Support operates within certain geographies only. If you relocate<br /> your device from the originally-approved location, please open a support case at <br />https://supportcases.paloaltonetworks.com to validate your new location.
+            </div>
+            
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Address 1:")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.ChassisComponent.Address1)
+                    @Html.TextBoxFor(model => model.ChassisComponent.Address1, new { id = (string)UniqueId.Address1, maxlength = 256 })
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+                    
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Address 2:")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.ChassisComponent.Address2)
+                    @Html.TextBoxFor(model => model.ChassisComponent.Address2, new {id = (string) UniqueId.Address2, maxlength = 256})
+                </div>
+            </div>
+
+            <div>
+                <div class="csp-label">
+                    @Html.Label("City: ")
+                </div>
+                <div class="csp-field" id="div_City">
+                    @Html.ValidationMessageFor(model => model.ChassisComponent.City)
+                        @Html.TextBoxFor(model => model.ChassisComponent.City, new { maxlength = 101, id = (string)UniqueId.CityId })
+                        <span class="required">*</span>
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Postal Code: ")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.ChassisComponent.PostalCode)
+                        @Html.TextBoxFor(model => model.ChassisComponent.PostalCode, new { maxlength = 15, id = (string)UniqueId.PostalCodeId })
+                        <span class="required">*</span>
+                </div>
+            </div>
+
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Country: ")
+                </div>
+                <div class="csp-field" id="div_Country">
+                    <input type="hidden" id="hdnCountryName" name="hdnCountryName" value="@Model.ChassisComponent.CountryName" />
+                    @Html.ValidationMessageFor(model => Model.ChassisComponent.CountryId)
+                        @(Html.Kendo().DropDownListFor(model => Model.ChassisComponent.CountryId)
+                                           .HtmlAttributes(new { @class = "k-dropdown",id = (string)UniqueId.CountryId  })
+                                          .OptionLabel(Constants.DropDownCountrySelect)
+                                          .DataValueField("Id")
+                                          .DataTextField("Name")
+                                          .DataSource(source => source.Read(read =>
+                                          {
+                                              if (read != null)
+                                              {
+                                                  read.Action("GetCountries", "Base");
+                                              }
+                                          })).Value(Model.ChassisComponent.CountryId.ToString())
+
+                                          )
+                        <span class="required">*</span>
+
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Region/State: ")
+                </div>
+
+                <div class="csp-field" id="div_Region">
+                    <div>
+                        @Html.ValidationMessageFor(model => Model.ChassisComponent.Region)
+                            @Html.TextBoxFor(model => Model.ChassisComponent.Region, new { maxlength = 100, id = (string)UniqueId.Region  })
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+    </div>
+
+    if (ViewBag.HideButton != true)
+        { 
+        <div class="fieldset">
+            <div class="csp-submit-container">
+                <span class="csp-required-text"><span class="required">*</span>@Constants.RequiredField</span>
+                <input type="submit" id="@UniqueId.okButtonId" value="Update" class="k-button csp-submit" />&nbsp;&nbsp;&nbsp;
+            </div>
+        </div>
+    }
+    }
+
+
+
+
+    <script>
+        $.validator.unobtrusive.parse("#@UniqueId.containerLineCardEditDiv");
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+        var chassisSerialNumber = $("#@UniqueId.ChassisSerialNumber").val();
+        $("#@UniqueId.ChassisSerialNumber").blur(function () {
+            if (chassisSerialNumber != $(this).val()) {
+                chassisSerialNumber = $(this).val();
+                getLocation(chassisSerialNumber);
+            }
+        });
+
+        function getLocation(chassisSerialNumber) {
+            $.ajax({
+                url: "/Device/GetChassisLocation/",
+                data: { chassisSerialNumber: chassisSerialNumber }, success: function (location) {
+                    if (location != null) {
+                        $("#@UniqueId.Address1").val(location.Address1);
+                        $("#@UniqueId.Address2").val(location.Address2);
+                        $("#@UniqueId.PostalCodeId").val(location.PostalCode);
+                        $("#@UniqueId.CityId").val(location.City);
+                        $("#@UniqueId.Region").val(location.Region);
+                        $('#@UniqueId.CountryId').data("kendoDropDownList").value(location.CountryId);
+                    }
+                },
+                error: function () {
+                }
+            });
+        }
+    </script>

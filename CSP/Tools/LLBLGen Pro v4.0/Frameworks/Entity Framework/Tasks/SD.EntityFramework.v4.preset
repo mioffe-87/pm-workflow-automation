@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preset name="SD.EntityFramework.v4 (EF v1 style)" lastModifiedOn="2010-04-13T17:06:27.4657865+02:00" createdBy="FB" isSealed="false" xmlns="http://sd/llblgen/pro/presetElementDefinitions.xsd">
+  <supportedPlatforms>
+    <platform name=".NET 4.0" />
+  </supportedPlatforms>
+  <supportedTemplateGroups>
+    <templateGroup name="General" />
+  </supportedTemplateGroups>
+  <supportedFrameworks>
+    <framework name="Entity Framework v4" />
+  </supportedFrameworks>
+  <taskPresets>
+    <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="Generate Entity Framework Domain model using EntityObject like in EF v1.0" 
+					 forSpecificDatabase="All" requiresCleanCache="false">
+      <performRule isEnabled="false" settingName="" operator="0" operand="" />
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate AssemblyInfo class">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\Properties" />
+          <parameter name="filenameFormat" value="AssemblyInfo.[extension]" />
+          <parameter name="templateID" value="SD_EF_AssemblyInfo" />
+          <parameter name="failWhenExistent" value="true" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate Entity Classes">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\EntityClasses" />
+          <parameter name="templateID" value="SD_EF_Entity" />
+          <parameter name="emitType" value="allEntities" />
+          <parameter name="templateAssemblySourceFileFormat" value="" />
+			<parameter name="elementFilter" value="!IsPureManyToManyIntermediate"/>
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate ValueType Classes">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\ValueTypeClasses" />
+          <parameter name="templateID" value="SD_EF_ValueType" />
+          <parameter name="emitType" value="allValueTypes" />
+          <parameter name="templateAssemblySourceFileFormat" value="" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate TypedListRow Classes">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\TypedListClasses" />
+  		  <parameter name="filenameFormat" value="[elementName]TypedListRow.[extension]"/>
+          <parameter name="templateID" value="SD_EF_TypedList" />
+          <parameter name="emitType" value="allTypedLists" />
+          <parameter name="templateAssemblySourceFileFormat" value="" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate TypedView Classes">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\TypedViewClasses" />
+   		  <parameter name="filenameFormat" value="[elementName]TypedViewRow.[extension]"/>
+         <parameter name="templateID" value="SD_EF_TypedView" />
+          <parameter name="emitType" value="allTypedViews" />
+          <parameter name="templateAssemblySourceFileFormat" value="" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate CommonEntityBase Class">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\EntityClasses" />
+          <parameter name="filenameFormat" value="CommonEntityBase.[extension]" />
+          <parameter name="templateID" value="SD_EF_CommonEntityBase" />
+		  <parameter name="elementFilter" value="Entities.Count>0"/>
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate CommonValueTypeBase Class">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\ValueTypeClasses" />
+          <parameter name="filenameFormat" value="CommonValueTypeBase.[extension]" />
+          <parameter name="templateID" value="SD_EF_CommonValueTypeBase" />
+		  <parameter name="elementFilter" value="ValueTypes.Count>0"/>
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate CommonTypedViewRowBase Class">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]\TypedViewClasses" />
+          <parameter name="filenameFormat" value="CommonTypedViewRowBase.[extension]" />
+          <parameter name="templateID" value="SD_EF_CommonTypedViewBase" />
+		  <parameter name="elementFilter" value="TypedViews.Count>0"/>
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate Context Class">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]" />
+          <parameter name="filenameFormat" value="[containerName]DataContext.[extension]" />
+          <parameter name="templateID" value="SD_EF_Context" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate app.config file">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]" />
+          <parameter name="filenameFormat" value="app.config" />
+          <parameter name="templateID" value="SD_EF_AppConfig" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate Edmx File">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]" />
+          <parameter name="filenameFormat" value="[containerName].edmx" />
+          <parameter name="templateID" value="SD_EF_Edmx" />
+          <parameter name="templateAssemblySourceFileFormat" value="" />
+        </parameters>
+      </taskPreset>
+      <taskPreset name="SD.Tasks.Base.GenerateVSNetProject" displayName="Generate VS.NET project file">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <parameters>
+          <parameter name="destinationFolder" value="[driverShortName]" />
+          <parameter name="templateID" value="SD_EF_VsNet" />
+          <parameter name="buildActionPerExtension" value=".config;None|.edmx;EntityDeploy|;Compile" />
+		  <parameter name="filenameFormat" value="[projectName].[extension]proj" />
+        </parameters>
+      </taskPreset>
+    </taskGroupPreset>
+  </taskPresets>
+</preset>

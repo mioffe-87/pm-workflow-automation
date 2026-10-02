@@ -1,0 +1,45 @@
+﻿
+@model Csp.Web.DataTransferObjects.MasterAuthCodeInfo
+
+
+<div class="csp-content-sections-parent">
+    <div class="horizontal-form-element" style="width: 360px">
+        <div class="fieldset">
+        <fieldset>
+            <legend style="font-weight: bold;font-size: larger">DEVICE INFORMATION</legend>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Serial Number: ")
+                </div>
+                <div class="csp-field" style="font-size: smaller">
+                    @Html.DisplayFor(model => model.SerialNumber)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Model: ")
+                </div>
+                <div class="csp-field" style="font-size: smaller">
+                    @Html.DisplayFor(model => model.ModelName)
+                </div>
+            </div>
+            <div style="font-weight: bold">
+                <div class="csp-label">
+                    @Html.Label("Master Auth Code: ")
+                </div>
+                <div class="csp-field" style="font-size: smaller">
+                    @Html.DisplayFor(model => model.MasterAuthCode)
+                </div>
+            </div>
+            <div style="font-weight: bold">
+                <div class="csp-label">
+                    @Html.Label("Child Auth Code: ")
+                </div>
+                <div class="csp-field" style="font-size: smaller">
+                    @Html.DisplayFor(model => model.AuthCode)
+                </div>
+            </div>
+        </fieldset>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,197 @@
+﻿<?xml version="1.0"?>
+<frameworkSettings xmlns="http://sd/llblgen/pro/frameworkSettingsDefinition.xsd">
+	<supportedFrameworks>
+		<framework name="NHibernate"/>
+	</supportedFrameworks>
+	<settingDefinitions>
+		<!-- project level settings -->
+		<settingDefinition name="GenerateGuidPKValuesAsCOMBs" description="The method to use for generating guids to be used as primary key value. True (default) means: guid.comb, false means: guid" 
+							default="true" category="General" type="bool" targetElement="1"/>
+		<settingDefinition name="SetInverseTrueOnCollectionMappings" description="This setting controls whether 'inverse=true' is appended to navigator mappings which represent a set/collection" default="true" category="General" 
+							type="bool" targetElement="1"/>
+		<settingDefinition name="EmitSchemaNameInMappings" description="This setting controls whether the schema name (if applicable) of the target table/view is specified in the mappings (default, true) or not (false). Setting is ignored if 'EmitCatalogNameInMappings' is set to true. If in doubt, leave this setting to true."
+							default="true" category="General" type="bool" targetElement="1"/>
+		<settingDefinition name="EmitCatalogNameInMappings" description="This setting controls whether the catalog name (if applicable) of the target table/view is specified in the mappings (default, true) or not (false). If there's just one catalog in use in the project, no catalog name is emitted in the mappings, regardless of this setting."
+							default="true" category="General" type="bool" targetElement="1"/>
+		<settingDefinition name="BytecodeProxyFactory" description="The bytecode proxy factory to use for the hibernate.cfg.xml file. The chosen proxy factory, if different from the 'BuiltIn' factory, has to be referenced in the 'Persistence' VS.NET project which contains the hibernate.cfg.xml file generated. 'BuiltIn' is the factory built into NHibernate v3.2 (and higher). Choosing 'BuiltIn' therefore requires NHibernate v3.2 or higher."
+							category="General" type="string" targetElement="1" source="BytecodeProviders" default="BuiltIn" />
+		<settingDefinition name="InitializeCollectionFields" description="This setting specifies whether backing fields for collection navigators are initialized with an empty instance (List, HashedSet) (true, default) or not (false)."
+							category="General" type="bool" targetElement="1" default="true"/>
+				
+		<!-- entity level settings -->
+		<settingDefinition name="EntityBaseClassName" description="The name of the base class for a generated entity class. The following macros are available: {$Name} for the entity name without group name, {$GroupName} for the name of the group the entity is in, {$FullName} for the group name plus entity name. Sub-types will always inherit from their super-type and not from the class specified." 
+							default="" category="General" type="string" targetElement="2" defaultSource="EntityBaseClassNameDefault" canBeEmpty="true"/>
+		<settingDefinition name="UseDynamicUpdates" targetElement="2" description="This setting specifies the value for the 'dynamic-update' mapping element. Default is false."
+							category="General" defaultSource="UseDynamicUpdatesForEntitiesDefault" type="bool" default="false" canBeEmpty="false"/>
+		<settingDefinition name="UseDynamicInserts" targetElement="2" description="This setting specifies the value for the 'dynamic-insert' mapping element. Default is false."
+							category="General" type="bool" defaultSource="UseDynamicInsertsForEntitiesDefault" default="false" canBeEmpty="false"/>
+		<settingDefinition name="UseExplicitPolymorphism" targetElement="2" description="This setting specifies whether implicit polymorphism (false, default) or explicit polymorphism (true) should be used for this entity. Set this setting to true for entities which have to be fetched without the subclasses they might define."
+							category="General" type="bool" default="false" canBeEmpty="false"/>
+		<settingDefinition name="UseLazyLoading" description="This setting specifies whether lazy loading (true, default) should be used or not, when the entity is on the 'one' side of a relationship."
+							category="General" type="bool" targetElement="2" defaultSource="UseLazyLoadingForSingleEntityNavigatorsDefault" default="true" canBeEmpty="false"/>
+		<settingDefinition name="OptimisticLockType" description="This setting specifies the optimistic-lock value for this entity. When choosing 'version' (the default is 'none'), be sure you select a field in this entity for versioning. Ignored on subtypes"
+							category="General" type="string" targetElement="2" default="none" canBeEmpty="false" defaultSource="EntityOptimisticLockTypeDefault" source="OptimisticLockTypes"/>
+		
+		<!-- navigator level settings -->
+		<settingDefinition name="EmitNavigatorSetter" description="This setting controls whether the code generator should emit setters in properties representing navigators (true, default) or not (false)"
+							category="General" targetElement="768" defaultSource="EmitNavigatorSetterDefault" default="true" type="bool" canBeEmpty="false"/>
+
+		<!-- navigator single value level settings-->
+		<settingDefinition name="FetchStrategy" description="This setting specifies whether the collection represented by this navigator should be fetched using a new 'select' (default) or by an outer-join ('join'). Although 'select' is the default, it might cause SELECT N+1 problems. Join always fetches the related data."
+							category="General" type="string" targetElement="256" defaultSource="FetchStrategyForSingleEntityNavigatorsDefault" canBeEmpty="false"
+						    default="select" source="FetchTypes" />
+		<settingDefinition name="SingleEntityNavigatorCascadeType" description="The cascade value to set for this navigator" category="General" type="string" 
+							targetElement="256" source="SingleEntityCascadeTypes" canBeEmpty="false" defaultSource="SingleEntityNavigatorCascadeTypeDefault" default="all"/>
+
+		
+		<!-- navigatorcollection level settings-->
+		<settingDefinition name="CollectionType" description="This setting specifies the collection type to use for navigators which represent a set (e.g. Customer.Orders)"
+							category="General" type="string" targetElement="512" defaultSource="CollectionTypeDefault" canBeEmpty="false"
+						    default="set" source="CollectionTypes" />
+		<settingDefinition name="UseLazyLoading" description="This setting specifies whether lazy loading (true, default) should be used or eager loading (false)"
+							category="General" type="bool" targetElement="512" defaultSource="UseLazyLoadingForCollectionNavigatorsDefault" default="false" canBeEmpty="false"/>
+		<settingDefinition name="FetchStrategy" description="This setting specifies whether the collection represented by this navigator should be fetched using a new 'select' (default) or by an outer-join ('join'). Although 'select' is the default, it might cause SELECT N+1 problems. Join always fetches the related data."
+							category="General" type="string" targetElement="512" defaultSource="FetchStrategyForCollectionNavigatorsDefault" canBeEmpty="false"
+						    default="select" source="FetchTypes" />
+		<settingDefinition name="CollectionNavigatorCascadeType" description="The cascade value to set for this navigator" 	category="General" type="string" 
+							targetElement="512" source="CollectionCascadeTypes" canBeEmpty="false" defaultSource="CollectionNavigatorCascadeTypeDefault" default="all-delete-orphan"/>
+
+		<!-- field level settings -->
+		<settingDefinition name="PropertyAccessModifier" description="Setting which controls the access modifier for the generated property" default="" category="General" 
+							type="string" targetElement="12096" defaultSource="PropertyAccessModifierDefault" canBeEmpty="false" 
+							source="AccessModifierSettings"/>
+		<settingDefinition name="EmitFieldSetter" description="This setting controls whether the code generator should emit setters in properties representing fields (true, default) or not (false)"
+							category="General" targetElement="64" defaultSource="EmitFieldSetterDefault" default="true" type="bool" canBeEmpty="false"/>
+		<settingDefinition name="UseAsVersionField" description="This setting controls whether this field should be used as a version field (true) or not (false, default). Only one version field per entity, all others are ignored for versioning. When using a field for versioning, be sure to set the OptimisticLockType for the entity to 'version' (default)."
+							category="General" targetElement="64" default="false" type="bool" canBeEmpty="false"/>
+
+		<settingDefinition name="UseCustomGenerator" targetElement="64" description="Setting which controls for Identifying numeric fields if the Custom generator specified in the 'output setting values' of the project properties has to be used (true) or not (false, default). If a sequence is specified for the field, it will take precedence over the custom generator. Ignored on non-identifying fields and identifying fields which have a non-numeric type."
+							category="General, custom generator" default="false" type="bool" canBeEmpty="false"/>
+		<settingDefinition name="CustomGeneratorTypeToUse" source="CustomGeneratorTypes" description="The custom generator type to use for entity fields which have their UseCustomGenerator setting set to true. 'seqhilo' is only available on RDBMSs which support Oracle style sequences (DB2, Postgresql, Oracle). If 'seqhilo' is chosen and a database type is used which doesn't support Oracle-style sequences, 'hilo' is used and the settings related to 'hilo'."
+							default="hilo" category="General, custom generator" targetElement="64" type="string" canBeEmpty="false" defaultSource="CustomGeneratorTypeToUseDefault"/>
+		<settingDefinition name="CustomGeneratorIntervalSize" description="The size of the set of values to obtain from the generator. Setting this to 0 or 1 makes using the generator inefficient. When setting it to -1, the interval size isn't emitted into the output and the NHibernate default is used (32K)."
+							default="-1" category="General, custom generator" targetElement="64" type="int" canBeEmpty="false" defaultSource="CustomGeneratorIntervalSizeDefault"/>
+		<settingDefinition name="CustomGeneratorHiLoTable" targetElement="64" description="The table to use by NHibernate for storing the custom generator values. Used when CustomGeneratorToUse is set to 'hilo'. If you use a custom generator for a field, be sure the table specified exists and has at least one row. Don't use name wrapping characters like [], these are added automatically. Name is considered case sensitive."
+							default="hibernate_unique_key" canBeEmpty="true" type="string" category="General, custom generator, HiLo" defaultSource="CustomGeneratorHiLoTableDefault"/>
+		<settingDefinition name="CustomGeneratorHiLoTableSchema" targetElement="64" description="If specified, the schema in which the table specified in CustomGeneratorHiLoTable is located. Used when CustomGeneratorToUse is set to 'hilo'. If not specified, the schema of the target of this entity is used as the schema for the table specification. Don't use name wrapping characters like [], these are added automatically. Name is considered case sensitive."
+							default="" canBeEmpty="true" type="string" category="General, custom generator, HiLo" defaultSource="CustomGeneratorHiLoTableSchemaDefault"/>
+		<settingDefinition name="CustomGeneratorHiLoField" targetElement="64" description="The field in the table specified in the setting CustomGeneratorHiLoTable which contains the value for the custom generator. Used when CustomGeneratorToUse is set to 'hilo'."
+							default="next_hi" canBeEmpty="true" type="string" category="General, custom generator, HiLo" defaultSource="CustomGeneratorHiLoFieldDefault"/>
+		<settingDefinition name="CustomGeneratorSeqHiLoSequence" targetElement="64" description="The sequence name to use by NHibernate for storing the custom generator values. Used when CustomGeneratorToUse is set to 'seqhilo'. 'seqhilo' is only supported on databases with sequences, e.g. Oracle, DB2 and Postgresql. Don't use name wrapping characters like [], these are added automatically. Name is considered case sensitive."
+							default="SEQ_HiLo" canBeEmpty="true" type="string" category="General, custom generator, Sequenced HiLo" defaultSource="CustomGeneratorSeqHiLoSequenceDefault"/>
+		<settingDefinition name="CustomGeneratorSeqHiLoSequenceSchema" targetElement="64" description="If specified, the schema in which the sequence specified in CustomGeneratorSeqHiLoSequence is located. Used when CustomGeneratorToUse is set to 'seqhilo'. If not specified, the schema of the target of this entity is used as the schema for the sequence specification. Don't use name wrapping characters like [], these are added automatically. Name is considered case sensitive."
+							default="" canBeEmpty="true" type="string" category="General, custom generator, Sequenced HiLo" defaultSource="CustomGeneratorSeqHiLoSequenceSchemaDefault"/>
+		
+		<!-- typed view level settings -->
+		<settingDefinition name="TypedViewBaseClassName" description="The name of the base class for a generated typed view class. The following macros are available: {$Name} for the typed view name without group name, {$GroupName} for the name of the group the typed view is in, {$FullName} for the group name plus typed view name." 
+							default="" category="General" type="string" targetElement="16" defaultSource="TypedViewBaseClassNameDefault" canBeEmpty="true"/>
+				
+		<!-- typed list level settings -->
+		<settingDefinition name="TypedListBaseClassName" description="The name of the base class for a generated typed list class. The following macros are available: {$Name} for the typed list name without group name, {$GroupName} for the name of the group the typed list is in, {$FullName} for the group name plus typed list name." 
+							default="" category="General" type="string" targetElement="8" defaultSource="TypedListBaseClassNameDefault" canBeEmpty="true"/>
+		
+		
+		<!-- value type level settings -->
+		<settingDefinition name="ValueTypeBaseClassName" description="The name of the base class for a generated value type class. The following macros are available: {$Name} for the value type name without group name, {$GroupName} for the name of the group the value type is in, {$FullName} for the group name plus value typename" 
+							default="" category="General" type="string" targetElement="4" defaultSource="ValueTypeBaseClassNameDefault" canBeEmpty="true" />
+		
+		
+		<!-- defaults which control other settings -->
+		<settingDefinition name="EntityBaseClassNameDefault" description="This setting specifies the default value for the EntityBaseClassName setting of an entity." 
+							default="" category="Defaults, code" targetElement="1" type="string" canBeEmpty="true"/>
+		<settingDefinition name="ValueTypeBaseClassNameDefault" description="This setting specifies the default value for the ValueTypeBaseClassName setting of a value type." 
+							default="" category="Defaults, code" targetElement="1" type="string" canBeEmpty="true"/>
+		<settingDefinition name="TypedViewBaseClassNameDefault" description="This setting specifies the default value for the TypedViewBaseClassName setting of a typed view." 
+							default="" category="Defaults, code" targetElement="1" type="string" canBeEmpty="true"/>
+		<settingDefinition name="TypedListBaseClassNameDefault" description="This setting specifies the default value for the TypedListBaseClassName setting of a typed view." 
+							default="" category="Defaults, code" targetElement="1" type="string" canBeEmpty="true"/>
+		<settingDefinition name="PropertyAccessModifierDefault" description="This setting specifies the default property access modifier for properties representing fields, navigators and fields mapped onto related fields" 
+							default="public" category="Defaults, code" targetElement="1" type="string" canBeEmpty="false" source="AccessModifierSettings"/>
+		<settingDefinition name="CollectionTypeDefault" description="This setting specifies the default collection type to use for navigators which represent a set (e.g. Customer.Orders)"
+							default="set" category="Defaults, code" targetElement="1" type="string" canBeEmpty="false" source="CollectionTypes"/>						    
+		<settingDefinition name="EmitNavigatorSetterDefault" description="This setting specifies the default for the EmitNavigatorSetter setting for navigators, whether the code generator should emit setters in properties representing navigators (true, default) or not (false)"
+							category="Defaults, code" targetElement="1" type="bool" default="true" canBeEmpty="false"/>
+		<settingDefinition name="EmitFieldSetterDefault" description="This setting specifies the default for the EmitFieldSetter setting for fields, whether the code generator should emit setters in properties representing fields (true, default) or not (false)"
+							category="Defaults, code" targetElement="1" type="bool" default="true" canBeEmpty="false"/>
+		<settingDefinition name="UseDynamicUpdatesForEntitiesDefault" targetElement="1" description="This setting specifies the default for the UseDynamicUpdates setting for entities, which controls the dynamic-update mapping element for entity classes."
+							category="Defaults, mapping" type="bool" default="false" canBeEmpty="false"/>
+		<settingDefinition name="UseDynamicInsertsForEntitiesDefault" targetElement="1" description="This setting specifies the default for the UseDynamicInserts setting for entities, which controls the dynamic-inert mapping element for entity classes."
+							category="Defaults, mapping" type="bool" default="false" canBeEmpty="false"/>
+		<settingDefinition name="UseLazyLoadingForCollectionNavigatorsDefault" targetElement="1" description="This setting specifies the default for the UseLazyLoading setting for navigators which represent a set/collection. Default is true"
+							category="Defaults, mapping, navigators" type="bool" default="true" canBeEmpty="false"/>
+		<settingDefinition name="UseLazyLoadingForSingleEntityNavigatorsDefault" targetElement="1" description="This setting specifies the default for the UseLazyLoading setting for navigators which represent a single entity. Default is true"
+							category="Defaults, mapping, navigators" type="bool" default="true" canBeEmpty="false"/>
+		<settingDefinition name="FetchStrategyForCollectionNavigatorsDefault" targetElement="1" description="This setting specifies the default for the FetchStrategy setting for navigators which represent a set/collection. Default is select"
+							category="Defaults, mapping, navigators" type="string" default="select" canBeEmpty="false" source="FetchTypes"/>
+		<settingDefinition name="FetchStrategyForSingleEntityNavigatorsDefault" targetElement="1" description="This setting specifies the default for the FetchStrategy setting for navigators which represent a single entity. Default is select"
+							category="Defaults, mapping, navigators" type="string" default="select" canBeEmpty="false" source="FetchTypes"/>
+		<settingDefinition name="EntityOptimisticLockTypeDefault" targetElement="1" description="This setting specifies the default for the OptimisticLockType setting for entities. Default is none"
+							category="Defaults, mapping" type="string" default="none" canBeEmpty="false" source="OptimisticLockTypes"/>
+		<settingDefinition name="CollectionNavigatorCascadeTypeDefault" description="The cascade attribute to set for navigator mappings which represent a set/collection" 
+							category="Defaults, mapping, navigators" type="string" targetElement="1" source="CollectionCascadeTypes" default="all-delete-orphan"/>
+		<settingDefinition name="SingleEntityNavigatorCascadeTypeDefault" description="The cascade attribute to set for navigator mappings which represent a single entity" 
+							category="Defaults, mapping, navigators" type="string" targetElement="1" source="SingleEntityCascadeTypes" default="all"/>
+
+		<settingDefinition name="CustomGeneratorTypeToUseDefault" source="CustomGeneratorTypes" description="This setting specifies the default for the CustomGeneratorTypeToUse setting of entity fields. It's the custom generator type to use for entity fields which have their UseCustomGenerator setting set to true. 'seqhilo' is only available on RDBMSs which support Oracle style sequences (DB2, Postgresql, Oracle). If 'seqhilo' is chosen and a database type is used which doesn't support Oracle-style sequences, 'hilo' is used and the settings related to 'hilo'."
+							default="hilo" category="Defaults, mapping, custom generator" targetElement="1" type="string" canBeEmpty="false"/>
+		<settingDefinition name="CustomGeneratorIntervalSizeDefault" description="This setting specifies the default for the CustomGeneratorIntervalSize setting of entity fields. It's the size of the set of values to obtain from the generator. Setting this to 0 or 1 makes using the generator inefficient. When setting it to -1, the interval size isn't emitted into the output and the NHibernate default is used (32K)."
+							default="-1" category="Defaults, mapping, custom generator" targetElement="1" type="int" canBeEmpty="false"/>
+		<settingDefinition name="CustomGeneratorHiLoTableDefault" targetElement="1" description="This setting specifies the default for the CustomGeneratorHiLoTable setting of entity fields. It's the table to use by NHibernate for storing the custom generator values. Used when CustomGeneratorToUse is set to 'hilo'. If you use a custom generator for a field, be sure the table specified exists and has at least one row. Don't use name wrapping characters like [], these are added automatically. Name is considered case sensitive."
+							default="hibernate_unique_key" canBeEmpty="true" type="string" category="Defaults, mapping, custom generator, HiLo"/>
+		<settingDefinition name="CustomGeneratorHiLoTableSchemaDefault" targetElement="1" description="This setting specifies the default for the CustomGeneratorHiLoTableSchema setting of entity fields. If specified, it's the schema in which the table specified in CustomGeneratorHiLoTable is located. Used when CustomGeneratorToUse is set to 'hilo'. If not specified, the schema of the target of the entity with the field using the custom generator is used as the schema for the table specification. Don't use name wrapping characters like [], these are added automatically. Name is considered case sensitive."
+							default="" canBeEmpty="true" type="string" category="Defaults, mapping, custom generator, HiLo"/>
+		<settingDefinition name="CustomGeneratorHiLoFieldDefault" targetElement="1" description="This setting specifies the default for the CustomGeneratorHiLoField setting of entity fields. It's the field in the table specified in the setting CustomGeneratorHiLoTable which contains the value for the custom generator. Used when CustomGeneratorToUse is set to 'hilo'."
+							default="next_hi" canBeEmpty="true" type="string" category="Defaults, mapping, custom generator, HiLo"/>
+		<settingDefinition name="CustomGeneratorSeqHiLoSequenceDefault" targetElement="1" description="This setting specifies the default for the CustomGeneratorSeqHiLoSequence setting of entity fields. It's the sequence name to use by NHibernate for storing the custom generator values. Used when CustomGeneratorToUse is set to 'seqhilo'. 'seqhilo' is only supported on databases with sequences, e.g. Oracle, DB2 and Postgresql. Don't use name wrapping characters like [], these are added automatically. Name is considered case sensitive."
+							default="SEQ_HiLo" canBeEmpty="true" type="string" category="Defaults, mapping, custom generator, Sequenced HiLo"/>
+		<settingDefinition name="CustomGeneratorSeqHiLoSequenceSchemaDefault" targetElement="1" description="This setting specifies the default for the CustomGeneratorSeqHiLoSequenceSchema setting of entity fields. If specified, it's the schema in which the sequence specified in CustomGeneratorSeqHiLoSequence is located. Used when CustomGeneratorToUse is set to 'seqhilo'. If not specified, the schema of the target of the entity with the field using the custom generator is used as the schema for the sequence specification. Don't use name wrapping characters like [], these are added automatically. Name is considered case sensitive."
+							default="" canBeEmpty="true" type="string" category="Defaults, mapping, custom generator, Sequenced HiLo"/>
+	</settingDefinitions>
+
+	<valueLists>
+		<valueList name="OptimisticLockTypes">
+			<value displayText="none" valueText="none"/>
+			<value displayText="version" valueText="version"/>
+			<value displayText="dirty" valueText="dirty"/>
+			<value displayText="all" valueText="all"/>
+        </valueList>
+		<valueList name="FetchTypes">
+			<value displayText="join" valueText="join"/>
+			<value displayText="select" valueText="select"/>
+        </valueList>
+		<valueList name="CollectionTypes">
+			<value displayText="bag" valueText="bag"/>
+			<value displayText="set" valueText="set"/>
+		</valueList>
+		<valueList name="BytecodeProviders">
+			<value displayText="BuiltIn" valueText="BuiltIn"/>
+			<value displayText="LinFu" valueText="LinFu"/>
+			<value displayText="Castle" valueText="Castle"/>
+			<value displayText="Spring" valueText="Spring" />
+        </valueList>
+		<valueList name="SingleEntityCascadeTypes">
+			<value displayText="all" valueText="all"/>
+			<value displayText="none" valueText="none"/>
+			<value displayText="save-update" valueText="save-update"/>
+			<value displayText="delete" valueText="delete"/>
+		</valueList>
+		<valueList name="CollectionCascadeTypes">
+			<value displayText="all" valueText="all"/>
+			<value displayText="all-delete-orphan" valueText="all-delete-orphan"/>
+			<value displayText="none" valueText="none"/>
+			<value displayText="save-update" valueText="save-update"/>
+			<value displayText="delete" valueText="delete"/>
+		</valueList>
+		<valueList name="AccessModifierSettings">
+			<value displayText="public" valueText="public"/>
+			<value displayText="internal" valueText="internal"/>
+			<value displayText="private" valueText="private"/>
+			<value displayText="protected" valueText="protected"/>
+			<value displayText="protected internal" valueText="protected internal"/>
+		</valueList>
+		<valueList name="CustomGeneratorTypes">
+			<value displayText="hilo" valueText="hilo"/>
+			<value displayText="seqhilo" valueText="seqhilo"/>
+        </valueList>
+	</valueLists>
+</frameworkSettings>

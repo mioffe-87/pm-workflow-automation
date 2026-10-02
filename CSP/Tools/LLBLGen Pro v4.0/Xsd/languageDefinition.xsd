@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- language Schema definition. Used for verification of .language files. -->
+<xs:schema id="languageDefinition" targetNamespace="http://sd/llblgen/pro/languageDefinition.xsd" 
+		elementFormDefault="qualified" xmlns="http://sd/llblgen/pro/languageDefinition.xsd" 
+		xmlns:mstns="http://sd/llblgen/pro/languageDefinition.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="language">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="keywords">
+					<xs:complexType>
+						<xs:sequence minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="keyword">
+								<xs:complexType>
+									<xs:attribute name="name" use="required">
+										<xs:simpleType>
+											<xs:list itemType="optionalKeywords" />
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="value" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:all>
+			<xs:attribute name="name" type="xs:string" use="required" />
+			<xs:attribute name="fileExtension" type="xs:string" use="required" />
+			<xs:attribute name="arrayIndexOperatorOpenChar" type="xs:string" use="required"/>
+			<xs:attribute name="arrayIndexOperatorCloseChar" type="xs:string" use="required"/>
+			<xs:attribute name="hasArrayIndexOperatorOnIdentifier" type="xs:boolean" use="required" />
+			<xs:attribute name="lineConcatenator" type="xs:string" use="required"/>
+			<xs:attribute name="supportsNamespaces" type="xs:boolean" use="required"/>
+			<xs:attribute name="attributeAssignmentOperator" type="xs:string" use="optional"/>
+			<xs:attribute name="attributePattern" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="keywords">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="trueKeyword" />
+			<xs:enumeration value="falseKeyword" />
+			<xs:enumeration value="thisKeyword" />
+			<xs:enumeration value="nullKeyword" />
+			<xs:enumeration value="partialKeyword" />
+			<xs:enumeration value="typeofKeyword"/>
+			<xs:enumeration value="=Keyword"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="optionalKeywords">
+		<xs:union memberTypes="xs:string keywords"/>
+	</xs:simpleType>
+</xs:schema>

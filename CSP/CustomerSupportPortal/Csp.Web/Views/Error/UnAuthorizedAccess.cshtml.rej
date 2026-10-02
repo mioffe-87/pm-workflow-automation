@@ -1,0 +1,9 @@
+diff a/CustomerSupportPortal/Csp.Web/Views/Error/UnAuthorizedAccess.cshtml b/CustomerSupportPortal/Csp.Web/Views/Error/UnAuthorizedAccess.cshtml	(rejected hunks)
+@@ -13,7 +13,6 @@
+     }
+ </script>
+ 
+-<input class="k-button" type="submit" value="Get Support" onclick="GetSupport();" style="height: 19px; padding-top: 0px; line-height: 18px;" />
+ <input class="k-button" type="submit" value="Get Help" onclick="GetSupport();" style="height: 19px; padding-top: 0px; line-height: 18px;" />
+ 
+ <div class="Csp-error">

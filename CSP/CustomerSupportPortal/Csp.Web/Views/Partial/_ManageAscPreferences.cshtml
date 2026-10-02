@@ -1,0 +1,206 @@
+﻿@model Csp.Web.DataTransferObjects.ManageAscPreferencesDto
+@using System.Globalization
+@using Kendo.Mvc.UI;
+@using Csp.Api.Security;
+
+@{
+    var actionHelper = Model.ActionHelper;
+
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+
+}
+
+<style>
+    .horizontal-form-element {
+        width: 550px;
+    }
+
+    .csp-label {
+        width: 18em;
+    }
+
+    .asc-business-contact {
+        padding: 10px 0 10px 0;
+        border: 1px solid lightgray;
+    }
+
+    .asc-case-notification {
+        
+    }
+</style>
+
+
+<script>
+    $.validator.unobtrusive.parse("#ManageAscPreferencesForm");
+
+    function OnUpdateComplete() {
+        SupportPortal.UnBlockUI();
+
+        $('#btnSaveAscPreferences').removeAttr('disabled');
+    }
+
+    function OnContactSelect(e) {
+        if (e.item) {
+            var dataItem = this.dataItem(e.item.index());
+
+            $('#ReadOnlyEmail').val(dataItem.Description);
+        }
+    }
+</script>
+
+<div id="manageAscPreferencesDiv">
+
+    @using (Ajax.BeginForm("ManageAscPreferences", "SupportAccount", null, new AjaxOptions { UpdateTargetId = "manageAscPreferencesDiv", OnBegin = "SupportPortal.BlockUI();", OnComplete = "OnUpdateComplete();" }, new { id = "ManageAscPreferencesForm" }))
+    {       
+        @Html.AntiForgeryToken()      
+        
+    <div class="csp-content-sections-parent">
+        
+        <div class="horizontal-form-element">
+            <div class="fieldset">
+                <fieldset>
+                    <legend>ASC Contact Information</legend>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Customer Support Email: ")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.ContactInfo.Email)
+                            @Html.TextBoxFor(model => model.ContactInfo.Email, new {maxlength = 80})
+                            <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 43);"></i></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Customer Support Phone Number: ")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.TextBoxFor(model => model.ContactInfo.Phone)
+                            <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 43);"></i></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Customer Support Website: ")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.ContactInfo.WebSite)
+                            @Html.TextBoxFor(model => model.ContactInfo.WebSite)
+                            <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 43);"></i></span>
+                        </div>
+                    </div>
+                    <div>
+                        &nbsp;
+                    </div>
+                    <div class="asc-business-contact">
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("ASC Business Contact: ")
+                            </div>
+
+                            <div class="csp-field">
+                                &nbsp;
+                                @Html.ValidationMessageFor(model => model.ContactInfo.ContactId)
+                                 @(Html.Kendo().ComboBoxFor(model => model.ContactInfo.ContactId)
+                                    .DataTextField("Name")
+                                    .DataValueField("Value")
+                                    .Filter(FilterType.Contains)
+                                    .DataSource(source =>
+                                    {
+                                        source.Custom()
+                                        .ServerFiltering(true)
+                                        .Type("aspnetmvc-ajax")
+                                        .Transport(transport =>
+                                        {
+                                            transport.Read("GetSupportAccountUsers", "SupportAccount");
+                                        })
+                                        .Schema(schema =>
+                                        {
+                                            schema.Data("Data")
+                                            .Total("Total");
+                                        });
+                                    })
+                                    .Events(e =>
+                                    {
+                                        e.Select("OnContactSelect");
+                                    })
+                                    .SelectedIndex(0)
+                                )
+                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 44);"></i></span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("ASC Business Contact Email: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.TextBoxFor(model => model.ContactInfo.Contact.Description, new { @readonly = "true", id = "ReadOnlyEmail", name = "ReadOnlyEmail" })
+                            </div>
+                        </div>
+                    </div>
+                    @{ Html.EnableClientValidation(true); }
+
+                </fieldset>
+                @Html.HiddenFor(x => x.ContactInfo.Id)
+            </div>
+        </div>
+
+        <div class="horizontal-form-element asc-case-notification">
+            <div class="fieldset">
+                <fieldset>
+                    <legend>ASC Group Email Case Notifications <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 42);"></i></span></legend>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Email Address: ")
+                        </div>
+
+                        <div class="csp-field">
+                            @Html.ValidationMessageFor(model => model.CaseNotification.EmailAddress)
+                            @Html.TextBoxFor(model => model.CaseNotification.EmailAddress, new {maxlength = 80})
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Notify on Case Creation: ")
+                        </div>
+
+                        <div class="csp-field">
+                            &nbsp;
+                            @Html.CheckBoxFor(model => model.CaseNotification.IsCaseCreationNotification)
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Notify on New Comments: ")
+                        </div>
+
+                        <div class="csp-field">
+                            &nbsp;
+                            @Html.CheckBoxFor(model => model.CaseNotification.IsCaseCommentNotification)
+                        </div>
+                    </div>
+                    @{ Html.EnableClientValidation(true); }
+
+                </fieldset>
+                @Html.HiddenFor(x => x.CaseNotification.Id)
+                @Html.HiddenFor(x => x.CaseNotification.SfdcAccountId)
+            </div>
+        </div>
+        <br style="clear: left;"/>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input id="btnSaveAscPreferences" type="submit" value="Save" class="k-button csp-submit"/>
+        </div>
+    </div>
+        
+    }
+
+</div>

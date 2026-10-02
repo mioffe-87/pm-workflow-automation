@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>CSR AI Admin Assistant</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0f172a;overflow:hidden}
+.deck{width:100vw;height:100vh;position:relative}
+.slide{position:absolute;inset:0;display:none;padding:48px 64px;overflow:auto;background:#fff}
+.slide.active{display:flex;flex-direction:column;gap:0}
+.slide-dark{background:#1e293b;color:#fff}
+.nav{position:fixed;bottom:24px;right:32px;display:flex;gap:10px;z-index:100}
+.nav button{padding:8px 20px;border-radius:6px;border:none;background:#334155;color:#fff;font-size:13px;cursor:pointer;font-family:inherit}
+.nav button:hover{background:#475569}
+.nav button.active{background:#2563eb}
+.progress{position:fixed;bottom:0;left:0;height:3px;background:#2563eb;transition:width .3s}
+.pill{position:fixed;bottom:28px;left:32px;font-size:11px;color:#94a3b8;font-family:inherit}
+/* typography */
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#64748b;margin-bottom:6px}
+h1{font-size:30px;font-weight:800;color:#0f172a;line-height:1.2;margin-bottom:6px}
+h2{font-size:18px;font-weight:700;color:#0f172a;margin-bottom:4px}
+h3{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:2px}
+.sub{font-size:13px;color:#475569;line-height:1.6;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #e2e8f0}
+.white h1,.white h2,.white h3{color:#fff}
+.white .eyebrow{color:#64748b}
+/* layout */
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.card{border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px}
+.card-title{font-size:11px;font-weight:700;color:#0f172a;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+p,li{font-size:12px;color:#475569;line-height:1.65}
+ul{padding-left:14px}
+li{margin-bottom:3px}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;border:1px solid;white-space:nowrap}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid #f1f5f9}
+.row:last-child{border-bottom:none}
+.callout{border-radius:8px;padding:12px 14px;font-size:12px;line-height:1.6;margin-top:12px}
+.callout-blue{background:#eff6ff;border-left:3px solid #3b82f6}
+.callout-amber{background:#fffbeb;border-left:3px solid #f59e0b}
+.callout-green{background:#f0fdf4;border-left:3px solid #16a34a}
+.callout-slate{background:#f8fafc;border-left:3px solid #475569}
+.callout-title{font-weight:700;color:#0f172a;margin-bottom:3px;font-size:11px}
+.metric-row{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:8px;padding:6px 10px;font-size:11px;align-items:center;border-bottom:1px solid #f1f5f9}
+.metric-row:last-child{border-bottom:none}
+.metric-header{background:#f8fafc;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#64748b}
+.danger-row{background:#fef2f2}
+.body-content{flex:1;display:flex;flex-direction:column;gap:16px;padding-top:16px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#f8fafc;padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;border-bottom:1px solid #e2e8f0}
+td{padding:7px 10px;border-bottom:1px solid #f1f5f9;color:#374151;font-size:11px}
+tr:last-child td{border-bottom:none}
+@media print{
+  body{overflow:visible}
+  .slide{position:relative;display:none !important}
+  .slide.active,.slide{display:flex !important;page-break-after:always}
+  .nav,.progress,.pill{display:none}
+  @page{size:A4 landscape;margin:8mm}
+}
+
+/* ── Speaker Notes Panel ── */
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:#0f172a;border-top:2px solid #334155;padding:14px 64px 14px 32px;max-height:200px;overflow-y:auto;z-index:200;display:none;transition:all .2s}
+.notes-panel.visible{display:block}
+.notes-header{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#3b82f6;margin-bottom:8px}
+.notes-body{font-size:12px;color:#cbd5e1;line-height:1.7}
+.notes-body strong{color:#f1f5f9}
+.notes-body .nt{display:inline-block;background:#1e3a5f;color:#93c5fd;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;margin-right:6px;margin-bottom:4px}
+.notes-toggle-btn{position:fixed;bottom:24px;left:160px;z-index:300;padding:8px 14px;border-radius:6px;border:none;background:#1e293b;color:#94a3b8;font-size:11px;cursor:pointer;font-family:inherit;border:1px solid #334155}
+.notes-toggle-btn.on{background:#1e3a5f;color:#93c5fd;border-color:#3b82f6}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- SLIDE 00: TITLE -->
+<div class="slide slide-dark active" id="s0">
+  <div style="background:#1e293b;flex:1;display:flex;flex-direction:column;gap:0;padding:0">
+    <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%);flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 56px 32px">
+      <div class="eyebrow" style="color:#3b82f6">PM Exercise &middot; Palo Alto Networks &middot; Sep 2026</div>
+      <h1 style="font-size:40px;color:#fff;margin-bottom:12px">CSR AI Admin Assistant</h1>
+      <p style="font-size:16px;color:#cbd5e1;max-width:640px;line-height:1.7;margin-bottom:28px">An AI assistant embedded in Salesforce Service Cloud that collapses multi-system admin case resolution from 2.7 days to under 5 minutes &mdash; one supervised click at a time.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:32px">
+        <div><div style="font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px">Phase</div><div style="font-size:12px;color:#e2e8f0">Phase 2 &mdash; Reactive Case Deflection</div></div>
+        <div><div style="font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px">MVP Scope</div><div style="font-size:12px;color:#e2e8f0">1 scenario &mdash; Generate &amp; Send Temp Password</div></div>
+        <div><div style="font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px">Track</div><div style="font-size:12px;color:#e2e8f0">Track B &mdash; Internal CSR &middot; HITL &middot; proving ground for Ask CSP</div></div>
+        <div><div style="font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px">Stage</div><div style="font-size:12px;color:#e2e8f0">Stage 2 &mdash; Guided Assistance</div></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid #334155">
+      <div style="padding:16px 24px;border-right:1px solid #334155"><div style="font-size:10px;font-weight:700;color:#3b82f6;margin-bottom:4px">The principle</div><p style="color:#94a3b8;font-size:12px">AI classifies and synthesizes. Rules decide and act. The model is never in the execution path.</p></div>
+      <div style="padding:16px 24px;border-right:1px solid #334155"><div style="font-size:10px;font-weight:700;color:#ea580c;margin-bottom:4px">The boundary</div><p style="color:#94a3b8;font-size:12px">Every write action requires CSR click-confirm. Override always visible and logged. Model never executes a write.</p></div>
+    </div>
+    <div style="padding:10px 24px;border-top:1px solid #334155;display:flex;gap:32px">
+      <div style="font-size:11px;color:#94a3b8">&rarr;&nbsp;01 Problem + Scope</div>
+      <div style="font-size:11px;color:#94a3b8">&rarr;&nbsp;02 Workflow + Agent Model</div>
+      <div style="font-size:11px;color:#94a3b8">&rarr;&nbsp;03 Prototype + Evals</div>
+      <div style="font-size:11px;color:#94a3b8">&rarr;&nbsp;04 Success + Post-V1</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 01: PROBLEM + SCOPE -->
+<div class="slide" id="s1">
+  <div class="eyebrow">01 / 04</div>
+  <h1>Problem + Scope</h1>
+  <p class="sub">CSR agents context-switch across 5+ systems per case. 3.8K admin cases/month. 2.7 days avg TTR for work that should take 5 minutes.</p>
+  <div class="body-content">
+    <div class="cols3">
+      <div class="card"><div class="card-title">The User</div><p>CSR agents in Salesforce Service Cloud — first line for admin access cases. Every case starts from scratch across Okta, CSP, SF, KB, AdminSite in parallel. No guided flow, no pre-fetched context.</p></div>
+      <div class="card"><div class="card-title">What Is Broken</div>
+        <div style="display:flex;flex-direction:column;gap:5px;margin-top:4px">
+          <div style="display:flex;gap:10px"><b style="min-width:70px;font-size:12px">3.8K</b><span style="font-size:12px;color:#475569">admin cases / month</span></div>
+          <div style="display:flex;gap:10px"><b style="min-width:70px;font-size:12px">2.7 days</b><span style="font-size:12px;color:#475569">avg TTR — should be &lt; 5 min</span></div>
+          <div style="display:flex;gap:10px"><b style="min-width:70px;font-size:12px">5+ tabs</b><span style="font-size:12px;color:#475569">context-switched per case</span></div>
+          <div style="display:flex;gap:10px"><b style="min-width:70px;font-size:12px">0 guided</b><span style="font-size:12px;color:#475569">no resolution flow — variable steps</span></div>
+        </div>
+      </div>
+      <div class="card"><div class="card-title">Why AI Fits Here</div>
+        <ul>
+          <li><b>Multi-system synthesis</b> — No single API gives the answer</li>
+          <li><b>Bounded action space</b> — ~10 actions; model classifies, rules execute</li>
+          <li><b>Volume flywheel</b> — 3.8K cases/month = calibration data immediately</li>
+          <li><b>Recoverable mistakes</b> — Reset PW / resend email are low-risk</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cols2">
+      <div>
+        <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">In Scope — V1</div>
+        <div class="row"><span style="font-size:12px">Generate &amp; Send Temp Password</span><span class="tag" style="color:#16a34a;border-color:#16a34a">MVP · 1 scenario</span></div>
+        <div class="row"><span style="font-size:12px">Reset / Forgot Password</span><span class="tag" style="color:#3b82f6;border-color:#3b82f6">P0 Post-MVP</span></div>
+        <div class="row"><span style="font-size:12px">Account Locked</span><span class="tag" style="color:#3b82f6;border-color:#3b82f6">P0 Post-MVP</span></div>
+        <div class="row"><span style="font-size:12px">Resend Activation Link</span><span class="tag" style="color:#3b82f6;border-color:#3b82f6">P0 Post-MVP</span></div>
+        <div class="row"><span style="font-size:12px">Activation Email Unbounce</span><span class="tag" style="color:#3b82f6;border-color:#3b82f6">P0 Post-MVP</span></div>
+        <div class="row"><span style="font-size:12px">Refer to Super User</span><span class="tag" style="color:#3b82f6;border-color:#3b82f6">P0 Post-MVP</span></div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Out of Scope — V1</div>
+        <div class="row"><span style="font-size:12px">Reset MFA / Allow-List / SSO</span><span style="font-size:11px;color:#94a3b8">P1</span></div>
+        <div class="row"><span style="font-size:12px">Customer email send</span><span style="font-size:11px;color:#94a3b8">P1 — outbound infra</span></div>
+        <div class="row"><span style="font-size:12px">Case auto-close / disposition</span><span style="font-size:11px;color:#94a3b8">P2 — SF write-back</span></div>
+        <div class="row"><span style="font-size:12px">Confidence badge</span><span style="font-size:11px;color:#94a3b8">P1 — calibration service</span></div>
+        <div class="row"><span style="font-size:12px">Re-analysis on new SF comment</span><span style="font-size:11px;color:#94a3b8">P2 — SF CDC needed</span></div>
+        
+      </div>
+    </div>
+    <div class="cols2">
+      <div class="callout callout-blue"><div class="callout-title">North Star outcome</div>TTR from 2.7 days to under 5 minutes — by collapsing multi-system lookup into a pre-fetched 12-signal layer and replacing multi-step manual resolution with a single supervised click.</div>
+      <div class="callout callout-slate"><div class="callout-title">Eligibility — Siddhartha sync Sep 24</div>Boolean AI-eligibility flag set at case creation (not case open) to avoid rendering delay. Category = Admin is the hard gate. <strong>Federal customers are in scope</strong> — the Federal Customer Salesforce flag is a policy driver (1h vs 8h reset-link expiry), not an exclusion gate.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 02: WORKFLOW -->
+<div class="slide" id="s2">
+  <div class="eyebrow">02 / 04</div>
+  <h1>Workflow + Agent Model</h1>
+  <p class="sub">RAG-gated eligibility. LLM classifies, deterministic rules execute. Every write requires CSR click-confirm — no exceptions.</p>
+  <div class="body-content">
+    <div class="callout callout-amber"><div class="callout-title">The permanent boundary</div>AI gets you into the right scenario (RAG gate + LLM classifier). Rules handle everything once you're in it. Decision tree traversal is permanently deterministic — now and after V1.</div>
+    <div class="cols2">
+      <div>
+        <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">How the eligibility gate works</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="card" style="display:flex;align-items:flex-start;gap:10px"><div style="min-width:22px;height:22px;border-radius:50%;background:#1d4ed8;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">1</div><div><b style="font-size:12px">Category = Admin?</b><br><span style="font-size:11px;color:#475569">Hard rule. False → Hermes renders, exit.</span></div></div>
+          <div class="card" style="display:flex;align-items:flex-start;gap:10px"><div style="min-width:22px;height:22px;border-radius:50%;background:#1d4ed8;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">2</div><div><b style="font-size:12px">Extract 4 fields</b><br><span style="font-size:11px;color:#475569">Subject · Description · Request Type · Request Category</span></div></div>
+          <div class="card" style="display:flex;align-items:flex-start;gap:10px"><div style="min-width:22px;height:22px;border-radius:50%;background:#0f766e;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">3</div><div><b style="font-size:12px">RAG Vector similarity ≥ 0.70?</b><br><span style="font-size:11px;color:#475569">4 fields embedded → compared against scenario library. Yes → Activate. No → Hermes.</span></div></div>
+          <div class="card" style="display:flex;align-items:flex-start;gap:10px"><div style="min-width:22px;height:22px;border-radius:50%;background:#7c3aed;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">4</div><div><b style="font-size:12px">LLM Classifier (Post-MVP)</b><br><span style="font-size:11px;color:#475569">Case text + 12 signals → scenario ID + confidence %. Confidence &lt; 70% → competing hypotheses shown.</span></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Human approval gates — every write action</div>
+        <table>
+          <tr><th>Action</th><th>Gate</th></tr>
+          <tr><td>Generate temp password</td><td>CSR click-confirm</td></tr>
+          <tr><td>Reset password / unlock</td><td>CSR click-confirm</td></tr>
+          <tr><td>Resend activation email</td><td>CSR click-confirm</td></tr>
+          <tr><td>Email unbounce</td><td>CSR click-confirm</td></tr>
+          <tr><td>Refer to Super User</td><td>CSR click-confirm</td></tr>
+          <tr><td>Any action via AI Search</td><td style="color:#dc2626;font-weight:600">Blocked server-side — chat is read-only</td></tr>
+        </table>
+        <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin:12px 0 8px">Failure handling</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="font-size:11px;padding:6px 10px;background:#f8fafc;border-radius:6px"><b>API timeout</b> — Chip shows Unavailable. CTA withheld if signal required, explicit reason shown.</div>
+          <div style="font-size:11px;padding:6px 10px;background:#f8fafc;border-radius:6px"><b>Model misclassification</b> — CSR overrides scenario. Feedback captures it. Calibration adjusts.</div>
+          <div style="font-size:11px;padding:6px 10px;background:#f8fafc;border-radius:6px"><b>Action outside allow-list</b> — Server-side hard block. Logged as security event.</div>
+          <div style="font-size:11px;padding:6px 10px;background:#f8fafc;border-radius:6px"><b>Action execution failure</b> — Inline error + retry. Fallback: manual instruction. Audit log records failure.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-slate"><div class="callout-title">Hermes coexistence — decided Sep 24 (Siddhartha sync)</div>When case passes RAG gate: Admin Assistant replaces Hermes panel. AI Summary and Evidence/Reasoning preserved. Ask AI button replaced by Admin Assistant surface. Key Actions Required replaced by Recommended Action hero card. Non-eligible cases: Hermes renders as normal, no UI change visible to CSR.</div>
+  </div>
+</div>
+
+<!-- SLIDE 03: PROTOTYPE + EVALS -->
+<div class="slide" id="s3">
+  <div class="eyebrow">03 / 04</div>
+  <h1>Prototype + Evals</h1>
+  <p class="sub">Built in Lovable to validate the UX model. Evals cover model accuracy and behavioral safety — both must pass before any change ships.</p>
+  <div class="body-content">
+    <div class="cols2">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">What was built</div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b>Lovable Prototype</b><span class="tag" style="color:#16a34a;border-color:#16a34a">Live</span></div>
+            <p style="margin-bottom:8px">Single-screen Admin Assistant panel for <b>Resend Activation Link</b> — same architecture as Temp Password MVP, one step simpler.</p>
+            <ul>
+              <li>Pre-filled signal chips (mocked Okta/CSP/SF data)</li>
+              <li>AI-generated Case Summary grounded in signal chips</li>
+              <li>Recommended Action card with confirmation state</li>
+              <li>Manual Override — free-text, always visible, always logged</li>
+              <li>Feedback widget (thumbs up/down)</li>
+            </ul>
+            <div style="margin-top:10px"><a href="https://lovable.dev/projects/f1115036-7086-4307-a0c8-8d5bbb7eef3b" style="font-size:11px;color:#2563eb">Open prototype in Lovable →</a></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Not built (deliberately)</div>
+          <div class="row"><span style="font-size:12px">Live Okta/CSP API calls</span><span style="font-size:11px;color:#94a3b8">Mocked with fixture data</span></div>
+          <div class="row"><span style="font-size:12px">Confidence scoring engine</span><span style="font-size:11px;color:#94a3b8">Hardcoded for research</span></div>
+          <div class="row"><span style="font-size:12px">SF write-back</span><span style="font-size:11px;color:#94a3b8">UI shell only — API not wired</span></div>
+          <div class="row"><span style="font-size:12px">AI Search / Ask Assistant</span><span style="font-size:11px;color:#94a3b8">P1 — in dev for Welcome Center</span></div>
+          <div class="row"><span style="font-size:12px">Re-analysis on comment</span><span style="font-size:11px;color:#94a3b8">P2 — requires SF CDC</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Initial eval dataset — 100 labeled cases</div>
+          <table>
+            <tr><th>Scenario</th><th>Count</th><th>Coverage focus</th></tr>
+            <tr><td>Temp Password — clean path</td><td>20</td><td>Okta Active, standard user</td></tr>
+            <tr><td>Temp Password — Federal</td><td>10</td><td>1h expiry policy validation</td></tr>
+            <tr><td>Temp Password — edge</td><td>5</td><td>Okta Locked + temp PW needed</td></tr>
+            <tr><td>Reset / Forgot Password</td><td>15</td><td>Super User vs Standard path</td></tr>
+            <tr><td>Account Locked</td><td>10</td><td>Force unlock + counter reset</td></tr>
+            <tr><td>Resend Activation</td><td>10</td><td>Delivery confirmed before resend</td></tr>
+            <tr><td>Activation Unbounce</td><td>10</td><td>Bounced address path</td></tr>
+            <tr><td>Refer to Super User</td><td>5</td><td>Role upgrade + missing entitlement</td></tr>
+            <tr><td>Adversarial</td><td>15</td><td>Misleading subject, wrong category</td></tr>
+          </table>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Pre-production gate — what blocks a release</div>
+          <table>
+            <tr><th>Gate</th><th>Threshold</th></tr>
+            <tr style="background:#fef2f2"><td>Missed escalation rate</td><td style="color:#dc2626;font-weight:600">0% — any regression blocks</td></tr>
+            <tr><td>Classification accuracy</td><td>≥ baseline on all covered scenarios</td></tr>
+            <tr><td>Override rate (affected scenarios)</td><td>≤ 25%</td></tr>
+            <tr><td>Tool call audit</td><td>No out-of-allow-list calls</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 04: SUCCESS + POST-V1 -->
+<div class="slide" id="s4">
+  <div class="eyebrow">04 / 04</div>
+  <h1>Success + Post-V1</h1>
+  <p class="sub">Scale when it's trusted. Graduate when it's proven. Never expand before the current wave is stable.</p>
+  <div class="body-content">
+    <div>
+      <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Success metrics</div>
+      <div class="metric-row metric-header"><div>Metric</div><div>Baseline</div><div>Target</div><div>Measured by</div></div>
+      <div class="metric-row"><div>TTR for covered cases</div><div>2.7 days</div><div style="color:#16a34a;font-weight:600">&lt; 5 min</div><div>SF case timestamps</div></div>
+      <div class="metric-row"><div>Completion rate (first-touch)</div><div>~65% est.</div><div style="color:#16a34a;font-weight:600">&gt; 85%</div><div>SF case disposition</div></div>
+      <div class="metric-row"><div>Recommendation accuracy</div><div>—</div><div style="color:#16a34a;font-weight:600">&gt; 85% thumbs-up</div><div>Feedback widget (P0)</div></div>
+      <div class="metric-row"><div>Override rate</div><div>—</div><div style="color:#16a34a;font-weight:600">&lt; 20%</div><div>Override analytics (P0)</div></div>
+      <div class="metric-row" style="background:#fef2f2"><div>Missed escalation</div><div>—</div><div style="color:#dc2626;font-weight:600">0%</div><div>Post-action review — zero tolerance</div></div>
+      <div class="metric-row"><div>Signal availability</div><div>—</div><div style="color:#16a34a;font-weight:600">&gt; 95% all 12 resolved</div><div>Signal normalization logs</div></div>
+      <div class="metric-row"><div>Adoption</div><div>0%</div><div style="color:#16a34a;font-weight:600">&gt; 60% in 4 weeks</div><div>Button click rate on eligible cases</div></div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:4px">
+      <div style="flex:1;padding:10px 14px;border-radius:8px;border-left:3px solid #16a34a;background:#f0fdf4"><div style="font-size:10px;font-weight:700;color:#16a34a;margin-bottom:4px">Scale</div><p>Rec accuracy &gt;85%, override &lt;20%, adoption &gt;60%, zero safety failures for 4 weeks</p></div>
+      <div style="flex:1;padding:10px 14px;border-radius:8px;border-left:3px solid #f59e0b;background:#fffbeb"><div style="font-size:10px;font-weight:700;color:#b45309;margin-bottom:4px">Iterate</div><p>Adoption &lt;50%, override &gt;25% on any scenario, signal availability &lt;90%</p></div>
+      <div style="flex:1;padding:10px 14px;border-radius:8px;border-left:3px solid #ef4444;background:#fef2f2"><div style="font-size:10px;font-weight:700;color:#dc2626;margin-bottom:4px">Halt</div><p>Any missed escalation, override &gt;40% across the board</p></div>
+    </div>
+    <div class="cols2">
+      <div>
+        
+        <!-- horizontal timeline -->
+        <div style="position:relative;padding-bottom:8px">
+          <!-- connector line -->
+          <div style="position:absolute;top:18px;left:18px;right:18px;height:2px;background:linear-gradient(to right,#3b82f6,#7c3aed,#7c3aed,#7c3aed,#16a34a);z-index:0"></div>
+          <!-- steps -->
+          <div style="display:flex;justify-content:space-between;position:relative;z-index:1">
+
+            <!-- step 1 -->
+            <div style="display:flex;flex-direction:column;align-items:center;width:22%">
+              <div style="width:36px;height:36px;border-radius:50%;background:#3b82f6;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 0 0 2px #3b82f6">1</div>
+              <div style="margin-top:8px;text-align:center">
+                <div style="font-size:10px;font-weight:700;color:#1d4ed8;margin-bottom:3px">Post-MVP</div>
+                <div style="font-size:9px;color:#475569;line-height:1.4">5 remaining P0 scenarios added to CSR Assistant</div>
+                <div style="margin-top:4px;font-size:9px;color:#94a3b8;font-style:italic">Gate: MVP metrics clear</div>
+              </div>
+            </div>
+
+            <!-- step 2 -->
+            <div style="display:flex;flex-direction:column;align-items:center;width:22%">
+              <div style="width:36px;height:36px;border-radius:50%;background:#7c3aed;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 0 0 2px #7c3aed">2</div>
+              <div style="margin-top:8px;text-align:left">
+                <div style="font-size:10px;font-weight:700;color:#7c3aed;margin-bottom:4px;text-align:center">Advanced Assistant</div>
+                <div style="font-size:9px;color:#475569;line-height:1.6">
+                  &middot; Similar Case Resolution<br>
+                  &middot; Previous Cases<br>
+                  &middot; Ask Assistant<br>
+                </div>
+                
+              </div>
+            </div>
+
+            <!-- step 3 -->
+            <div style="display:flex;flex-direction:column;align-items:center;width:22%">
+              <div style="width:36px;height:36px;border-radius:50%;background:#7c3aed;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 0 0 2px #7c3aed">3</div>
+              <div style="margin-top:8px;text-align:center">
+                <div style="font-size:10px;font-weight:700;color:#7c3aed;margin-bottom:3px">P1 Expansion</div>
+                <div style="font-size:9px;color:#475569;line-height:1.4">SSO, MFA, Entra ID, Role Upgrade — 8 new resolution scenarios</div>
+                
+              </div>
+            </div>
+
+            <!-- step 4 -->
+            <div style="display:flex;flex-direction:column;align-items:center;width:22%">
+              <div style="width:36px;height:36px;border-radius:50%;background:#16a34a;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 0 0 2px #16a34a">4</div>
+              <div style="margin-top:8px;text-align:center">
+                <div style="font-size:10px;font-weight:700;color:#16a34a;margin-bottom:3px">Ask CSP: Live ✦</div>
+                <div style="font-size:9px;color:#475569;line-height:1.4">Client-facing self-service assistant in CSP</div>
+                
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!-- legend -->
+        <div style="display:flex;gap:16px;margin-top:14px">
+          <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#3b82f6"></div><span style="font-size:9px;color:#475569">CSR Assistant (P0)</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#7c3aed"></div><span style="font-size:9px;color:#475569">CSR Assistant (P1)</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#16a34a"></div><span style="font-size:9px;color:#475569">Customer Assistant</span></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Graduation gates (Track B → Ask CSP)</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="font-size:11px;padding:7px 10px;background:#f8fafc;border-radius:6px;border-left:2px solid #3b82f6"><b>Diagnostic accuracy</b> — ≥95% RCA accuracy vs. historical CSR resolutions</div>
+          <div style="font-size:11px;padding:7px 10px;background:#f8fafc;border-radius:6px;border-left:2px solid #0f766e"><b>Shadow mode dry-run</b> — false-positive rate and blast radius proven on historical cases</div>
+          <div style="font-size:11px;padding:7px 10px;background:#f8fafc;border-radius:6px;border-left:2px solid #7c3aed"><b>Action verification</b> — agent replays action to confirm resolution; auto-rollback on failure</div>
+          <div style="font-size:11px;padding:7px 10px;background:#f8fafc;border-radius:6px;border-left:2px solid #16a34a"><b>Auditability</b> — 100% of state changes logged with correlation IDs, payloads, timestamps</div>
+        </div>
+        <div class="callout callout-slate" style="margin-top:10px"><div class="callout-title">What you would NOT do after V1</div>Graduate any scenario before all 4 gates clear. Build Stage 3/4 as an extension of this product. Add P2 complexity before P0 is proven in production.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- ── Speaker Notes Panel ── -->
+<div class="notes-panel" id="notesPanel">
+  <div class="notes-header">Speaker Notes — press N to toggle</div>
+  <div class="notes-body" id="notesBody"></div>
+</div>
+<button class="notes-toggle-btn" id="notesBtnEl" onclick="toggleNotes()">N — Notes</button>
+
+
+<!-- navigation UI -->
+<div class="pill" id="pill">00 / 04 — Overview</div>
+<div class="progress" id="progress" style="width:0%"></div>
+<div class="nav">
+  <button id="prev" onclick="go(-1)">← Prev</button>
+  <button onclick="go(0)" id="n0">00</button>
+  <button onclick="go(1)" id="n1">01</button>
+  <button onclick="go(2)" id="n2">02</button>
+  <button onclick="go(3)" id="n3">03</button>
+  <button onclick="go(4)" id="n4">04</button>
+  <button id="next" onclick="go(1)" class="active">Next →</button>
+</div>
+
+<script>
+
+const NOTES = [
+  // Slide 00 — Title
+  `<span class='nt'>Framing</span><strong>Track B only</strong> — internal HITL proving ground. Nothing goes client-facing until it clears all 4 graduation gates.<br>
+<span class='nt'>Architecture</span>The single invariant to land: <strong>AI is never in the write path</strong>. Eligibility and classification use ML. Execution is a deterministic decision tree. That boundary is permanent — not a V1 constraint.<br>
+<span class='nt'>Stage</span>Stage 2 Guided Assistance. AI recommends, CSR clicks. We are not building Stage 3 autonomous execution.`,
+
+  // Slide 01 — Problem + Scope
+  `<span class='nt'>MVP Scope</span><strong>One scenario: Generate &amp; Send Temporary Password.</strong> That's the only scenario shipping in MVP. Everything else — Reset Password, Account Locked, Resend Activation, Unbounce, Refer to Super User — is P0 Post-MVP, after MVP metrics are proven.<br>
+<span class='nt'>Why one?</span>De-risk the architecture. If the signal fetch, RAG gate, and Okta API write all work cleanly for one scenario, adding the other five is low-risk. Build more before proving the core = tech debt.<br>
+<span class='nt'>Federal flag</span><strong>Federal customers are in scope.</strong> The SF Federal Customer flag is signal #12. It only affects the reset-link expiry timer — 1h for Federal, 8h standard. It is NOT an eligibility gate. Do not exclude Federal cases.<br>
+<span class='nt'>AI flag</span>The AI-eligibility boolean is set at <strong>case creation</strong>, not when the CSR opens the case. This is a performance decision — avoids rendering delay in Salesforce.`,
+
+  // Slide 02 — Workflow + Agent Model
+  `<span class='nt'>Framing</span>This is the <strong>Post-MVP flow</strong> — showing the full architecture so the dev team designs the foundation correctly from day one. I'll call out exactly where MVP ends.<br>
+<span class='nt'>Row 1 — Eligibility</span>Two gates, both must pass. <strong>(1) Category = Admin</strong> — hard boolean, instant, no ML. False → exit. <strong>(2) RAG vector similarity ≥ 0.70</strong> — extract 4 fields (Subject, Description, Request Type, Request Category), embed, compare against scenario library. Below 0.70 → exit. Pass both → LLM Classifier activates.<br>
+<span class='nt'>MVP boundary</span>For MVP there is <strong>no LLM Classifier</strong>. The RAG match is the scenario identifier — one scenario, deterministic routing straight to signal fetch. Everything from the LLM Classifier onward is Post-MVP.<br>
+<span class='nt'>Row 2 — Classification</span>Signal fetch happens <strong>first</strong> — before scenario is confirmed. Okta Status, Membership, IDP type and the other 9 signals are inputs to confirmation, not outputs. Example: Okta Status = Provisioned → Resend Activation Link. Okta Status = Active + expired token → Reset Password. The signals are what disambiguates the scenario — the LLM alone cannot do this reliably from case text. Once signals + LLM text analysis agree, Scenario Confirmed locks. Case Similarity then surfaces similar resolved cases to support the recommendation.<br>
+<span class='nt'>Row 3 — Resolution</span>Recommended Action is deterministic — scenario config, not the model. AI Search is read-only, cannot trigger writes. <strong>CSR Confirms is the only write trigger</strong>. Execute Action writes to Okta — idempotent, allow-listed, 100% audit logged. Feedback Widget feeds per-scenario calibration. Re-Analyze loops back to LLM Classifier when case context shifts.<br>
+<span class='nt'>The permanent boundary</span>AI classifies and synthesizes. Rules decide and act. The model is <strong>never in the write path</strong> — not in MVP, not in Post-MVP, not ever.`,
+
+  // Slide 03 — Prototype + Evals
+  `<span class='nt'>Prototype</span>The Lovable prototype demonstrates the <strong>UX pattern only</strong> — all API calls are mocked with fixture data. It validates the interaction model (signal chips, recommended action card, confirm flow), not the data layer.<br>
+<span class='nt'>Scenario</span>Prototype was built for <strong>Resend Activation Link</strong> — same architecture as Temp Password MVP, one step simpler. Useful for alignment on panel structure even though MVP scenario is Temp Password.<br>
+<span class='nt'>What dev needs to build</span>(1) Signal fetch layer — parallel calls to CSP, Okta, SF APIs. (2) RAG embedding pipeline — 4 fields → embed → compare. (3) Admin Assistant panel in SF replacing Hermes. (4) Okta API write + audit log. (5) AI-eligibility flag at case creation.<br>
+<span class='nt'>Eval gate</span>Before any LLM component ships (Post-MVP): 100-case labeled eval dataset must pass. <strong>Zero-tolerance: missed escalation = 0% — one miss blocks the release.</strong> For MVP (no LLM), signal fetch reliability and Okta API integration tests are the gate.`,
+
+  // Slide 04 — Success + Post-V1
+  `<span class='nt'>Key metric</span>TTR 2.7 days → under 5 minutes. That's the headline number to instrument from day one — SF case timestamps, open to resolved.<br>
+<span class='nt'>Adoption signal</span>If the tool is useful, CSRs will use it. Target: >60% of eligible cases use it within 4 weeks. If adoption is low, the UX or recommendation quality is the problem — not awareness.<br>
+<span class='nt'>Halt condition</span>Any missed escalation halts the release. Override rate >40% across the board halts. These are non-negotiable, not thresholds to negotiate later.<br>
+<span class='nt'>Graduation</span>Track B → Ask CSP requires <strong>all 4 gates</strong> cleared: diagnostic accuracy ≥95%, shadow mode dry-run, action verification with rollback, 100% audit log. No single gate can be waived.<br>
+<span class='nt'>What we won't do</span>Build Stage 3/4 agentic execution as an extension of this product. Add P2 complexity before P0 is proven. Graduate any scenario before all 4 gates clear.`
+];
+
+let notesVisible = false;
+function toggleNotes() {
+  notesVisible = !notesVisible;
+  document.getElementById('notesPanel').classList.toggle('visible', notesVisible);
+  document.getElementById('notesBtnEl').classList.toggle('on', notesVisible);
+  document.getElementById('notesBtnEl').textContent = notesVisible ? 'N — Hide Notes' : 'N — Notes';
+  if (notesVisible) updateNotes(cur);
+}
+function updateNotes(n) {
+  if (notesVisible) {
+    document.getElementById('notesBody').innerHTML = NOTES[n] || '';
+  }
+}
+
+const SLIDES = [
+  {id:'s0', label:'00 / 04 — Overview'},
+  {id:'s1', label:'01 / 04 — Problem + Scope'},
+  {id:'s2', label:'02 / 04 — Workflow + Agent Model'},
+  {id:'s3', label:'03 / 04 — Prototype + Evals'},
+  {id:'s4', label:'04 / 04 — Success + Post-V1'},
+];
+let cur = 0;
+function show(n) {
+  n = Math.max(0, Math.min(SLIDES.length-1, n));
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById(SLIDES[n].id).classList.add('active');
+  document.getElementById('pill').textContent = SLIDES[n].label;
+  document.getElementById('progress').style.width = ((n/(SLIDES.length-1))*100)+'%';
+  for(let i=0;i<SLIDES.length;i++) document.getElementById('n'+i).classList.toggle('active', i===n);
+  document.getElementById('prev').style.opacity = n===0 ? '0.3' : '1';
+  document.getElementById('next').style.opacity = n===SLIDES.length-1 ? '0.3' : '1';
+  cur = n;
+  updateNotes(n);
+}
+function go(delta) {
+  if(typeof delta === 'number' && Math.abs(delta)===1) show(cur+delta);
+  else show(delta);
+}
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') { e.preventDefault(); show(cur+1); }
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') { e.preventDefault(); show(cur-1); }
+  if(e.key==='n'||e.key==='N') toggleNotes();
+});
+show(0);
+</script>
+</body>
+</html>

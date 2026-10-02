@@ -1,0 +1,4 @@
+﻿<% // The catalog to rename is in the variable 'catalog' %>
+-- In IBM DB2, databases can't be renamed, so a new alias is added for the catalog, so connections can be made using the new name. 
+UNCATALOG DATABASE "<%=GetOriginalName(catalog)%>";
+CATALOG DATABASE "<%=GetOriginalName(catalog)%>" AS "<%=GetNewName(catalog)%>";

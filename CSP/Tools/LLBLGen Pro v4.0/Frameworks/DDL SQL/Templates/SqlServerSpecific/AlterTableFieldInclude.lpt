@@ -1,0 +1,14 @@
+﻿<% // the name of the catalog is in the variable 'catalogName', the name of the schema is in the variable 'schemaName'. The table name
+   // is in the variable 'tableName', the DBTableField object is in the variable 'field'.%>
+ALTER TABLE [<%=schemaName%>].[<%=tableName%>] 
+<% if(field.HasChangeFlagsSet((int)DBTableFieldChangeType.IsIdentity)) { 
+%>	-- Identity constraint was changed on field '<%=field.FieldName%>'. However SQL Server doesn't allow changing this in SQL. 
+	-- This means that you have to do this manually by creating a new temporary column, copy over all data and then remove 
+	-- the column (cumbersome, due to FK constraints). Another, probably less cumbersome way, is to do this through SSMS, which 
+	-- does the handling for you. Example of how to do it manually:
+	-- http://stackoverflow.com/questions/702745/sql-server-how-to-drop-identity-from-a-column
+	-- Discussion about this issue on MS' forums:
+	-- http://social.msdn.microsoft.com/forums/en-US/transactsql/thread/04d69ee6-d4f5-4f8f-a115-d89f7bcbc032/
+<% } 
+%>	ALTER COLUMN <%=CreateFieldDefinitionString(field)%>
+GO

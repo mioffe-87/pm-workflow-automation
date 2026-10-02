@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="SD.EntityFramework.Shared" description="Template bindings for the templates used in the support of LLBLGen Pro for both Entity Framework v1, v4 and v5" precedenceLevel="10" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+	<supportedPlatforms>
+		<platform name=".NET 3.5" />
+		<platform name=".NET 4.0" />
+		<platform name=".NET 4.5" />
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="Entity Framework v1" />
+		<framework name="Entity Framework v4" />
+		<framework name="Entity Framework v5" />
+	</supportedFrameworks>
+	<supportedDrivers>
+		<driver id="2D18D138-1DD2-467E-86CC-4838250611AE"/>	
+		<driver id="3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA"/> 
+		<driver id="758A392F-06F3-498b-AED9-D85A4C795BDA"/> 
+		<driver id="88EBFD8C-CBDD-4452-88AF-1C99E41A123F"/> 
+		<driver id="BB438EBA-A0B5-4236-A2B8-64D828A138AF"/>	
+		<driver id="BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A"/> 
+	</supportedDrivers>
+	<language name="C#">
+		<templateBinding templateID="SD_EF_AppConfig" filename="Shared\Shared\appConfig.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_AssemblyInfo" filename="Shared\C#\assemblyInfo.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_CommonEntityBase" filename="Shared\C#\commonEntityBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_CommonValueTypeBase" filename="Shared\C#\commonValueTypeBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_ContextInclude" filename="Shared\C#\contextClassInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_EF_EdmxInclude" filename="Shared\Shared\edmxFileInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_EF_EntityInclude" filename="Shared\C#\entityClassInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_EF_GeneralUtils" filename="Shared\Shared\generalTemplateUtils.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_TypedList" filename="Shared\C#\typedListClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_TypedView" filename="Shared\C#\typedViewClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_ValueType" filename="Shared\C#\valueTypeClass.lpt" templateLanguage="C#"/>
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_EF_AppConfig" filename="Shared\Shared\appConfig.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_AssemblyInfo" filename="Shared\VB.NET\assemblyInfo.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_CommonEntityBase" filename="Shared\VB.NET\commonEntityBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_CommonValueTypeBase" filename="Shared\VB.NET\commonValueTypeBaseClass.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_ContextInclude" filename="Shared\VB.NET\contextClassInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_EF_EdmxInclude" filename="Shared\Shared\edmxFileInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_EF_EntityInclude" filename="Shared\VB.NET\entityClassInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_EF_GeneralUtils" filename="Shared\Shared\generalTemplateUtils.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_EF_TypedList" filename="Shared\VB.NET\typedListClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_TypedView" filename="Shared\VB.NET\typedViewClass.lpt" templateLanguage="C#"/>
+		<templateBinding templateID="SD_EF_ValueType" filename="Shared\VB.NET\valueTypeClass.lpt" templateLanguage="C#"/>
+	</language>
+</templateBindings>

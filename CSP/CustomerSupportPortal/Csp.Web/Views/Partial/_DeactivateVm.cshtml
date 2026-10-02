@@ -1,0 +1,132 @@
+﻿@using Csp.Web.DataTransferObjects
+@model DeactiveVmDto
+
+<!--Deactivate VM-ELA devices-->
+<script>
+    function getVmElaProvisionsParams() {
+        var params = SetAntiForgery();
+        params.authCode = '@Model.ParentAuthCode';
+        return params;
+    }
+
+    //Select All checkbox action
+    function onSelectAllClicked(e) {
+        var checked = e.checked;
+        if (checked) {
+            $('.selectOneSn').each(function(idx, item) {
+                var rowCheckbox = $(item).closest('tr').find('.selectOneSn');
+                if (rowCheckbox != null) {
+                    $(rowCheckbox).attr("checked", true);
+                }
+            });
+        } else {
+            $('.selectOneSn').each(function(idx, item) {
+                var rowCheckbox = $(item).closest('tr').find('.selectOneSn');
+                if (rowCheckbox != null) {
+                    $(rowCheckbox).attr("checked", false);
+                }
+            });
+        }
+    }
+
+    function onSubmit() {
+        $('#submitBtn').prop("disabled", true);
+        var postData = {
+            "ParentAuthCode": '@Model.ParentAuthCode',
+            "VmItemsToDeactivate": []
+        };
+        var items = $('#@UniqueId.DeactivateVmGrid').data('kendoGrid').dataSource.data();
+        $('.selectOneSn').each(function (idx, item) {
+            var rowCheckbox = $(item).closest('tr').find(".selectOneSn");
+            if (rowCheckbox != null && $(rowCheckbox).prop("checked")) {
+                items[idx].IsSelected = true;
+                postData.VmItemsToDeactivate.push(items[idx]);
+            }
+        });
+
+        if (postData.VmItemsToDeactivate.length < 1) {
+            $('#submitBtn').prop("disabled", false);
+            return;
+        }
+
+        SupportPortal.Confirmation("Once the VM is deactivated, it cannot be restored, are you sure to proceed?",
+            function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/VM/DeactivateVmItems",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(postData),
+                    success: function (result) {
+                        SupportPortal.UnBlockUI();
+                        if (result.ErrorMsg != null && result.ErrorMsg.length > 0) {
+                            SupportPortal.Message("Encountered an error: " + result.ErrorMsg, { height: 250, width: 350 });
+                        } else {
+                            SupportPortal.Message("The selected VMs have been successfully deactivated.", { height: 150, width: 350 });
+                        }
+                        $('#submitBtn').prop("disabled", false);
+                        reloadData();
+                    },
+                    error: function (xhr) {
+                        SupportPortal.UnBlockUI();
+                        SupportPortal.Message("Encountered an error: " + xhr.responseText, { height: 250, width: 350 });
+                        $('#submitBtn').prop("disabled", false);
+                        reloadData();
+                    }
+                });
+            }, function() {
+                $('#submitBtn').prop("disabled", false);
+            }, {width:400, height: 145});
+    }
+
+    function reloadData() {
+        //refresh datasource
+        $('#@UniqueId.DeactivateVmGrid').data('kendoGrid').dataSource.read();
+        $('#checkAllSns').attr("checked", false);
+    }
+
+    //data bounded event
+    function onDadaBounded() {
+        var items = $('#@UniqueId.DeactivateVmGrid').data("kendoGrid").dataSource.data();
+        if (items != null && items.length < 1) {
+            $('#submitBtn').prop("disabled", true);
+        }
+    }
+</script>
+
+<div class="fieldset fieldset-upper" style="font-size: small;">
+    <fieldset style="font-weight: bold;">
+        <div>Auth Code: @Model.ParentAuthCode</div>
+    </fieldset>
+    <fieldset>
+        <div class="grid-content">
+            @(Html.Kendo().Grid(Model.VmItemsToDeactivate)
+                  .Name((string) UniqueId.DeactivateVmGrid)
+                  .DataSource(dataSource => dataSource
+                      .Ajax()
+                      .Model(model =>
+                      {
+                          model.Field(f => f.IsSelected).Editable(true);
+                          model.Field(f => f.SerialNumber).Editable(false);
+                          model.Field(f => f.Description).Editable(false);
+                      })
+                      .Read(read => read.Action("GetVmElaProvisionedItems", "VM").Data("getVmElaProvisionsParams"))
+                      .PageSize(Model.VmItemsToDeactivate.Count())
+                  )
+                  .Columns(columns =>
+                  {
+                      columns.Bound(p => p.IsSelected).Width(90).Title("").Sortable(false)
+                          .HeaderTemplate(@"<span>Select All</span>
+                                <input type=""checkbox"" id=""checkAllSns"" class=""selectAllSns"" onchange=""onSelectAllClicked(this)"" style=""margin-left: 5px; margin-top: -3px;""/>")
+                          .ClientTemplate(@"<input type=""checkbox"" class=""selectOneSn"" #= IsSelected ? checked=""checked"":"""" # />");
+                      columns.Bound(p => p.SerialNumber).Width(130).Title("Serial Number");
+                      columns.Bound(p => p.Description).Title("License");
+                  })
+                  .Scrollable(s => s.Enabled(true).Height(340))
+                  .Events(events => events.DataBound("onDadaBounded"))
+          )
+        </div>
+    </fieldset>
+</div>
+<div class="csp-submit-container" style="margin-top: 10px; margin-bottom: 10px; font-size: small;">
+    <input type="button" id="submitBtn" class="k-button csp-submit" value="Submit" onclick="onSubmit()" />
+</div>

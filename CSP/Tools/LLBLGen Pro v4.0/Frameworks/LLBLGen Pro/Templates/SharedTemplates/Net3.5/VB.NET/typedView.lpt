@@ -1,0 +1,672 @@
+﻿<%
+	Project currentProject = _executingGenerator.ProjectDefinition;
+	var typedView = _activeObject as TypedViewDefinition;
+	var mapping = currentProject.GetGroupableModelElementMapping(typedView, _executingGenerator.DriverID);
+	bool mappedOnTvfCallResultset = false;
+	bool mappedOnTableView = false;
+	bool mappedOnProcResultset = false;
+	if(mapping == null)
+	{
+		mapping = currentProject.GetGroupableModelElementMapping(typedView, _executingGenerator.DriverID, true);
+		mappedOnTvfCallResultset = true;
+	}
+	else
+	{
+		mappedOnTableView = ((mapping.MappedTarget.ElementType==ProjectElementMapTargetElementType.Table) || 
+								(mapping.MappedTarget.ElementType==ProjectElementMapTargetElementType.View));
+		mappedOnProcResultset = (mapping.MappedTarget.ElementType==ProjectElementMapTargetElementType.StoredProcedureResultset);
+	}
+	List<FieldElement> fields = null;
+	if(typedView.Fields.HasFieldOrdering && mappedOnTableView)
+	{
+		fields = typedView.Fields.ApplyFieldOrdering().ToList();
+	}
+	else
+	{
+		// grab fields from mapping and sort on ordinal, as ordering IS important (on ordinal of target) as it otherwise goes wrong with oracle cursors.
+		fields = mapping.FieldMappings.OrderBy(fm => fm.MappedTarget.OrdinalPosition).Select(fm => fm.MappedFieldInstance)
+																										.Cast<FieldElement>().ToList();
+	}
+%>' ///////////////////////////////////////////////////////////////
+' // This is generated code. 
+' //////////////////////////////////////////////////////////////
+' // Code is generated using LLBLGen Pro version: <%=ApplicationConstants.LLBLGenProVersion%>
+' // Code is generated on: <% if(currentProject.GetRealBoolSettingValue("TdlEmitTimeDateInOutputFiles")) {%><%=DateTime.Now.ToString("F")%><%}%>
+' // Code is generated using templates: <%=_executingGenerator.GetTemplateBindingsName(_templateID, _templateBindingDefinitionName)%>
+' // Templates vendor: Solutions Design.
+' //////////////////////////////////////////////////////////////
+Imports System
+Imports System.ComponentModel
+Imports System.Data
+Imports System.Collections
+Imports System.Runtime.Serialization
+Imports <%=_executingGenerator.RootNamespaceToUse%>
+Imports <%=_executingGenerator.RootNamespaceToUse%>.HelperClasses
+Imports <%=_executingGenerator.RootNamespaceToUse%>.DaoClasses
+Imports <%=_executingGenerator.RootNamespaceToUse%>.EntityClasses
+Imports <%=_executingGenerator.RootNamespaceToUse%>.FactoryClasses<% if(mappedOnProcResultset) {%>
+Imports <%=_executingGenerator.RootNamespaceToUse%>.StoredProcedureCallerClasses<% } %>
+Imports SD.LLBLGen.Pro.ORMSupportClasses
+<%
+	if(mappedOnTvfCallResultset)
+	{
+%>Imports <%=_executingGenerator.RootNamespaceToUse%>.RelationClasses
+<%	}
+
+	foreach(var additionalNamespace in typedView.GetAdditionalNamespaces(currentProject))
+	{
+%>Imports <%=additionalNamespace%>
+<%	}
+%>
+namespace <%=_executingGenerator.RootNamespaceToUse%>.TypedViewClasses
+<%=DotNetTemplateEngine.GetUserCodeRegion("AdditionalNamespaces", @"'")%>
+	''' <summary>Typed datatable for the view '<%=typedView.Name%>'.</summary>
+<%	if(typedView.OutputSettingValues.CustomProperties.Count>0)
+	{
+%>	''' <remarks>Custom Properties: <br/>
+<%		foreach(var kvp in typedView.OutputSettingValues.CustomProperties)
+		{
+%>	''' <%=kvp.Key%>: <%=kvp.Value%><br/>
+<%		}
+%>	''' </remarks>
+<%	}
+%>	<Serializable(), System.ComponentModel.DesignerCategory("Code"), ToolboxItem(True), DesignTimeVisible(True)> _
+<%	foreach(var additionalAttribute in typedView.GetAttributes(currentProject))
+	{
+%>	<%=_executingGenerator.ProduceRealAttributeString(additionalAttribute)%>
+<%	}
+%>	Public Class <%=typedView.Name%>TypedView 
+		Inherits TypedViewBase(Of <%=typedView.Name%>Row)
+<%	if(mappedOnTableView) 
+	{
+%>		Implements ITypedView
+<% 	}
+	foreach(var additionalInterface in typedView.GetAdditionalInterfaces(currentProject).Where(s=>s.Trim().Length>0))
+	{
+%>		Implements <%=additionalInterface%> 
+<% 	} 
+%><%=DotNetTemplateEngine.GetUserCodeRegion("AdditionalInterfacesView", @"'")%>
+#Region "Class Member Declarations"
+<%
+	foreach(var field in fields)
+	{
+%>		Private _column<%=field.Name%> As DataColumn
+<%	}
+%><%=DotNetTemplateEngine.GetUserCodeRegion("AdditionalMembers", @"'")%>
+		Private Shared _customProperties As Hashtable
+		Private Shared _fieldsCustomProperties As Hashtable
+#End Region
+
+#Region "Class Constants"
+		Private Const AmountOfFields As Integer = <%=fields.Count%>
+#End Region
+
+		''' <summary>Static CTor for setting up custom property hashtables.</summary>
+		Shared Sub New()
+			SetupCustomPropertyHashtables()
+		End Sub
+
+		''' <summary>CTor</summary>
+		Public Sub New()
+			MyBase.New("<%=typedView.Name%>")
+			InitClass()
+		End Sub
+		
+		''' <summary>Protected constructor for deserialization.</summary>
+		''' <param name="info"></param>
+		''' <param name="context"></param>
+		Protected Sub New(info As SerializationInfo, context As StreamingContext)
+			MyBase.New(info, context)
+			InitMembers()
+		End Sub
+
+<%	
+	var parameterDeclarations = new List<string>();
+	var parameterNames = new List<string>();
+	if(mappedOnProcResultset)
+	{
+		SPCallDefinition parentSPCall = null;
+		SPCallMapping parentSPCallMapping = null;
+		DBStoredProcedureResultset resultset = (DBStoredProcedureResultset)mapping.MappedTarget;
+		var allSPCalls = currentProject.GetAllMappedSPCallsPerTarget(_executingGenerator.DriverID);
+		parentSPCall = allSPCalls.GetValues(resultset.OwningStoredProcedure, true).OrderBy(sc => sc.Name).FirstOrDefault();
+		parentSPCallMapping = (SPCallMapping)currentProject.GetGroupableModelElementMapping(parentSPCall, _executingGenerator.DriverID);
+
+%>		''' <summary>Fills itself with data obtained from the resultset this typedview is mapped on.</summary>
+		''' <param name="transactionToUse">The transaction to use.</param>
+<%		if(GeneratorUtils.CheckIfCurrentSPCallHasOutputParameters(true, parentSPCall, _executingGenerator))
+		{
+			foreach(var parameter in GeneratorUtils.GetStoredProcedureParametersToWalk(true, false, parentSPCall, _executingGenerator))
+			{
+				var parameterMapping = parentSPCallMapping.GetFieldMappingOfField(parameter);
+%>		''' <param name="<%=GeneratorUtils.CamelCaseString(parameter.Name)%>"><%=parameterMapping.MappedTarget.Direction%> parameter of stored procedure</param>
+<%			}
+		}
+		var parametersToWalk = GeneratorUtils.GetStoredProcedureParametersToWalk(false, false, parentSPCall, _executingGenerator)
+																						.Where(p=>p.Direction==ParameterDirection.Input)
+							   	.Union(GeneratorUtils.GetStoredProcedureParametersToWalk(true, false, parentSPCall, _executingGenerator)
+																		.Where(p=>p.Direction!=ParameterDirection.Input))
+							 	.ToList();
+		foreach(var parameter in parametersToWalk)
+		{
+			string refKeyword = parameter.Direction!=ParameterDirection.Input ? "ByRef " : string.Empty;
+			string parameterNameCamelCased = GeneratorUtils.CamelCaseString(parameter.Name);
+			parameterNames.Add(parameterNameCamelCased);
+			parameterDeclarations.Add(string.Format("{0}{1} As {2}", 
+							refKeyword, 
+							parameterNameCamelCased,
+							GeneratorUtils.GetDotNetTypeAsString(parameter.FieldType.RepresentedType, _executingGenerator, "Nullable(Of {0})", parameter.IsOptional)));
+		}
+%>		''' <returns>true if fill succeeded, false otherwise</returns>
+		Public Function Fill(transactionToUse As ITransaction<% if(parameterDeclarations.Count>0) { %>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% }%>) As Boolean
+			Return RetrievalProcedures.Fetch<%=typedView.Name%>TypedView(transactionToUse, GetFields(), Me<% if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><%}%>)
+		End Function
+<%	}
+	if(mappedOnTvfCallResultset)
+	{
+		TvfCallDefinition parentTvfCall = null; 
+		TvfCallMapping parentTvfCallMapping = null;
+		var resultset = (DBStoredProcedureResultset)mapping.MappedTarget;
+		var allTvfCalls = currentProject.GetAllMappedTvfCallsPerTarget(_executingGenerator.DriverID);
+		parentTvfCall = allTvfCalls.GetValues(resultset.OwningStoredProcedure, true).OrderBy(sc => sc.Name).FirstOrDefault();
+		parentTvfCallMapping = (TvfCallMapping)currentProject.GetGroupableModelElementMapping(parentTvfCall, _executingGenerator.DriverID);
+		
+		parameterDeclarations = new List<string>();
+		parameterNames = new List<string>();
+		foreach(var parameterMapping in parentTvfCallMapping.FieldMappings.OrderBy(fm=>fm.MappedTarget.OrdinalPosition))
+		{
+			var mappedParameter = parameterMapping.MappedFieldInstance as TvfCallParameterDefinition;
+			string parameterNameCamelCased = GeneratorUtils.CamelCaseString(mappedParameter.Name);
+			parameterNames.Add(parameterNameCamelCased);
+			parameterDeclarations.Add(string.Format("{0} As {1}", 
+							parameterNameCamelCased,
+							GeneratorUtils.GetDotNetTypeAsString(mappedParameter.FieldType.RepresentedType, _executingGenerator, "Nullable<{0}>", mappedParameter.IsOptional)));
+		}
+%>
+		''' <summary>Fills itself with data. it builds a dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>' and loads itself with that query, using the specified filter</summary>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <returns>true if fill succeeded, false otherwise</returns>
+		Public Function Fill([alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>) As Boolean
+			Return Fill(Nothing, [alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>, 0, Nothing, true, Nothing, Nothing, 0, 0)
+		End Function
+
+		''' <summary>Fills itself with data. it builds a dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>' and loads itself with that query, using the specified filter</summary>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <param name="selectFilter">Predicate expression to filter on the rows inserted in this TypedView object.</param>
+		''' <returns>true if fill succeeded, false otherwise</returns>
+		Public Function Fill([alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>, selectFilter As IPredicate) As Boolean
+			Return Fill(Nothing, [alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>, 0, Nothing, true, selectFilter, Nothing, 0, 0)
+		End Function
+		
+		''' <summary>Fills itself with data. it builds a dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>' and loads itself with that query, using the specified filter</summary>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When null is specified, no sorting is applied.</param>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (true) or not (false)</param>
+		''' <param name="selectFilter">Predicate expression to filter on the rows inserted in this TypedView object.</param>
+		''' <returns>true if fill succeeded, false otherwise</returns>
+		Public Function Fill([alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>, sortClauses As ISortExpression, allowDuplicates As Boolean, selectFilter As IPredicate) As Boolean
+			Return Fill(Nothing, [alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>, 0, sortClauses, allowDuplicates, selectFilter, Nothing, 0, 0)
+		End Function
+
+		''' <summary>Fills itself with data. it builds a dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>' and loads itself with that query, using the specified filter</summary>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <param name="maxNumberOfItemsToReturn">The maximum amount of rows to return. specifying 0 means all rows are returned</param>
+		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When null is specified, no sorting is applied.</param>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (true) or not (false)</param>
+		''' <param name="selectFilter">Predicate expression to filter on the rows inserted in this TypedView object.</param>
+		''' <returns>true if fill succeeded, false otherwise</returns>
+		Public Function Fill([alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>, maxNumberOfItemsToReturn As Long, sortClauses As ISortExpression, allowDuplicates As Boolean, selectFilter As IPredicate) As Boolean
+			Return Fill(Nothing, [alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>, maxNumberOfItemsToReturn, sortClauses, allowDuplicates, selectFilter, Nothing, 0, 0)
+		End Function
+
+		''' <summary>Fills itself with data. it builds a dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>' and loads itself with that query, using the specified filter</summary>
+		''' <param name="transactionToUse">The transaction object to use. Can be null. If specified, the connection object of the transaction is used to fill the TypedView, which avoids deadlocks on SqlServer.</param>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <param name="maxNumberOfItemsToReturn">The maximum amount of rows to return. specifying 0 means all rows are returned</param>
+		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When null is specified, no sorting is applied.</param>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (true) or not (false)</param>
+		''' <param name="selectFilter">Predicate expression to filter on the rows inserted in this TypedView object.</param>
+		''' <returns>true if fill succeeded, false otherwise</returns>
+		Public Function Fill(transactionToUse As ITransaction, [alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>, maxNumberOfItemsToReturn As Long, sortClauses As ISortExpression, allowDuplicates As Boolean, selectFilter As IPredicate) As Boolean
+			Return Fill(transactionToUse, [alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>, maxNumberOfItemsToReturn, sortClauses, allowDuplicates, selectFilter, Nothing, 0, 0)
+		End Function
+
+		''' <summary>Fills itself with data. it builds a dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>' and loads itself with that query, using the specified filter</summary>
+		''' <param name="transactionToUse">The transaction object to use. Can be null. If specified, the connection object of the transaction is used to fill the TypedView, which avoids deadlocks on SqlServer.</param>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <param name="maxNumberOfItemsToReturn">The maximum amount of rows to return. specifying 0 means all rows are returned</param>
+		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When null is specified, no sorting is applied.</param>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (true) or not (false)</param>
+		''' <param name="selectFilter">Predicate expression to filter on the rows inserted in this TypedView object.</param>
+		''' <param name="groupByClause">GroupByCollection with fields to group by on.</param>
+		''' <returns>true if fill succeeded, false otherwise</returns>
+		Public Function Fill(transactionToUse As ITransaction, [alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>, maxNumberOfItemsToReturn As Long, sortClauses As ISortExpression, allowDuplicates As Boolean, selectFilter As IPredicate, groupByClause As IGroupByCollection) As Boolean
+			Return Fill(transactionToUse, [alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>, maxNumberOfItemsToReturn, sortClauses, allowDuplicates, selectFilter, groupByClause, 0, 0)
+		End Function
+
+		''' <summary>Fills itself with data. it builds a dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>' and loads itself with that query, using the specified filter</summary>
+		''' <param name="transactionToUse">The transaction object to use. Can be null. If specified, the connection object of the transaction is used to fill the TypedView, which avoids deadlocks on SqlServer.</param>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <param name="maxNumberOfItemsToReturn">The maximum amount of rows to return. specifying 0 means all rows are returned</param>
+		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When null is specified, no sorting is applied.</param>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (true) or not (false)</param>
+		''' <param name="selectFilter">Predicate expression to filter on the rows inserted in this TypedView object.</param>
+		''' <param name="groupByClause">GroupByCollection with fields to group by on.</param>
+		''' <param name="pageNumber">The page number to retrieve.</param>
+		''' <param name="pageSize">The page size of the page to retrieve.</param>
+		''' <returns>true if fill succeeded, false otherwise</returns>
+		Overridable Public Function Fill(transactionToUse As ITransaction, [alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>, maxNumberOfItemsToReturn As Long, sortClauses As ISortExpression, allowDuplicates As Boolean, selectFilter As IPredicate, groupByClause As IGroupByCollection, pageNumber As Integer, pageSize As Integer) As Boolean
+			Dim relations = New RelationCollection(New DynamicRelation(TvfCallFactory.<%=parentTvfCall.Name%>([alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>))) With { .SelectListAlias = [alias] }
+			Return DAOFactory.CreateTypedListDAO().GetMultiAsDataTable(GetFields(), Me, maxNumberOfItemsToReturn, sortClauses, selectFilter, relations, allowDuplicates, groupByClause, transactionToUse, pageNumber, pageSize)
+		End Function
+
+		''' <summary>Gets the amount of rows in the database returned by the dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>', not skipping duplicates</summary>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <returns>the number of rows in the set defined by the passed in query elements</returns>
+		Public Function GetDbCount([alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>) As Integer
+			Return GetDbCount([alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>, True, Nothing)
+		End Function
+		
+		''' <summary>Gets the amount of rows in the database returned by the dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>'.</summary>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <param name="allowDuplicates">Flag to allow duplicate rows (true) or not (false)</param>
+		''' <returns>the number of rows in the set defined by the passed in query elements</returns>
+		Public Function GetDbCount([alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>, allowDuplicates As Boolean) As Integer
+			Return GetDbCount([alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>, allowDuplicates, Nothing)
+		End Function
+		
+		''' <summary>Gets the amount of rows in the database returned by the dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>'.</summary>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <param name="allowDuplicates">Flag to allow duplicate rows (true) or not (false)</param>
+		''' <param name="filter">The filter to apply for the count retrieval</param>
+		''' <returns>the number of rows in the set defined by the passed in query elements</returns>
+		Public Function GetDbCount([alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>, allowDuplicates As Boolean, filter As IPredicate) As Integer
+			Return GetDbCount([alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>, allowDuplicates, filter, Nothing)
+		End Function
+
+		''' <summary>Gets the amount of rows in the database returned by the dynamic query calling the TVF '<%=parentTvfCallMapping.MappedTarget.FullName%>'.</summary>
+		''' <param name="alias">The alias.</param>
+<%			foreach(var parameterName in parameterNames)
+			{
+%>		''' <param name="<%=parameterName%>">A parameter of the TVF Call.</param>
+<%			}
+%>		''' <param name="allowDuplicates">Flag to allow duplicate rows (true) or not (false)</param>
+		''' <param name="filter">The filter to apply for the count retrieval</param>
+		''' <param name="groupByClause">group by clause to embed in the query</param>
+		''' <returns>the number of rows in the set defined by the passed in query elements</returns>
+		Overridable Public Function GetDbCount([alias] As String<%if(parameterDeclarations.Count>0) {%>, <%=string.Join(", ", parameterDeclarations.ToArray())%><% } %>, allowDuplicates As Boolean, filter As IPredicate, groupByClause As GroupByCollection) As Integer
+			Dim relations = New RelationCollection(New DynamicRelation(TvfCallFactory.<%=parentTvfCall.Name%>([alias]<%if(parameterNames.Count>0) {%>, <%=string.Join(", ", parameterNames.ToArray())%><% } %>))) With { .SelectListAlias = [alias] }
+			Return DAOFactory.CreateTypedListDAO().GetDbCount(GetFields(), Nothing, filter, relations, groupByClause, allowDuplicates)
+		End Function
+<%	}
+	if(mappedOnTableView)
+	{
+%>		''' <summary>Fills itself with data. it builds a dynamic query and loads itself with that query. 
+		''' Will use no sort filter, no select filter, will allow duplicate rows and will not limit the amount of rows returned
+		''' </summary>
+		''' <returns>True if fill succeeded, False otherwise</returns>
+		Public Function Fill() As Boolean Implements ITypedView.Fill
+			Return Fill(0, Nothing, True, Nothing, Nothing, Nothing, 0, 0)
+		End Function
+
+		''' <summary>
+		''' Fills itself with data. it builds a dynamic query and loads itself with that query. 
+		''' Will not use a filter, will allow duplicate rows.
+		''' </summary>
+		''' <param name="maxNumberOfItemsToReturn">The maximum amount of rows to Return. specifying 0 means all rows are returned</param>
+		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When Nothing is specified, no sorting is applied.</param>
+		''' <returns>True if fill succeeded, False otherwise</returns>
+		Public Function Fill(maxNumberOfItemsToReturn As Long, sortClauses As ISortExpression) As Boolean Implements ITypedView.Fill
+			Return Fill(maxNumberOfItemsToReturn, sortClauses, True, Nothing, Nothing, Nothing, 0, 0)
+		End Function
+
+		''' <summary>
+		''' Fills itself with data. it builds a dynamic query and loads itself with that query. 
+		''' Will not use a filter.
+		''' </summary>
+		''' <param name="maxNumberOfItemsToReturn">The maximum amount of rows to Return. specifying 0 means all rows are returned</param>
+		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When Nothing is specified, no sorting is applied.</param>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (True) or not (False)</param>
+		''' <returns>True if fill succeeded, False otherwise</returns>
+		Public Function Fill(maxNumberOfItemsToReturn As Long, sortClauses As ISortExpression, allowDuplicates As Boolean) As Boolean Implements ITypedView.Fill
+			Return Fill(maxNumberOfItemsToReturn, sortClauses, allowDuplicates, Nothing, Nothing, Nothing, 0, 0)
+		End Function
+
+		''' <summary>
+		''' Fills itself with data. it builds a dynamic query and loads itself with that query, using the specified filter
+		''' </summary>
+		''' <param name="maxNumberOfItemsToReturn">The maximum amount of rows to Return. specifying 0 means all rows are returned</param>
+		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When Nothing is specified, no sorting is applied.</param>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (True) or not (False)</param>
+		''' <param name="selectFilter">Predicate which is used to filter the rows to insert in this Typed List instance</param>
+		''' <returns>True if fill succeeded, False otherwise</returns>
+		Public Function Fill(maxNumberOfItemsToReturn As Long, sortClauses As ISortExpression, allowDuplicates As Boolean, selectFilter As IPredicate) As Boolean Implements ITypedView.Fill
+			Return Fill(maxNumberOfItemsToReturn, sortClauses, allowDuplicates, selectFilter, Nothing, Nothing, 0, 0)
+		End Function
+
+		''' <summary>
+		''' Fills itself with data. it builds a dynamic query and loads itself with that query, using the specified filter
+		''' </summary>
+		''' <param name="maxNumberOfItemsToReturn">The maximum amount of rows to Return. specifying 0 means all rows are returned</param>
+		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When Nothing is specified, no sorting is applied.</param>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (True) or not (False)</param>
+		''' <param name="selectFilter">Predicate which is used to filter the rows to insert in this Typed List instance</param>
+		''' <param name="transactionToUse">The transaction object to use. Can be null. If specified, the connection object of the transaction is
+		''' used to fill the TypedView, which avoids deadlocks on SqlServer.</param>
+		''' <returns>True if fill succeeded, False otherwise</returns>
+		Public Function Fill(maxNumberOfItemsToReturn As Long, sortClauses As ISortExpression, allowDuplicates As Boolean, selectFilter As IPredicate, transactionToUse As ITransaction) As Boolean Implements ITypedView.Fill
+			Return Fill(maxNumberOfItemsToReturn, sortClauses, allowDuplicates, selectFilter, transactionToUse, Nothing, 0, 0)
+		End Function
+
+		''' <summary>
+		''' Fills itself with data. it builds a dynamic query and loads itself with that query, using the specified filter
+		''' </summary>
+		''' <param name="maxNumberOfItemsToReturn">The maximum amount of rows to Return. specifying 0 means all rows are returned</param>
+		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When Nothing is specified, no sorting is applied.</param>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (True) or not (False)</param>
+		''' <param name="selectFilter">Predicate which is used to filter the rows to insert in this Typed List instance</param>
+		''' <param name="transactionToUse">The transaction object to use. Can be null. If specified, the connection object of the transaction is
+		''' used to fill the TypedView, which avoids deadlocks on SqlServer.</param>
+		''' <param name="groupByClause">GroupByCollection with fields to group by on.</param>
+		''' <returns>True if fill succeeded, False otherwise</returns>
+		Public Function Fill(maxNumberOfItemsToReturn As Long, sortClauses As ISortExpression, allowDuplicates As Boolean, selectFilter As IPredicate, transactionToUse As ITransaction, groupByClause As IGroupByCollection) As Boolean Implements ITypedView.Fill
+			Return Fill(maxNumberOfItemsToReturn, sortClauses, allowDuplicates, selectFilter, transactionToUse, groupByClause, 0, 0)
+		End Function
+
+		''' <summary>
+		''' Fills itself with data. it builds a dynamic query and loads itself with that query, using the specified filter
+		''' </summary>
+		''' <param name="maxNumberOfItemsToReturn">The maximum amount of rows to Return. specifying 0 means all rows are returned</param>
+		''' <param name="sortClauses">The order by specifications for the sorting of the resultset. When Nothing is specified, no sorting is applied.</param>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (True) or not (False)</param>
+		''' <param name="selectFilter">Predicate which is used to filter the rows to insert in this Typed List instance</param>
+		''' <param name="transactionToUse">The transaction object to use. Can be null. If specified, the connection object of the transaction is
+		''' used to fill the TypedView, which avoids deadlocks on SqlServer.</param>
+		''' <param name="groupByClause">GroupByCollection with fields to group by on.</param>
+		''' <param name="pageNumber">The page number to retrieve.</param>
+		''' <param name="pageSize">The page size of the page to retrieve.</param>
+		''' <returns>True if fill succeeded, False otherwise</returns>
+		Overridable Public Function Fill(maxNumberOfItemsToReturn As Long, sortClauses As ISortExpression, allowDuplicates As Boolean, selectFilter As IPredicate, transactionToUse As ITransaction, groupByClause As IGroupByCollection, pageNumber As Integer, pageSize As Integer) As Boolean Implements ITypedView.Fill
+			Dim fieldsInResultset As IEntityFields = GetFields()
+<%=DotNetTemplateEngine.GetUserCodeRegion("AdditionalFields", @"'")%>
+			Return DAOFactory.CreateTypedListDAO().GetMultiAsDataTable(fieldsInResultset, Me, maxNumberOfItemsToReturn, sortClauses, selectFilter, Nothing, allowDuplicates, groupByClause, transactionToUse, pageNumber, pageSize)
+		End Function
+
+		''' <summary>Gets the amount of rows in the database for this typed view, not skipping duplicates</summary>
+		''' <returns>the amount of objects found</returns>
+		Public Function GetDbCount() As Integer Implements ITypedView.GetDbCount
+			Return GetDbCount(True, Nothing, Nothing)
+		End Function
+		
+		''' <summary>Gets the amount of rows in the database for this typed view.</summary>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (true) or not (false)</param>
+		''' <returns>the amount of objects found</returns>
+		Public Function GetDbCount(allowDuplicates As Boolean) As Integer Implements ITypedView.GetDbCount
+			Return GetDbCount(allowDuplicates, Nothing, Nothing)
+		End Function
+
+		''' <summary>Gets the amount of rows in the database for this typed view.</summary>
+		''' <param name="allowDuplicates">Flag to allow duplicate rows (true) or not (false)</param>
+		''' <param name="filter">The filter to apply for the count retrieval</param>
+		''' <returns>the amount of objects found</returns>
+		Public Function GetDbCount(allowDuplicates As Boolean, Filter As IPredicateExpression) As Integer Implements ITypedView.GetDbCount
+			Return GetDbCount(allowDuplicates, Filter, Nothing)
+		End Function
+
+		''' <summary>Gets the amount of rows In the database For this typed list.</summary>
+		''' <param name="allowDuplicates">Flag To allow duplicate rows (True) Or Not (False)</param>
+		''' <param name="filter">The filter To apply For the count retrieval</param>
+		''' <param name="groupByClause">group by clause To embed In the query</param>
+		''' <returns>the number of rows In the Set defined by the passed In query elements</returns>
+		Public Overridable Function GetDbCount(allowDuplicates As Boolean, Filter As IPredicateExpression, groupByClause As GroupByCollection) As Integer Implements ITypedView.GetDbCount
+			Dim fieldsInResultset As IEntityFields = EntityFieldsFactory.CreateTypedViewEntityFieldsObject(TypedViewType.<%=typedView.Name%>TypedView)
+			Return DAOFactory.CreateTypedListDAO().GetDbCount(fieldsInResultset, Nothing, Filter, Nothing, groupByClause, allowDuplicates)
+		End Function
+<%	}
+%>
+		''' <summary>Gets the fields of this typed view</summary>
+		''' <returns>IEntityFields Object</returns>
+		Public Overridable Function GetFields() As IEntityFields <% if(mappedOnTableView) {%>Implements ITypedView.GetFields<%}%>
+			Return EntityFieldsFactory.CreateTypedViewEntityFieldsObject(TypedViewType.<%=typedView.Name%>TypedView)
+		End Function
+		
+		''' <summary>Creates a new typed row during the build of the datatable during a Fill session by a dataadapter.</summary>
+		''' <param name="rowBuilder">supplied row builder to pass to the typed row</param>
+		''' <returns>the new typed datarow</returns>
+		Protected Overrides Function NewRowFromBuilder(rowBuilder As DataRowBuilder) As DataRow
+			Return New <%=typedView.Name%>Row(rowBuilder)
+		End Function
+
+		''' <summary>Initializes the hashtables for the typed view type and typed view field custom properties. </summary>
+		Private Shared Sub SetupCustomPropertyHashtables()
+			_customProperties = New Hashtable()
+			_fieldsCustomProperties = New Hashtable()
+<%	foreach(var cp in typedView.OutputSettingValues.CustomProperties)
+	{			
+%>			_customProperties.Add("<%=cp.Key%>", "<%=cp.Value%>")
+<%	}
+%>			Dim fieldHashtable As Hashtable
+<%	foreach(var field in fields)
+	{
+%>			fieldHashtable = new Hashtable()
+<%		foreach(var fieldCP in field.OutputSettingValues.CustomProperties)
+		{
+%>			fieldHashtable.Add("<%=fieldCP.Key%>", "<%=fieldCP.Value%>")
+<%		}
+%>			_fieldsCustomProperties.Add("<%=field.Name%>", fieldHashtable)
+<%	}
+%>		End Sub
+
+		''' <summary>Initialize the datastructures.</summary>
+		Protected Overrides Overloads Sub InitClass()
+			TableName = "<%=typedView.Name%>"
+<%		
+	foreach(var field in fields)
+	{
+%>			_column<%=field.Name%> = GeneralUtils.CreateTypedDataTableColumn("<%=field.Name%>", "<%=field.Name%>", GetType(<%=GeneratorUtils.GetDotNetTypeAsString(field.FieldType.RepresentedType, _executingGenerator)%>), Me.Columns)
+<%	}
+%><%=DotNetTemplateEngine.GetUserCodeRegion("InitClass", @"'")%>
+			OnInitialized()
+		End Sub
+
+		''' <summary>Initializes the members, after a clone action.</summary>
+		Private Sub InitMembers()
+<%		
+	foreach(var field in fields)
+	{
+%>			_column<%=field.Name%> = Me.Columns("<%=field.Name%>")
+<%	}
+%><%=DotNetTemplateEngine.GetUserCodeRegion("InitMembers", @"'")%>
+		End Sub
+
+		''' <summary>Clones this instance.</summary>
+		''' <returns>A clone of this instance</returns>
+		Public Overrides Function Clone() As DataTable
+			Dim cloneToReturn As <%=typedView.Name%>TypedView = CType(MyBase.Clone(), <%=typedView.Name%>TypedView)
+			cloneToReturn.InitMembers()
+			Return cloneToReturn
+		End Function		
+
+		''' <summary>Creates a new instance of the DataTable class.</summary>
+		''' <returns>a new instance of a datatable with this schema.</returns>
+		Protected Overrides Function CreateInstance() As DataTable
+			Return New <%=typedView.Name%>TypedView()
+		End Function
+
+#Region "Class Property Declarations"
+		''' <summary>Returns the number of rows in this typed view</summary>
+		Public Shadows ReadOnly Property Count() As Integer <%if(mappedOnTableView) {%>Implements ITypedView.Count<%}%>
+			' Necessary re-implementation as VB.NET compiler can't implement interface members through inheritance.
+			Get
+				Return MyBase.Count
+			End Get
+		End Property
+
+		''' <summary>
+		''' The custom properties for this TypedView type.
+		''' </summary>
+		''' <remarks>The data returned from this property should be considered read-only: it is not thread safe to alter this data at runtime.</remarks>
+		Public Shared ReadOnly Property CustomProperties() As Hashtable
+			Get
+				Return _customProperties
+			End Get
+		End Property		
+
+		''' <summary>The custom properties for the type of this TypedView instance.</summary>
+		''' <remarks>The data returned from this property should be considered read-only: it is not thread safe to alter this data at runtime.</remarks>
+		<System.ComponentModel.Browsable(False)> _
+		Public Overridable ReadOnly Property CustomPropertiesOfType() As Hashtable
+			Get
+				Return <%=typedView.Name%>TypedView.CustomProperties
+			End Get
+		End Property
+
+		''' <summary>The custom properties for the fields of this TypedView type. The returned Hashtable contains per fieldname a hashtable of name-value pairs. </summary>
+		''' <remarks>The data returned from this property should be considered read-only: it is not thread safe to alter this data at runtime.</remarks>
+		Public Shared ReadOnly Property FieldsCustomProperties() As Hashtable
+			Get
+				Return _fieldsCustomProperties
+			End Get
+		End Property
+
+		''' <summary> The custom properties for the fields of the type of this TypedView instance. The returned Hashtable contains per fieldname a hashtable of name-value pairs. </summary>
+		''' <remarks>The data returned from this property should be considered read-only: it is not thread safe to alter this data at runtime.</remarks>
+		<System.ComponentModel.Browsable(False)> _
+		Public Overridable ReadOnly Property FieldsCustomPropertiesOfType() As Hashtable
+			Get
+				Return <%=typedView.Name%>TypedView.FieldsCustomProperties
+			End Get
+		End Property
+		
+<%
+	foreach(var field in fields)
+	{
+%>		''' <summary>Returns the column object belonging to the TypedView field '<%=field.Name%>'</summary>
+		ReadOnly Friend Property <%=field.Name%>Column As DataColumn
+			Get 
+				Return _column<%=field.Name%> 
+			End Get
+		End Property
+
+<%	}
+%><%=DotNetTemplateEngine.GetUserCodeRegion("AdditionalColumnProperties", @"'")%>
+#End Region
+
+#Region "Custom Typed View code"
+<%=DotNetTemplateEngine.GetUserCodeRegion("CustomTypedViewCode", @"'")%>		
+#End Region
+
+#Region "Included Code"
+<# Custom_TypedViewTemplate #>
+#End Region
+	End Class
+
+	''' <summary>Typed datarow for the typed datatable <%=typedView.Name%></summary>
+	Public Class <%=typedView.Name%>Row 
+		Inherits DataRow
+<%=DotNetTemplateEngine.GetUserCodeRegion("AdditionalInterfacesRow", @"'")%>
+#Region "Class Member Declarations"
+		Private _parent As <%=typedView.Name%>TypedView
+#End Region
+
+		''' <summary>CTor</summary>
+		''' <param name="rowBuilder">Row builder object to use when building this row</param>
+		Protected Friend Sub New(rowBuilder As DataRowBuilder)
+			MyBase.New(rowBuilder) 
+			_parent = CType(Me.Table, <%=typedView.Name%>TypedView)
+		End Sub		
+
+#Region "Class Property Declarations"
+<%	foreach(var field in fields)
+	{
+		var fieldMapping = mapping.GetFieldMappingOfField(field);
+		var targetField = fieldMapping.MappedTarget;
+%>		''' <summary>Gets / sets the value of the TypedView field <%=field.Name%></summary>
+		''' <remarks>Mapped on view field: "<%=targetField.Parent.Name%>"."<%=targetField.FieldName%>"<br/>
+<%		foreach(var kvp in field.OutputSettingValues.CustomProperties)
+		{
+%>		''' <%=kvp.Key%>: <%=kvp.Value%><br/>
+<%		}
+		if(!string.IsNullOrEmpty(field.Description))
+		{ 
+%>		''' Description: <%=field.Description%><br/>
+<%		}
+%>		''' View field characteristics (type, precision, scale, length): <%=_executingGenerator.GetDBNETProviderTypeForDbType(targetField.TypeDefinition.DBType)%>, <%=targetField.TypeDefinition.Precision%>, <%=targetField.TypeDefinition.Scale%>, <%=GeneratorUtils.GetRealMaxLength(targetField.TypeDefinition.Length, targetField.TypeDefinition.DBTypeAsNETType)%></remarks>
+<%
+		foreach(var additionalAttribute in field.GetAttributes(currentProject))
+		{
+%>		<%=_executingGenerator.ProduceRealAttributeString(additionalAttribute)%>
+<%		}
+
+		var typeString=GeneratorUtils.GetDotNetTypeAsString(field.FieldType.RepresentedType, _executingGenerator);
+%>		Public Property [<%=field.Name%>] As <%=typeString%> 
+			Get 
+				Return CType(IIf(Is<%=field.Name%>Null(), TypeDefaultValue.GetDefaultValue(GetType(<%=typeString%>)), Me(_parent.<%=field.Name%>Column)), <%=typeString%>)
+			End Get
+			Set 
+				Me(_parent.<%=field.Name%>Column) = value
+			End Set
+		End Property
+
+		''' <summary>Returns true if the TypedView field <%=field.Name%> is NULL, false otherwise.</summary>
+		Public Function Is<%=field.Name%>Null() As Boolean
+			Return IsNull(_parent.<%=field.Name%>Column)
+		End Function
+
+		''' <summary>Sets the TypedView field <%=field.Name%> to NULL. Not recommended; a typed list should be used as a readonly object.</summary>
+    	Public Sub Set<%=field.Name%>Null() 
+			Me(_parent.<%=field.Name%>Column) = System.Convert.DBNull
+		End Sub
+		
+<%	}
+%>#End Region
+		
+#Region "Custom Typed View Row Code"
+<%=DotNetTemplateEngine.GetUserCodeRegion("CustomTypedViewRowCode", @"'")%>		
+#End Region
+		
+#Region "Included Row Code"
+<# Custom_TypedViewRowTemplate #>
+#End Region
+	End Class
+End Namespace

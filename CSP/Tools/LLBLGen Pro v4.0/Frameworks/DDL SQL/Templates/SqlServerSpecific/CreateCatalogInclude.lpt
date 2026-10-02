@@ -1,0 +1,5 @@
+﻿<% // the name of the catalog is in the variable 'catalogName'.%>
+USE master
+GO
+CREATE DATABASE [<%=catalogName%>] /* ON PRIMARY (NAME=<%=catalogName%>_dat, FILENAME='c:\mycatalogs\<%=catalogName%>.mdf', SIZE=10MB) */
+GO

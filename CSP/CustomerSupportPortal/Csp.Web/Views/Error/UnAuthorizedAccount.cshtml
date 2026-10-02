@@ -1,0 +1,35 @@
+﻿@model Csp.Web.DataTransferObjects.UnAuthorizedAccessDto
+@{
+    ViewBag.Title = "UnAuthorizedAccount";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var supportLink = "https://live.paloaltonetworks.com/t5/custom/page/page-id/Support";
+}
+
+<script type="text/javascript">
+    function GetSupport() {
+        location.href = '@supportLink';
+    }
+</script>
+
+<input class="k-button" type="submit" value="Get Support" onclick="GetSupport();" style="height: 19px; padding-top: 0px; line-height: 18px;" />
+
+<div class="Csp-error">
+    <br />
+    <br />
+    <span>UnAuthorized Access</span>
+</div>
+<div>
+    <div class="alert alert-error">
+        @if (!Model.HasImpersonateAccessToAccount)
+        {
+            <div>
+                You have no approved impersonate requests to access the account.
+                Click @Html.ActionLink("here", "Logout", "Home") to log out from this account.
+            </div>
+        }
+        else if (string.IsNullOrEmpty(Model.Email))
+        {
+            <span>You do not have permission to access this content. Please contact Palo Alto Networks Support, if you believe you have reached this notification in error.</span>
+        }
+    </div>
+</div>

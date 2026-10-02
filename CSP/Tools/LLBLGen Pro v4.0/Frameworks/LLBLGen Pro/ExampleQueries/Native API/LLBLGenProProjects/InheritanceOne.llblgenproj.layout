@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LayoutInfo>
+  <ModelViews>
+    <ModelView Name="Test">
+      <EntityDefinitions>
+        <Entity Name=":BoardMember" X="961.6105" Y="17.719574" />
+        <Entity Name=":CompanyCar" X="640.610657" Y="-18.6133118" />
+        <Entity Name=":Department" X="1603.61243" Y="180.93808" />
+        <Entity Name=":Employee" X="1603.61255" Y="-51.7479248" />
+        <Entity Name=":FamilyCar" X="640.61145" Y="237.803177" />
+        <Entity Name=":GermanFamilyCar" X="640.611267" Y="450.303955" />
+        <Entity Name=":ItalianSportsCar" X="319.610474" Y="215.869156" />
+        <Entity Name=":Manager" X="1282.611" Y="60.8834534" />
+        <Entity Name=":SportsCar" X="319.610474" Y="3.30297852" />
+      </EntityDefinitions>
+    </ModelView>
+    <ModelView Name="Test2">
+      <EntityDefinitions>
+        <Entity Name=":Clerk" X="288.250122" Y="31.1032257" />
+        <Entity Name=":Department" X="609.2502" Y="340.5636" />
+        <Entity Name=":Employee" X="609.2501" Y="107.952377" />
+        <Entity Name=":Manager" X="288.250122" Y="219.769943" />
+      </EntityDefinitions>
+    </ModelView>
+  </ModelViews>
+</LayoutInfo>

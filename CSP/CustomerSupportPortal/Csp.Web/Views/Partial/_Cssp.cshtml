@@ -1,0 +1,147 @@
+﻿@using Csp.Web.Controllers
+@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.CsspDto
+
+<script type="text/javascript">
+
+    var @(UniqueId.cssp)csspTabs = (function () {
+        var lastSelectedCsspTab = -1;
+
+        function onCsspTabStripSelect(e) {
+            lastSelectedCsspTab = $(e.item).index();
+            if (lastSelectedCsspTab == CsspTabs.OrderHistory)
+            {
+                $(e.contentElement).html("");
+            }
+        }
+
+        function onCsspTabStripContentLoad(e) {
+            var eItem = $(e.item);
+            var tabStrip = eItem.closest('.k-tabstrip').data("kendoTabStrip");
+
+            var isFirstTabSelection = lastSelectedCsspTab == -1;
+            var isMostRecentlySelectedTab = lastSelectedCsspTab == eItem.index();
+            if (isFirstTabSelection || isMostRecentlySelectedTab) {
+                //Proceed as normal - this tab should load
+            } else {
+                //This tab should not load
+                tabStrip.deactivateTab(eItem);
+            }
+
+            deactivateUnselectedTabs(tabStrip);
+        }
+
+        var callonce = true;
+
+        function deactivateUnselectedTabs(tabStrip) {
+            if (callonce) {
+                callonce = false;
+
+                var tabs = tabStrip.items();
+                var current = tabStrip.select();
+                for (var i = 0; i < tabs.length; i++) {
+                    //var tab = $(tabs[i]);
+                    var isCurrentTab = i == current.index();
+
+                    if (!isCurrentTab) {
+                        var contentHolder = tabStrip.contentHolder(i);
+                        $(contentHolder).css('display', 'none');
+                    }
+                }
+            }
+        }
+
+        return {
+            onCsspTabStripSelect: onCsspTabStripSelect,
+            onCsspTabStripContentLoad: onCsspTabStripContentLoad
+        };
+    })();
+</script>
+<div>
+  <div style="background-color: rgb(254, 229, 199);border-bottom: 2px solid rgb(243, 140, 22);color: rgb(51, 51, 51);padding: 12px 24px;display: flex;-webkit-box-align: center;align-items: center;-webkit-box-pack: start;justify-content: flex-start;font-size: 14px;width: 100%;box-sizing: border-box;margin-bottom: 5px;">
+    <span aria-hidden="true" role="img" style="margin-right: 8px;font-size: 14px;background-color: rgb(254, 229, 199);">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1em" height="1em" fill="#F38C16" aria-hidden="true" focusable="false">
+          <path d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path>
+        </svg>
+      </span>
+    <span style="margin-right: 4px;font-weight: 400;color: rgb(243, 140, 22);">WARNING:</span>
+    <span style="">New purchases and activations for this product are no longer allowed. Support is scheduled to end in October 2026.</span>
+  </div>
+  @(Html.Kendo().TabStrip()
+                        .Animation(false)
+                        .Name("CsspTabStrip")
+                        .Events(e => e.Select((string)UniqueId.cssp + "csspTabs.onCsspTabStripSelect").ContentLoad((string)UniqueId.cssp + "csspTabs.onCsspTabStripContentLoad"))
+                        .HtmlAttributes(new { @class = "subTabs" })
+                        .Items(tabstrip => {
+
+                            var tab = tabstrip.Add().Text("CSSP Home")
+                                    .LoadContentFrom("Index", "Cssp", new
+                                    {
+                                        id = Model.SupportAccountId
+                                    });
+
+                            if (Model.SelectedTab == "Index")
+                            {
+                                tab.Selected(true);
+                            }
+
+                            tab = tabstrip.Add().Text("Shopping Cart")
+                                    .LoadContentFrom("CsspCart", "Cssp", new {
+                                        id = Model.SupportAccountId
+                                    }).Enabled(false).HtmlAttributes(new { style = "background: none;text-decoration: none;font-family: Arial, Helvetica, sans-serif;text-transform: none;font-size: 12px;" });
+
+                            if (Model.SelectedTab == "Cart")
+                            {
+                                tab.Selected(true);
+                            }
+
+                            tab = tabstrip.Add().Text("VM Provisioning Auth Codes")
+                                    .LoadContentFrom("ViewAvailable", "Cssp", new
+                                    {
+                                        id = Model.SupportAccountId,
+                                    });
+
+                            if (Model.SelectedTab == "VM")
+                            {
+                                tab.Selected(true);
+                            }
+                            if (Model.IsPrelicensingEnabled)
+                            {
+                                tab = tabstrip.Add().Text("Pre-License Devices")
+                                    .LoadContentFrom("PreLicenseDevices", "Cssp", new
+                                    {
+                                        supportAccountId = Model.SupportAccountId,
+                                        prelicenseId = Model.FirstQueryStringValue
+                                    });
+
+                                if (Model.SelectedTab == "PreLicenseDevices")
+                                {
+                                    tab.Selected(true);
+                                }
+                            }
+                            tab = tabstrip.Add().Text("Provisioned Devices")
+                            .LoadContentFrom("ProvisionedDevices", "Cssp", new
+                            {
+                                id = Model.SupportAccountId,
+                            });
+
+                            if (Model.SelectedTab == "Devices")
+                            {
+                                tab.Selected(true);
+                            }
+
+                            tab = tabstrip.Add().Text("Order History")
+                                    .LoadContentFrom("OrderHistory", "Cssp", new {
+                                        id = Model.SupportAccountId
+                                    });
+
+                            if (Model.SelectedTab == "Orders")
+                            {
+                                tab.Selected(true);
+                            }
+
+                        }
+
+                        )
+          )
+</div>

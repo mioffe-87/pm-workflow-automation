@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<taskGroup xmlns="http://sd/llblgen/pro/taskGroupElementDefinitions.xsd"
+		name="SD.Tasks.DDLSQL" isOptional ="true"
+		description="General group of tasks which are used to emit DDL SQL.">
+	<task name="SD.Tasks.DDLSQL.GenerateUpdateScript"
+		assemblyFilename="SD.LLBLGen.Pro.LptParser.dll"
+		taskPerformerClass="SD.LLBLGen.Pro.LptParser.DotNetTemplateEngine"
+		description ="Generates a DDL SQL script which can be used to update existing schema(s)."
+		isOptional="true">
+		<supportedPlatforms>
+			<platform name="RDBMS"/>
+		</supportedPlatforms>
+		<supportedTemplateGroups>
+			<templateGroup name="Update DDL SQL"/>
+		</supportedTemplateGroups>
+		<dependencies/>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="DDLSQL_UpdateScript_[time].[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_DDLSQL_UpdateScript_Main" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="generic" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="compileOnly" defaultValue="false" isOptional="true" description="Flag to signal if the templates should just be compiled, but not run" valueType="boolean"/>
+			<parameter name="debugBuild" defaultValue ="false" isOptional="true" description ="Flag to signal that the templates have to be compiled using a debug compile, so debugging the templates can be done more easily." valueType="boolean"/>
+			<parameter name="templateAssemblySourceFileFormat" defaultValue="templatesSource.[extension]" isOptional="true" description="The filename format for the template sourcecode as it's compiled. Use for debugging templates."/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.DDLSQL.GenerateCreateScript"
+		assemblyFilename="SD.LLBLGen.Pro.LptParser.dll"
+		taskPerformerClass="SD.LLBLGen.Pro.LptParser.DotNetTemplateEngine"
+		description ="Generates a DDL SQL script which can be used to create new schema(s)."
+		isOptional="true">
+		<supportedPlatforms>
+			<platform name="RDBMS"/>
+		</supportedPlatforms>
+		<supportedTemplateGroups>
+			<templateGroup name="Create DDL SQL"/>
+		</supportedTemplateGroups>
+		<dependencies/>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="DDLSQL_CreateScript_[time].[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_DDLSQL_CreateScript_Main" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="generic" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="compileOnly" defaultValue="false" isOptional="true" description="Flag to signal if the templates should just be compiled, but not run" valueType="boolean"/>
+			<parameter name="debugBuild" defaultValue ="false" isOptional="true" description ="Flag to signal that the templates have to be compiled using a debug compile, so debugging the templates can be done more easily." valueType="boolean"/>
+			<parameter name="templateAssemblySourceFileFormat" defaultValue="templatesSource.[extension]" isOptional="true" description="The filename format for the template sourcecode as it's compiled. Use for debugging templates."/>
+		</parameters>
+	</task>
+</taskGroup>

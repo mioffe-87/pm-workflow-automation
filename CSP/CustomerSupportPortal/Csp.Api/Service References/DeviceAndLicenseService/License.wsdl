@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://services.paloaltonetworks.com/License" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="License" targetNamespace="http://services.paloaltonetworks.com/License" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="BasicHttpBinding_ILicense_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http" />
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false" />
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256 />
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict />
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://services.paloaltonetworks.com/License/Imports">
+      <xsd:import schemaLocation="https://panservice.qa.sap.api.paloaltonetworks.com/License.svc?xsd=xsd0" namespace="http://services.paloaltonetworks.com/License" />
+      <xsd:import schemaLocation="https://panservice.qa.sap.api.paloaltonetworks.com/License.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="https://panservice.qa.sap.api.paloaltonetworks.com/License.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="https://panservice.qa.sap.api.paloaltonetworks.com/License.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts" />
+      <xsd:import schemaLocation="https://panservice.qa.sap.api.paloaltonetworks.com/License.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts.License" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ILicense_PushToDeviceMaster_InputMessage">
+    <wsdl:part name="parameters" element="tns:PushToDeviceMaster" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_PushToDeviceMaster_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PushToDeviceMasterResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_PushToLicenseFeatures_InputMessage">
+    <wsdl:part name="parameters" element="tns:PushToLicenseFeatures" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_PushToLicenseFeatures_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PushToLicenseFeaturesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_PushSalesOrderInformation_InputMessage">
+    <wsdl:part name="parameters" element="tns:PushSalesOrderInformation" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_PushSalesOrderInformation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PushSalesOrderInformationResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_SetSourceDevice_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetSourceDevice" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_SetSourceDevice_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetSourceDeviceResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_UnsetSourceDevice_InputMessage">
+    <wsdl:part name="parameters" element="tns:UnsetSourceDevice" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_UnsetSourceDevice_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UnsetSourceDeviceResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_TerminateLicense_InputMessage">
+    <wsdl:part name="parameters" element="tns:TerminateLicense" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_TerminateLicense_OutputMessage">
+    <wsdl:part name="parameters" element="tns:TerminateLicenseResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_RMA_InputMessage">
+    <wsdl:part name="parameters" element="tns:RMA" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_RMA_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RMAResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_UpdateASC_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateASC" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_UpdateASC_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateASCResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GetIBCAuthCodes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetIBCAuthCodes" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GetIBCAuthCodes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetIBCAuthCodesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_UpdateSAPSyncFlag_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateSAPSyncFlag" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_UpdateSAPSyncFlag_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateSAPSyncFlagResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_EvalRMA_InputMessage">
+    <wsdl:part name="parameters" element="tns:EvalRMA" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_EvalRMA_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EvalRMAResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_RestoreDevice_InputMessage">
+    <wsdl:part name="parameters" element="tns:RestoreDevice" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_RestoreDevice_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RestoreDeviceResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_Delete_InputMessage">
+    <wsdl:part name="parameters" element="tns:Delete" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_Delete_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_IsValidPartnerEval_InputMessage">
+    <wsdl:part name="parameters" element="tns:IsValidPartnerEval" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_IsValidPartnerEval_OutputMessage">
+    <wsdl:part name="parameters" element="tns:IsValidPartnerEvalResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GetDeviceLicenses_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDeviceLicenses" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GetDeviceLicenses_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDeviceLicensesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_DeviceLicenseMatch_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeviceLicenseMatch" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_DeviceLicenseMatch_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeviceLicenseMatchResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_UpdateDecommisionedReasonCode_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateDecommisionedReasonCode" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_UpdateDecommisionedReasonCode_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateDecommisionedReasonCodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallDevOpsApi_InputMessage">
+    <wsdl:part name="parameters" element="tns:CallDevOpsApi" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallDevOpsApi_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CallDevOpsApiResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallDevOpsApiDuringOrderFulfillment_InputMessage">
+    <wsdl:part name="parameters" element="tns:CallDevOpsApiDuringOrderFulfillment" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallDevOpsApiDuringOrderFulfillment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CallDevOpsApiDuringOrderFulfillmentResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_Decommission_InputMessage">
+    <wsdl:part name="parameters" element="tns:Decommission" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_Decommission_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DecommissionResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallDevOpsApiForTenant_InputMessage">
+    <wsdl:part name="parameters" element="tns:CallDevOpsApiForTenant" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallDevOpsApiForTenant_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CallDevOpsApiForTenantResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallMagnifierDevOpsApi_InputMessage">
+    <wsdl:part name="parameters" element="tns:CallMagnifierDevOpsApi" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallMagnifierDevOpsApi_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CallMagnifierDevOpsApiResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_RevokeCertificate_InputMessage">
+    <wsdl:part name="parameters" element="tns:RevokeCertificate" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_RevokeCertificate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RevokeCertificateResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallAppportalDevOpsApi_InputMessage">
+    <wsdl:part name="parameters" element="tns:CallAppportalDevOpsApi" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallAppportalDevOpsApi_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CallAppportalDevOpsApiResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallAppportalDevOpsAPISecured_InputMessage">
+    <wsdl:part name="parameters" element="tns:CallAppportalDevOpsAPISecured" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallAppportalDevOpsAPISecured_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CallAppportalDevOpsAPISecuredResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_ProvisionCdl_InputMessage">
+    <wsdl:part name="parameters" element="tns:ProvisionCdl" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_ProvisionCdl_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ProvisionCdlResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GetHeaderToken_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetHeaderToken" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GetHeaderToken_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetHeaderTokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GenerateTenantSignature_InputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateTenantSignature" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GenerateTenantSignature_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateTenantSignatureResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallAppportalForBundleTenant_InputMessage">
+    <wsdl:part name="parameters" element="tns:CallAppportalForBundleTenant" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_CallAppportalForBundleTenant_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CallAppportalForBundleTenantResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_LicenseTransfer_InputMessage">
+    <wsdl:part name="parameters" element="tns:LicenseTransfer" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_LicenseTransfer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LicenseTransferResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_DecommissionForRefresh_InputMessage">
+    <wsdl:part name="parameters" element="tns:DecommissionForRefresh" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_DecommissionForRefresh_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DecommissionForRefreshResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GetActivationTokenId_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetActivationTokenId" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GetActivationTokenId_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetActivationTokenIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GetActivationLinkByAuthcode_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetActivationLinkByAuthcode" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_GetActivationLinkByAuthcode_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetActivationLinkByAuthcodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_ProvisionPanorama_InputMessage">
+    <wsdl:part name="parameters" element="tns:ProvisionPanorama" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_ProvisionPanorama_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ProvisionPanoramaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_DeletePanorama_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeletePanorama" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_DeletePanorama_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeletePanoramaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_ProcessPrismaAccessEdition_InputMessage">
+    <wsdl:part name="parameters" element="tns:ProcessPrismaAccessEdition" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_ProcessPrismaAccessEdition_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ProcessPrismaAccessEditionResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_PrismaAccessDevOpsApi_InputMessage">
+    <wsdl:part name="parameters" element="tns:PrismaAccessDevOpsApi" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_PrismaAccessDevOpsApi_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PrismaAccessDevOpsApiResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_ExtendPrismaAccessEdition_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExtendPrismaAccessEdition" />
+  </wsdl:message>
+  <wsdl:message name="ILicense_ExtendPrismaAccessEdition_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExtendPrismaAccessEditionResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ILicense">
+    <wsdl:operation name="PushToDeviceMaster">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/PushToDeviceMaster" message="tns:ILicense_PushToDeviceMaster_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/PushToDeviceMasterResponse" message="tns:ILicense_PushToDeviceMaster_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PushToLicenseFeatures">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/PushToLicenseFeatures" message="tns:ILicense_PushToLicenseFeatures_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/PushToLicenseFeaturesResponse" message="tns:ILicense_PushToLicenseFeatures_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PushSalesOrderInformation">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/PushSalesOrderInformation" message="tns:ILicense_PushSalesOrderInformation_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/PushSalesOrderInformationResponse" message="tns:ILicense_PushSalesOrderInformation_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetSourceDevice">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/SetSourceDevice" message="tns:ILicense_SetSourceDevice_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/SetSourceDeviceResponse" message="tns:ILicense_SetSourceDevice_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UnsetSourceDevice">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/UnsetSourceDevice" message="tns:ILicense_UnsetSourceDevice_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/UnsetSourceDeviceResponse" message="tns:ILicense_UnsetSourceDevice_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="TerminateLicense">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/TerminateLicense" message="tns:ILicense_TerminateLicense_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/TerminateLicenseResponse" message="tns:ILicense_TerminateLicense_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RMA">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/RMA" message="tns:ILicense_RMA_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/RMAResponse" message="tns:ILicense_RMA_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateASC">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/UpdateASC" message="tns:ILicense_UpdateASC_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/UpdateASCResponse" message="tns:ILicense_UpdateASC_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIBCAuthCodes">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GetIBCAuthCodes" message="tns:ILicense_GetIBCAuthCodes_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GetIBCAuthCodesResponse" message="tns:ILicense_GetIBCAuthCodes_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSAPSyncFlag">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/UpdateSAPSyncFlag" message="tns:ILicense_UpdateSAPSyncFlag_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/UpdateSAPSyncFlagResponse" message="tns:ILicense_UpdateSAPSyncFlag_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="EvalRMA">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/EvalRMA" message="tns:ILicense_EvalRMA_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/EvalRMAResponse" message="tns:ILicense_EvalRMA_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RestoreDevice">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/RestoreDevice" message="tns:ILicense_RestoreDevice_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/RestoreDeviceResponse" message="tns:ILicense_RestoreDevice_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Delete">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/Delete" message="tns:ILicense_Delete_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/DeleteResponse" message="tns:ILicense_Delete_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="IsValidPartnerEval">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/IsValidPartnerEval" message="tns:ILicense_IsValidPartnerEval_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/IsValidPartnerEvalResponse" message="tns:ILicense_IsValidPartnerEval_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDeviceLicenses">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GetDeviceLicenses" message="tns:ILicense_GetDeviceLicenses_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GetDeviceLicensesResponse" message="tns:ILicense_GetDeviceLicenses_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeviceLicenseMatch">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/DeviceLicenseMatch" message="tns:ILicense_DeviceLicenseMatch_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/DeviceLicenseMatchResponse" message="tns:ILicense_DeviceLicenseMatch_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateDecommisionedReasonCode">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/UpdateDecommisionedReasonCode" message="tns:ILicense_UpdateDecommisionedReasonCode_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/UpdateDecommisionedReasonCodeResponse" message="tns:ILicense_UpdateDecommisionedReasonCode_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CallDevOpsApi">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallDevOpsApi" message="tns:ILicense_CallDevOpsApi_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallDevOpsApiResponse" message="tns:ILicense_CallDevOpsApi_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CallDevOpsApiDuringOrderFulfillment">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallDevOpsApiDuringOrderFulfillment" message="tns:ILicense_CallDevOpsApiDuringOrderFulfillment_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallDevOpsApiDuringOrderFulfillmentResponse" message="tns:ILicense_CallDevOpsApiDuringOrderFulfillment_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Decommission">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/Decommission" message="tns:ILicense_Decommission_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/DecommissionResponse" message="tns:ILicense_Decommission_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CallDevOpsApiForTenant">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallDevOpsApiForTenant" message="tns:ILicense_CallDevOpsApiForTenant_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallDevOpsApiForTenantResponse" message="tns:ILicense_CallDevOpsApiForTenant_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CallMagnifierDevOpsApi">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallMagnifierDevOpsApi" message="tns:ILicense_CallMagnifierDevOpsApi_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallMagnifierDevOpsApiResponse" message="tns:ILicense_CallMagnifierDevOpsApi_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RevokeCertificate">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/RevokeCertificate" message="tns:ILicense_RevokeCertificate_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/RevokeCertificateResponse" message="tns:ILicense_RevokeCertificate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CallAppportalDevOpsApi">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallAppportalDevOpsApi" message="tns:ILicense_CallAppportalDevOpsApi_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallAppportalDevOpsApiResponse" message="tns:ILicense_CallAppportalDevOpsApi_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CallAppportalDevOpsAPISecured">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallAppportalDevOpsAPISecured" message="tns:ILicense_CallAppportalDevOpsAPISecured_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallAppportalDevOpsAPISecuredResponse" message="tns:ILicense_CallAppportalDevOpsAPISecured_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ProvisionCdl">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/ProvisionCdl" message="tns:ILicense_ProvisionCdl_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/ProvisionCdlResponse" message="tns:ILicense_ProvisionCdl_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetHeaderToken">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GetHeaderToken" message="tns:ILicense_GetHeaderToken_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GetHeaderTokenResponse" message="tns:ILicense_GetHeaderToken_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerateTenantSignature">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GenerateTenantSignature" message="tns:ILicense_GenerateTenantSignature_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GenerateTenantSignatureResponse" message="tns:ILicense_GenerateTenantSignature_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CallAppportalForBundleTenant">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallAppportalForBundleTenant" message="tns:ILicense_CallAppportalForBundleTenant_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/CallAppportalForBundleTenantResponse" message="tns:ILicense_CallAppportalForBundleTenant_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LicenseTransfer">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/LicenseTransfer" message="tns:ILicense_LicenseTransfer_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/LicenseTransferResponse" message="tns:ILicense_LicenseTransfer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DecommissionForRefresh">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/DecommissionForRefresh" message="tns:ILicense_DecommissionForRefresh_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/DecommissionForRefreshResponse" message="tns:ILicense_DecommissionForRefresh_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetActivationTokenId">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GetActivationTokenId" message="tns:ILicense_GetActivationTokenId_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GetActivationTokenIdResponse" message="tns:ILicense_GetActivationTokenId_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetActivationLinkByAuthcode">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GetActivationLinkByAuthcode" message="tns:ILicense_GetActivationLinkByAuthcode_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/GetActivationLinkByAuthcodeResponse" message="tns:ILicense_GetActivationLinkByAuthcode_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ProvisionPanorama">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/ProvisionPanorama" message="tns:ILicense_ProvisionPanorama_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/ProvisionPanoramaResponse" message="tns:ILicense_ProvisionPanorama_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeletePanorama">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/DeletePanorama" message="tns:ILicense_DeletePanorama_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/DeletePanoramaResponse" message="tns:ILicense_DeletePanorama_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessPrismaAccessEdition">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/ProcessPrismaAccessEdition" message="tns:ILicense_ProcessPrismaAccessEdition_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/ProcessPrismaAccessEditionResponse" message="tns:ILicense_ProcessPrismaAccessEdition_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PrismaAccessDevOpsApi">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/PrismaAccessDevOpsApi" message="tns:ILicense_PrismaAccessDevOpsApi_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/PrismaAccessDevOpsApiResponse" message="tns:ILicense_PrismaAccessDevOpsApi_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExtendPrismaAccessEdition">
+      <wsdl:input wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/ExtendPrismaAccessEdition" message="tns:ILicense_ExtendPrismaAccessEdition_InputMessage" />
+      <wsdl:output wsaw:Action="http://services.paloaltonetworks.com/License/ILicense/ExtendPrismaAccessEditionResponse" message="tns:ILicense_ExtendPrismaAccessEdition_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_ILicense" type="tns:ILicense">
+    <wsp:PolicyReference URI="#BasicHttpBinding_ILicense_policy" />
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="PushToDeviceMaster">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/PushToDeviceMaster" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PushToLicenseFeatures">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/PushToLicenseFeatures" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PushSalesOrderInformation">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/PushSalesOrderInformation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetSourceDevice">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/SetSourceDevice" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UnsetSourceDevice">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/UnsetSourceDevice" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TerminateLicense">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/TerminateLicense" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RMA">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/RMA" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateASC">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/UpdateASC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIBCAuthCodes">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/GetIBCAuthCodes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSAPSyncFlag">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/UpdateSAPSyncFlag" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EvalRMA">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/EvalRMA" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RestoreDevice">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/RestoreDevice" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Delete">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/Delete" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsValidPartnerEval">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/IsValidPartnerEval" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDeviceLicenses">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/GetDeviceLicenses" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeviceLicenseMatch">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/DeviceLicenseMatch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateDecommisionedReasonCode">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/UpdateDecommisionedReasonCode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CallDevOpsApi">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/CallDevOpsApi" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CallDevOpsApiDuringOrderFulfillment">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/CallDevOpsApiDuringOrderFulfillment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Decommission">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/Decommission" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CallDevOpsApiForTenant">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/CallDevOpsApiForTenant" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CallMagnifierDevOpsApi">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/CallMagnifierDevOpsApi" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RevokeCertificate">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/RevokeCertificate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CallAppportalDevOpsApi">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/CallAppportalDevOpsApi" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CallAppportalDevOpsAPISecured">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/CallAppportalDevOpsAPISecured" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProvisionCdl">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/ProvisionCdl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetHeaderToken">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/GetHeaderToken" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateTenantSignature">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/GenerateTenantSignature" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CallAppportalForBundleTenant">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/CallAppportalForBundleTenant" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LicenseTransfer">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/LicenseTransfer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DecommissionForRefresh">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/DecommissionForRefresh" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetActivationTokenId">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/GetActivationTokenId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetActivationLinkByAuthcode">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/GetActivationLinkByAuthcode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProvisionPanorama">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/ProvisionPanorama" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeletePanorama">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/DeletePanorama" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessPrismaAccessEdition">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/ProcessPrismaAccessEdition" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PrismaAccessDevOpsApi">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/PrismaAccessDevOpsApi" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ExtendPrismaAccessEdition">
+      <soap:operation soapAction="http://services.paloaltonetworks.com/License/ILicense/ExtendPrismaAccessEdition" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="License">
+    <wsdl:port name="BasicHttpBinding_ILicense" binding="tns:BasicHttpBinding_ILicense">
+      <soap:address location="https://panservice.qa.sap.api.paloaltonetworks.com/License.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

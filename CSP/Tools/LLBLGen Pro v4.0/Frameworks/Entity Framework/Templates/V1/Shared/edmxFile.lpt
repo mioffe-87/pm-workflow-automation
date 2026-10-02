@@ -1,0 +1,14 @@
+﻿<[ SD.Tools.BCLExtensions.CollectionsRelated ]>
+<%
+	Project currentProject = _executingGenerator.ProjectDefinition;
+	bool emitForeignKeyFields = false;
+	bool canHandleFkUCOneToOne = false;
+	bool canHandleTypedViewsOnResultset = false;
+	bool emitEnums=false;
+	string ssdlNamespaceName="http://schemas.microsoft.com/ado/2006/04/edm/ssdl";
+	string csdlNamespaceName="http://schemas.microsoft.com/ado/2006/04/edm";
+	string mslNamespaceName="urn:schemas-microsoft-com:windows:storage:mapping:CS";
+	string designerNamespace="http://schemas.microsoft.com/ado/2007/06/edmx";
+%><?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+<# SD_EF_EdmxInclude #>

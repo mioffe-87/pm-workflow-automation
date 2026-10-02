@@ -1,0 +1,2 @@
+﻿<% // the name of the catalog is in the variable 'catalogName', the name of the sequence is in the variable 'sequenceName'.%>
+CREATE SEQUENCE "<%=schemaName%>"."<%=sequenceName%>" AS INTEGER START WITH 1 INCREMENT BY 1 NO CYCLE;

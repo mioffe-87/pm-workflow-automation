@@ -1,0 +1,765 @@
+﻿@using Csp.Api.HelperClasses
+@using Csp.Api.Model
+@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.EpViewModelDto
+
+<style>
+        div.licenserow {
+        height: 30px;
+        white-space: nowrap;
+    }
+</style>
+
+<script>
+    var isActivatingAuthCode = false;
+    var addWindow = null;
+
+    
+    $(document).ready(function () {
+        deviceWindowId = "#@UniqueId.deviceWindowId";
+    });
+
+  
+    //Add New Ep AuthCode inside the grid.
+    $(function () {
+        deviceWindowId = "#@UniqueId.deviceWindowId";
+        $("#PleaseWaitDiv").hide();
+        $('#@UniqueId.AddEpAuthCode').click(function () {
+            
+            var direction = '/EP/AddEndpointLicense';
+            var window = $('#@UniqueId.AddLicense').data("kendoWindow");
+            window.bind('open', onAddLicenseWindowOpen);
+            window.bind('close', onAddLicenseWindowClose);
+            window.refresh(direction);
+            window.setOptions({
+                minHeight: 400,
+                width: 540
+            });
+            window.open();
+            window.center();
+
+            // Inline add
+            // 
+            // var grid = $('#@UniqueId.EpAuthCodesGrid').data('kendoGrid');
+            // grid.addRow();
+            // var row = $('#@UniqueId.EpAuthCodesGrid').find('input:text').closest('tr');
+            // $(row).find("td").eq(8).html("<a href='javascript: void(0)' class='k-button k-button-icontext k-grid-csp-update' onclick='@(UniqueId.EpAuthCodesGrid)updateRow()' title='Update Ep'><span class=' '></span></a> " +
+            //     "<a href='javascript: void(0)' class='k-button k-button-icontext k-grid-csp-cancel' onclick='@(UniqueId.EpAuthCodesGrid)cancelRow()' title='Cancel EP Changes'><span class=' '></span></a>");
+            // $(row).find('td').eq(2).text('');
+            // return false;
+        });
+        $('#@UniqueId.EpAuthCodesGrid').on("focus", "td", function (e) {
+            var iCount = 0;
+            $(".k-textbox").on("keydown", function (event) {
+                if (event.keyCode == 13) {
+                    iCount = iCount + 1;
+                    if (iCount == 1) {
+                        @(UniqueId.EpAuthCodesGrid)updateRow(event);
+                        return false;
+                    }
+                }
+            });
+
+        });
+    });
+    
+    function @(UniqueId.EpGrid)onDataBound(e) {
+        ShowHideLicenseKey();
+        ShowAscInfo();
+        if (addWindow != null) {
+            addWindow.close();
+        }
+    }
+
+    function ShowHideLicenseKey() {
+        var grid = $('#@UniqueId.EpAuthCodesGrid').data('kendoGrid');
+        var gridData = grid.dataSource.view();
+        for (var i = 0; i < gridData.length; i++) {
+            var currentUid = gridData[i].uid;
+            var currenRow = grid.table.find("tr[data-uid='" + currentUid + "']");
+            if (gridData[i].ShowLicenseKey == false) {
+                var showLicense = $(currenRow).find(".ep-download-license");
+                showLicense.hide();
+            }
+            if (gridData[i].ShowSoftwareUpdates == false) {
+                var showSoftwareUpdates = $(currenRow).find(".ep-download-software");
+                showSoftwareUpdates.hide();
+            }
+        }
+    }
+
+    function ShowAscInfo() {
+        $("div.AscContactInfo").each(function() {
+            var row = $(this).closest("tr");
+            var dataItem = $("#@UniqueId.EpAuthCodesGrid").data("kendoGrid").dataItem(row);
+
+            if (dataItem != null && dataItem.ASCId != undefined) {
+                $(this).html('<a href="javascript:void(0);" onclick="@(UniqueId.EpGrid)showAscContactDetailsWindow(' + dataItem.ASCId + ')">' + dataItem.ASCName + '</a>');
+            }
+        });
+    }
+
+    function @(UniqueId.EpGrid)showAscContactDetailsWindow(id) {
+
+        var direction = "/@ControllerFields.SupportAccountController/GetAscContactInfo/" + id;
+            var window = $("#@UniqueId.ascContactDetailsWindowId").data("kendoWindow");
+            window.content(SupportPortal.AjaxLoadingMessage());
+            window.refresh();
+            window.refresh(direction);
+            window.setOptions({
+                minHeight: 100
+            });
+            window.open();
+            window.center();
+        }
+
+    function @(UniqueId.EpView)onEpViewGridError(args) {
+        if (args.errors) {
+            var grid = $("#@UniqueId.EpAuthCodesGrid").data("kendoGrid");
+            var gridElement = grid.editable.element;
+
+            grid.one("dataBinding", function (e) {
+                e.preventDefault ? e.preventDefault() : e.returnValue = false; // cancel grid rebind if error occurs
+
+                $.each(args.errors, function (key, value) {
+                    if (value.errors) {
+                        gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]")
+                            .replaceWith(SupportPortal.ValidationMessageTemplate({ field: key, message: value.errors[0] }));
+                        gridElement.find("input[name=" + key + "]").focus();
+                    }
+                });
+            });
+            
+            if (isActivatingAuthCode) {
+                SupportPortal.Message("Failed to Activate Endpoint Authcode");
+            }
+
+        }
+    }
+
+    function kendoGridNewLines(text) {
+        return text;
+    }
+
+    function  @(UniqueId.EpAuthCodesGrid)updateRow(e) {
+
+        if ($("#AuthorizationCode").val() == "") {
+            SupportPortal.Message("Please enter a Authcode");
+            return false;
+        }
+
+        // Ajax call and get the type of Auth Code
+        // Auth Code should be a Cyvera Auth Code
+        var urldata = "/EP/ValidateEsmAuthCode?authCode=" + $("#AuthorizationCode").val();
+        $.ajax({
+            url: urldata,
+            async: false,
+            type: 'GET',
+            cache: false,
+            success: function (result) {
+                if (result.HasError == true || result.RequiresUserConfirmation == true || result.RequiresUserSelection == true) {
+                    if (result.HasError == true) {
+                        SupportPortal.LengthyMessage(result.ErrorMessage);
+                    } else if (result.RequiresUserConfirmation) {
+                        SupportPortal.Confirmation(result.UserConfirmationMessage, function () { AddAuthCode(); }, null);
+                    } else {
+                        // Show popup window.
+                        openAddEpAuthCodeWindowOpen();
+                    }
+                } else {
+                    AddAuthCode();
+                }
+            },
+            error: function () {
+                SupportPortal.Message("Error in processing request.");
+            }
+        });
+
+    }
+    
+    function  @(UniqueId.EpAuthCodesGrid)cancelRow(e) {
+        var grid = $('#@UniqueId.EpAuthCodesGrid').data('kendoGrid');
+        grid.cancelRow();
+    }
+    
+    function AddEpLicense(esmAuthCode) {
+        var genLicWindow = $('#@UniqueId.AddLicense').data('kendoWindow');
+        genLicWindow.content(" ");
+        genLicWindow.setOptions({
+            minHeight: 650,
+            width: 540
+        });
+        genLicWindow.bind('open', onAddLicenseWindowOpen);
+        genLicWindow.bind('close', onAddLicenseWindowClose);
+        genLicWindow.refresh();
+        genLicWindow.refresh('/EP/AddEndpointLicense?authCode=' + esmAuthCode);
+        genLicWindow.open();
+        genLicWindow.center();
+    }
+    
+    function onAddLicenseWindowOpen() {
+        SupportPortal.OnWindowOpen("@UniqueId.AddLicense");
+    }
+
+    function onAddLicenseWindowClose() {
+        var window = $("#@UniqueId.AddLicense").data("kendoWindow");
+        window.content("");
+        window.refresh();
+        SupportPortal.OnWindowClose("@UniqueId.EpAuthCodesGrid");
+    }
+
+    // Call Genereate Window
+    function GenerateLicense(esmAuthCode) {
+        var genLicWindow = $('#@UniqueId.GenerateLicense').data('kendoWindow');
+        genLicWindow.content(" ");
+        genLicWindow.setOptions({
+            minHeight: 500,
+            width: 700
+        });
+        genLicWindow.bind('open', onGenerateLicenseWindowOpen);
+        genLicWindow.bind('close', onGenerateLicenseWindowClose);
+        genLicWindow.refresh();
+        genLicWindow.refresh('/EP/ShowLicense?authCode=' + esmAuthCode);
+        genLicWindow.open();
+        genLicWindow.center();
+    }
+    
+    function onGenerateLicenseWindowOpen() {
+        SupportPortal.OnWindowOpen("@UniqueId.GenerateLicense");
+    }
+
+    function onGenerateLicenseWindowClose() {
+        var window = $("#@UniqueId.GenerateLicense").data("kendoWindow");
+        window.content("");
+        window.refresh();
+    }
+
+    function DownloadSoftwareUpdates(epType) {
+        var downloadsWindow = $('#@UniqueId.DownloadsWindow').data('kendoWindow');
+        downloadsWindow.refresh('/updates/SoftwareUpdates?epType=' + epType);
+        downloadsWindow.setOptions({
+            minHeight: 200
+        });
+        downloadsWindow.open();
+        downloadsWindow.center();
+        return false;
+    }
+    
+    function onDownloadsWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.DownloadsWindow');
+    }
+    
+    function onDownloadsWindowClose() {
+
+    }
+
+    function onOpenTrapsVersionWindow() {
+       // console.trace();
+        SupportPortal.OnWindowOpen("@UniqueId.SelectTrapsVersion");
+    }
+
+    function onCloseTrapsVersionWindow() {
+        var window = $("#@UniqueId.SelectTrapsVersion").data("kendoWindow");
+        if ($("#DownloadEndpointLicense").val() == "1") {
+            subType = $('#ProductSubType').val();
+            //only pass subtype to terminate the dialog and download the license directly
+            GenerateAndDownloadLicense($("#EndpointAuthorizationCode").val(), subType, '');
+        }
+        
+        window.content("");
+        window.refresh();
+    }
+
+    //Called when there is Just one or no ESM
+    function AddAuthCode() {
+        isActivatingAuthCode = true;
+        if (addWindow == null) {
+            addWindow = $('#AddingLicense').data('kendoWindow');
+
+            addWindow.setOptions({
+                minWidth: 400,
+                minHeight: 100
+            });
+            addWindow.content(SupportPortal.CustomLoadingMessageWithSpinner("Please wait while we activate Endpoint Auth-Code"));
+        }
+        addWindow.open();
+        addWindow.center();
+        var grid = $('#@UniqueId.EpAuthCodesGrid').data('kendoGrid');
+        grid.saveRow();
+        SupportPortal.OnWindowClose("@UniqueId.EpAuthCodesGrid");
+    }
+
+    // Called when more than one ESM and AND ep100 or ep500 IS GETTING ADDED
+    function openAddEpAuthCodeWindowOpen() {
+        var direction = "/EP/AddEndpointLicense/?authCode=" + $("#AuthorizationCode").val();
+        var window = $("#@UniqueId.AddEpAuthCodeWindow").data("kendoWindow");
+        window.content(" ");
+        window.setOptions({
+            minWidth: 450,
+            minHeight: 110
+        });
+        window.bind('open', onAddEpAuthCodeWindowOpen);
+        window.bind('close', onAddEpAuthCodeWindowClose);
+        window.title("Add Ep License");
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+    
+    function onAddEpAuthCodeWindowOpen() {
+        SupportPortal.OnWindowOpen("@UniqueId.AddEpAuthCodeWindow");
+    }
+    
+    function onAddEpAuthCodeWindowClose() {
+        SupportPortal.BlockUI();
+        var grid = $('#@UniqueId.EpAuthCodesGrid').data('kendoGrid');
+        grid.refresh();
+        var window = $("#@UniqueId.AddEpAuthCodeWindow").data("kendoWindow");
+        window.content("");
+        window.refresh();
+        SupportPortal.OnWindowClose("@UniqueId.EpAuthCodesGrid");
+    }
+    function showEditDeviceDetailWindow(deviceId) {
+
+        var direction = "/@ControllerFields.DeviceController/Details?deviceId=" + deviceId;
+        var window = $("#@UniqueId.deviceWindowId").data("kendoWindow");
+        window.content(" ");
+        window.refresh();
+        window.refresh(direction);
+        window.setOptions({
+            minHeight: 530
+        });
+        window.open();
+        window.center();
+    }
+    
+    function @(UniqueId.device)onCloseDeviceWindow() {
+        var window = $("#@UniqueId.deviceWindowId").data("kendoWindow");
+        window.content("");
+        window.refresh();
+        SupportPortal.OnWindowClose("@UniqueId.EpAuthCodesGrid");
+    }
+
+
+    function @(UniqueId.device)onOpenDeviceWindow() {
+
+        SupportPortal.OnWindowOpen("@UniqueId.deviceWindowId");
+
+    }
+
+    // Search Related
+    
+    function OnDevicesCmbChange() {
+        var cmbId = "#@(UniqueId.searchFieldId)";
+        $('#@UniqueId.textDivId input:text').val('');
+        var selectedValue = $(cmbId).data("kendoDropDownList").value();
+        if (selectedValue == "DeviceCategoryId") {
+            $('#@UniqueId.textDivId').css('display', 'none');
+            $('#@UniqueId.deviceCategoryDropDownDivId').css('display', 'block');
+
+        } else {
+            $('#@UniqueId.textDivId').css('display', 'block');
+            $('#@UniqueId.deviceCategoryDropDownDivId').css('display', 'none');
+        }
+    }
+    
+    function getSearchParams() {
+        var selectedValue = $("#@UniqueId.searchFieldId").val();
+
+        if (selectedValue == "DeviceCategoryId") {
+            var deviceCategoryDropDown = $("#@UniqueId.deviceCategoryFieldId");
+            if (deviceCategoryDropDown.val() > 0)
+                $("#@UniqueId.searchValueId").val(deviceCategoryDropDown.val());
+            else {
+                $("#@UniqueId.searchValueId").val("");
+            }
+        }
+        
+        var params = SetAntiForgery();
+        params.searchField = $("#@UniqueId.searchFieldId").val();
+        params.searchValue = $("#@UniqueId.searchValueId").val();
+        return params;
+    }
+    
+    function getAddParams() {
+        var params = SetAntiForgery();
+        params.authCode = $("#AuthorizationCode").val();
+        return params;
+    }
+
+    function @(UniqueId.device)SearchDeviceData() {
+        var grid = $("#@UniqueId.EpAuthCodesGrid").data("kendoGrid");
+        var gridData = grid.dataSource;
+        gridData.read();
+    }
+    
+        function GenerateAndDownloadLicense(authCode, subType, partNumber) {
+            
+        var isMalborkLicense = "false";
+        var showDialog = false;
+        // var pattern = new RegExp('^(REN)*TRAPSMA(L|LUS|LLAB|LNFR)');
+        var pattern = new RegExp('MAL|TRAPSELA');
+        if (pattern.test(subType.toUpperCase())) {
+            isMalborkLicense = 'true';
+            if (partNumber) {
+                showDialog = true;
+            }
+        }
+
+        //TRAPSBETA40 or Malbork Renewal: launch the dialog to let customer choose which license is needed
+        if ((subType.toLowerCase().indexOf("40") >= 0 && partNumber != undefined && partNumber !== '') || (isMalborkLicense === 'true' && showDialog)) {
+            $('#ProductSubType').val(subType);
+            GetLicenseForMalbork(authCode);
+        }
+        else {
+            //not new Malbork SKU, 4.0 BETA SKU like PAN-TRAPS-200-40BETA, subtype: TRAPSBETA40 
+            if (isMalborkLicense === 'false' && subType.toLowerCase().indexOf("40") >= 0) {
+                isMalborkLicense = true;
+            }
+
+            GetLicenseFromCyveraLicensing(authCode, isMalborkLicense); // 4.0 and before (3.2,3.2-3.3)
+        } 
+    }
+
+    function GetLicenseFromCyveraLicensing(authCode, isMalborkLicense) {
+        var window = $('#DownloadLicenseKey').data('kendoWindow');
+        $(".no-buttons").prev(".k-window-titlebar").find(".k-window-action").hide();
+
+        window.setOptions({
+            minWidth: 400,
+            minHeight: 100
+        });
+        window.content(SupportPortal.CustomLoadingMessageWithSpinner("Please wait while we download the License Key"));
+        window.open();
+        window.center();
+
+        // Ajax call and get the type of Auth Code
+        // Auth Code should be a Cyvera Auth Code
+
+        var serverCount = $("#ServerUsecount").length > 0 ? $("#ServerUsecount").val() : 0;
+        var workstationCount = $("#WorkstationUsecount").length > 0 ? $("#WorkstationUsecount").val() : 0;
+        var vdiCount = $("#VdiUsecount").length > 0 ? $("#VdiUsecount").val() : 0;
+        var panOsV = $("#ddTrapsVersion").length > 0 ? $("#ddTrapsVersion").val() : "";
+
+        serverCount = isNaN(parseInt(serverCount)) ? 0 : parseInt(serverCount);
+        workstationCount = isNaN(parseInt(workstationCount)) ? 0 : parseInt(workstationCount);
+        vdiCount = isNaN(parseInt(vdiCount)) ? 0 : parseInt(vdiCount);
+
+        var urldata = "/EP/GenerateLicenseKey?authCode=" + authCode + "&isMalborkLicense=" + isMalborkLicense + "&versionRequested=" + panOsV + "&serverCount=" + serverCount + "&workstationCount=" + workstationCount + "&vdiCount=" + vdiCount;
+        $.ajax({
+            url: urldata,
+            async: true,
+            type: 'POST',
+            cache: false,
+            success: function (result) {
+                window.close();
+                DownloadLicense(authCode);
+            },
+            error: function () {
+                SupportPortal.Message("Error in processing request.");
+                window.close();
+            }
+        });
+    }
+
+    function GetLicenseForMalbork(authCode) {
+        var direction = "/EP/TrapsVersion?authCode=" + authCode;
+        var window = $("#@UniqueId.SelectTrapsVersion").data("kendoWindow");
+        window.content(" ");
+        window.refresh();
+        window.refresh(direction);
+        window.setOptions({
+            minHeight: 150
+        });
+        window.open();
+        window.center();
+    }
+    
+    function DownloadLicense(authcode) {
+        window.location = "/EP/DownloadLicenseKey?authCode=" + authcode;
+    }
+    
+    function @((string)UniqueId.device)onDevicesEnterPress(e) {
+        if (e.keyCode == 13) {
+            @(UniqueId.device)SearchDeviceData()
+            return false;
+        }
+
+        return true;
+    }
+
+    function DeviceTagChangeHandler(e) {
+        @(UniqueId.device)SearchDeviceData();
+        return false;
+    }
+
+    function exportTrapsToCsv() {
+
+        var supportAccountId = "@Model.ActionHelper.Id";
+        
+        var searchField = $("#@UniqueId.searchFieldId").val();
+        var searchValue = $("#@UniqueId.searchValueId").val();
+        //"SearchAvailable", "EP"
+        location.href = '@Url.Action("SearchAvailableReport", "EP")?supportAccountId=' + supportAccountId + '&searchField='
+                + searchField + '&searchValue=' + searchValue;
+    }
+
+</script>
+@Html.AntiForgeryToken()
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)UniqueId.ascContactDetailsWindowId)
+        .Visible(false)
+        .Modal(true)
+        .Draggable(true)
+        .Width(400)
+        .Title("Asc Contact Information")
+    )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)UniqueId.AddEpAuthCodeWindow)
+          .Visible(false)
+          .Width(460)
+          .Modal(true)
+          .Draggable()
+          .Title("Add Endpoint Auth-Code")
+          )
+</div>
+<div>
+    @(
+    Html.Kendo().Window()
+        .Name((string)UniqueId.DownloadsWindow)
+        .Visible(false)
+        .Events(events => events
+        .Open("onDownloadsWindowOpen")
+        .Close("onDownloadsWindowClose"))
+        .Modal(true)
+        .Width(1080)
+        .Visible(false)
+        .Draggable()
+        .Title("Downloads")
+          )
+</div>
+<div>
+    @(
+    Html.Kendo().Window()
+        .Name((string)UniqueId.GenerateLicense)
+        .Visible(false)
+        .Modal(true)
+        .Width(1080)
+        .Draggable()
+        .Title("Endpoint License Key")
+          )
+</div>
+<div>
+    @(
+    Html.Kendo().Window()
+        .Name((string)UniqueId.deviceWindowId)
+        .Events(events => events
+                              .Close((string)UniqueId.device + "onCloseDeviceWindow")
+                              .Open((string)UniqueId.device + "onOpenDeviceWindow")
+        )
+        .Modal(true)
+        .Width(600)
+        .Visible(false)
+        .Draggable()
+        .Title("Device:")
+          )
+</div>
+<div>
+    @(
+    Html.Kendo().Window()
+        .Name((string)UniqueId.AddLicense)
+        .Visible(false)
+        .Modal(true)
+        .Width(1080)
+        .Draggable()
+        .Title("Add EndPoint License")
+          )
+</div>
+<div>
+    @(Html.Kendo().Window()
+          .Name("DownloadLicenseKey")
+          .HtmlAttributes(new { @class = "no-buttons" })
+          .Actions(a => a.Clear())
+          .Scrollable(false)
+          .Visible(false)
+          .Modal(true)
+          .Title(false)
+          )
+</div>
+<div>
+    @(Html.Kendo().Window()
+          .Name("AddingLicense")
+          .HtmlAttributes(new {@class = "no-buttons"})
+          .Actions(a => a.Clear())
+          .Scrollable(false)
+          .Visible(false)
+          .Modal(true)
+          .Title(false)
+          )
+</div>
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)UniqueId.SelectTrapsVersion)
+          .Events(events => events
+              .Close("onCloseTrapsVersionWindow")
+              .Open("onOpenTrapsVersionWindow")
+          )
+          .Modal(true)
+          .Visible(false)
+          .Width(450)
+          .Draggable()
+          .Title("Endpoint License Key")
+          )
+</div>
+
+<div class="contextTitle">Advanced Endpoint Protection</div>
+<div class="grid-header">
+    <input type="hidden" id="ProductSubType" name="ProductSubType" value="" />
+
+    <div class="grid-left">
+        <button type="button" class="k-button k-primary"  data-link-type="auth-code" id="@UniqueId.AddEpAuthCode">Activate New Auth-Code</button><span class="csp-tooltip"></span>
+    </div>
+    <div class="grid-right">
+
+            <div class="grid-filter">
+                @{                    
+                    @(Html.Kendo().DropDownList()
+                        .Name((string)UniqueId.searchFieldId)
+                        .Events(events => events.Change("OnDevicesCmbChange"))
+                        .OptionLabel("Filter By")
+                        .OptionLabelTemplate("<span class='grid-filter__dropdown-placeholder'>Filter By</span>")
+                        .DataTextField("Text")
+                        .DataValueField("Value")
+                        .BindTo(new List<SelectListItem>
+                            {
+                                new SelectListItem
+                                    {
+                                        Text = "Serial Number",
+                                        Value = "SerialNumber"
+                                    },
+                                 new SelectListItem
+                                    {
+                                        Text = "Authorization Code",
+                                        Value = "AuthCode"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Device Name",
+                                        Value = "DeviceName"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = ApiConstants.DEVICE_CATEGORY,
+                                        Value = "DeviceCategoryId"
+                                    },
+
+                            })
+                        )
+                }
+
+            </div>
+
+            <div class="grid-filter">
+                <div class="grid-filter" id="@UniqueId.textDivId">
+                    @Html.TextBox((string)UniqueId.searchValueId, Model.DefaultDeviceCode, new {
+                        onkeypress = "return " + (string)UniqueId.device + "onDevicesEnterPress(event)",
+                        @class = "grid-filter__search-input",
+                        placeholder = "Search",
+                        aria_label = "Search"
+                    })
+                    <button aria-label="search" type="button" class="grid-filter__search-button" onclick="@(UniqueId.device)SearchDeviceData()">
+                        <span aria-hidden="true" class="fa fa-search" />
+                    </button>
+                </div>
+                <div class="grid-filter" id="@UniqueId.deviceCategoryDropDownDivId" style="display: none;">
+                    @(Html.Kendo().DropDownList()
+                            .Name((string)UniqueId.deviceCategoryFieldId)
+                            .Events(events => events.Change("DeviceTagChangeHandler"))
+                            .HtmlAttributes(new { @class = "grid-filter__date-input" })
+                            .OptionLabel(Constants.DropDownPleaseSelect)
+                            .DataValueField("DeviceCategoryId")
+                            .DataTextField("DeviceCategoryName")
+                            .BindTo(Model.AllDeviceCategories))
+                </div>
+            </div>
+        </div>
+</div>
+
+<div class="grid-content">
+    @{
+        var maxPageSizeForms = (Model != null && Model.AvailableEps != null) ? Convert.ToInt32(Model.AvailableEps.ToList().Count) : 0;
+        var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+        if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+            pageSizeOptionsForms.Add(maxPageSizeForms);
+        }
+
+    }
+    @(Html.Kendo().Grid(Model.AvailableEps)
+          .Name((string)UniqueId.EpAuthCodesGrid)
+          .Columns(cols =>
+              {
+                  cols.Bound(x => x.DivSerialNumber).Title("Serial Number").Width(100).ClientTemplate("#= kendoGridNewLines(DivSerialNumber) #");
+                  cols.Bound(x => x.AuthorizationCode).Title("Auth Code").Width(100).ClientTemplate("#= kendoGridNewLines(AuthorizationCode) #");
+                  cols.Bound(x => x.ELAAuthCode).Title("ELA Auth Code").Width(100).ClientTemplate("#= kendoGridNewLines(ELAAuthCode) #");
+                  cols.Bound(x => x.Quantity).Title("Quantity").Width(100).ClientTemplate("#= kendoGridNewLines(Quantity) #");
+                  cols.Bound(x => x.PartSubTypeName).Title("License").ClientTemplate("#= kendoGridNewLines(PartSubTypeName) #");
+                  cols.Bound(x => x.DivExpirationDate).Title("Expiration Date").ClientTemplate("#= kendoGridNewLines(DivExpirationDate) #");
+                  cols.Bound(x => x.ASCName).Title("ASC").Template(t => "<div class='AscContactInfo'></div>").ClientTemplate("<div class='AscContactInfo'></div>");
+                  cols.Bound(x => x.Description).Title("Part Description").ClientTemplate("#= kendoGridNewLines(Description) #").Hidden(true);
+                  cols.Bound(x => x.DeviceName).Title("Device Name").ClientTemplate("#= kendoGridNewLines(DeviceName) #");
+                  cols.Bound(x => x.DeviceTag).Title("Device Tag").ClientTemplate("#= kendoGridNewLines(DeviceTag) #");
+                  cols.Bound(x => x.Actions).Title("Actions/Software Download").ClientTemplate("#= kendoGridNewLines(Actions) #");
+              })
+          .Editable(x => x.Mode(GridEditMode.InLine))
+          .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+          .Resizable(resize => resize.Columns(true))
+          .Events(e => e.DataBound((string)UniqueId.EpGrid + "onDataBound"))
+          .ToolBar(toolBar => {
+                toolBar.Custom()
+                .Text("Export To CSV")
+                .HtmlAttributes(new { id = "export", data_link_type = "export-csv-assets" })
+                .Url("javascript: exportTrapsToCsv();");
+            })
+          .DataSource(dataSource => dataSource
+                                        .Ajax()
+                                        .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                        .Model(model => {
+                                                            model.Id(p => p.AuthorizationCode);
+                                                            model.Field(f => f.DivSerialNumber).Editable(false);
+                                                            model.Field(f => f.Quantity).Editable(false);
+                                                            model.Field(f => f.Description).Editable(false);
+                                                            model.Field(f => f.PartSubType).Editable(false);
+                                                            model.Field(f => f.ShowLicenseKey).Editable(false);
+                                                            model.Field(f => f.ShowSoftwareUpdates).Editable(false);
+                                                            model.Field(f => f.EsmAuthorizationCode).Editable(false);
+                                                            model.Field(f => f.PartSubTypeName).Editable(false);
+                                                            model.Field(f => f.DivExpirationDate).Editable(false);
+                                                            model.Field(f => f.DeviceName).Editable(false);
+                                                            model.Field(f => f.DeviceTag).Editable(false);
+                                                            model.Field(f => f.ASCName).Editable(false);
+                                                            model.Field(f => f.ASCId).Editable(false);
+                                        })
+                                        .PageSize(Model.DataParameters.PaginationCount)
+                                        .Events(e => e.Error((string)UniqueId.EpView + "onEpViewGridError"))
+                                        .Read(read => read.Action("SearchAvailable", "EP").Data("getSearchParams"))
+                                        .Create(x => x.Action("AddEpAuthCode", "EP").Data("getAddParams"))
+          ))
+</div>
+<div>
+    &nbsp;
+</div>
+<div>
+    &nbsp;
+</div>
+<div>
+    &nbsp;
+</div>
+<div>
+    &nbsp;
+</div>

@@ -1,0 +1,30 @@
+﻿@using Csp.Api.Logic
+@using Csp.Api.Services.Contracts
+
+@{
+    var configValues = new ConfigValues();
+}
+
+<div id="header">
+    <div class="row">
+        <div class="span2">
+            <a style="padding-left: 10px;" href="@configValues.GetAppSetting(AppSettings.HeaderFooterBaseUrl)">
+                <img src="~/Content/PAN/logo.png" alt="Palo Alto Networks" style="max-width: none;"/>
+            </a>
+        </div>
+        <div class="span8">
+            <a href="http://www.paloaltonetworksignite.com/" target="_blank">
+                <img alt="Register for Ignite" src="/Content/marketing/img/IgniteBanner.jpg" style="padding-left: 150px;"/>
+            </a>
+        </div>
+        <div class="span2 text-right">
+            <div class="topright">
+            </div>
+            <div id="HeaderMenuDiv">
+                @if (configValues.GetAppSetting(AppSettings.AppName) != "CSP PROD") {
+                    <div id="divEnvironment" class="divRound"><span style="color: red; font-weight: bold">@configValues.GetAppSetting(AppSettings.AppName).ToUpper()</span></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

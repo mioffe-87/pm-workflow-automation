@@ -1,0 +1,503 @@
+﻿@model Csp.Web.DataTransferObjects.RequestReturnDto
+@{ 
+    ActionHelper actionHelper = Model.ActionHelper;
+    var frmRmaReturns = "frmRmaReturns";
+    var divUniqueId = "RmaReturns";
+    var countries = new HtmlString(JsonConvert.SerializeObject(Model.Countries, new JsonSerializerSettings
+                        {
+	                        StringEscapeHandling = StringEscapeHandling.EscapeHtml
+                        }));
+    var regions = new HtmlString(JsonConvert.SerializeObject(Model.Regions, new JsonSerializerSettings
+                        {
+	                        StringEscapeHandling = StringEscapeHandling.EscapeHtml
+                        }));
+    var deviceCategories = new HtmlString(JsonConvert.SerializeObject(Model.DeviceCategories, new JsonSerializerSettings
+                        {
+	                        StringEscapeHandling = StringEscapeHandling.EscapeHtml
+                        }));
+}
+<style>
+    
+    span.status-msg {
+        width: 250px;
+    }
+
+     .list-rma-returns {
+         border-color: #ffffff;
+     }
+    
+    div.csp-label {
+        padding: 4px;    
+    }
+
+    div.csp-field {
+        display: inline-flex !important;
+    }
+
+    div.csp-field .k-widget.k-dropdown.k-header {
+        margin-left: 4px;
+        width: 153px;
+    }
+    
+    span.k-widget.k-tooltip-validation {
+        display: inline-block;
+        width: 160px;
+        text-align: left;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        background: none;
+        box-shadow: none;
+        color: red;
+    }
+                
+    .k-tooltip-validation .k-warning {
+        display: none;
+    }
+
+    input.select-device {
+        width: 18px;
+        height: 18px;
+    }
+</style>
+<script>
+    function onDeviceDataBound() {
+        var grid = this;
+        console.log(grid);
+        $("input[type='file']").each(function() {
+                var file = $(this);
+                var tr = file.closest('tr');
+                var model = grid.dataItem(tr);
+
+                file.kendoUpload({
+                    multiple: false,
+                    async: {
+                        saveUrl: "/Returns/SaveFile",
+                        removeUrl: "/Returns/RemoveFile",
+                        autoUpload: false
+                    },
+                    select: function(e) {
+                        setTimeout(function () {
+                            var kendoUploadButton = $(".k-upload-selected");
+                            kendoUploadButton.hide();
+                        }, 1);
+                    },
+                    upload: function(e) {
+                        e.data = { serialNumber: model.SerialNumber };
+                    }
+                });
+            });
+    }
+
+    function index(dataItem) {
+        var data = $("#ReturnsGrid").data("kendoGrid").dataSource.data();
+        return data.indexOf(dataItem);
+    }
+
+    var RmaRequestReturnManageUtil = function () {
+
+        return {
+            FormId: null,
+            UniqueId: null,
+            Countries: null,
+            Regions: null,
+            DeviceListViewModel: null,
+            DeviceList: null,
+            Validator: null,
+            UploadCount: 0,
+            
+
+            Init: function (args) {
+                // initialize defaults
+                var self = this;
+                
+                self.FormId = args.formId;
+                self.UniqueId = args.uniqueId;
+                self.IsReadOnly = args.isReadOnly,
+                self.Countries = args.countries;
+                self.Regions = args.regions;
+                self.DeviceList = args.devices;
+
+                self.BindDeviceListViewModel();
+            },
+
+            BindDeviceListViewModel: function () {
+                var self = this;
+
+                self.DeviceListViewModel = kendo.observable({
+                    OnDeviceCheckBoxChange: function (e) {
+                        e.data.set('IsReadOnly', !e.data.get('IsSelected'));
+                    },
+                    Countries: new kendo.data.DataSource({
+                        data: self.Countries
+                    }),
+                    Regions: new kendo.data.DataSource({
+                        data: self.Regions
+                    }),
+                    Devices: new kendo.data.DataSource({
+                        pageSize: 24,
+                        data: self.DeviceList,
+                        schema: {
+                            model: {
+                                id: "DeviceId",
+                                fields: {
+                                    SerialNumber: { editable: false },
+                                    ModelName: { editable: false }
+                                }
+                            }
+                        }
+                    }),
+                    OnTechSupportFileSelect: function (e) {
+                       setTimeout(function () {
+                            var kendoUploadButton = $(".k-upload-selected");
+                            kendoUploadButton.hide();
+                        }, 1);
+
+                        $.each(e.files,
+                        function (index, value) {
+                            if (!((/^.*\.(tgz|TGZ)$/).test(value.extension))) {
+                                e.preventDefault();
+                                alert("Please upload TAR GZ file");
+                                return;
+                            }
+                        });
+                    },
+                    OnTechSupportFileUpload: function (e) {
+                        SupportPortal.BlockUI();
+                        self.UploadCount++;
+                        var country = e.data.Country;
+                        var region = e.data.Region;
+
+                        var countryCode = (country && country.Code) ? country.Code : '';
+
+                        e.data.ShippingCountry = countryCode;
+
+                        if (countryCode == 'US' || countryCode == 'CA') {
+                            var regionCode = (region && region.Code) ? region.Code : '';
+
+                            e.data.ShippingRegion = regionCode;
+                        }
+                        else {
+                            e.data.ShippingRegion = e.data.OtherRegion;
+                        }
+
+                        var deviceInfo = JSON.stringify(e.data);
+
+                        e.data = JSON.parse(deviceInfo);
+                        e.data.TechSupportFile = e.files[0].rawFile;
+                    },
+                    OnTechSupportFileUploadSuccess: function (e) {
+                        self.UploadCount--;
+                        e.data.set('IsReadOnly', true);
+                        e.data.set('IsAnalysed', true);
+                        e.data.set('StatusMessage', e.response.Message);
+                        if (self.UploadCount === 0){
+                            SupportPortal.UnBlockUI();
+                            if (e.response && e.response.Success) {
+                                SupportPortal.Notification(e.response.Message, SupportPortal.NotificationType.Success);
+                            }
+                        }
+                    },
+                    OnTechSupportFileUploadError: function (e) {
+                        self.UploadCount--;
+                        if (self.UploadCount === 0) {
+                            SupportPortal.UnBlockUI();
+                        }
+                        if (e.response && !e.response.Success) {
+                            SupportPortal.Notification(e.response.Message, SupportPortal.NotificationType.Error);
+                            e.data.StatusMessage = e.response.Message;
+                        }
+                    },
+                    IsOtherRegion: function (e) {
+                        var country = e.get('Country.Name');
+
+                        return (country !== "United States" && country !== "Canada") ? true : false;
+                    },
+                    OnCountryChange: function (e) {
+                        var self = this;
+                        var countryId = e.data.get('Country.Id');
+                        var country = e.data.get('Country.Name');
+
+                        if (country !== "United States" && country !== "Canada") {
+                            e.data.set('OtherRegion', null);
+                            e.data.set('Region', null);
+                        } else {
+                            e.data.set('OtherRegion', null);
+                            e.data.set('Region', null);
+                            self.Regions.filter({
+                                logic: "or",
+                                filters: [
+                                    { field: "CountryId", operator: "eq", value: countryId },
+                                    { field: "CountryId", operator: "eq", value: 0 }
+                                ]
+                            });
+                        }
+
+                        self.trigger("IsOtherRegion", e.data);
+                    },
+                    OnSubmit: function (e) {
+                        var self = this;
+                        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+                        var data = $('div.list-rma-returns').data('kendoListView').dataSource.data();
+
+                        if (data.length === 0) {
+                            SupportPortal.Message("There are no devices eligible for RMA");
+                            return;
+                        }
+
+                        var validator = $("#" + RmaRequestReturnManageUtil.FormId).data("kendoValidator");
+
+                        if (!validator.validate()) {
+                            try {
+                                var errorKeys = Object.keys(validator._errors);
+
+                                if (errorKeys && errorKeys.length > 0) {
+                                    
+                                }
+                            } catch (e) {
+
+                            }
+
+                            return;
+                        }
+
+                        $("input[type='file']").each(function () {
+                            console.log('Uploading....');
+                            var upload = $(this).data("kendoUpload");
+
+                            if (upload) {
+                                upload.wrapper.find("button.k-upload-selected").click();
+                            }
+                        });
+                    }
+                });
+
+                kendo.bind($("#" + self.UniqueId), self.DeviceListViewModel);
+            }
+        };
+    }();
+
+    $(document).ready(function () {
+        RmaRequestReturnManageUtil.Init({
+            formId: '@frmRmaReturns',
+            uniqueId: '@divUniqueId',
+            isReadOnly: false,
+            countries: function() {
+                return '@countries';
+            }(),
+            regions: function() {
+                return '@regions';
+            }(),
+            devices: function () {
+                return '@deviceCategories';
+            }()
+        });
+    });
+
+    $("#@frmRmaReturns").kendoValidator({
+        rules: {
+            validCountry: function (input) {
+                if (input.is("[data-validcountry-msg]") && (input.val() === "" || input.val() === "0")) {
+                    return false;
+                }
+
+                return true;
+            },
+            validRegion: function (input) {
+                if (input.is("[data-validregion-msg]")) {
+                    var rowId = input.attr('Id').replace('ddlShippingRegion', '');
+
+                    if ($('#ddlShippingRegion' + rowId).is(":hidden") && $('#tbShippingRegion' + rowId).is(":hidden")) {
+                        return true;
+                    }
+
+                    if ($('#tbShippingRegion' + rowId).is(":hidden") && (input.val() === "" || input.val() === "0")) {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
+            validOtherRegion: function (input) {
+                if (input.is("[data-validotherregion-msg]")) {
+
+                    if (!input.is(":hidden") && (input.val() === "")) {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
+            validTechSupportFile: function (input) {
+                if (input.is("[data-validtechsupportfile-msg]")) {
+                    if (!input.is(":hidden") && (input.closest(".k-upload").find(".k-file").length === 0)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+    });
+</script>
+
+<div>
+    
+</div>
+
+<form id="@frmRmaReturns">
+<div id="@divUniqueId">
+    <div class="response-notification rma-returns-notification"></div>    
+    <div class="grid-content">
+        <div class="list-rma-returns" data-role="listview" data-bind="source: Devices" data-template="template"></div>         
+        <div class="csp-submit-container">
+            <input id="SubmitButton" type="submit" value="Submit" data-link-type="request-return" class="k-button csp-submit" data-bind="click: OnSubmit" />
+        </div>
+    </div>
+</div>
+</form>
+<script type="text/x-kendo-template" id="template">
+    <div class="device-info">
+        <fieldset class="csp-fieldset-with-border">
+            <legend class="device-info-header"><div class="toggle plus">&nbsp;<input type="checkbox" class="select-device" data-bind="checked: IsSelected, invisible: IsAnalysed, events: { change: OnDeviceCheckBoxChange }"/>&nbsp;<span data-bind="text:SerialNumber"></span>&nbsp;<span data-bind="text:ModelName"></span></div></legend>
+
+            <div class="device-info">
+                <div class="row-fluid">
+                    <div class="span3">
+                        <div class="csp-label">
+                            Serial Number:
+                        </div>
+                        <div class="csp-field">
+                            <span data-bind="text:SerialNumber"></span>
+                        </div>
+                    </div>
+                    <div class="span4">
+                        <div class="csp-label">
+                            Shipping Address:
+                        </div>
+                        <div class="csp-field">
+                            <input id="tbShippingAddress#=DeviceId#" name="tbShippingAddress#=DeviceId#" class="k-textbox" data-bind="value: ShippingAddress, invisible: IsReadOnly,readonly: IsReadOnly" required data-required-msg="Address is required"/>
+                            <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                            <span data-bind="invisible: IsReadOnly"><span class="k-invalid-msg" data-for="tbShippingAddress#=DeviceId#"></span></span>
+                            <span data-bind="text:ShippingAddress, visible: IsReadOnly"></span>
+                        </div>
+                    </div>
+                    <div class="span4">
+                        <div class="csp-label">
+                            Shipping City:
+                        </div>
+                        <div class="csp-field">
+                            <input id="tbShippingCity#=DeviceId#" name="tbShippingCity#=DeviceId#" class="k-textbox" data-bind="value: ShippingCity, invisible: IsReadOnly,readonly: IsReadOnly" required data-required-msg="City is required"/>
+                            <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                            <span data-bind="invisible: IsReadOnly"><span class="k-invalid-msg" data-for="tbShippingCity#=DeviceId#"></span></span>
+                            <span data-bind="text:ShippingCity, visible: IsReadOnly"></span>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row-fluid">
+                    <div class="span3">
+                        <div class="csp-label">
+                            Model Name:
+                        </div>
+                        <div class="csp-field">
+                            <span data-bind="text:ModelName"></span>
+                        </div>
+                    </div>
+                    <div class="span4">
+                        <div class="csp-label">
+                            Shipping Country:
+                        </div>
+                        <div class="csp-field">
+                            <input id="ddlShippingCountry#=DeviceId#" name="ddlShippingCountry#=DeviceId#"
+                                    data-role="dropdownlist"
+                                    data-auto-bind="false"
+                                    data-text-field="Name"
+                                    data-value-field="Id"
+                                    data-bind="value: Country,
+                                                source: Countries, 
+                                                invisible: IsReadOnly,
+                                                events: {
+                                                    change: OnCountryChange
+                                                }" data-validcountry-msg="Country is required" />
+                            <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                            <span data-bind="invisible: IsReadOnly"><span class="k-invalid-msg" data-for="ddlShippingCountry#=DeviceId#"></span></span>
+                            <span data-bind="text:Country.Name, visible: IsReadOnly"></span>
+                        </div>
+                    </div>
+                    <div class="span4">
+                        <div class="csp-label">
+                            Shipping State/Region:
+                        </div>
+                        <div class="csp-field">
+                            <span data-bind="invisible: IsReadOnly">
+                                <input id="ddlShippingRegion#=DeviceId#" name="ddlShippingRegion#=DeviceId#"
+                                        data-role="dropdownlist"
+                                        data-auto-bind="false"
+                                        data-text-field="Name"
+                                        data-value-field="Id"
+                                        data-bind="value: Region, 
+                                                    source: Regions, 
+                                                    invisible: IsOtherRegion" data-validregion-msg="Region is required" />
+                                <input id="tbShippingRegion#=DeviceId#" name="tbShippingRegion#=DeviceId#" class="k-textbox" data-bind="value: OtherRegion, visible: IsOtherRegion" data-validotherregion-msg="Region is required"/>
+                                <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                                <span data-bind="invisible: IsReadOnly"><span class="k-invalid-msg" data-for="ddlShippingRegion#=DeviceId#"></span></span>
+                                <span data-bind="invisible: IsReadOnly"><span class="k-invalid-msg" data-for="tbShippingRegion#=DeviceId#"></span></span>
+                            </span>
+                            <span data-bind="visible: IsReadOnly">
+                                <span data-bind="text:Region.Name, invisible: IsOtherRegion"></span>
+                                <span data-bind="text:OtherRegion, visible: IsOtherRegion"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row-fluid">
+                    <div class="span3">
+                        <div class="csp-label">
+                            &nbsp;
+                        </div>
+                        <div class="csp-field">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="span4">
+                        <div class="csp-label">
+                            Shipping Zip:
+                        </div>
+                        <div class="csp-field">
+                            <input id="tbShippingZipCode#=DeviceId#" name="tbShippingZipCode#=DeviceId#" class="k-textbox" data-bind="value: ShippingZipCode, invisible: IsReadOnly,readonly: IsReadOnly" required data-required-msg="Zip Code is required"/>
+                            <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                            <span data-bind="invisible: IsReadOnly"><span class="k-invalid-msg" data-for="tbShippingZipCode#=DeviceId#"></span></span>
+                            <span data-bind="text:ShippingZipCode, visible: IsReadOnly"></span>
+                        </div>
+                    </div>
+                    <div class="span5">
+                        <div class="csp-label">
+                            <span data-bind="invisible: IsReadOnly">Tech Support File:</span>
+                            <span data-bind="visible: IsReadOnly">Status:</span>
+                        </div>
+                        <div class="csp-field">
+                            <input 
+                                type="file" 
+                                id="tbTechSupportFile#=DeviceId#" 
+                                name="tbTechSupportFile#=DeviceId#" 
+                                data-role="upload"
+                                data-multiple="false"
+                                data-localization="{ select: 'Upload' }"
+                                data-async="{ autoUpload: false, saveUrl: '/Returns/SaveFile' }"
+                                data-bind="events: { select: OnTechSupportFileSelect, upload: OnTechSupportFileUpload, success: OnTechSupportFileUploadSuccess, error: OnTechSupportFileUploadError }, invisible: IsReadOnly"
+                                data-validtechsupportfile-msg="Tech Support File is required"/>
+                            <span data-bind="invisible: IsReadOnly" class="csp-required">*</span>
+                            <span data-bind="invisible: IsReadOnly"><span class="k-invalid-msg" data-for="tbTechSupportFile#=DeviceId#"></span></span>
+                            <span data-bind="text:StatusMessage, visible: IsReadOnly" class="wrapText status-msg"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+    </div>
+</script>
+
+

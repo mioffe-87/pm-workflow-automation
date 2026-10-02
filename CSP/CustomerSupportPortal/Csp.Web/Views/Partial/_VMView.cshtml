@@ -1,0 +1,654 @@
+﻿@using Csp.Api.HelperClasses
+@using Csp.Api.Model
+@using Kendo.Mvc.UI
+@using NHibernate.Type
+@model Csp.Web.DataTransferObjects.VmViewModelDto<AvailableVm>
+
+<script>
+    function ShowNsxDevices(e) {
+        var direction = '/VM/ViewProvisionedPanoramaDevices';
+        var dataItem = this.dataItem($(e.target).closest("tr"));
+        var window = $('#@UniqueId.PraProvisionWindow').data("kendoWindow");
+        window.refresh(direction + '?authCode=' + dataItem.AuthorizationCode + "&partNumber=" + dataItem.ProductSku);
+        window.setOptions({
+            minHeight: 200
+        });
+        window.open();
+        window.center();
+    }
+
+    function RegisterVm(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+        var direction = '/VM/RegisterVm';
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var newVmDeviceId = $('#@UniqueId.NewVmDeviceId');
+        newVmDeviceId.val('');
+        globalNewVmDeviceId = '@UniqueId.NewVmDeviceId';
+
+        var window = $('#@UniqueId.RegisterVmWindow').data("kendoWindow");
+        window.refresh(direction + '?authCode=' + dataItem.AuthorizationCode);
+        window.setOptions({
+            minHeight: 200
+        });
+        window.open();
+        window.center();
+    }
+
+    function Download(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+        var downloadsWindow = $('#@UniqueId.DownloadsWindow').data('kendoWindow');
+        downloadsWindow.refresh('/updates/softwareupdates?id=@(Model.ActionHelper.Id)&vmDevices=true');
+        downloadsWindow.setOptions({
+            minHeight: 200
+        });
+
+        downloadsWindow.open();
+        downloadsWindow.center();
+    }
+
+    //show renewal items dialog
+    function ShowRenewalItems(e) {
+        var direction = '/VM/Renewal';
+        var dataItem = this.dataItem($(e.target).closest("tr"));
+        var window = $('#@UniqueId.RenewalWindow').data("kendoWindow");
+        window.refresh(direction + '?authCode=' + dataItem.AuthorizationCode + '&description=' + dataItem.Description
+                    + '&totalQuantity=' + dataItem.VmTotalCount + '&provisionedNum=' + (dataItem.VmTotalCount-dataItem.VmUseCount) + '&partNumber=' + dataItem.ProductSku) ;
+        window.setOptions({
+            minHeight: 665,
+            minWidth: 500
+        });
+        window.title("VM RENEWAL: " + dataItem.AuthorizationCode);
+        window.open();
+        window.center();
+    }
+
+    //deactivate VM-ELA Authcode only
+    function DeactivateVM(e) {
+        var direction = '/VM/DeactivateVm';
+        var dataItem = this.dataItem($(e.target).closest("tr"));
+        var window = $('#@UniqueId.DeactivateVmWindow').data("kendoWindow");
+        window.refresh(direction + '?authCode=' + dataItem.AuthorizationCode) ;
+        window.setOptions({
+            minHeight: 500,
+            minWidth: 400
+        });
+        window.title("Deactivate VM");
+        window.open();
+        window.center();
+    }
+
+    function onDownloadsWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.DownloadsWindow');
+    }
+
+    function onAddVmAuthCodeWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.AddVmAuthCodeWindow');
+    }
+
+    function onRegisterVmWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.RegisterVmWindow');
+    }
+
+    function onActivateVmAuthCodeWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.ActivateVmAuthCodeWindow');
+    }
+
+    function onActivateVmAuthCodeWindowClose() {
+        SupportPortal.OnWindowClose("@UniqueId.VMAuthCodesGrid");
+    }
+
+    function onDeviceViewWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.DeviceViewWindow');
+    }
+
+    function onPraProvisionWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.PraProvisionWindow');
+    }
+
+    function onRenewalWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.RenewalWindow');
+    }
+
+    function onDeactivateVmWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.DeactivateVmWindow');
+    }
+
+    //Must be set for pop-up to function
+    //var deviceWindowId = '#@UniqueId.DeviceViewWindow';
+
+    function onRegisterVmWindowClose() {
+        var newVmDeviceId = $('#@UniqueId.NewVmDeviceId');
+
+        if (newVmDeviceId.val().length > 0) {
+
+            var proddevicegrid = $('.proddevicegrid');
+            if (proddevicegrid.length > 0) {
+                proddevicegrid.data("kendoGrid").dataSource.read();
+            }
+
+            var direction = '/Device/Details?deviceId=' + newVmDeviceId.val();
+            var window = $('#@UniqueId.DeviceViewWindow').data('kendoWindow');
+            window.content(' ');
+            window.refresh();
+            window.refresh(direction);
+            window.setOptions({
+                minHeight: 520
+            });
+            window.open();
+            window.center();
+        }
+
+        SupportPortal.OnWindowClose("@UniqueId.VMAuthCodesGrid");
+    }
+
+    function onWindowClose() {
+        SupportPortal.OnWindowClose("@UniqueId.VMAuthCodesGrid");
+    }
+
+    function onPraProvisionWindowClose() {
+    }
+
+    //close the Renewal dialog.
+    function onRenewalWindowClose() {
+        var isDataDirty = $('#renewalDataDirty').val();
+        if (isDataDirty !== '0') {
+            SupportPortal.Confirmation("You haven't saved your changes yet, do you want to exit?", function() {
+                $('#renewalDataDirty').val(0);
+                $('#@UniqueId.RenewalWindow').data('kendoWindow').close();
+            }, null, null);
+            this.preventDefault();
+        }
+    }
+
+    //close the deactivate VM dialog
+    function onDeactivateVmWindowClose() {
+        SupportPortal.OnWindowClose("@UniqueId.VMAuthCodesGrid");
+    }
+
+    function onAcceptElaTokensGrantWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.AcceptElaTokensGrantWindow');
+    }
+
+    function onAcceptElaTokensGrantWindowClose() {
+        // on grant Token window close the page needs to be refreshed to load page based on Access from database
+        window.location.href = '/SupportAccount/VM/' + '@Model.SupportAccountId';
+    }
+
+    function getSearchParams() {
+        var params = SetAntiForgery();
+
+        params.authCode = $('#FindAuthCode').val();
+
+        return params;
+    }
+
+    function @(UniqueId.VMAuthCodesGrid)updateRow(e) {
+
+        var grid = $('#@UniqueId.VMAuthCodesGrid').data('kendoGrid');
+
+        grid.saveRow();
+        //TODO Revert Action column - if the update succeeds - HINT look for a input:text...
+    }
+
+    function @(UniqueId.VMAuthCodesGrid)cancelRow(e) {
+
+        var grid = $('#@UniqueId.VMAuthCodesGrid').data('kendoGrid');
+
+        grid.cancelRow();
+    }
+
+    var isPostBack = $('#@UniqueId.isPostBackId');
+
+    function @(UniqueId.VMGrid)onDataBound(e) {
+
+        //if (!isPostBack.val()) {
+        //    $('#@UniqueId.VMAuthCodesGrid').data('kendoGrid').dataSource._total = '@Convert.ToInt32(Model.DataParameters.TotalRecordCount)';
+        //    isPostBack.val('1');
+        //}
+
+        var grid = $('#@UniqueId.VMAuthCodesGrid').data('kendoGrid');
+        var gridData = grid.dataSource.view();
+        for (var i = 0; i < gridData.length; i++) {
+            var currentUid = gridData[i].uid;
+            var currenRow = grid.table.find("tr[data-uid='" + currentUid + "']");
+
+            if (gridData[i].IsNsx === 0 || (gridData[i].IsNsx === 1 && gridData[i].AllowGeneratingPanorama === 0)) {
+                var provisionPan = $(currenRow).find(".k-grid-ProvisionPanorama");
+                provisionPan.hide();
+            }
+
+            //gridData[i].VmUseCount: unprovisioned quantity; gridData[i].VmTotalCount: total quantity
+            var showRenewButton = false;
+            if (gridData[i].IsVmRenewalEligible && gridData[i].ProductSku != null) {
+                var re = new RegExp('^PAN-VM-(((50|100|300|500|700)-PERP-(BASC|BND1|BND2)-(.+)YR)|((100|200|300)-(BND|USG-BND)-(LAB|NFR))|(300-PREM-(BND|BND1|BND2))|(300-PERP-(USG)*-BND)|(1000-HV-(BND|PERP|PERP-BND|PERP-USG-BND|USG-BND|SUB-BND)-(LAB|NFR|NSX)))');
+                if(re.test(gridData[i].ProductSku)) {
+                    showRenewButton = true;
+                }
+            }
+
+            //hide Renew button
+            if (!showRenewButton) {
+                $(currenRow).find(".k-grid-Renew").hide();
+            }
+
+            //hide Deactivate Vm button
+            if (gridData[i].ProductSku != null) {
+                var re1 = new RegExp('^PAN-VM-(50|100|300|500|700)-ELA-BND2');
+                if(!re1.test(gridData[i].ProductSku)) {
+                    $(currenRow).find(".k-grid-DeactivateVM").hide();
+                }
+            }
+        }
+    }
+
+    function @(UniqueId.VmView)onVmViewGridError(args) {
+        if (args.errors) {
+            var grid = $("#@UniqueId.VMAuthCodesGrid").data("kendoGrid");
+            var gridElement = grid.editable.element;
+
+            grid.one("dataBinding",
+                function(e) {
+                    e.preventDefault ? e.preventDefault() : e.returnValue = false; // cancel grid rebind if error occurs
+
+                    $.each(args.errors,
+                        function(key, value) {
+                            if (value.errors) {
+                                gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]")
+                                    .replaceWith(SupportPortal.ValidationMessageTemplate({
+                                        field: key,
+                                        message: value.errors[0]
+                                    }));
+                                gridElement.find("input[name=" + key + "]").focus();
+                            }
+                        });
+                });
+        }
+    }
+
+    $(function() {
+
+        deviceWindowId = '#@UniqueId.DeviceViewWindow';
+
+        var hasPendingTokensRequest = '@Model.HasTokenGrantRequest';
+        if (hasPendingTokensRequest === 'False') {
+            $('#@UniqueId.ReviewTokensGrantBtn').hide();
+        }
+
+        $('#@UniqueId.AddVmSeriesAuthCode').click(function() {
+
+            //Open pop-up window
+
+            var direction = '/VM/AddVmAuthCode';
+            var window = $('#@UniqueId.ActivateVmAuthCodeWindow').data("kendoWindow");
+            window.refresh(direction);
+            window.setOptions({
+                minHeight: 400
+            });
+            window.open();
+            window.center();
+
+            //
+            //
+            // var grid = $('#@UniqueId.VMAuthCodesGrid').data('kendoGrid');
+            //
+            // grid.addRow();
+            //
+            // var row = $('#@UniqueId.VMAuthCodesGrid').find('input:text').closest('tr');
+            //
+            // $(row).find("td").eq(3).html("<a href='javascript: void(0)' class='k-button k-button-icontext k-grid-csp-update' onclick='@(UniqueId.VMAuthCodesGrid)updateRow()' title='Update VM'><span class=' '></span></a> " +
+            //   "<a href='javascript: void(0)' class='k-button k-button-icontext k-grid-csp-cancel' onclick='@(UniqueId.VMAuthCodesGrid)cancelRow()' title='Cancel VM Changes'><span class=' '></span></a>");
+            //
+            // $(row).find('td').eq(1).text('');
+            //
+            // return false;
+        });
+        //review tokens grant button action
+        $('#@UniqueId.ReviewTokensGrantBtn').click(function() {
+            var direction = "/SiteLicense/GetPendingElaTokensGrantItems";
+            var window = $('#@UniqueId.AcceptElaTokensGrantWindow').data("kendoWindow");
+            window.refresh(direction);
+            window.open();
+            window.center();
+        });
+
+        $('#@UniqueId.ReleasedVMAuthCodes').click(function() {
+            var direction = "/VM/ViewReleasedLicenses";
+            var window = $("#@UniqueId.releasedVMLicensesWindowId").data("kendoWindow");
+            window.content(" ");
+            window.setOptions({
+                minHeight: 400,
+                minWidth: 350
+
+            });
+            window.bind('open', onOpenReleasedVMAuthCodesWindow);
+            window.bind('close', onCloseReleasedVMAuthCodesWindow);
+            window.title("Available VM Licenses");
+            window.refresh();
+            window.refresh(direction);
+            window.open();
+            window.center();
+        });
+
+        function onOpenReleasedVMAuthCodesWindow() {
+            SupportPortal.OnWindowOpen("@UniqueId.releasedVMLicensesWindowId");
+        }
+
+        function onCloseReleasedVMAuthCodesWindow() {
+            var window = $("#@UniqueId.releasedVMLicensesWindowId").data("kendoWindow");
+            window.content(" ");
+            window.refresh();
+
+            SupportPortal.OnWindowClose("@UniqueId.VMAuthCodesGrid");
+        }
+
+
+        $('#@UniqueId.DeactivateLicenses').click(function() {
+            var direction = "/License/DeactivateLicenses";
+            var window = $("#@UniqueId.deactivateLicensesWindowId").data("kendoWindow");
+            window.content(" ");
+            window.setOptions({
+                minHeight: 400
+            });
+            window.bind('open', onOpenDeactivateLicensesWindow);
+            window.bind('close', onCloseDeactivateLicensesWindow);
+            window.title("Deactivate Licenses");
+            window.refresh();
+            window.refresh(direction);
+            window.open();
+            window.center();
+        });
+
+        function onOpenDeactivateLicensesWindow() {
+            SupportPortal.OnWindowOpen("@UniqueId.deactivateLicensesWindowId");
+        }
+
+        function onCloseDeactivateLicensesWindow() {
+            var window = $("#@UniqueId.deactivateLicensesWindowId").data("kendoWindow");
+            window.content("");
+            window.refresh();
+
+            SupportPortal.OnWindowClose("@UniqueId.VMAuthCodesGrid");
+        }
+    });
+
+    function onSearchEnterPress(e) {
+        if (e.keyCode == 13) {
+            findVM();
+            return false;
+        }
+
+        return true;
+    }
+
+    function findVM() {
+        $('#@UniqueId.VMAuthCodesGrid').data('kendoGrid').dataSource.read();
+        return false;
+    }
+
+    function exportVmsToCsv() {
+
+        var authCode = $('#FindAuthCode').val();
+
+        location.href = '@Url.Action("SearchAvailableReport", "VM")?authCode=' + authCode;
+    }
+</script>
+
+@Html.AntiForgeryToken()
+
+@Html.Hidden((string)UniqueId.isPostBackId, "")
+<input type="hidden" value="0" id="renewalDataDirty"/>
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)@UniqueId.AddVmAuthCodeWindow)
+          .Visible(false)
+          .Width(460)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+                                .Open("onAddVmAuthCodeWindowOpen")
+                                .Close("onWindowClose"))
+          .Title("Register VM-Series Auth-Code")
+          )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)@UniqueId.ActivateVmAuthCodeWindow)
+          .Visible(false)
+          .Width(500)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+                                .Open("onActivateVmAuthCodeWindowOpen")
+                                .Close("onActivateVmAuthCodeWindowClose"))
+          .Title("VM-Series Auth-Code")
+          )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)@UniqueId.RegisterVmWindow)
+          .Visible(false)
+          .Width(550)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+                                .Open("onRegisterVmWindowOpen")
+                                .Close("onRegisterVmWindowClose"))
+          .Title("Register Virtual Machine")
+          )
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)@UniqueId.DeviceViewWindow)
+        .Visible(false)
+        .Events(events => events
+                              .Open("onDeviceViewWindowOpen")
+                              .Close("onWindowClose"))
+        .Modal(true)
+        .Width(600)
+        .Visible(false)
+        .Draggable()
+        .Title("Device:")
+          )
+</div>
+
+<div>
+    @(
+    Html.Kendo().Window()
+        .Name((string)@UniqueId.DownloadsWindow)
+        .Visible(false)
+        .Events(events => events
+                              .Open("onDownloadsWindowOpen")
+                              .Close("onWindowClose"))
+        .Modal(true)
+        .Width(1080)
+        .Visible(false)
+        .Draggable()
+        .Title("Downloads")
+          )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+          .Name((string) @UniqueId.PraProvisionWindow)
+          .Visible(false)
+          .Width(550)
+          .Height(350)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+              .Open("onPraProvisionWindowOpen")
+              .Close("onPraProvisionWindowClose"))
+          .Title("Provision Panorama")
+          )
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.deactivateLicensesWindowId)
+        .Visible(false)
+        .Width(500)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title("Deactivate Licenses")
+)
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.releasedVMLicensesWindowId)
+        .Visible(false)
+        .Width(750)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title("Available VM Licenses")
+)
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+          .Name((string) @UniqueId.RenewalWindow)
+          .Visible(false)
+          .Width(780)
+          .Height(400)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+              .Open("onRenewalWindowOpen")
+              .Close("onRenewalWindowClose"))
+          .Title("VM Renewal")
+          )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+          .Name((string) @UniqueId.DeactivateVmWindow)
+          .Visible(false)
+          .Width(500)
+          .Height(300)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+              .Open("onDeactivateVmWindowOpen")
+              .Close("onDeactivateVmWindowClose"))
+          .Title("Deactivate VM")
+          )    
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+          .Name((string) @UniqueId.Confirmation)
+          .Visible(false)
+          .Modal(true)
+          .Draggable()
+          .Title("Confirmation")
+          )
+</div>
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)@UniqueId.AcceptElaTokensGrantWindow)
+          .Visible(false)
+          .Width(900)
+          .Height(320)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+              .Open("onAcceptElaTokensGrantWindowOpen")
+              .Close("onAcceptElaTokensGrantWindowClose"))
+          .Title("Review Tokens Grant")
+          )
+</div>
+@Html.Hidden((string)UniqueId.NewVmDeviceId)
+<div class="contextTitle">VM-Series Auth-Codes</div>
+
+<div class="grid-header">
+    <div class="grid-left">
+        <button type="button" class="k-button k-primary" data-link-type="vm-series-add-auth-code" id="@UniqueId.AddVmSeriesAuthCode">Add VM-Series Auth-Code</button><span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 10);"></i></span>
+        <input type="button" class="k-button" data-link-type="vm-series-deactivate-license" value="Deactivate License(s)" style="margin-left: 5px;" id="@UniqueId.DeactivateLicenses" />
+         <input type="button" class="k-button" data-link-type="vm-series-released-licenses" value="Released VM License Auth Codes" style="margin-left: 5px;" id="@UniqueId.ReleasedVMAuthCodes" />
+         <button type="button" class="k-button" style="margin-left: 5px; color: red" id="@UniqueId.ReviewTokensGrantBtn" >Review Tokens Grant</button>
+    </div>
+    <div class="grid-right">
+        <div class="grid-filter">
+            @Html.TextBox("FindAuthCode", Model.DefaultDeviceCode, new
+                   {
+                       onkeypress = "return onSearchEnterPress(event)",
+                       @class = "grid-filter__search-input",
+                       placeholder = "Auth Code",
+                       aria_label = "Search Auth Code"
+                   })
+            <button aria-label="search" type="button" class="grid-filter__search-button" onclick="findVM()">
+                <span aria-hidden="true" class="fa fa-search" />
+            </button>
+        </div>
+    </div>
+</div>
+
+<div>
+
+    @{
+        var maxPageSizeForms = Convert.ToInt32(Model.DataParameters.TotalRecordCount);
+        var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+        if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+            pageSizeOptionsForms.Add(maxPageSizeForms);
+        }
+    }
+
+    @(Html.Kendo().Grid(Model.AvailableVms)
+          .Name((string)UniqueId.VMAuthCodesGrid)
+          .Columns(cols => {
+              cols.Bound(x => x.AuthorizationCode).Title("Auth Code").Width(100);
+              cols.Bound(x => x.DisplayQuantity).Width(100).Title("Quantity of VM Provisioned").Sortable(false);
+              cols.Bound(x => x.Description).Title("Part Description");
+              cols.Bound(x => x.DisplayExpirationDate).Title("Expiration Date").Sortable(false).Width(80);
+              cols.Bound(x => x.AscName).Title("ASC").Sortable(false).Width(160);
+              cols.Bound(x => x.ProductSku).Hidden(true);
+              cols.Bound(x => x.IsVmRenewalEligible).Hidden(true);
+              cols.Command(command => {
+                  command.Custom("csp-download").Text(" ").Click("Download").HtmlAttributes(new { title = "Download", href = "javascript:void(0);", style="font-size: 12px;" });
+                  command.Custom("RegisterVM").Click("RegisterVm").Text("Register VM").HtmlAttributes(new {style="font-size: 12px;" });
+                  command.Custom("DeactivateVM").Click("DeactivateVM").Text("Deactivate VM").HtmlAttributes(new {style="font-size: 12px;" });
+                  command.Custom("ProvisionPanorama").Click("ShowNsxDevices").Text("Panorama").HtmlAttributes(new {style="font-size: 12px;" });
+                  command.Custom("Renew").Click("ShowRenewalItems").Text("Renew").HtmlAttributes(new {style="font-size: 12px;" });
+              }).Width(320).Title("Actions");
+          })
+          .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+          .Sortable()
+          .Editable(x => x.Mode(GridEditMode.InLine))
+          .Events(e => e.DataBound((string)UniqueId.VMGrid + "onDataBound"))
+          .ToolBar(toolBar => {
+                toolBar.Custom()
+                .Text("Export To CSV")
+                .HtmlAttributes(new { id = "export", data_link_type = "export-csv-assets" })
+                .Url("javascript: exportVmsToCsv();");
+            })
+          .DataSource(dataSource => dataSource
+                                        .Ajax()
+                                        .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                                .Model(model => {
+                                                    model.Id(p => p.AuthorizationCode);
+                                                    model.Field(f => f.VmUseCount).Editable(false);
+                                                    model.Field(f => f.Description).Editable(false);
+                                                    model.Field(f => f.VmTotalCount).Editable(false);
+                                                    model.Field(f => f.IsNsx).Editable(false);
+                                                    model.Field(f => f.IsPerpetualNsx).Editable(false);
+                                                    model.Field(f => f.AllowGeneratingPanorama).Editable(false);
+                                                    model.Field(f => f.DisplayExpirationDate).Editable(false);
+                                                })
+                                                .Events(e => e.Error((string)UniqueId.VmView + "onVmViewGridError"))
+                                        .PageSize(Model.DataParameters.PaginationCount)
+                                        .Read(read => read.Action("SearchAvailable", "VM").Data("getSearchParams"))
+                                        .Create(x => x.Action("AddVmAuthCode", "VM").Data("SetAntiForgery"))
+          ))
+</div>

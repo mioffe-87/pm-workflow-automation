@@ -1,0 +1,10 @@
+﻿		/// <summary>Creates the call object for the call '<[CurrentSPCallName]>' to stored procedure '<[ActualStoredProcedureName]>'.</summary>
+		/// <param name="dataAccessProvider">The data access provider.</param>
+<[If HasParameter NoCursors]><[Foreach Parameter NoCursors CrLf]>		/// <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter</param><[NextForeach]>
+<[EndIf]>		/// <returns>Ready to use StoredProcedureCall object</returns>
+		private static StoredProcedureCall Create<[CurrentSPCallName]>Call(IDataAccessCore dataAccessProvider<[If HasParameter NoCursors]>, <[EndIf]><[Foreach InputParameter Comma]><[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfParameter]>><[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]> <[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]><[If IsNullable]><[If IsValueType]>Nullable<<[TypeOfParameter]>><[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]> <[CaseCamel CurrentParameterName]><[NextForeach]>)
+		{
+<[Foreach OutputParameter CursorsOnly]>			object <[CaseCamel CurrentParameterName]> = null;
+<[NextForeach]>			return new StoredProcedureCall(dataAccessProvider, <# SD_ProcedureNameIncludeTemplate #>, "<[CurrentSPCallName]>")<[Foreach Parameter]>
+							.AddParameter("<[ActualParameterName]>", "<[TypeOfActualParameter]>", <[ ParameterSize ]>, ParameterDirection.<[CurrentParameterDirection]>, true, <[ParameterPrecision]>, <[ParameterScale]>, <[If HasTypeConverterDefined]>new <[TypeConverterFullName]>().ConvertTo(null, null, <[CaseCamel CurrentParameterName]>, typeof(<[TypeOfMappedTargetField]>))<[Else]><[CaseCamel CurrentParameterName]><[EndIf]>)<[NextForeach]>;
+		}

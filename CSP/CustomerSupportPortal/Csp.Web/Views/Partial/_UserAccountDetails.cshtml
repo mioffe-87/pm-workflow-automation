@@ -1,0 +1,40 @@
+﻿@using Csp.Api.Security;
+@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.UserAccountDto
+
+
+@{
+    ViewBag.Title = "User Account";
+    var actionHelper = Model.ActionHelper;
+
+    var isViewingSelf = CurrentState.GetLoggedInUser().UserAccount.Id == Model.UserAccount.Id;
+
+    //You can always edit your own account
+    var canEditUserAccount = User.HasPermission(Permission.EditUserAccount) || isViewingSelf;
+    var canViewUserAccount = User.HasPermission(Permission.ViewUserAccount);
+}
+
+<script>
+    var lastSelectedUserDevicesTab = 0;
+
+    function @(UniqueId.userAccount)onUserDevicesTabStripSelect(e) {
+        lastSelectedUserDevicesTab = $(e.item).index();
+    }
+
+    function @(UniqueId.userAccount)onUserDevicesTabStripContentLoad(e) {
+        if (lastSelectedUserDevicesTab != $(e.item).index()) {
+            e.item.className = "k-item k-state-default";
+            e.contentElement.style.display = "none";
+        }
+    }
+</script>
+
+<div>
+    @if (canEditUserAccount) {
+        Html.RenderAction(Model.ActionHelper.Edit, "UserAccount", new { userAccount = Model.UserAccount });
+
+    } else if (canViewUserAccount) {
+        Html.RenderAction(Model.ActionHelper.View, "UserAccount", new { userAccount = Model.UserAccount });
+    }
+
+</div>

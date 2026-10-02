@@ -1,0 +1,17 @@
+﻿<[SD.Tools.BCLExtensions.CollectionsRelated]>
+<%
+	Project currentProject = _executingGenerator.ProjectDefinition;
+	bool emitForeignKeyFields=false;
+	bool emitAddToEntitySetMethodsInContext = true;
+	bool enableLazyLoadingOnContext = false;
+	bool enableProxyCreationOnContextForPOCO = false;
+	string entitySetType = "ObjectQuery";
+	bool useObjectSet = false;
+	bool useEFSpecificProcCalls = false;
+	bool includeChangeTrackerHelperCode = false;
+	bool isForv1StyleEntities = true;
+	bool isForSelfTrackingEntities = false;
+	bool isForPOCOEntities = false;
+	bool isForDbContextAPI = false;
+	bool setContextClassNameEqualToEdmxModelContainerName = false;
+%><# SD_EF_ContextInclude #>

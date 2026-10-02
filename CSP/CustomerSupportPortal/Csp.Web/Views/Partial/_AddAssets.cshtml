@@ -1,0 +1,595 @@
+﻿@using Csp.Api.Model
+@model Csp.Web.DataTransferObjects.AddAssetsDto
+@{ 
+    ActionHelper actionHelper = Model.ActionHelper;
+    var availablePurchasesGridId = UniqueId.GridAvailablePurchases;
+    var selectedPurchasesGridId = UniqueId.GridSelectedPurchases;
+    var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+}
+<style>
+    .move-assets {
+        display: table-row;
+    }
+
+    .grid-available-purchases {
+        width: 47%;
+        display: table-cell;
+    }
+
+    .grid-selected-purchases {
+        width: 47%;
+        display: table-cell;
+    }
+
+    .grid-commands {
+        width: 5%;
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .grid-available-purchases fieldset, .grid-selected-purchases fieldset {
+        padding: 0px;
+    }
+
+    .grid-commands div {
+        padding: 5px;
+    }
+
+    .grid-commands div a {
+        text-align: center;
+        text-decoration: none;
+        width: 35px;
+    }
+
+    .search-purchases {
+        display: inline;
+    }
+
+    .assets-toolbar {
+        padding: 5px;
+        height: 20px;
+    }
+</style>
+<script>
+    var availablePurchasesGridId = '@availablePurchasesGridId';
+    var selectedPurchasesGridId = '@selectedPurchasesGridId';
+
+    function GetAdditionalInfo() {
+        return {
+            customerCode: $("#CustomerCode").val(),
+            deviceCode: $("#DeviceCode").val()
+        };
+    }
+
+    function Search() {
+        SupportPortal.BlockUI();
+        SupportPortal.ClearNotification();
+
+        $('#' + availablePurchasesGridId).data('kendoGrid').dataSource.filter({});
+        $('#' + availablePurchasesGridId).data('kendoGrid').dataSource.read();
+        $('#' + selectedPurchasesGridId).data('kendoGrid').dataSource.data([]);
+
+        return false;
+    }
+
+    function MoveRows(fromGrid, toGrid, isSelectAll) {
+        if (fromGrid.tbody.find('tr.grid-empty-message-row').length > 0) {
+            return;
+        }
+
+        var selectedRows = (isSelectAll) ? fromGrid.dataSource.data().toJSON() : GetSelectedRows(fromGrid);
+
+        if (selectedRows.length > 0) {
+            var fromGridData = fromGrid.dataSource.data().toJSON();
+            var toGridData = toGrid.dataSource.data().toJSON();
+
+            var fromGridIdsForDeletion = _.difference(_.pluck(fromGridData, 'UniqueId'), _.pluck(selectedRows, 'UniqueId'));
+            var fromGridDataSource = _.filter(fromGridData, function (item) { return fromGridIdsForDeletion.indexOf(item.UniqueId) >= 0; });
+            var toGridDataSource = _.values(_.extend(_.indexBy(toGridData, 'UniqueId'), _.indexBy(selectedRows, 'UniqueId')));
+
+            fromGrid.dataSource.data(fromGridDataSource);
+            toGrid.dataSource.data(toGridDataSource);
+        }
+    }
+
+    function GetSelectedRows(grid) {
+        var items = [];
+        var selected = grid.select();
+
+        if (selected.length > 0) {
+            $.each(selected, function (idx, elem) {
+                items.push(grid.dataItem(elem).toJSON());
+            });
+        }
+
+        return items;
+    }
+
+    function ToggleClaimSelectedPurchasesButton() {
+        var selectedCount = $('#' + selectedPurchasesGridId).data('kendoGrid').dataSource.total();
+
+        if (selectedCount > 0) {
+            $("#btnClaimSelectedPurchases").val("Add (" + selectedCount + ") Selected Asset(s)");
+        } else {
+            $("#btnClaimSelectedPurchases").val("Add Selected Assets");
+        }
+    }
+
+    function OnGridAvailablePurchasesError(e) {
+        var status = e.status;
+
+        SupportPortal.ClearNotification();
+
+        if (status === "customerror") {
+            SupportPortal.Notification(e.errors, SupportPortal.NotificationType.Error);
+        }
+    }
+
+    function OnGridAvailablePurchasesRequestEnd(e) {
+        SupportPortal.UnBlockUI();
+    }
+
+    function OnGridAvailablePurchasesDataBound(e) {
+        var grid = e.sender;
+
+        if (grid.dataSource.total() === 0) {
+            var columnCount = grid.columns.length;
+            $(e.sender.wrapper)
+                .find('tbody')
+                .append('<tr class="grid-empty-message-row"><td colspan="' + columnCount + '" class="grid-empty-message">No available assets to display</td></tr>');
+        }
+    }
+
+    function OnGridSelectedPurchasesDataBound(e) {
+        var grid = e.sender;
+
+        if (grid.dataSource.total() === 0) {
+            var columnCount = grid.columns.length;
+            $(e.sender.wrapper)
+                .find('tbody')
+                .append('<tr class="grid-empty-message-row"><td colspan="' + columnCount + '" class="grid-empty-message">No selected assets to display</td></tr>');
+        }
+
+        ToggleClaimSelectedPurchasesButton();
+    }
+
+    function CloseAddAssetsWindow(e) {
+        $(e).closest(".k-window-content").data("kendoWindow").close();
+    }
+
+    function OnGridAvailablePurchasesParse(response) {
+        SupportPortal.ClearNotification();
+
+        if (!response.Data.Success) {
+            SupportPortal.Notification(response.Data.Errors, SupportPortal.NotificationType.Error);
+        }
+
+        try {
+            $('#AvailableAssetsTypeFilter').data('kendoDropDownList').value("");
+            $('#AvailableAssetsTypeFilter').data('kendoDropDownList').setDataSource(response.Data.AssetTypes);
+
+            $('#AvailableAssetsCodeFilter').data('kendoDropDownList').value("");
+            $('#AvailableAssetsCodeFilter').data('kendoDropDownList').setDataSource(response.Data.AssetCodes);
+
+            $('#AvailableAssetsPartNumberFilter').data('kendoDropDownList').value("");
+            $('#AvailableAssetsPartNumberFilter').data('kendoDropDownList').setDataSource(response.Data.PartNumbers);
+
+            $('#AvailableAssetsSalesOrderNumberFilter').data('kendoDropDownList').value("");
+            $('#AvailableAssetsSalesOrderNumberFilter').data('kendoDropDownList').setDataSource(response.Data.SalesOrderNumbers);
+
+            /*
+            $('#SelectedAssetsTypeFilter').data('kendoDropDownList').setDataSource(response.Data.AssetTypes);
+            $('#SelectedAssetsCodeFilter').data('kendoDropDownList').setDataSource(response.Data.AssetCodes);
+            $('#SelectedAssetsPartNumberFilter').data('kendoDropDownList').setDataSource(response.Data.PartNumbers);
+            $('#SelectedAssetsSalesOrderNumberFilter').data('kendoDropDownList').setDataSource(response.Data.SalesOrderNumbers);
+            */
+        } catch (e) {
+            
+        }
+
+        return response.Data.Data;
+    }
+
+    function OnAvailableAssetsTypeFilterChange(e) {
+        ApplyFilter(availablePurchasesGridId, 'AssetType', e.sender.value());
+    }
+
+    function OnAvailableAssetsCodeFilterChange(e) {
+        ApplyFilter(availablePurchasesGridId, 'Code', e.sender.value());
+    }
+
+    function OnAvailableAssetsPartNumberFilterChange(e) {
+        ApplyFilter(availablePurchasesGridId, 'PartNumber', e.sender.value());
+    }
+
+    function OnAvailableAssetsSalesOrderNumberFilterChange(e) {
+        ApplyFilter(availablePurchasesGridId, 'SalesOrderNumber', e.sender.value());
+    }
+
+    function OnSelectedAssetsTypeFilterChange(e) {
+        ApplyFilter(selectedPurchasesGridId, 'AssetType', e.sender.value());
+    }
+
+    function OnSelectedAssetsCodeFilterChange(e) {
+        ApplyFilter(selectedPurchasesGridId, 'Code', e.sender.value());
+    }
+
+    function OnSelectedAssetsPartNumberFilterChange(e) {
+        ApplyFilter(selectedPurchasesGridId, 'PartNumber', e.sender.value());
+    }
+
+    function OnSelectedAssetsSalesOrderNumberFilterChange(e) {
+        ApplyFilter(selectedPurchasesGridId, 'SalesOrderNumber', e.sender.value());
+    }
+
+    function ApplyFilter(gridName, fieldName, filterValue) {
+        var grid = $("#" + gridName).data("kendoGrid");
+        var gridFilters = grid.dataSource.filter();
+        var currentFilters = gridFilters ? gridFilters.filters : [];
+
+        if (currentFilters && currentFilters.length > 0) {
+            for (var i = 0; i < currentFilters.length; i++) {
+                if (currentFilters[i].field === fieldName) {
+                    currentFilters.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        if (filterValue !== "") {
+            currentFilters.push({
+                field: fieldName,
+                operator: "eq",
+                value: filterValue
+            });
+        }
+
+        var filter = { logic: "and", filters: currentFilters };
+
+        if (currentFilters.length === 0 && gridName === availablePurchasesGridId && grid.dataSource.total() === 0) {
+            return;
+        }
+
+        grid.dataSource.filter(filter);
+    }
+</script>
+<div>
+    @{ Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications); }
+    @Html.AntiForgeryToken()
+    <div class="content">
+        <div class="csp-content-sections-parent">
+
+            <div class="row-fluid">
+                <fieldset class="csp-fieldset-with-border search-purchases span12">
+                    <legend class="csp-fieldset-legend">Search for Assets to Add</legend>
+                    <div class="csp-inline-block">
+                        Sales Order Number or Customer ID:
+                    </div>
+                    <div class="csp-inline-block">
+                        @Html.TextBoxFor(x => x.CustomerCode)
+                        <span class="csp-required">*</span>
+                    </div>
+                    <div class="csp-inline-block">&nbsp;</div>
+                    <div class="csp-inline-block">
+                        Serial Number or Auth Code:
+                    </div>
+                    <div class="csp-inline-block">
+                        @Html.TextBoxFor(x => x.DeviceCode)
+                        <span class="csp-required">*</span>
+                    </div>
+                    <div class="csp-inline-block">
+                        <input type="button" class="k-button" value="Search" onclick="Search();"/>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="row-fluid">&nbsp;</div>
+
+            <div class="row-fluid move-assets">
+                <div class="grid-available-purchases">
+                    <fieldset>
+                        <legend class="csp-fieldset-legend">Available Assets</legend>
+                        @(Html.Kendo().Grid<ClaimedAssetListItem>()
+                              .Name((string) availablePurchasesGridId)
+                              .AutoBind(false)
+                              .Columns(columns =>
+                              {
+                                  columns.Bound(p => p.AssetType).Width(80);
+                                  columns.Bound(p => p.Code).Title("Serial Number/Authorization Code");
+                                  columns.Bound(p => p.PartNumber);
+                                  columns.Bound(p => p.SalesOrderNumber);
+                                  columns.Bound(p => p.ShipDate).Format(SiteHelper.DateFormatString);
+                              })
+                              /*.DataSource(dataSource => dataSource
+                                  .Ajax()
+                                  .ServerOperation(false)
+                                  .Model(model => model.Id("UniqueId"))
+                                  .Read(read => read.Action("GetAvailablePurchases", "BulkRegistration").Data("GetAdditionalInfo"))
+                                  .Events(e => e.Error("OnGridAvailablePurchasesError").RequestEnd("OnGridAvailablePurchasesRequestEnd"))
+                              )*/
+                              .DataSource(dataSource => dataSource
+                                    .Custom()
+                                    .PageSize(10)
+                                    .Transport(transport => transport
+                                        .Read(read => read.Action("GetAvailablePurchases", "BulkRegistration").Data("GetAdditionalInfo"))
+                                    )
+                                    .Schema(schema => schema
+                                        //.Data("Data.Data")
+                                        .Parse(e => "OnGridAvailablePurchasesParse")
+                                        //.Total("Data.Total")
+                                        //.Errors("Errors")
+                                    )
+                                    .Events(e => e.Error("OnGridAvailablePurchasesError").RequestEnd("OnGridAvailablePurchasesRequestEnd"))
+                                )
+                              .Selectable(selectable => selectable
+                                  .Mode(GridSelectionMode.Multiple))
+                              .Pageable(pageable => pageable.ButtonCount(2).PageSizes(pageSizeOptionsForms.ToArray()))
+                              .Sortable()
+                              .Scrollable(scrollable => scrollable.Height(320))
+                              .Resizable(resize => resize.Columns(true))
+                              .Events(e => e.DataBound("OnGridAvailablePurchasesDataBound"))
+                              .ToolBar(toolbar =>
+                              {
+                                  toolbar.Template(@<text>
+                                                       <div class="toolbar assets-toolbar">
+                                                           <span>
+                                                           Filter By: &nbsp;
+                                                           </span>
+                                                           <span class="assets-toolbar-button">
+                                                           @(Html.Kendo().DropDownList()
+                                                                 .Name("AvailableAssetsTypeFilter")
+                                                                 .OptionLabel("Asset Type")
+                                                                 .Events(e => e.Change("OnAvailableAssetsTypeFilterChange"))
+                                                                 .HtmlAttributes(new {style = "width: 80px;"})
+                                                                 )
+                                                           </span>
+                                                           <span class="assets-toolbar-button">
+                                                           @(Html.Kendo().DropDownList()
+                                                                 .Name("AvailableAssetsCodeFilter")
+                                                                 .OptionLabel("Serial Number/Auth Code")
+                                                                 .Events(e => e.Change("OnAvailableAssetsCodeFilterChange"))
+                                                                 .HtmlAttributes(new {style = "width: 160px;"})
+                                                                 )
+                                                           </span>
+                                                           <span class="assets-toolbar-button">
+                                                           @(Html.Kendo().DropDownList()
+                                                                 .Name("AvailableAssetsPartNumberFilter")
+                                                                 .OptionLabel("Part Number")
+                                                                 .Events(e => e.Change("OnAvailableAssetsPartNumberFilterChange"))
+                                                                 .HtmlAttributes(new {style = "width: 100px;"})
+                                                                 )
+                                                           </span>
+                                                           <span class="assets-toolbar-button">
+                                                           @(Html.Kendo().DropDownList()
+                                                                 .Name("AvailableAssetsSalesOrderNumberFilter")
+                                                                 .OptionLabel("Sales Order Number")
+                                                                 .Events(e => e.Change("OnAvailableAssetsSalesOrderNumberFilterChange"))
+                                                                 .HtmlAttributes(new {style = "width: 150px;"})
+                                                                 )
+                                                           </span>
+                                                       </div>
+                                                    </text>);
+                              })
+                              )
+                    </fieldset>
+                </div>
+
+                <div class="grid-commands">
+                    <div><a href="javascript:void(0);" id="copyAllRight" class="k-button">&gt;&gt;</a>
+                    </div>
+                    <div><a href="javascript:void(0);" id="copyRight" class="k-button">&gt;</a>
+                    </div>
+                    <div><a href="javascript:void(0);" id="copyLeft" class="k-button">&lt;</a>
+                    </div>
+                    <div><a href="javascript:void(0);" id="copyAllLeft" class="k-button">&lt;&lt;</a>
+                    </div>
+                </div>
+
+                <div class="grid-selected-purchases">
+                    <fieldset>
+                        <legend class="csp-fieldset-legend">Selected Assets</legend>
+                        @(Html.Kendo().Grid(Model.AvailablePurchases)
+                              .Name((string)selectedPurchasesGridId)
+                              .Columns(columns =>
+                              {
+                                  columns.Bound(p => p.AssetType).Width(80);
+                                  columns.Bound(p => p.Code).Title("Serial Number/Authorization Code");
+                                  columns.Bound(p => p.PartNumber);
+                                  columns.Bound(p => p.SalesOrderNumber);
+                                  columns.Bound(p => p.ShipDate).Format(SiteHelper.DateFormatString);
+                              })
+                              .DataSource(dataSource => dataSource
+                                  .Ajax()
+                                  .Model(model => model.Id("UniqueId"))
+                              )
+                              .Selectable(selectable => selectable
+                                  .Mode(GridSelectionMode.Multiple))
+                              .Pageable(pageable => pageable.ButtonCount(2).PageSizes(pageSizeOptionsForms.ToArray()))
+                              .Sortable()
+                              .Scrollable(scrollable => scrollable.Height(320))
+                              .Resizable(resize => resize.Columns(true))
+                              .Events(e => e.DataBound("OnGridSelectedPurchasesDataBound"))
+                              .ToolBar(toolbar =>
+                              {
+                                  toolbar.Template(@<text>
+                                                       <div class="toolbar assets-toolbar">
+                                                           @*<span>
+                                                           Filter By: &nbsp;
+                                                           </span>
+                                                           <span class="assets-toolbar-button">
+                                                           @(Html.Kendo().DropDownList()
+                                                                 .Name("SelectedAssetsTypeFilter")
+                                                                 .OptionLabel("Asset Type")
+                                                                 .Events(e => e.Change("OnSelectedAssetsTypeFilterChange"))
+                                                                 .HtmlAttributes(new {style = "width: 80px;"})
+                                                                 )
+                                                           </span>
+                                                           <span class="assets-toolbar-button">
+                                                           @(Html.Kendo().DropDownList()
+                                                                 .Name("SelectedAssetsCodeFilter")
+                                                                 .OptionLabel("Serial Number/Auth Code")
+                                                                 .Events(e => e.Change("OnSelectedAssetsCodeFilterChange"))
+                                                                 .HtmlAttributes(new {style = "width: 160px;"})
+                                                                 )
+                                                           </span>
+                                                           <span class="assets-toolbar-button">
+                                                           @(Html.Kendo().DropDownList()
+                                                                 .Name("SelectedAssetsPartNumberFilter")
+                                                                 .OptionLabel("Part Number")
+                                                                 .Events(e => e.Change("OnSelectedAssetsPartNumberFilterChange"))
+                                                                 .HtmlAttributes(new {style = "width: 100px;"})
+                                                                 )
+                                                           </span>
+                                                           <span class="assets-toolbar-button">
+                                                           @(Html.Kendo().DropDownList()
+                                                                 .Name("SelectedAssetsSalesOrderNumberFilter")
+                                                                 .OptionLabel("Sales Order Number")
+                                                                 .Events(e => e.Change("OnSelectedAssetsSalesOrderNumberFilterChange"))
+                                                                 .HtmlAttributes(new {style = "width: 150px;"})
+                                                                 )
+                                                           </span>*@
+                                                       </div>
+                                                    </text>);
+                              })
+                              )
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="row-fluid">&nbsp;</div>
+
+            <div class="csp-submit-container">
+                <input id="btnCancelAdd" type="button" class="k-button" value="Cancel" onclick="CloseAddAssetsWindow(this);"/>
+                <input id="btnClaimSelectedPurchases" type="button" class="k-button" value="Add Selected Assets" onclick="ClaimPurchases(this);"/>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#copyRight").on("click", function (idx, elem) {
+        MoveRows($('#' + availablePurchasesGridId).data('kendoGrid'), $('#' + selectedPurchasesGridId).data('kendoGrid'), false);
+    });
+
+    $("#copyLeft").on("click", function (idx, elem) {
+        MoveRows($('#' + selectedPurchasesGridId).data('kendoGrid'), $('#' + availablePurchasesGridId).data('kendoGrid'), false);
+    });
+
+    $("#copyAllRight").on("click", function (idx, elem) {
+        MoveRows($('#' + availablePurchasesGridId).data('kendoGrid'), $('#' + selectedPurchasesGridId).data('kendoGrid'), true);
+    });
+
+    $("#copyAllLeft").on("click", function (idx, elem) {
+        MoveRows($('#' + selectedPurchasesGridId).data('kendoGrid'), $('#' + availablePurchasesGridId).data('kendoGrid'), true);
+    });
+
+    function ClaimPurchases(e) {
+        SupportPortal.ClearNotification();
+
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var message = "Are you sure, you want to add the selected assets";
+        var data = $('#' + selectedPurchasesGridId).data('kendoGrid').dataSource.data();
+
+        if (data.length === 0) {
+            SupportPortal.Message("Please select the assets you want to add");
+            return;
+        }
+
+        var claimPurchasesAction = function () {
+            SupportPortal.BlockUI();
+
+            $.ajax({
+                url: '@(Url.Action("ClaimPurchases", "BulkRegistration"))',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({ purchases: data }),
+                contentType: 'application/json; charset=utf-8',
+                headers: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                cache: false,
+                success: function (result) {
+                    SupportPortal.UnBlockUI();
+
+                    if (result.Success) {
+                        SupportPortal.Notification(result.Message, SupportPortal.NotificationType.Success);
+                        $('#' + selectedPurchasesGridId).data('kendoGrid').dataSource.data([]);
+                        $('#btnCancelAdd').trigger('click');
+
+                        return;
+                    }
+
+                    SupportPortal.Notification(result.Message, SupportPortal.NotificationType.Error);
+                },
+                error: function () {
+                    SupportPortal.UnBlockUI();
+                    SupportPortal.Notification("Failed to claim your selected purchases.", SupportPortal.NotificationType.Error);
+                }
+            });
+        };
+
+        SupportPortal.Confirmation(message, function () { claimPurchasesAction(); }, null);
+    }
+
+    $(document).ready(function () {
+        $('#' + availablePurchasesGridId).data('kendoGrid').dataSource.data([]);
+
+        // Comments By LK On 04/28/2016 - Disabling drag drop feature
+        /*
+        $('#' + availablePurchasesGridId).data('kendoGrid').element.kendoDraggable({
+            filter: "tr",
+            hint: function (e) {
+                var item = $('<div class="k-grid k-widget" style="background-color: Orange; color: black;"><table><tbody><tr>' + e.html() + '</tr></tbody></table></div>');
+                return item;
+            },
+            group: "gridGroup1",
+        });
+
+
+        $('#' + selectedPurchasesGridId).data('kendoGrid').element.kendoDraggable({
+            filter: "tr",
+            hint: function (e) {
+                var item = $('<div class="k-grid k-widget" style="background-color: Orange; color: black;"><table><tbody><tr>' + e.html() + '</tr></tbody></table></div>');
+                return item;
+            },
+            group: "gridGroup2",
+        });
+
+
+        $('#' + availablePurchasesGridId).data('kendoGrid').table.kendoDropTarget({
+            drop: function (e) {
+                var gridSelectedPurchasesDataSource = $('#' + selectedPurchasesGridId).data('kendoGrid').dataSource;
+                var gridAvailablePurchasesDataSource = $('#' + availablePurchasesGridId).data('kendoGrid').dataSource;
+                var dataItem = gridSelectedPurchasesDataSource.getByUid(e.draggable.currentTarget.data("uid"));
+
+                gridSelectedPurchasesDataSource.remove(dataItem);
+                gridAvailablePurchasesDataSource.add(dataItem);
+            },
+            group: "gridGroup2",
+        });
+
+        $('#' + selectedPurchasesGridId).data('kendoGrid').table.kendoDropTarget({
+            drop: function (e) {
+                var gridAvailablePurchasesDataSource = $('#' + availablePurchasesGridId).data('kendoGrid').dataSource;
+                var gridSelectedPurchasesDataSource = $('#' + selectedPurchasesGridId).data('kendoGrid').dataSource;
+                var dataItem = gridAvailablePurchasesDataSource.getByUid(e.draggable.currentTarget.data("uid"));
+
+                gridAvailablePurchasesDataSource.remove(dataItem);
+                gridSelectedPurchasesDataSource.add(dataItem);
+            },
+            group: "gridGroup1",
+        });*/
+
+        $('#' + availablePurchasesGridId + ' .k-grid-header .k-link').click(function (e) {
+            if ($('#' + availablePurchasesGridId).data('kendoGrid').dataSource.data().length === 0) {
+                e.stopPropagation();
+                return false;
+            }
+        });
+
+        $('#' + availablePurchasesGridId + ' .k-grid-pager select').change(function (e) {
+            if ($('#' + availablePurchasesGridId).data('kendoGrid').dataSource.data().length === 0) {
+                e.stopPropagation();
+                return false;
+            }
+        });
+    });
+</script>

@@ -1,0 +1,76 @@
+﻿@model Csp.Api.Services.Contracts.PendingDeviceTransferDetails
+@helper DisplayEmail(string email) {
+    if (!string.IsNullOrEmpty(email)) {
+    <text><a href="mailto:@email" target="_top">@email</a></text>
+    } else {
+    <text>@email</text>
+    }
+}
+
+@helper DisplayName(string firstName, string lastName) {
+    var name = string.Format("{0} {1}", firstName, lastName);
+    <text>@name</text>
+}
+<style>
+    .panel {
+        display: inline-block;
+        border: 1px solid #a4bccf;
+        border-radius: 0;
+        padding: 10px;
+        margin: 5px;
+        background-color: #f6f6f9;
+        width: 330px;
+    }
+
+    .greenTitle {
+        margin-left: 0px;
+    }
+
+    .transfer-details {
+        border-spacing: 5px;
+    }
+
+    .transfer-details td {
+        padding: 5px;
+    }
+</style>
+<div>
+    <div class="panel">
+        <div class="greenTitle">Source</div>
+        <div>
+            <table class="transfer-details">
+                <tr>
+                    <td>Name:</td>
+                    <td>@DisplayName(Model.CreatedByFirstName, Model.CreatedByLastName)</td>
+                </tr>
+                <tr>
+                    <td>Email:</td>
+                    <td>@Html.DisplayFor(model => model.CreatedByEmail)</td>
+                </tr>
+                <tr>
+                    <td>Date Initiated:</td>
+                    <td>@Html.DisplayFor(model => model.CreatedOn)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="greenTitle">Destination</div>
+        <div>
+            <table class="transfer-details">
+                <tr>
+                    <td>Name:</td>
+                    <td>@DisplayName(Model.DestinationUserAccountFirstName, Model.DestinationUserAccountLastName)</td>
+                </tr>
+                <tr>
+                    <td>Email:</td>
+                    <td>@Html.DisplayFor(model => model.DestinationUserAccountEmail)</td>
+                </tr>
+                <tr>
+                    <td>Date Initiated:</td>
+                    <td>@Html.DisplayFor(model => model.CreatedOn)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

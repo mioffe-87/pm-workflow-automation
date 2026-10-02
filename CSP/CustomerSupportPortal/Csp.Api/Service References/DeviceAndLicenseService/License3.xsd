@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts.License" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Pan.Contracts.DataContracts.License" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="AppportalDevOps">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CloudServiceAuthcode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Reason" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="AppportalDevOps" nillable="true" type="tns:AppportalDevOps" />
+  <xs:complexType name="LgsPayLoad">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="af_expiry_ts" type="xs:int" />
+      <xs:element minOccurs="0" name="application_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="authcode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="b_autofocus" type="xs:int" />
+      <xs:element minOccurs="0" name="cust_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="data_size" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="expiry_ts" type="xs:int" />
+      <xs:element minOccurs="0" name="license_expiration" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="license_type" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="num_instances" type="xs:int" />
+      <xs:element minOccurs="0" name="platform_id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="pri_panorama" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="region" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="sec_panorama" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="serial_no" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="sku" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="support_account_id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="support_account_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="tenant_id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="timestamp" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LgsPayLoad" nillable="true" type="tns:LgsPayLoad" />
+  <xs:complexType name="LicenseTransferDevOps">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DestinationSupportAccount" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Reason" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TenantId" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LicenseTransferDevOps" nillable="true" type="tns:LicenseTransferDevOps" />
+</xs:schema>

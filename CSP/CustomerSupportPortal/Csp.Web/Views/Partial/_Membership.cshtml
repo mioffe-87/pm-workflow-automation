@@ -1,0 +1,206 @@
+﻿@using Kendo.Mvc.UI
+@using Csp.Web.DataTransferObjects
+@model MembershipDto
+
+@{
+   
+    var actionHelper = Model.ActionHelper;
+    var emailAction = "";
+    long membershipParentId = 0;
+
+
+    if (Model.Membership.SupportAccountId > 0) {
+
+        emailAction = actionHelper.GetSupportAccountUserByEmail;
+        membershipParentId = Model.Membership.SupportAccountId;
+
+    } else if (Model.Membership.GroupId > 0) {
+
+        emailAction = actionHelper.GetGroupUserByEmail;
+        membershipParentId = Model.Membership.GroupId;
+
+    } else if (Model.Membership.DeviceId > 0) {
+
+        emailAction = actionHelper.GetDeviceUserByEmail;
+        membershipParentId = Model.Membership.DeviceId;
+    }
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+}
+
+<script>
+    $(document).ready(function () {
+        membershipUserAccountId = "#@UniqueId.membershipUserAccountId";
+    });
+
+</script>
+
+<div id="@UniqueId.membershipDiv" >
+
+    @using (Ajax.BeginForm(actionHelper.FormAction, actionHelper.Controller, new AjaxOptions { OnBegin = "SupportPortal.BlockUI();", OnComplete = "SupportPortal.UnBlockUI();", UpdateTargetId = UniqueId.membershipDiv }, new { id = UniqueId.membershipForm })) {
+
+        @Html.AntiForgeryToken()
+    
+    
+        @Html.HiddenFor(model => model.Membership.Id)
+        @Html.HiddenFor(model => model.Membership.LastUpdateByUserAccountId)
+        @Html.HiddenFor(model => model.Membership.CreatedByUserAccountId)
+        @Html.HiddenFor(model => model.Membership.LastUpdate)
+        @Html.HiddenFor(model => model.Membership.CreatedOn)
+        @Html.HiddenFor(model => model.Membership.JiveId)
+        @Html.HiddenFor(model => model.Membership.SalesforceContactId)
+        @Html.HiddenFor(model => model.Membership.SalesforceLogInId)
+        @Html.HiddenFor(model => model.Membership.SupportAccountId)
+        @Html.HiddenFor(model => model.Membership.GroupId)
+        @Html.HiddenFor(model => model.Membership.DeviceId)
+        @Html.HiddenFor(model => model.Membership.UserAccount.Id, new { id = (string)UniqueId.membershipUserAccountId })    
+       
+        
+        if (actionHelper.FormAction != actionHelper.Edit) {
+        <div class="form-search">
+            <div class="csp-label">
+                <span class="nowrap">Search User by Email:</span>
+            </div>
+            <div class="csp-field">
+                <input type="text" id="@UniqueId.searchText" />
+
+                <input type="button" value="Search" id="@UniqueId.searchButton" class="k-button" data-url="@Url.Action(emailAction, actionHelper.Controller)"/>
+
+            </div>
+            <div id="@UniqueId.errorDiv" class="csp-field Csp-error"></div>
+        </div>
+        }
+        <div class="csp-content-sections-parent">
+            <div class="horizontal-form-element">
+                <div class="fieldset fieldset-upper">
+                    <fieldset>
+                        <legend>User Account Information</legend>
+                        <div id="@UniqueId.userInformationDiv">
+                            @{Html.RenderPartial("../partial/_UserIdentification", new UserAccountDto { UserAccount = Model.Membership.UserAccount });}
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="fieldset" style="min-height: 203px;">
+                    <fieldset>
+                        <legend>Membership</legend>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Description:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Membership.Description)
+                                @Html.TextBoxFor(model => model.Membership.Description, new { maxlength = 256 })
+
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Activation Date:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Membership.ActivationDate)
+                                @(Html.Kendo().DatePickerFor(model => model.Membership.ActivationDate)
+                          .ParseFormats(new[] { "MM/dd/yyyy" })
+                          .HtmlAttributes(new { @id = UniqueId.activationDate })
+                          )
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Expiration Date:", new { id = UniqueId.expirationLabel })
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Membership.ExpirationDate)
+                                @(Html.Kendo().DatePickerFor(model => model.Membership.ExpirationDate)
+                          .ParseFormats(new[] { "MM/dd/yyyy" })
+                          .Max(DateTime.MaxValue)
+                          .HtmlAttributes(new { @id = UniqueId.expirationDate })
+
+                          )
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="horizontal-form-element horizontal-form-element-right" style="width: 487px;">
+                <div class="fieldset" style="height: 100%">
+                    <fieldset>
+                        <legend>Security Roles</legend>
+                        <div>
+                            @Html.EditorFor(model => Model.RoleAssignment)
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input id="@UniqueId.okButton" type="button" value="Submit" class="k-button csp-submit" onclick="checkValidUser();"/>
+        </div>
+    }
+</div>
+
+
+<script>
+
+    function checkValidUser() {
+        var emailHtml = $("#" + userAccountEmailId).html();
+        if (emailHtml == "") {
+            $("#@UniqueId.errorDiv").html("You must search for a valid User by email address.");
+        } else {
+            $("#@UniqueId.errorDiv").html("");
+            $('#@UniqueId.membershipForm').submit();
+        }
+    }
+
+    $.validator.unobtrusive.adapters.add(
+        'isdateafterstart', ['startpropertyname', 'allowequaldates'], function (options) {
+            options.rules['isdateafterstart'] = options.params;
+            options.messages['isdateafterstart'] = options.message;
+        });
+
+    $.validator.addMethod("isdateafterstart", function (value, element, params) {
+        var startdatevalue = $('input[name="' + 'Membership.' + params.startpropertyname + '"]').val();
+        if (!value || !startdatevalue) return true;
+        return (params.allowequaldates) ? Date.parse(startdatevalue) <= Date.parse(value) : Date.parse(startdatevalue) < Date.parse(value);
+    }, '');
+
+    $.validator.unobtrusive.parse("#@UniqueId.membershipForm");
+
+    $(document).ready(function () {
+
+        $('#@UniqueId.searchText').focus();
+
+    });
+
+    $(function () {
+        $("#@UniqueId.searchButton").click(function () {
+            var urldata = $(this).data('url') + "/?id=@membershipParentId" + "&email=" + $("#@UniqueId.searchText").val();
+            $.ajax({
+                url: urldata,
+                type: 'GET',
+                cache: false,
+                success: function (result) {
+
+                    if (result != "") {
+                        if (result == "member") {
+                            $("#@UniqueId.errorDiv").html("User is already a member.");
+                        }
+                        else {
+                            $("#@UniqueId.errorDiv").html("");
+                            $("#@UniqueId.userInformationDiv").html(result);
+                        }
+                    }
+                    else {
+                        $("#@UniqueId.errorDiv").html("User not found.  To add a user who has never registered, use the 'Create New User' under Members on the side navigation bar");
+                    }
+                },
+                error: function () {
+                    $("#@UniqueId.errorDiv").html("Error in processing request.");
+                }
+            });
+            return false;
+        });
+    });
+
+</script>

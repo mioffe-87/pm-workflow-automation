@@ -1,0 +1,153 @@
+﻿@model Csp.Web.DataTransferObjects.RoleDto
+@using Kendo.Mvc.UI;
+
+@{
+    var actionHelper = Model.ActionHelper;
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+}
+
+<script>
+    $.validator.unobtrusive.parse("#AddUpdateRoleForm");
+
+    function onCategoryChange(e) {
+        var dropDownval = $("#Category").val();
+        $("#Role_Category").val(dropDownval);
+    }
+
+    function onClassificationChange(e) {
+        var dropDownval = $("#Classification").val();
+        $("#Role_Classification").val(dropDownval);
+    }
+</script>
+
+<div id="AddUpdateRoleDiv">
+
+    @using (Ajax.BeginForm(actionHelper.AddUpdateRole, actionHelper.Controller, new AjaxOptions { UpdateTargetId = "AddUpdateRoleDiv", OnBegin = "SupportPortal.BlockUI();", OnComplete = "SupportPortal.UnBlockUI();" }, new { id = "AddUpdateRoleForm" })) {
+        @Html.AntiForgeryToken()      
+       
+        @Html.HiddenFor(model => model.Role.Id)
+        @Html.HiddenFor(model => model.Role.Category)
+        @Html.HiddenFor(model => model.Role.Classification)
+       
+        <div class="csp-content-sections-parent static-sized-content">
+            <div class="horizontal-form-element">
+                <div class="fieldset">
+                    <fieldset>
+                        <legend>Role Information</legend>
+
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Name: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Role.Name)
+                                @Html.TextBoxFor(model => model.Role.Name, new { maxlength = 45 })
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Category: ")
+                            </div>
+
+                            <div class="csp-field">
+                                @(Html.Kendo().DropDownList()
+                                  .Name("Category")
+                                  .DataTextField("Text")
+                                  .DataValueField("Value")
+                                  .Events(e => e.Change("onCategoryChange"))
+                                  .BindTo(new List<SelectListItem>() {
+                                      new SelectListItem() {
+                                          Text = "SupportAccount",
+                                          Value = "SupportAccount"
+                                      },
+                                      new SelectListItem() {
+                                          Text = "Group",
+                                          Value = "Group"
+                                      },
+                                      new SelectListItem() {
+                                          Text = "Device",
+                                          Value = "Device"
+                                      }
+                                  })
+                                  .Value(Model.Role.Category.ToString())
+                               )
+
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Classification: ")
+                            </div>
+
+                            <div class="csp-field">
+                                @(Html.Kendo().DropDownList()
+                                  .Name("Classification")
+                                  .DataTextField("Text")
+                                  .DataValueField("Value")
+                                  .Events(e => e.Change("onClassificationChange"))
+                                  .BindTo(new List<SelectListItem>() {
+                                      new SelectListItem() {
+                                          Text = "Default",
+                                          Value = "Default"
+                                      },
+                                      new SelectListItem() {
+                                          Text = "Administrative",
+                                          Value = "Administrative"
+                                      },
+                                      new SelectListItem() {
+                                          Text = "Support",
+                                          Value = "Support"
+                                      },
+                                      new SelectListItem() {
+                                          Text = "Global",
+                                          Value = "Global"
+                                      }
+                                  })
+                                  .Value(Model.Role.Classification.ToString())
+                               )
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Description: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Role.Description)
+                                @Html.TextAreaFor(model => Model.Role.Description, new { maxlength = 255, rows = 3, columns = 3 })
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="horizontal-form-element horizontal-form-element-right">
+                <div class="fieldset" style="height: 100%">
+                    <fieldset>
+                        <legend>Role Privileges <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 1);"></i></span></legend>
+                        <div>
+                            @Html.EditorFor(model => model.PrivilegeAssignment)
+                        </div>
+                    </fieldset>
+                </div>
+
+            </div>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+        </div>
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input type="submit" value="Submit" class="k-button csp-submit" />
+        </div>
+    }
+
+</div>

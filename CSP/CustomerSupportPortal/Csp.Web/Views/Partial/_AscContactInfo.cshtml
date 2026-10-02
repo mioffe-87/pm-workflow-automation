@@ -1,0 +1,36 @@
+﻿@model Csp.Web.DataTransferObjects.AscContactInfoDto
+@helper DisplayEmail(string email) {
+    if (!string.IsNullOrEmpty(email)) {
+    <text><a href="mailto:@email" target="_top">@email</a></text>
+    } else {
+    <text>@email</text>
+    }
+}
+
+@helper DisplayWebSite(string url) {
+    if (!string.IsNullOrEmpty(url)) {
+        var displayName = url;
+        if (url.ToLower().IndexOf("http://") == -1 && url.ToLower().IndexOf("https://") == -1) {
+            url = string.Format("http://{0}", url);
+        }
+      
+    <text><a href="@url" target="_blank">@displayName</a></text>
+    } else {
+    <text>@url</text>
+    }
+}
+
+@if (Model != null && Model.AscContactInfo != null) {
+    <div>
+        <dl>
+            <dt>Name: @Html.DisplayFor(model => model.AscContactInfo.Name)</dt>
+            <dt>Email: @DisplayEmail(Model.AscContactInfo.Email)</dt>
+            <dt>Phone: @Html.DisplayFor(model => model.AscContactInfo.Phone)</dt>
+            <dt>Website: @DisplayWebSite(Model.AscContactInfo.WebSite)</dt>
+        </dl>
+    </div>
+} else {
+    <div>
+        No contact information found.
+    </div>
+}

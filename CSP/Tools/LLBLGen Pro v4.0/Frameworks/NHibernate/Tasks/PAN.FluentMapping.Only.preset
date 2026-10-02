@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preset name="PAN - Fluent Mapping Only" lastModifiedOn="2008-04-22T16:06:27.4657865+01:00" createdBy="" isSealed="false" xmlns="http://sd/llblgen/pro/presetElementDefinitions.xsd">
+  <supportedPlatforms>
+	<platform name=".NET 3.5"/>
+	<platform name=".NET 4.0"/>
+	<platform name=".NET 4.5"/>
+  </supportedPlatforms>
+  <supportedTemplateGroups>
+    <templateGroup name="General" />
+  </supportedTemplateGroups>
+  <supportedFrameworks>
+    <framework name="NHibernate" />
+  </supportedFrameworks>
+  <taskPresets>
+    <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="SD.NHibernate (Fluent NHibernate code only)" requiresCleanCache="false">
+      <performRule isEnabled="false" settingName="" operator="0" operand="" />
+      <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="Generate NHibernate Fluent NHibernate code only" forSpecificDatabase="All" requiresCleanCache="false">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="Create Properties Folder">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="folderToCreate" value="Properties" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="Create Entity Mappings folder">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="folderToCreate" value="EntityMappings\GeneratedCode" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="Create TypedView Mappings folder">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="folderToCreate" value="TypedViewMappings" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate Entity Mapping Files">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="EntityMappings\GeneratedCode" />
+            <parameter name="filenameFormat" value="[elementName]Map.[extension]" />
+            <parameter name="templateID" value="SD_NHibernateEntityFluentMapping" />
+            <parameter name="emitType" value="allEntities" />
+            <parameter name="templateAssemblySourceFileFormat" value="" />
+            <parameter name="elementFilter" value="!IsSubType &amp;&amp; !IsPureManyToManyIntermediate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate TypedView Mapping Files">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="TypedViewMappings" />
+            <parameter name="filenameFormat" value="[elementName]TypedViewRowMap.[extension]" />
+            <parameter name="templateID" value="SD_NHibernateTypedViewFluentMapping" />
+            <parameter name="emitType" value="allTypedViews" />
+            <parameter name="templateAssemblySourceFileFormat" value="" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate TypedListQueryFactory Class">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="" />
+            <parameter name="filenameFormat" value="TypedListQueryFactory.[extension]" />
+            <parameter name="templateID" value="SD_NHibernateTypedListQueryFactory" />
+            <parameter name="templateAssemblySourceFileFormat" value="" />
+            <parameter name="elementFilter" value="TypedLists.Count &gt; 0" />
+          </parameters>
+        </taskPreset>
+      </taskGroupPreset>
+    </taskGroupPreset>
+  </taskPresets>
+</preset>

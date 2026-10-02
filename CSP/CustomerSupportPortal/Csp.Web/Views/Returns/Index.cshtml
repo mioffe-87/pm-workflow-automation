@@ -1,0 +1,24 @@
+﻿@using Kendo.Mvc.UI
+
+@{
+    ViewBag.Title = "Device Analysis";
+    ViewBag.IsGlobal = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*@Html.Partial("../Partial/_CompanyLogoName")*@
+
+<div class="contextTitle">Device Analysis</div>
+
+@(Html.Kendo().TabStrip()
+          .Name("ReturnsTabStrip")
+          .Animation(false)
+          .Items(tabstrip =>
+          {
+              tabstrip.Add().Text("Overview").Selected(true).LoadContentFrom(Url.Content("~/StaticContent/Overview.html"));
+
+              tabstrip.Add().Text("FAQ").LoadContentFrom(Url.Content("~/StaticContent/FAQ.html"));            
+              
+          })
+          )
+              

@@ -1,0 +1,115 @@
+﻿@model Csp.Web.DataTransferObjects.UserAccountDto
+
+
+@Html.AntiForgeryToken()
+
+<div class="fieldset fieldset-upper">
+    <fieldset>
+        <legend>User Account Information</legend>
+        <div>
+            <div class="csp-label">
+                @Html.Label("Email:")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.Email)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">
+                @Html.Label("Display Name:")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.DisplayName)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">
+                @Html.Label("Title:")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.Title)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">
+                @Html.Label("Name(First Last):")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.FirstName)  @Html.DisplayFor(model => model.UserAccount.LastName)
+            </div>
+        </div>
+    </fieldset>
+</div>
+<div class="fieldset">
+    <fieldset>
+        <legend>Address Information</legend>
+
+        <div>
+            <div class="csp-label">
+                @Html.Label("Address 1:")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.Address.Address1)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">
+                @Html.Label("Address 2:")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.Address.Address2)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">
+                @Html.Label("Phone Number:")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.PhoneNumber)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">
+                @Html.Label("City:")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.Address.City)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">
+                @Html.Label("Country: ")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.Address.Country)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">
+                @Html.Label("Region: ")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.Address.Region)
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">
+                @Html.Label("Postal Code:")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.UserAccount.Address.PostalCode)
+            </div>
+        </div>
+    </fieldset>
+</div>

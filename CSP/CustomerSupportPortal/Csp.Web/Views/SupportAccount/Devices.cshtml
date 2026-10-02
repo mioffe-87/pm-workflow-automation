@@ -1,0 +1,292 @@
+﻿@using Csp.Web.Controllers
+@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.DevicesDto
+
+@{
+    var actionHelper = Model.ActionHelper;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Devices - Customer Support - Palo Alto Networks";
+}
+
+
+<script type="text/javascript">
+    var @(UniqueId.devices)deviceTabs = (function() {
+        var lastSelectedDevicesTab = -1;
+
+        function onDevicesTabStripSelect(e) {
+            lastSelectedDevicesTab = $(e.item).index();
+        }
+
+        function onDevicesTabStripContentLoad(e) {
+            var eItem = $(e.item);
+            var tabStrip = eItem.closest('.k-tabstrip').data("kendoTabStrip");
+
+            var isFirstTabSelection = lastSelectedDevicesTab == -1;
+            var isMostRecentlySelectedTab = lastSelectedDevicesTab == eItem.index();
+            if (isFirstTabSelection || isMostRecentlySelectedTab) {
+                //Proceed as normal - this tab should load
+            } else {
+                //This tab should not load
+                tabStrip.deactivateTab(eItem);
+            }
+
+            deactivateUnselectedTabs(tabStrip);
+        }
+
+        var callonce = true;
+
+        function deactivateUnselectedTabs(tabStrip) {
+            if (callonce) {
+                callonce = false;
+
+                var tabs = tabStrip.items();
+                var current = tabStrip.select();
+                for (var i = 0; i < tabs.length; i++) {
+                    //var tab = $(tabs[i]);
+                    var isCurrentTab = i == current.index();
+
+                    if (!isCurrentTab) {
+                        var contentHolder = tabStrip.contentHolder(i);
+                        $(contentHolder).css('display', 'none');
+                    }
+                }
+            }
+        }
+
+        return {
+            onDevicesTabStripSelect: onDevicesTabStripSelect,
+            onDevicesTabStripContentLoad: onDevicesTabStripContentLoad
+        };
+    })();
+</script>
+
+<div>
+    @{
+
+        if (Model.SelectedTab == GroupDestination.DevicesProd)
+        {
+            Html.RenderAction(actionHelper.ProductionDevices, actionHelper.Controller, new {id = actionHelper.Id, defaultDeviceCode = Model.DefaultDeviceCode});
+        }
+        else if (Model.SelectedTab == GroupDestination.DevicesSpare)
+        {
+            ViewBag.Title = "Spares - Customer Support - Palo Alto Networks";
+            Html.RenderAction(actionHelper.SpareDevices, actionHelper.Controller, new {id = actionHelper.Id, defaultDeviceCode = Model.DefaultDeviceCode});
+        }
+        else if (Model.SelectedTab == GroupDestination.EPAuthCodes)
+        {
+            ViewBag.Title = "Advanced Endpoint Protection - Customer Support - Palo Alto Networks";
+            Html.RenderAction("ViewAvailable", "EP", new {id = actionHelper.Id, defaultDeviceCode = Model.DefaultDeviceCode});
+        }
+        else if (Model.SelectedTab == GroupDestination.DevicesVmCodes)
+        {
+            ViewBag.Title = "VM-Series Auth-Codes - Customer Support - Palo Alto Networks";
+            Html.RenderAction("ViewAvailable", "VM", new {id = actionHelper.Id, defaultDeviceCode = Model.DefaultDeviceCode});
+        }
+        else if (Model.SelectedTab == GroupDestination.SaaService)
+        {
+            ViewBag.Title = "Cloud Services - Customer Support - Palo Alto Networks";
+            Html.RenderAction("ShowActivations", "Saas", new {id = actionHelper.Id});
+        }
+        else if (Model.SelectedTab == GroupDestination.SiteLicenses)
+        {
+            ViewBag.Title = "Site Licenses - Customer Support - Palo Alto Networks";
+            Html.RenderAction("View", "SiteLicense", new {id = actionHelper.Id, defaultDeviceCode = Model.DefaultDeviceCode});
+        }
+        else if (Model.SelectedTab == GroupDestination.EnterpriseAgreements && Model.HasEnterpriseAgreementAccess)
+        {
+            ViewBag.Title = "Enterprise Agreements - Customer Support - Palo Alto Networks";
+            Html.RenderAction("ShowEnterpriseAgreements", "SiteLicense", new {id = actionHelper.Id});
+        }
+        else if (Model.SelectedTab == GroupDestination.AssetHistory)
+        {
+            ViewBag.Title = "Asset History - Customer Support - Palo Alto Networks";
+            Html.RenderAction("ViewHistory", "AssetHistory", new {id = actionHelper.Id});
+        }
+        else if (Model.SelectedTab == GroupDestination.SearchAll)
+        {
+            ViewBag.Title = "Search All Assets - Customer Support - Palo Alto Networks";
+            Html.RenderAction("View", "SearchAll", new {id = actionHelper.Id});
+        }
+        else if (Model.SelectedTab == GroupDestination.DevicesCnCodes)
+        {
+            ViewBag.Title = "CN-Series Auth-Codes - Customer Support - Palo Alto Networks";
+            Html.RenderAction("ViewAvailable", "CnSeries", new {id = actionHelper.Id, defaultDeviceCode = Model.DefaultDeviceCode});
+        }
+        else if (Model.HasBulkRegistrationAccess)
+        {
+            ViewBag.Title = "BulkRegistration - Customer Support - Palo Alto Networks";
+            Html.RenderAction("Tabs", "BulkRegistration", new {id = actionHelper.Id, selectedTab = Model.SelectedTab});
+
+            @*var bulkRegistrationTabNames = new[]
+            {
+                GroupDestination.ClaimedAssets,
+                GroupDestination.PrepBulkRegistration,
+                GroupDestination.CustomizeBulkRegistration,
+                GroupDestination.BulkRegistrationReview,
+            };
+
+            if (bulkRegistrationTabNames.Contains(Model.SelectedTab))
+            {
+
+                Html.RenderAction("Tabs", "BulkRegistration", new {id = actionHelper.Id, selectedTab = Model.SelectedTab});
+
+            }*@
+        }
+
+        else if (Model.SelectedTab == GroupDestination.LineCards)
+        {
+            ViewBag.Title = "Line Cards/Optics/FRUs - Customer Support - Palo Alto Networks";
+            Html.RenderAction("GetDeviceLineCards", actionHelper.Controller, new {id = actionHelper.Id});
+        }
+    }
+    
+
+
+ @*   @(Html.Kendo().TabStrip()
+                        .Animation(false)
+                        .Name((string)UniqueId.deviceTabId)
+                        .Events(e => e.Select((string)UniqueId.devices + "deviceTabs.onDevicesTabStripSelect").ContentLoad((string)UniqueId.devices + "deviceTabs.onDevicesTabStripContentLoad"))
+                        .HtmlAttributes(new { @class = "subTabs" })
+                        .Items(tabstrip => {
+
+
+                            var tab = tabstrip.Add().Text("Devices")
+                                    .LoadContentFrom(actionHelper.ProductionDevices, actionHelper.Controller, new {
+                                        id = actionHelper.Id,
+                                        defaultDeviceCode = Model.DefaultDeviceCode,
+                                    });
+
+                            if (Model.SelectedTab == GroupDestination.DevicesProd) {
+                                tab.Selected(true);
+                            }
+
+                            tab = tabstrip.Add().Text("Spares")
+                                    .LoadContentFrom(actionHelper.SpareDevices, actionHelper.Controller, new {
+                                        id = actionHelper.Id,
+                                        defaultDeviceCode = Model.DefaultDeviceCode,
+                                    });
+
+                            if (Model.SelectedTab == GroupDestination.DevicesSpare) {
+                                tab.Selected(true);
+                            }
+
+                            tab = tabstrip.Add().Text("Advanced Endpoint Protection")
+                                    .LoadContentFrom("ViewAvailable", "EP", new
+                                    {
+                                        id = actionHelper.Id,
+                                        defaultDeviceCode = Model.DefaultDeviceCode,
+                                    });
+
+                            if (Model.SelectedTab == GroupDestination.EPAuthCodes)
+                            {
+                                tab.Selected(true);
+                            }
+
+                            tab = tabstrip.Add().Text("VM-Series Auth-Codes")
+                                    .LoadContentFrom("ViewAvailable", "VM", new {
+                                        id = actionHelper.Id,
+                                        defaultDeviceCode = Model.DefaultDeviceCode,
+                                    });
+
+                            if (Model.SelectedTab == GroupDestination.DevicesVmCodes) {
+                                tab.Selected(true);
+                            }
+                            
+                                tab = tabstrip.Add().Text("Cloud Services") 
+                                               .LoadContentFrom("ShowActivations", "Saas", new
+                                               {
+                                                   id = actionHelper.Id
+                                               });
+
+                                if (Model.SelectedTab == GroupDestination.SaaService)
+                                {
+                                    tab.Selected(true);
+                                }
+                            
+                            tab = tabstrip.Add().Text("Site Licenses")
+                                   .LoadContentFrom("View", "SiteLicense", new
+                                   {
+                                       id = actionHelper.Id,
+                                       defaultDeviceCode = Model.DefaultDeviceCode,
+                                   });
+
+                            if (Model.SelectedTab == GroupDestination.SiteLicenses)
+                            {
+                                tab.Selected(true);
+                            }
+
+
+                            tab = tabstrip.Add().Text("CN-Series Auth-Codes").LoadContentFrom("ViewAvailable", "CnSeries", new { id = actionHelper.Id, defaultDeviceCode = Model.DefaultDeviceCode });
+                            if (Model.SelectedTab == GroupDestination.DevicesCnCodes) {
+                                tab.Selected(true);
+                            }
+
+                            if (Model.HasEnterpriseAgreementAccess)
+                            {
+                                tab = tabstrip.Add().Text("Enterprise Agreements")
+                                    .LoadContentFrom("ShowEnterpriseAgreements", "SiteLicense", new
+                                    {
+                                        id = actionHelper.Id
+                                    });
+
+                                if (Model.SelectedTab == GroupDestination.EnterpriseAgreements)
+                                {
+                                    tab.Selected(true);
+                                }
+                            }
+                            if (Model.HasBulkRegistrationAccess)
+                            {
+                                tab = tabstrip.Add().Text("Bulk Registration")
+                                    .LoadContentFrom("Tabs", "BulkRegistration", new
+                                    {
+                                        id = actionHelper.Id,
+                                        selectedTab = GroupDestination.ClaimedAssets,
+                                    });
+
+                                var bulkRegistrationTabNames = new[]
+                                {
+                                    GroupDestination.ClaimedAssets,
+                                    GroupDestination.PrepBulkRegistration,
+                                    GroupDestination.CustomizeBulkRegistration,
+                                    GroupDestination.BulkRegistrationReview,
+                                };
+
+                                if (bulkRegistrationTabNames.Contains(Model.SelectedTab))
+                                {
+                                    tab.Selected(true);
+                                    tab.LoadContentFrom("Tabs", "BulkRegistration", new
+                                    {
+                                        id = actionHelper.Id,
+                                        selectedTab = Model.SelectedTab,
+                                    });
+                                }
+                            }
+
+                            tab = tabstrip.Add().Text("Asset History")
+                                            .LoadContentFrom("ViewHistory", "AssetHistory", new
+                                            {
+                                                id = actionHelper.Id
+                                            })
+                                            .LinkHtmlAttributes(new { data_link_attribute = "asset-history" });
+
+                            if (Model.SelectedTab == GroupDestination.AssetHistory)
+                            {
+                                tab.Selected(true);
+                            }
+                            
+                            tab = tabstrip.Add().Text("Search All")
+                                            .LoadContentFrom("View", "SearchAll", new {
+                                                id = actionHelper.Id
+                                            })
+                                            .LinkHtmlAttributes(new { data_link_attribute = "assets-search-all" });
+
+                            if (Model.SelectedTab == GroupDestination.SearchAll) {
+                                tab.Selected(true);
+                            }
+
+                        }
+
+                        )
+          )*@
+
+</div>

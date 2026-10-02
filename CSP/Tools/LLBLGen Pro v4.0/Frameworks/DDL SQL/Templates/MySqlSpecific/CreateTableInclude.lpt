@@ -1,0 +1,12 @@
+﻿<% // the name of the catalog is in the variable 'catalogName', the name of the schema is in the variable 'schemaName'. The DBTable object
+   // is in the variable 'table'.%>
+CREATE TABLE `<%=table.Name%>`
+(
+    <%=string.Join(string.Format(", {0}    ", Environment.NewLine), table.Fields.Select(f=>CreateFieldDefinitionString(f)).ToArray())%>
+<% 
+	var identityField = table.Fields.FirstOrDefault(f=>f.IsIdentity);
+	if(identityField!=null)
+	{
+%>    , KEY(<%=identityField.FieldName%>)
+<%	}
+%>);

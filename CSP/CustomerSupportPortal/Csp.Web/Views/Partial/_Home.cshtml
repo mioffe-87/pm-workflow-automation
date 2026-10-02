@@ -1,0 +1,280 @@
+﻿@using FluentValidation
+@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.HomeDto
+@using System.Configuration
+
+<style>
+  
+</style>
+
+<script>
+
+    var searchAllHelper = (function () {
+
+        var windowIsOpening = false;
+        function openWindow() {
+
+            var url = '/searchall/view';
+
+            var window = $('#SearchAllWindow').data("kendoWindow");
+            window.refresh();
+            window.setOptions({
+                minHeight: 100
+            });
+            window.refresh(url);
+            windowIsOpening = true;
+            window.open();
+            window.center();
+            //window.maximize();
+        }
+
+        function onOpenWindow() {
+            SupportPortal.OnWindowOpen('SearchAllWindow');
+        }
+
+        function onCloseWindow() {
+            var window = $('#SearchAllWindow').data("kendoWindow");
+            window.content("");
+            window.refresh();
+        }
+
+        function onResizeWindow() {
+            if (windowIsOpening) {
+                windowIsOpening = false;
+                return;
+            }
+            var window = $('#SearchAllWindow').data("kendoWindow");
+            window.center();
+        }
+
+        return {
+            openWindow: openWindow,
+            onOpenWindow: onOpenWindow,
+            onCloseWindow: onCloseWindow,
+            onResizeWindow: onResizeWindow
+        };
+    })();
+
+    var homeAccountSelector = (function () {
+        var isPickingAccount = false;
+        function getIsPickingAccount() {
+            return isPickingAccount;
+        }
+
+        function openWindow() {
+
+            isPickingAccount = true;
+
+            var url = '/supportaccount/ChangeAccount';
+
+            var window = $('#HomeAccountSelectorWindow').data("kendoWindow");
+            window.refresh();
+            window.setOptions({
+                minHeight: 500
+            });
+            window.refresh(url);
+            window.open();
+            window.center();
+        }
+
+        function onOpenWindow() {
+            SupportPortal.OnWindowOpen('HomeAccountSelectorWindow');
+        }
+
+        function onCloseWindow() {
+            var window = $('#HomeAccountSelectorWindow').data("kendoWindow");
+            window.content("");
+            window.refresh();
+
+            //UPDATE Window based on select...redirect?
+            //SupportPortal.OnWindowClose("@UniqueId.Groups" + "groupGrid");
+        }
+
+        function setDefaultConfirmation() {
+
+            var currentAccountName = $('#CurrentAccountName').text();
+
+            SupportPortal.Confirmation('Are you sure you want to set ' + currentAccountName + ' as your default account?', setDefaultConfirmed);
+        }
+
+        function setDefaultConfirmed() {
+
+            var currentSupportAccountId = $('#CurrentSupportAccountId').val();
+            var url = '/supportaccount/setdefault/' + currentSupportAccountId;
+            location.href = url;
+        }
+
+        return {
+            openWindow: openWindow,
+            onOpenWindow: onOpenWindow,
+            onCloseWindow: onCloseWindow,
+            setDefaultConfirmation: setDefaultConfirmation,
+            getIsPickingAccount: getIsPickingAccount
+        };
+    })();
+
+    function showNetworkOutageAnnouncement() {
+        var window = $('#NetworkOutageWindow').data("kendoWindow");
+        window.open();
+        window.center();
+    }
+</script>
+@if (System.Configuration.ConfigurationManager.AppSettings["ShowAnnouncement"] == "true")
+{
+    <div class="well announcement">
+        <div>&nbsp;</div>
+        <strong>WildFire & PAN-DB Service Announcement: Sept. 18, 2016</strong>
+        <div>&nbsp;</div>
+        <div><a href="javascript:void(0);" onclick="showNetworkOutageAnnouncement();">Details</a></div>
+    </div>
+}
+<div class="row">
+    <div class="span6">
+        <fieldset>
+            <legend class="marketing-legend">Current Account <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick=" SupportPortal.Help(this, 2); "></i></span></legend>
+            <p id="CurrentAccountName" class="marketing-font csp-home-font-gray">@Model.CurrentAccount</p>
+
+            @switch (Model.NumberOfAccounts)
+            {
+                case 0:
+                    if (Model.HasPendingMemberships)
+                    {
+                <p class="text-error" style="white-space: normal;">You have no active memberships, but currently have a pending membership.  You cannot access the support account until your request receives super user approval.</p>
+                    }
+                    else
+                    {
+                <p class="text-error" style="white-space: normal;">You have no active memberships, if you believe this was a mistake, please contact your account administrator.</p> 
+                    }
+                    break;
+
+                case 1:
+                    //Do nothing (no link, no warning)
+                    break;
+
+                default:
+                <p>
+                    <a class="marketing-font" id="ChangeAccountLink" href="#" onclick=" homeAccountSelector.openWindow(); return false; ">Change Account</a>
+                </p>
+
+                    if (!Model.DefaultSupportAccountId.HasValue && !Model.CurrentSupportAccountId.HasValue)
+                    {
+                <script>
+                    $(function () {
+                        setTimeout(function () {
+                            var isPickingAccount = homeAccountSelector.getIsPickingAccount();
+                            if (!isPickingAccount) {
+                                var tooltip = $('#ChangeAccountLink').kendoTooltip({ content: "Click here to choose an account", autoHide: false }).data("kendoTooltip");
+                                tooltip.show($('#ChangeAccountLink'));
+                            }
+                        }, 2000);
+                    });
+                </script>
+                    }
+                    break;
+            }
+
+            @if (!Model.IsDefault)
+            {
+                <input type="hidden" id="CurrentSupportAccountId" value="@(Model.CurrentSupportAccountId == null ? "" : Model.CurrentSupportAccountId.Value.ToString())"/>
+                if (Model.CurrentSupportAccountId.HasValue)
+                {
+                <p>
+                    <a class="marketing-font" id="SetAsDefault" href="/supportaccount/setdefault/@Model.CurrentSupportAccountId.Value" onclick=" homeAccountSelector.setDefaultConfirmation(); return false; ">Set as Default</a>
+                </p>
+                    if (!Model.DefaultSupportAccountId.HasValue)
+                    {
+                <script>
+                    $(function () {
+                        setTimeout(function () {
+                            var tooltip = $('#SetAsDefault').kendoTooltip({ content: "Click here to set this account as your default", autoHide: false }).data("kendoTooltip");
+                            tooltip.show($('#SetAsDefault'));
+                        }, 2000);
+                    });
+                </script>
+                    }
+                }
+                if (Model.DefaultSupportAccountId.HasValue)
+                {
+                <p>
+                    <a class="marketing-font" href="/supportaccount/myaccounts/@Model.DefaultSupportAccountId.Value">Return to Default</a>
+                </p>
+                }
+            }
+
+            @if (Model.NumberOfAccounts > 1 && !Model.HasAnyPanAccess)
+            {
+                <p><a class="marketing-font" href="javascript: void(0)" onclick="searchAllHelper.openWindow();">Search Assets in All Accounts</a></p>
+            }
+        </fieldset>
+        <fieldset>
+            <legend class="marketing-legend">Current Roles</legend>
+            <div>
+                @foreach (var role in Model.CurrentRoles)
+                {
+                    <p class="marketing-font csp-home-font-gray">@role</p>
+                }
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="span6">
+        <fieldset>
+
+        </fieldset>
+    </div>
+</div>
+
+
+@(Html.Kendo().Window()
+    .Name("HomeAccountSelectorWindow")
+    .Width(700)
+    .Modal(true)
+    .Draggable()
+    .Scrollable(false)
+    .Events(events => events
+                            .Close("homeAccountSelector.onCloseWindow")
+                            .Open("homeAccountSelector.onOpenWindow")
+                            )
+    .Title("Select an Account")
+    .Visible(false)
+    )
+
+@(Html.Kendo().Window()
+    .Name("SearchAllWindow")
+    .Width(600)
+    .Modal(true)
+    .Draggable()
+    .Scrollable(false)
+    .Events(events => events
+                            .Close("searchAllHelper.onCloseWindow")
+                            .Open("searchAllHelper.onOpenWindow")
+                            .Resize("searchAllHelper.onResizeWindow")
+                            )
+    .Title("Search Assets in all Accounts")
+    .Actions(a => a.Maximize().Close())
+    .Visible(false)
+      )
+
+@(Html.Kendo().Window()
+    .Name("NetworkOutageWindow")
+    .Width(600)
+    .Modal(true)
+    .Draggable()
+    .Scrollable(false)
+    .Title("Important update regarding PAN-DB issue")
+    .Content(@"
+<div>
+    <div>&nbsp;</div>
+    <div>We resolved an issue with the PAN-DB cloud servers that began on Sunday, August 21 and impacted customers’ ability to connect to the PAN-DB cloud service.  As of Monday, August 22 at 9:05 a.m. PT, we have confirmed that the service is fully operational. We are investigating the root cause of the issue and remain enabled and committed to answering any questions.</div>
+    <div>&nbsp;</div>
+    <div>For more details, please reach out directly to support online at support.paloaltonetworks.com.</div>
+    <div>&nbsp;</div>
+    <div>Thank you for your patience while we restored the service and we apologize for the interruption.</div>
+    <div>&nbsp;</div>
+    <div>The Palo Alto Networks Support team</div>
+    <div>&nbsp;</div>
+</div>
+")
+    .Actions(a => a.Close())
+    .Visible(false)
+    )

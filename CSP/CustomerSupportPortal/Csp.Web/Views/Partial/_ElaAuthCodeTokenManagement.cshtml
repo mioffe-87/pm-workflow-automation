@@ -1,0 +1,299 @@
+﻿
+@model Csp.Api.Model.VmElaTokenModel 
+@{
+    var bindingItems = new List<SelectListItem>();
+    foreach (var account in Model.GrantedAccounts)
+    {
+        bindingItems.Add(new SelectListItem
+        {
+            Value = account.Key.ToString(),
+            Text = string.Format("{0} {1}", account.Key, account.Value)
+        });
+    }
+    var availableToAllocate = Model.TotalTokens - Model.AllocatedTokens;
+}
+
+<script type="text/javascript">
+    function getModelsInfoParams() {
+        var params = SetAntiForgery();
+        params.grandParentAuthCode = '@Model.GrandParentAuthCode';
+        params.supportAccountId = $('#@UniqueId.SupportAccountsComboBox').val();
+        return params;
+    }
+    
+    //VmElaTokenManagementGrid data finished bounding event    
+    var g_changeEvent = false;
+    function onDadaBound() {
+        var grid = $('#@UniqueId.VmElaTokenManagementGrid').data("kendoGrid");
+        if (!g_changeEvent) {
+            var items = grid.dataSource.data();
+            if (items != null) {
+                var i;
+                //load the cached data back
+                var supportAcctId = $('#preSupportAcctId').val();
+                if (g_tokenCache.hasOwnProperty(supportAcctId)) {
+                    for (i = 0; i < items.length; i++) {
+                        items[i].AllocatedQuantity = g_tokenCache[supportAcctId][i].AllocatedQuantity;
+                        items[i].Tokens = g_tokenCache[supportAcctId][i].AllocatedQuantity * items[i].ExchangeRate;
+                    }
+                    g_changeEvent = true; //do not callback again
+                    grid.refresh();
+                }
+
+                var totaltokens = 0;
+                for (i = 0; i < items.length; i++) {
+                    totaltokens += items[i].Tokens;
+                }
+                $('#curAccountToken').text(totaltokens);
+            }
+        }
+
+        g_changeEvent = false;
+        //quantity column change event
+        grid.dataSource.bind('change', function (e) {
+            //this event is from data grid refresh, ignore it.
+            if (e.items != null && e.items.length > 1) {
+                g_changeEvent = false;
+                return;
+            }
+            g_changeEvent = true;
+            $('#dataDirty').val(1);
+            if (e.items[0] != null) {
+                //do not allow negative numbers
+                if (e.items[0].AllocatedQuantity < 0) {
+                    e.items[0].AllocatedQuantity = 0;
+                    e.items[0].Tokens = 0;
+                    grid.refresh();
+                    return;
+                }
+                //cannot less than provisioned quantity
+                else if (e.items[0].AllocatedQuantity < e.items[0].ProvisionedQuantity) {
+                    e.items[0].AllocatedQuantity = e.items[0].ProvisionedQuantity;
+                    e.items[0].Tokens = e.items[0].AllocatedQuantity * e.items[0].ExchangeRate;
+                    grid.refresh();
+                    return;
+                }
+                var newTokens = e.items[0].AllocatedQuantity * e.items[0].ExchangeRate;
+                //check if the allocated tokens exceeds the max or not
+                var availableTokens = parseInt($('#availableToAllocate').html());
+                var totalAllocated = parseInt($('#totalAllocated').html());
+                var oldTokens = e.items[0].Tokens;
+                //old value of this line
+                var newAvailable = availableTokens + oldTokens;
+                var allocatedSofar = getCurrentAccountTokens(grid) - oldTokens;
+                //set the quantity to max
+                if (newTokens > newAvailable) {
+                    e.items[0].AllocatedQuantity = Math.floor(newAvailable / e.items[0].ExchangeRate);
+                    if (e.items[0].AllocatedQuantity < 0) {
+                        e.items[0].AllocatedQuantity = 0;
+                    }
+                    e.items[0].Tokens = e.items[0].AllocatedQuantity * e.items[0].ExchangeRate;
+                } else {
+                    e.items[0].Tokens = newTokens;
+                }
+
+                $('#curAccountToken').html(allocatedSofar + e.items[0].Tokens);
+                $('#availableToAllocate').html(newAvailable - e.items[0].Tokens);
+                $('#totalAllocated').html(totalAllocated - oldTokens + e.items[0].Tokens);
+                grid.refresh();
+            }
+        });
+    }
+    
+    //ComboBox databound evenr
+    function onComboboxBound() {
+        var supprtAcctId = $("#@UniqueId.SupportAccountsComboBox").data("kendoComboBox").value();
+        $('#preSupportAcctId').val(supprtAcctId);
+    }
+
+    //save the current page's change to cache
+    var g_tokenCache = {  };
+    function saveChangesToCache() {
+        var supportAccout = $('#preSupportAcctId').val();
+        g_tokenCache[supportAccout] = [];
+        var items = $('#@UniqueId.VmElaTokenManagementGrid').data("kendoGrid").dataSource.data();
+        for (var i = 0; i < items.length; i++) {
+            var item = {
+                "LicenseId": items[i].LicenseId,
+                "AllocatedQuantity": items[i].AllocatedQuantity
+            };
+            g_tokenCache[supportAccout].push(item);
+        }
+    }
+
+    //Combobox selection change event: trigger Grid to refresh
+    function onDropdownChange() {
+        var grid = $('#@UniqueId.VmElaTokenManagementGrid').data('kendoGrid');
+        if (grid.dataSource.hasChanges()) {
+            $('#dataDirty').val(1);
+            saveChangesToCache();
+        }
+
+        //refresh data
+        var supportAcctId = this.value();
+        $('#preSupportAcctId').val(supportAcctId);
+        grid.dataSource.read();
+    }
+    
+    //total tokens allocated in the current account
+    function getCurrentAccountTokens(grid) {
+        var items = grid.dataSource.data();
+        var total = 0;
+        for (var i = 0; i < items.length; i++) {
+            total += items[i].Tokens;
+        }
+        return total;
+    }
+
+    function revokeElaAuthCode() {
+        
+        $('#revokeLicense').prop("disabled", true);
+        SupportPortal.BlockUI();
+        var grandParentAuthCode = '@Model.GrandParentAuthCode';
+
+        $.ajax({
+            type: "POST",
+            url: "/SiteLicense/RevokeVmElaLicense",
+            data: {
+                authCode: '@Model.GrandParentAuthCode',
+                supportAccountId: $('#preSupportAcctId').val()
+            },
+            success: function (result) {
+                SupportPortal.UnBlockUI();
+                if (result.Message != null && result.Message.length > 0) {
+                    SupportPortal.Message(result.Message, { height: 120, width: 350 });
+                }
+                $('#revokeLicense').prop("disabled", false);
+                
+                var direction = '/SiteLicense/ManageElaAuthCodeTokens?authCode=' + grandParentAuthCode;
+                var window = $("#revokeLicense").closest(".k-window-content").data("kendoWindow");
+                window.refresh(direction);
+            },
+            error: function () {
+                SupportPortal.UnBlockUI();
+                SupportPortal.Message("Failed to revoke the license. Please contact technical support.", { height: 120, width: 350 });
+                $('#revokeLicense').prop("disabled", false);
+            }
+        });
+    }
+
+    //save the changes to DB
+    function onSubmit() {
+        //check if the current selected index has change or not.
+        if ($('#@UniqueId.VmElaTokenManagementGrid').data('kendoGrid').dataSource.hasChanges()) {
+            saveChangesToCache();
+        }
+        
+        //save to DB
+        if (!$.isEmptyObject(g_tokenCache)) {
+            $('#submitBtn').prop("disabled", true);
+            SupportPortal.BlockUI();
+
+            $.ajax({
+                type: "POST",
+                url: "/SiteLicense/SaveVmElaAllocatedQuantities",
+                data: {
+                    modelsInfo: JSON.stringify(g_tokenCache),
+                    grandParanetAuthCode: '@Model.GrandParentAuthCode',
+                    totalAllocatedTokens: parseInt($('#totalAllocated').html())
+                },
+                success: function(result) {
+                    SupportPortal.UnBlockUI();
+                    if (result.ErrorMsg != null && result.ErrorMsg.length > 0) {
+                        SupportPortal.Message("Failed to save the changes: " + result.ErrorMsg, { height: 120, width: 350 });
+                    } else {
+                        //reset flag
+                        g_tokenCache = {};
+                        $('#dataDirty').val(0);
+                        //refresh data to reset hasChanges flag.
+                        $('#@UniqueId.VmElaTokenManagementGrid').data('kendoGrid').dataSource.read();
+                        SupportPortal.Message("The changes have been successfully saved.", { height: 120, width: 350 });
+                    }
+
+                    $('#submitBtn').prop("disabled", false);
+                },
+                error: function() {
+                    SupportPortal.UnBlockUI();
+                    SupportPortal.Message("Failed to save the changes. Please contact technical support.", { height: 120, width: 350 });
+                    $('#submitBtn').prop("disabled", false);
+                }
+            });
+        } 
+    }
+</script>
+
+<input type="hidden" id="preSupportAcctId" value="" />
+<div class="fieldset fieldset-upper" style="font-size: small">
+    <fieldset>
+        <div style="float: left; padding-top: 3px;">@Html.Label("Account ID: ")</div>
+        <div class="csp-field" style="padding-left: 12px;">
+            @(Html.Kendo().ComboBox()
+                  .Name((string) UniqueId.SupportAccountsComboBox)
+                  .HtmlAttributes(new { @class = "k-combobox", style = "width:255px; height:27px;" })
+                  .DataValueField("Value")
+                  .DataTextField("Text")
+                  .Filter("contains")
+                  .SelectedIndex(0)
+                  .Suggest(true)
+                  .Events(e => e.Change("onDropdownChange"))
+                  .Events(e => e.DataBound("onComboboxBound"))
+                  .BindTo(bindingItems)
+                  )
+        </div>
+        @if (Model.GrantedAccounts.Count > 1)
+        {
+            <div style="float: right; padding-right: 40%;">
+                <button type="button" class="k-button k-primary" id="revokeLicense" onclick="revokeElaAuthCode();">Reclaim Token</button>
+            </div>
+        }
+    </fieldset>
+    <fieldset style="padding-top: 10px;">
+        <div style="float: left;">
+            @(Html.Kendo().Grid(Model.CurrentAccountModelsInfo)
+                  .Name((string) UniqueId.VmElaTokenManagementGrid)
+                  .Editable(editable => editable.Mode(GridEditMode.InCell))
+                  .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Model(model =>
+                        {
+                            model.Id(f => f.LicenseId);
+                            model.Field(f => f.ExchangeRate).Editable(false);
+                            model.Field(f => f.Model).Editable(false);
+                            model.Field(f => f.AllocatedQuantity).Editable(true);
+                            model.Field(f => f.Tokens).Editable(false);
+                            model.Field(f => f.ProvisionedQuantity).Editable(false);
+                        })
+                        .Read(read => read.Action("GetCurrentAccountModelsInfo", "SiteLicense").Data("getModelsInfoParams"))
+                        .PageSize(Model.CurrentAccountModelsInfo.Count())
+                  )
+                  .Columns(columns =>
+                  {
+                      columns.Bound(p => p.LicenseId).Hidden(true);
+
+                      columns.Bound(p => p.Model).ClientTemplate(
+                          "#if(Model=='CN-X') {#CN-X<br><label style='font-size:10px;font-weight: bold;' >" +
+                          "Tokens usable only in Panorama/PAN-OS 10.0</label>#} " +
+                          "else {# #=Model# #}#").Title("Model").Width(140).HtmlAttributes(new { style = "vertical-align: top;" });
+                      columns.Bound(p => p.AllocatedQuantity).Title("Quantity").Width(80).HtmlAttributes(new { style = "vertical-align: top;" });
+                      columns.Bound(p => p.ExchangeRate).Title("Tokens per VM/CN-X").Width(150).HtmlAttributes(new { style = "vertical-align: top;" });
+                      columns.Bound(p => p.Tokens).Title("Token").Width(80).HtmlAttributes(new { style = "vertical-align: top;" });
+                      columns.Bound(p => p.ProvisionedQuantity).Hidden(true);
+                  })
+                 .Events(events => events.DataBound("onDadaBound"))
+            )
+            <div style="clear: both; padding-top: 10px;">     
+                <input id="submitBtn" style="float: right;" type="button" type="submit" value="Submit" class="k-button csp-submit" onclick="onSubmit();"/>
+            </div>    
+        </div>
+        <div style="float: left; padding-left: 5px;">
+            <div>Total token for VM/CN-X-Series ELA<span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 67, {width:270, height: 100});"></i></span>: @Model.TotalTokens</div>
+            <div>Total allocated token: <span id="totalAllocated">@Model.AllocatedTokens</span></div>
+            <div>Token available to allocate: <span id="availableToAllocate">@availableToAllocate</span></div>
+            <div>Token allocated for this account: <span id="curAccountToken">0</span></div>
+            <div style="color: red; font-size: 12px; padding-top: 10px; width: 220px;">
+                Click the quantity number to modify it. If the number cannot be changed, it means you have reached the maximum token to allocate or the registered VM/CN-X count number.
+            </div>           
+        </div>             
+    </fieldset>
+</div>
+

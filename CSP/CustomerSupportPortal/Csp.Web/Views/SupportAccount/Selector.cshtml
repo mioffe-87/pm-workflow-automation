@@ -1,0 +1,109 @@
+﻿@using Kendo.Mvc.UI;
+
+@model List<Csp.Api.Model.SelectorAccountListItem>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  
+}
+
+
+<p class="contextTitle">My Support Accounts / Groups</p>
+<p>
+    Please select the Account/Group you would like to login to:
+</p>
+
+
+<script type="text/x-kendo-tmpl" id="SelectorTemplate">   
+	<div class="SelectorLink" id=#:MembershipId#>
+				
+		<h2>#:CompanyName#
+            #if(SupportAccountGroupName != null && SupportAccountGroupName != '') {#
+                (<i>Group</i>: #=SupportAccountGroupName #)
+            #}#
+        </h2>
+
+        <input type="hidden" id="#:MembershipId#SupportAccountId" value="#:Id#" >
+        <input type="hidden" id="#:MembershipId#CompanyName" value="#:CompanyName#" >
+        <input type="hidden" id="#:MembershipId#Address1" value="#:Address1#" >
+        <input type="hidden" id="#:MembershipId#City" value="#:City#" >
+        <input type="hidden" id="#:MembershipId#Region" value="#:Region#" >
+        <input type="hidden" id="#:MembershipId#Country" value="#:Country#" >
+        <input type="hidden" id="#:MembershipId#PhoneNumber" value="#:PhoneNumber#" >
+        <input type="hidden" id="#:MembershipId#GroupId" value="#:GroupId#" >
+        <input type="hidden" id="#:MembershipId#SupportAccountGroupName" value="#:SupportAccountGroupName#" >
+        <input type="hidden" id="#:MembershipId#MembershipId" value="#:MembershipId#" >
+	</div>	
+</script>
+
+<div>
+    @Html.AntiForgeryToken()
+
+    <div id="SelectorErrorDiv" class="csp-field error"></div>
+
+    @(Html.Kendo().ListView<Csp.Api.Model.SupportAccountListItem>(Model)
+    .Name("SelectorListView")
+    .TagName("div")
+    .ClientTemplateId("SelectorTemplate")
+    .Selectable(selectable => selectable.Mode(ListViewSelectionMode.Single))
+    .Events(events => events.Change("OnSelectedChanged"))
+    )
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $("#SelectorListView").removeClass("k-widget");
+    });
+
+    function OnSelectedChanged(arg) {
+
+        SupportPortal.BlockUI();
+
+        var selectedId = $.map(this.select(), function (item) {
+            return $(item).attr("id");
+        });
+
+        if (selectedId > 0) {
+            var direction = "/SupportAccount/SelectorAccountSelected";
+
+            $.ajax({
+                url: direction,
+                type: 'Post',
+                data: {
+                    "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val(),
+                    Id: $("#" + selectedId + "SupportAccountId").val(),
+                    CompanyName: $("#" + selectedId + "CompanyName").val(),
+                    Address1: $("#" + selectedId + "Address1").val(),
+                    City: $("#" + selectedId + "City").val(),
+                    Region: $("#" + selectedId + "Region").val(),
+                    Country: $("#" + selectedId + "Country").val(),
+                    PhoneNumber: $("#" + selectedId + "PhoneNumber").val(),
+                    GroupId: $("#" + selectedId + "GroupId").val(),
+                    SupportAccountGroupName: $("#" + selectedId + "SupportAccountGroupName").val(),
+                    MembershipId: $("#" + selectedId + "MembershipId").val(),
+                    urlParam: getURLParameter('r')
+                },
+                cache: false,
+                success: function (result) {
+                    window.location = result;
+                },
+                error: function () {
+                    var listView = $("#SelectorListView").data("kendoListView");
+                    listView.clearSelection();;
+
+                    SupportPortal.UnBlockUI();
+
+                    $("#SelectorErrorDiv").html("Error in processing request.");
+                }
+            });
+
+        }
+
+    }
+
+    function getURLParameter(name) {
+        return decodeURI(
+            (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]
+        );
+    }
+</script>

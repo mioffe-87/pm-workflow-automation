@@ -1,0 +1,103 @@
+﻿'///////////////////////////////////////////////////////////////
+'// This Is generated code. 
+'//////////////////////////////////////////////////////////////
+'// Code Is generated Using LLBLGen Pro version: <[LLBLGenVersion]>
+'// Code Is generated On: <[Time]>
+'// Code Is generated Using templates: <[TemplateName]>
+'// Templates vendor: Solutions Design.
+'///////////////////////////////////////////////////////////''' 
+Imports System
+Imports System.Linq
+<[If HasEntity]>Imports <[RootNamespace]>.EntityClasses
+<[EndIf]>Imports SD.LLBLGen.Pro.ORMSupportClasses
+Imports SD.LLBLGen.Pro.QuerySpec
+
+Namespace <[RootNamespace]>.FactoryClasses
+	''' <summary>Factory Class To produce DynamicQuery instances And EntityQuery instances</summary>
+	Public Class QueryFactory
+		Dim _aliasCounter As Integer = 0
+
+		''' <summary>Creates a New DynamicQuery instance With no Alias Set.</summary>
+		''' <returns>Ready To use DynamicQuery instance</returns>
+		Public Function Create() As DynamicQuery
+			Return Create(String.Empty)
+		End Function
+
+		''' <summary>Creates a New DynamicQuery instance With the Alias specified As the Alias Set.</summary>
+		''' <param name="alias">The Alias.</param>
+		''' <returns>Ready To use DynamicQuery instance</returns>
+		Public Function Create([Alias] As String) As DynamicQuery 
+			Return New DynamicQuery(New ElementCreator(), [Alias], Me.GetNextAliasCounterValue())
+		End Function
+
+		''' <summary>Creates a new DynamicQuery which wraps the specified TableValuedFunction call</summary>
+		''' <param name="toWrap">The table valued function call to wrap.</param>
+		''' <returns>toWrap wrapped in a DynamicQuery.</returns>
+		Public Function Create(toWrap As TableValuedFunctionCall) As DynamicQuery 
+			Return Me.Create().From(New TvfCallWrapper(toWrap)).Select(toWrap.GetFieldsAsArray().Select(Function(f) Me.Field(toWrap.Alias, f.Alias)).ToArray())
+		End Function
+<[If HasEntity]>
+		''' <summary>Creates a New EntityQuery For the entity Of the type specified With no Alias Set.</summary>
+		''' <typeparam name="TEntity">The type Of the entity To produce the query For.</typeparam>
+		''' <returns>ready To use EntityQuery instance</returns>
+		Public Function Create(Of TEntity As IEntityCore)() As EntityQuery(Of TEntity)
+			Return Create(Of TEntity)(String.Empty)
+		End Function
+
+		''' <summary>Creates a New EntityQuery For the entity Of the type specified With the Alias specified As the Alias Set.</summary>
+		''' <typeparam name="TEntity">The type Of the entity To produce the query For.</typeparam>
+		''' <param name="alias">The Alias.</param>
+		''' <returns>ready To use EntityQuery instance</returns>
+		Public Function Create(Of TEntity As IEntityCore)([Alias] As String) As EntityQuery(Of TEntity)
+			Return New EntityQuery(Of TEntity)(New ElementCreator(), [Alias], Me.GetNextAliasCounterValue())
+		End Function
+<[EndIf]>
+		''' <summary>Creates a New field Object With the name specified And Of resulttype 'object'. Used for referring to aliased fields in another projection.</summary>
+		''' <param name="fieldName">Name Of the field.</param>
+		''' <returns>Ready To use field Object</returns>
+		Public Function Field(fieldName As String) As EntityField2
+			Return Field(Of Object)(String.Empty, fieldName)
+		End Function
+
+		''' <summary>Creates a New field Object With the name specified And Of resulttype 'object'. Used for referring to aliased fields in another projection.</summary>
+		''' <param name="targetAlias">The Alias Of the table/query To target.</param>
+		''' <param name="fieldName">Name Of the field.</param>
+		''' <returns>Ready To use field Object</returns>
+		Public Function Field(targetAlias As String, fieldName As String) As EntityField2
+			Return Field(Of Object)(targetAlias, fieldName)
+		End Function
+
+		''' <summary>Creates a New field Object With the name specified And Of resulttype 'TValue'. Used for referring to aliased fields in another projection.</summary>
+		''' <typeparam name="TValue">The type Of the value represented by the field.</typeparam>
+		''' <param name="fieldName">Name Of the field.</param>
+		''' <returns>Ready To use field Object</returns>
+		Public Function Field(Of TValue)(fieldName As String) As EntityField2 
+			Return Field(Of TValue)(String.Empty, fieldName)
+		End Function
+
+		''' <summary>Creates a New field Object With the name specified And Of resulttype 'TValue'. Used for referring to aliased fields in another projection.</summary>
+		''' <typeparam name="TValue">The type Of the value represented by the field.</typeparam>
+		''' <param name="targetAlias">The Alias Of the table/query To target.</param>
+		''' <param name="fieldName">Name Of the field.</param>
+		''' <returns>Ready To use field Object</returns>
+		Public Function Field(Of TValue)(targetAlias As String, fieldName As String) As EntityField2 
+			Return New EntityField2(fieldName, targetAlias, GetType(TValue))
+		End Function
+
+		''' <summary>Gets the Next Alias counter value To produce artifical aliases With</summary>
+		Protected Function GetNextAliasCounterValue() As Integer
+			_aliasCounter+=1
+			Return _aliasCounter
+		End Function
+<[If HasEntity]>
+<[Foreach Entity CrLf]>		''' <summary>Creates And returns a New EntityQuery For the <[CurrentEntityName]> entity</summary>
+		Public ReadOnly Property [<[CurrentEntityName]>] As EntityQuery(Of <[CurrentEntityName]>Entity)
+			Get
+				Return Create(Of <[CurrentEntityName]>Entity)()
+			End Get
+		End Property
+<[NextForeach]>
+<# SD_QueryFactoryInclude #>
+<[EndIf]>
+	End Class
+End Namespace

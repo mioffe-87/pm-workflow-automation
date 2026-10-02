@@ -1,0 +1,58 @@
+﻿' ////////////////////////////////////////////////////////////////////////////////////////////////////////
+' // This is generated code. 
+' ////////////////////////////////////////////////////////////////////////////////////////////////////////
+' // Code is generated using LLBLGen Pro version: <[LLBLGenVersion]>
+' // Code is generated on: <[Time]>
+' // Code is generated using templates: <[TemplateName]>
+' // Templates vendor: Solutions Design.
+' ////////////////////////////////////////////////////////////////////////////////////////////////////////
+Imports System
+Imports System.Data
+Imports System.Data.Common
+Imports <[RootNamespace]>.HelperClasses
+Imports SD.LLBLGen.Pro.ORMSupportClasses
+<# SD_DQENamespaceIncludeTemplate #>
+
+Namespace <[RootNamespace]>.DaoClasses
+	''' <summary>DAO base Class, used For all generated DAO classes.</summary>
+	Public Class CommonDaoBase 
+		Inherits DaoBase
+
+#Region "Class Member Definitions"
+		''' <summary>The connection String To use In the SelfServicing code. This Is a global setting And Is automatically Set With the value read From the config file.</summary>
+		Public Shared ActualConnectionString As String = String.Empty
+#End Region
+		
+#Region "Constants"
+		Private Const connectionKeyString As String = "<[ConnectionStringKeyName]>"
+#End Region
+
+		''' <summary>CTor</summary>
+		''' <remarks>CTor To use For non-entity specific dao usage</remarks>
+		Public Sub New()
+			Me.New(InheritanceHierarchyType.None, String.Empty, Nothing)
+		End Sub
+	
+		''' <summary>CTor</summary>
+		''' <param name="typeOfInheritance">Type Of inheritance the entity which owns this Dao Is In.</param>
+		''' <param name="entityName">Name Of the entity owning this Dao</param>
+		''' <param name="entityFactory">Entity factory For the entity owning this Dao.</param>
+		Public Sub New(typeOfInheritance As InheritanceHierarchyType, entityName As String, entityFactory As IEntityFactory)
+			MyBase.New(InheritanceInfoProviderSingleton.GetInstance(), New DynamicQueryEngine(), typeOfInheritance, entityName, entityFactory)
+		End Sub
+		
+<# SD_DbSpecificDataAccessIncludeTemplate #>		
+		''' <summary>Gets the connection string.</summary>
+		''' <returns>the connection string as set by code or in the config file.</returns>
+		Protected Overrides Function GetConnectionString() As String
+			If String.IsNullOrEmpty(ActualConnectionString) Then
+				ActualConnectionString = ConfigFileHelper.ReadConnectionStringFromConfig(connectionKeyString)
+			End If
+			Return ActualConnectionString
+		End Function
+		
+#Region "Included Code"
+<# Custom_CommonDAOBaseTemplate #>
+#End Region
+	End Class
+End Namespace

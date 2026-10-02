@@ -1,0 +1,146 @@
+﻿@model Csp.Web.DataTransferObjects.TrapsVersionDto
+<script>
+    function ValidateInput(obj) {
+        $("#divValidationMsg").hide();
+        var agentCount = "@Model.TotalUsecount";
+        var serverCount = $("#ServerUsecount").val();
+        var workstationCount = $("#WorkstationUsecount").val();
+        var vdiCount = $("#VdiUsecount").val();
+        var panOsV = $("#ddTrapsVersion").val();
+
+        agentCount = isNaN(parseInt(agentCount)) ? 0 : parseInt(agentCount);
+        serverCount = isNaN(parseInt(serverCount)) ? 0 : parseInt(serverCount);
+        workstationCount = isNaN(parseInt(workstationCount)) ? 0 : parseInt(workstationCount);
+        vdiCount = isNaN(parseInt(vdiCount)) ? 0 : parseInt(vdiCount);
+
+
+        if (panOsV != "4.0") {
+            if (panOsV == "3.4") {
+                if (((serverCount + workstationCount + vdiCount) > agentCount) || (serverCount + workstationCount + vdiCount <= 0)) {
+                    $("#divValidationMsg").show();
+                    $("#divValidationMsg").text("Invalid license count!");
+                    return false;
+                }
+            } else {
+                if (((serverCount + workstationCount) > agentCount) || (serverCount + workstationCount <= 0)) {
+                    $("#divValidationMsg").show();
+                    $("#divValidationMsg").text("Invalid license count!");
+                    return false;
+                }
+            }
+        }
+        $("#DownloadEndpointLicense").val("1");
+        $(obj).closest(".k-window-content").data("kendoWindow").close();
+    }
+
+    function CloseMe(obj) {
+        $("#DownloadEndpointLicense").val("0");
+        $(obj).closest(".k-window-content").data("kendoWindow").close();
+    }
+
+    function trapsVersionChange() {
+        var panOsV = $("#ddTrapsVersion").val();
+        if (panOsV == "4.0") {
+            $("#divTrapsUseCountSection").hide();
+        } else {
+            if (panOsV == "3.4") {
+                $("#divTrapsVDIUseCountSection").show();
+                $("#divTrapsUseCountSection").show();
+                $("#trapsPre33Note").hide();
+                $("#traps3334Note").show();
+            } else {
+                $("#divTrapsVDIUseCountSection").hide();
+                $("#divTrapsUseCountSection").show();
+                $("#trapsPre33Note").show();
+                $("#traps3334Note").hide();
+            }
+        }
+    }
+
+</script>
+<div id="ContainerTrapsVersionDiv">
+
+    <input type="hidden" id="DownloadEndpointLicense" name="DownloadEndpointLicense" value="0" />
+    <input type="hidden" id="EndpointAuthorizationCode" name="EndpointAuthorizationCode" value="@Model.AuthorizationCode" />
+
+    @Html.AntiForgeryToken()
+
+    <div class="fieldset" id="@UniqueId.TrapsVersion">
+        <fieldset>
+            <legend>Traps Version</legend>
+            <div id="divTrapsVersionSection">
+                <div class="csp-label" style="width: 160px !important">
+                    @Html.Label("Select Traps version installed:")
+                </div>
+                <div class="csp-field">
+                    @(Html.Kendo().DropDownList()
+                          .Name("ddTrapsVersion")
+                          .DataTextField("Text")
+                          .DataValueField("Value")
+                          .Events(e => e.Change("trapsVersionChange"))
+                          .BindTo(new List<SelectListItem>()
+                          {
+                              new SelectListItem()
+                              {
+                                  Text = "3.4",
+                                  Value = "3.4"
+                              },
+                              new SelectListItem()
+                              {
+                                  Text = "4.0 and above",
+                                  Value = "4.0"
+                              }
+                          })
+                          .Value("4.0")
+                          .HtmlAttributes(new {@class = "k-dropdown", id = "ddTrapsVersion", name = "ddTrapsVersion", style = "width: 100px;"}))                    
+                </div>
+            </div>
+            <div>&nbsp;</div>
+            <div id="divTrapsUseCountSection" style="display: none; border-style: solid;border-color: gainsboro; padding: 5px;">
+                <div id="trapsPre33Note" style="display: none; padding-bottom: 8px">
+                    Note: You have a total license (Qty: @Model.TotalUsecount). Please enter the number of servers and workstations you want your Pre 3.3 license key to have.
+                </div>
+                <div id="traps3334Note" style="display: none;padding-bottom: 8px">
+                    Note: You have a total license (Qty: @Model.TotalUsecount). Please enter the number of servers, VDIs and workstations you want your Pre 3.4 license key to have.
+                </div>
+                <div>
+                    <div class="csp-label" style="width: 160px !important">
+                        @Html.Label("Server Quantity:")
+                    </div>
+                    <div class="csp-field">
+                        @Html.TextBoxFor(model => model.ServerUsecount, new {style = "width:100px;"})
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="csp-label" style="width: 160px !important">
+                        @Html.Label("Workstation Quantity:")
+                    </div>
+                    <div class="csp-field">
+                        @Html.TextBoxFor(model => model.WorkstationUsecount, new {style = "width:100px;"})
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+                <div id="divTrapsVDIUseCountSection" style="display: none">
+                    <div class="csp-label" style="width: 160px !important">
+                        @Html.Label("VDI Quantity:")
+                    </div>
+                    <div class="csp-field">
+                        @Html.TextBoxFor(model => model.VdiUsecount, new {style = "width:100px;"})
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+                <div id="divValidationMsg" style="display: none; color: red; margin-bottom: 5px;padding-left: 170px!important"></div>
+            </div>
+        </fieldset>
+    </div>
+    <fieldset>
+        <div class="fieldset">
+            <div class="csp-submit-container">
+                <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+                <input class="k-button csp-submit" type="button" value="Download" onclick="ValidateInput(this)"/>&nbsp;&nbsp;&nbsp;
+                <input type="button" value="Close" name="btnRefuse" id="btnRefuse" class="k-button" onclick="CloseMe(this)"/>&nbsp;&nbsp;
+            </div>
+        </div>
+    </fieldset>
+</div>

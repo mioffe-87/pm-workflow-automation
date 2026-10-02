@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="FullPublish" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<Import Project="$(TargetEnvPropsFile)"/>
+
+	<UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\Web\Microsoft.Web.Publishing.Tasks.dll"/>
+
+	<PropertyGroup>
+		<FullPublishDir>$(OutDir)$(PublishedWebsitesDir)</FullPublishDir>
+	</PropertyGroup>
+
+	<Target Name="GenerateProperties">
+		<CreateItem Include="$(OutDir)\..\">
+			<Output ItemName="OutDirParentDirectory" TaskParameter="Include"/>
+		</CreateItem>
+
+		<!-- You can now retrieve its fullpath using Fullpath metadata -->
+		<Message Text="%(OutDirParentDirectory.Fullpath)"/>
+
+		<!-- Create a property based on parent fullpath-->
+		<CreateProperty Value="%(OutDirParentDirectory.Fullpath)">
+			<Output PropertyName="RootBuildDir" TaskParameter="Value"/>
+		</CreateProperty>
+	</Target>
+
+	<Target Name="TransformWebConfig">
+		<TransformXml Source="$(FullPublishDir)web.config"
+                  Transform="$(FullPublishDir)web.$(Configuration).config"
+                  Destination="$(FullPublishDir)web.config" />
+	</Target>
+
+	<Target Name="CopyToServer">
+
+		<ItemGroup>
+			<_FilesToCopy Include="$(FullPublishDir)**\*"/>
+		</ItemGroup>
+
+		<Exec Command="net use $(PublishDestinationPath) JadeGl0bal /USER:jadeglobal"/>
+
+		<ItemGroup>
+			<_FilesToDelete Include="$(PublishDestinationPath)\**\*" Exclude="**\Csp_Exception.log" />
+		</ItemGroup>
+		<Delete Files="@(_FilesToDelete)" />
+
+
+		<Copy SourceFiles="@(_FilesToCopy)" DestinationFolder="$(PublishDestinationPath)\%(RecursiveDir)" />
+
+		<Exec Command="net use $(PublishDestinationPath) /delete"/>
+
+
+		<Exec Command="net use $(PublishDestinationPath2) JadeGl0bal /USER:jadeglobal"/>
+
+		<ItemGroup>
+			<_FilesToDelete2 Include="$(PublishDestinationPath2)\**\*" Exclude="**\Csp_Exception.log" />
+		</ItemGroup>
+		<Delete Files="@(_FilesToDelete2)" />
+
+
+		<Copy SourceFiles="@(_FilesToCopy)" DestinationFolder="$(PublishDestinationPath2)\%(RecursiveDir)" />
+
+		<Exec Command="net use $(PublishDestinationPath2) /delete"/>
+
+
+	</Target>
+
+	<PropertyGroup>
+		<FullPublishDependsOn>
+			GenerateProperties;
+			TransformWebConfig;
+			CopyToServer;
+		</FullPublishDependsOn>
+	</PropertyGroup>
+
+	<Target Name="FullPublish" DependsOnTargets="$(FullPublishDependsOn)" />
+</Project>

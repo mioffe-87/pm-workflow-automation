@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+      <Title>Add namespace references to code file</Title>
+      <Shortcut>llblA_AddNamespaceRefs</Shortcut>
+      <Description>Code snippet to add all necessary namespace definitions to the current code file, adapter specific. </Description>
+      <Author>Solutions Design</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal Editable="true">
+          <ID>RootNamespace</ID>
+          <ToolTip>The root namespace of your generated project</ToolTip>
+          <Default>MyRootNamespace</Default>
+          <Function>
+          </Function>
+        </Literal>
+      </Declarations>
+      <Code Language="VB"><![CDATA[Imports $RootNamespace$.DatabaseSpecific
+Imports $RootNamespace$.EntityClasses
+Imports $RootNamespace$.FactoryClasses
+Imports $RootNamespace$.HelperClasses
+Imports $RootNamespace$.RelationClasses
+Imports $RootNamespace$.TypedListClasses
+Imports $RootNamespace$.TypedViewClasses
+Imports $RootNamespace$
+
+Imports SD.LLBLGen.Pro.ORMSupportClasses
+$end$]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

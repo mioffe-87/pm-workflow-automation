@@ -1,0 +1,29 @@
+﻿@using Csp.Api.Security
+@using Csp.Web.HelperClasses
+@helper AddOmniture(string section) {
+    var jsFile = System.Configuration.ConfigurationManager.AppSettings["OmnitureScript"];
+    if (section == "HEAD")
+    {
+        <script src="@jsFile" async></script>
+    }
+    else if (section == "INIT")
+    {
+        <script defer type="text/javascript">
+            @{
+                var user = (HttpContext.Current.User as CspPrincipal);
+            }
+
+            var webData = {
+                "eMail": "@(user == null ? "" : user.UserAccount.Email)",
+                "portalAccessed": "CustomerSupportPortal",
+                "companyName": "@(CurrentState.GetSupportAccountName() ?? "")",
+                "jobTitle": "@(user == null ? "" : user.UserAccount.Title)",
+                "country": "@(user == null ? "" : user.UserAccount.Address.Country)",
+                "state": "@(user == null ? "" : user.UserAccount.Address.Region)",
+                "userType": "@(user == null ? "" : (user.UserAccount.Email.Contains("paloaltonetworks.com") ? "Employee" : "Not Employee"))",
+                "loggedInState": "@(user == null ? "Not Logged In" : "Logged In")",
+                "authEvent": "login"
+            };
+        </script>
+    }
+}

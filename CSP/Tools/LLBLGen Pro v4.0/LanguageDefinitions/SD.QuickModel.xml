@@ -1,0 +1,78 @@
+<SyntaxLanguage Key="QML" LanguageDefinitionVersion="4.0" Secure="True" WordContainsAdditionalCharacters="@_"
+				SyntaxLanguageTypeName="SD.LLBLGen.Pro.Gui.LanguageDefinitions.Parsers.QmlDynamicSyntaxLanguage, LLBLGenPro, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27"
+				xmlns="http://ActiproSoftware/SyntaxEditor/4.0/LanguageDefinition">
+
+	<!-- String Properties -->
+	<!-- MigrationAction: Insert or Add (default) -->
+	<!-- CoreLanguage: The key of the Core language, for example CSharp -->
+	<!-- DefaultBackColor: The name of the default back color for all lines in this language when it is the core logic language -->
+	<Properties>
+		<Property Key="Creator" Value="Solutions Design" />
+		<Property Key="Copyright" Value="Copyright (c) 2002-2010 Solutions Design.  All rights reserved." />
+	</Properties>
+	<!-- triggers -->
+	<Triggers>
+		<KeyPressTrigger Key="CommandListTrigger" Character="#">
+			<KeyPressTriggerValidStates>
+				<KeyPressTriggerValidState State="DefaultState" />
+			</KeyPressTriggerValidStates>
+		</KeyPressTrigger>
+	</Triggers>
+	
+	<!-- Highlighting Styles -->	
+	<Styles>
+		<Style Key="DefaultStyle" ForeColor="Black" BackColor="Default" Bold="False" Italic="False"/>
+		<Style Key="RelationshipTypeTokenStyle" ForeColor="Blue" BackColor="Default" Bold="True" Italic="False" />
+		<Style Key="CommandTokenStyle" ForeColor="Maroon" BackColor="Default" Bold="True" Italic="False" />
+		<Style Key="OperatorStyle" ForeColor="Green" BackColor="Default" Bold="True" Italic="False" />
+		<Style Key="ReservedWordStyle" ForeColor="Blue" />
+		<Style Key="NumberStyle" ForeColor="Purple" />
+	</Styles>
+
+	<!-- Macros -->	
+	<Macros>
+		<!-- Redefine word macros to include hyphens -->
+		<Macro Key="WordMacro" Value="[a-zA-Z_0-9]" />
+		<Macro Key="NonWordMacro" Value="[^a-zA-Z_0-9]" />
+	</Macros>
+	
+	<!-- States -->
+	<States>
+		<!-- Code -->
+		<State Key="DefaultState" Style="DefaultStyle">
+			<!-- Patterns Groups -->
+			<PatternGroups>
+				<RegexPatternGroup TokenKey="WhitespaceToken" PatternValue="{WhitespaceMacro}+" IsWhitespace="True" Style="DefaultStyle" />
+				<RegexPatternGroup TokenKey="LineTerminatorToken" PatternValue="{LineTerminatorMacro}" IsWhitespace="True" />
+				<ExplicitPatternGroup Key="OpenParenthesisPatternGroup" TokenKey="OpenParenthesisToken" PatternValue="(" EndBracket="CloseParenthesisPatternGroup" />
+				<ExplicitPatternGroup Key="CloseParenthesisPatternGroup" TokenKey="CloseParenthesisToken" PatternValue=")" StartBracket="OpenParenthesisPatternGroup" />
+				<ExplicitPatternGroup TokenKey="NullToken" Style="ReservedWordStyle" PatternValue="null" LookAhead="{NonWordMacro}|\z" CaseSensitivity="AutoCorrect" />
+				<ExplicitPatternGroup TokenKey="PkToken" Style="OperatorStyle" PatternValue="*" />
+				<ExplicitPatternGroup TokenKey="CommandToken" Style="CommandTokenStyle" CaseSensitivity="AutoCorrect">
+					<ExplicitPatterns>
+						#u #d #e #v #mg #ms #cm #rgl #rll #r #cv
+					</ExplicitPatterns>
+				</ExplicitPatternGroup>
+				<ExplicitPatternGroup TokenKey="DashToken" PatternValue="-" Style="OperatorStyle" />
+				<ExplicitPatternGroup TokenKey="NameSeparatorToken" Style="OperatorStyle">
+					<ExplicitPatterns>
+						. :
+					</ExplicitPatterns>
+				</ExplicitPatternGroup>
+				<ExplicitPatternGroup TokenKey="InheritanceTypeToken" Style="OperatorStyle" CaseSensitivity="AutoCorrect">
+					<ExplicitPatterns>
+						tpeh tpe
+					</ExplicitPatterns>
+				</ExplicitPatternGroup>
+				<ExplicitPatternGroup TokenKey="RelationshipTypeToken" Style="RelationshipTypeTokenStyle" CaseSensitivity="AutoCorrect">
+					<ExplicitPatterns>
+						1n m1 11
+					</ExplicitPatterns>
+				</ExplicitPatternGroup>
+				<RegexPatternGroup TokenKey="IntegerNumberToken" Style="NumberStyle" PatternValue="{DigitMacro}+ (([Uu]? [Ll]?) | ([Ll]? [Uu]?))" LookAhead="{NonWordMacro}|\z" />
+				<RegexPatternGroup TokenKey="IdentifierToken" PatternValue="{WordMacro}*" Style="DefaultStyle" />
+			</PatternGroups>
+		</State>
+	
+	</States>
+</SyntaxLanguage>

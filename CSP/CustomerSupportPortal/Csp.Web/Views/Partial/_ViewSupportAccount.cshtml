@@ -1,0 +1,231 @@
+﻿@model Csp.Web.DataTransferObjects.SupportAccountDto
+
+
+@using Csp.Api.Security;
+
+@{
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+}
+
+<script>
+    function activateAccountStep1() {
+
+        $('#ActivateAccount').slideUp();
+
+        var email = window.PortalContext.email;
+        var supportAccountId = '@Model.SupportAccount.Id';
+        var accountConversionDeviceCode = $('#AccountConversionDeviceCode').val();
+        var accountConversionCustomerCode = $('#AccountConversionCustomerCode').val();
+
+        $.ajax({
+            type: 'GET',
+            beforeSend: function (request) {
+                request.setRequestHeader('Authorization', 'Bearer ' + window.PortalContext.authToken);
+            },
+            dataType: 'json',
+            url: '/api/EvalRequest/ConvertEvalToCust?email=' + email + '&supportAccountId=' + supportAccountId + '&deviceCode=' + accountConversionDeviceCode + '&customerCode=' + accountConversionCustomerCode,
+            success: function (data) {
+                activateAccountStep1Response(data);
+            }
+        });
+    }
+
+    function activateAccountStep1Response(data) {
+
+        if (data.Error && data.Error.length > 0) {
+            cancelFinalizeActivation();
+            $('#AccountActivationErrors').text(data.Error);
+            $('#AccountActivationErrors').slideDown();
+            return;
+        } else {
+            $('#AccountActivationErrors').hide();
+        }
+
+        if (data.IsActiveOtherAccount) {
+            $('#EvalConversionCompanyDetails').html('The <b>' + data.CompanyName +
+                '</b> account is already active.  Click Continue and you will be added to the account otherwise click Cancel and contact Support.');
+            $('#FinalizeActivation').text('Continue');
+        } else {
+            $('#EvalConversionCompanyDetails').html('For this asset, the company on record is <b>' + data.CompanyName +
+            '</b>.  Click Continue to activate the account otherwise Cancel and contact Support.');
+            $('#FinalizeActivation').text('Continue');
+        }
+
+        $('#EvalConversionCompanyDetails').slideDown();
+        $('#FinalizeActivationButtons').slideDown();
+    }
+
+    function cancelFinalizeActivation() {
+        $('#FinalizeActivationButtons').slideUp();
+        $('#ActivateAccount').slideDown();
+        $('#EvalConversionCompanyDetails').html('');
+    }
+
+    function updateComplete() {
+        SupportPortal.UnBlockUI();
+    }
+
+    $(function () {
+        $('#ConvertAccount').val('true');
+        $('#ActivateAccount').click(activateAccountStep1);
+        $('#CancelFinalizeActivation').click(cancelFinalizeActivation);
+    });
+</script>
+
+<div id="supportAccountDiv" style="overflow:auto">
+
+    <div class="csp-content-sections-parent static-sized-content">
+        <div class="horizontal-form-element">
+            <div class="fieldset fieldset-upper">
+                <fieldset>
+                    <legend>Company Information</legend>
+                    @if (Model.SupportAccount.SAPMasterId > 0) {
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Customer ID:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.DisplayFor(model => model.SupportAccount.SAPMasterId)
+                            </div>
+                        </div>
+                    }
+                    @{if (User.HasPermission(Permission.ViewAccountType)) {
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Account Type:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.DisplayFor(model => Model.AccountType)
+                            </div>
+                        </div>
+                      }
+                    }
+                    <div>
+
+                        <div class="csp-label">
+                            @Html.Label("Name:")
+                        </div>
+                        <div class="csp-field">
+                            @Html.DisplayFor(model => model.SupportAccount.Name)
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="fieldset">
+                <fieldset>
+                    <legend>Contact Information</legend>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Address 1: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.DisplayFor(model => model.SupportAccount.Address.Address1)
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Address 2: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.DisplayFor(model => model.SupportAccount.Address.Address2)
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("City: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.DisplayFor(model => model.SupportAccount.Address.City)
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Postal Code: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.DisplayFor(model => model.SupportAccount.Address.PostalCode)
+                        </div>
+                    </div>
+                    <div>
+                        <div class="csp-label">
+                            @Html.Label("Phone Number: ")
+                        </div>
+                        <div class="csp-field">
+                            @Html.DisplayFor(model => model.SupportAccount.PhoneNumber)
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="fieldset">
+                <fieldset>
+                    <legend>MSSP Account - <span class="label-blue">@(Model.IsMSSPAccount ? "Yes" : "No")</span></legend>
+                </fieldset>
+            </div>
+            
+            <div class="fieldset">
+                <fieldset>
+                    <legend class="marketing-legend">Current Roles</legend>
+                    <div>
+                        @foreach (var role in Model.CurrentRoles)
+                        {
+                            <label>@role</label> <br/>
+                        }
+                    </div>
+                </fieldset>
+            </div>
+
+        </div>
+        <div class="horizontal-form-element horizontal-form-element-right">
+            @using (Ajax.BeginForm("ConvertAccount", "SupportAccount", null, new AjaxOptions { UpdateTargetId = "supportAccountDiv", OnBegin = "SupportPortal.BlockUI();", OnComplete = "updateComplete();" })) {
+                if (Model.AccountType == "Eval") {
+                <div>
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.SupportAccount.Id)
+                    @Html.HiddenFor(x => x.AccountType)
+                    @Html.HiddenFor(model => model.ConvertAccount)
+                </div>
+                <div class="fieldset" id="EvalConversionArea">
+                    <fieldset>
+                        <legend>Eval Account</legend>
+                        <div class="text-info">
+                            *To activate your Support Account, enter the following information.
+                        </div>
+                        <div>
+                            <div class="csp-label" style="width: 12em;">
+                                @Html.Label("Serial Number or Auth Code: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(x => x.AccountConversionDeviceCode)
+                                @Html.TextBoxFor(model => model.AccountConversionDeviceCode)
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label" style="width: 12em;">
+                                @Html.Label("Sales Order Number or Customer Id: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(x => x.AccountConversionCustomerCode)
+                                @Html.TextBoxFor(model => model.AccountConversionCustomerCode)
+                            </div>
+                        </div>
+                        <div id="AccountActivationErrors" style="display: none;" class="text-error"></div>
+                        <div>
+                            <button type="button" id="ActivateAccount">Activate this Account</button>
+                        </div>
+                        <div id="EvalConversionCompanyDetails" style="display: none;">
+                        </div>
+                        <div id="FinalizeActivationButtons" style="display: none;">
+                            <button type="submit" id="FinalizeActivation"></button>
+                            <button type="button" id="CancelFinalizeActivation">Cancel</button>
+                        </div>
+                    </fieldset>
+                </div>
+                }
+            }
+        </div>
+    </div>
+
+    <br style="clear: both;" />
+
+</div>

@@ -1,0 +1,43 @@
+﻿@model Csp.Api.Model.UserAccount
+
+@{
+    User.UserAccount.IsTempMessageViewed = true;
+}
+
+<script>
+
+    function close() {
+        $('#temporaryAnnouncementWindow').data("kendoWindow").close();
+    }
+
+</script>
+
+<div id="@UniqueId.formContainer">
+
+    @using (Ajax.BeginForm("TemporaryAnnouncement", "UserAccount", new AjaxOptions {
+        UpdateTargetId = (string)UniqueId.formContainer,
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI(); close();",
+    })) {
+        @Html.HiddenFor(model => model.Id);
+        @Html.AntiForgeryToken()
+        <div class="fieldset" style="padding: 10px; margin: 10px; font-size: 130%;">
+
+            <p>Welcome to the Next Generation Customer Support Portal!</p>
+
+            <p>We listened to your feedback and gave the Support Portal a new look and added new features.</p>
+
+            <p>Learn what the new portal has to offer.</p>
+
+            <p><a href="https://live.paloaltonetworks.com/" target="_blank">LEARN MORE</a></p>
+        </div>
+        
+        <div style="float: right; margin: 5px;">
+            <label style="cursor: pointer;">Do Not Display Again @Html.CheckBoxFor(model => model.IsTempMessageViewed)</label>
+        </div>
+        
+        <div class="csp-submit-container">
+            <input class="k-button csp-submit" type="submit" value="OK" />
+        </div>
+    }
+</div>

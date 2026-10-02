@@ -1,0 +1,99 @@
+﻿<~
+	// The enum definition for the Dbtypes as it is used by the SqlServer driver. Used here to determine in readable code
+	// if a field requires a length specification and/or collation specifications emitted in the DDL
+	public enum SqlDbTypes:int
+	{
+		BigInt,
+		Binary,
+		Bit,
+		Char,
+		DateTime,
+		Decimal,
+		Float,
+		Image,
+		Int,
+		Money,
+		NChar,
+		NText,
+		NVarChar,
+		Numeric,
+		Real,
+		SmallDateTime,
+		SmallInt,
+		SmallMoney,
+		Sql_Variant,
+		SysName,
+		Text,
+		TimeStamp,
+		TinyInt,
+		VarBinary,
+		VarChar,
+		UniqueIdentifier,
+		Xml,				// SqlServer 2005 specific
+		UserDefinedType,	// SqlServer 2005 specific
+		Date,				// SqlServer 2008 specific
+		DateTime2,			// SqlServer 2008 specific
+		DateTimeOffset,		// SqlServer 2008 specific
+		Time,				// SqlServer 2008 specific
+	}
+	
+	// Creates the string which defines the field, complete with name, type, identity (if applicable) and nullable/not nullable
+	private string CreateFieldDefinitionString(DBTableField field)
+	{
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.AppendFormat("[{0}]", field.FieldName);
+		if(field.TypeDefinition.DBType==(int)SqlDbTypes.UserDefinedType)
+		{
+			// .NET CLR UDT. SqlServer 2005+ specific.
+			toReturn.AppendFormat(" [{0}].[{1}]", field.TypeDefinition.UserDefinedTypeOwner, field.TypeDefinition.UserDefinedTypeName);
+		}
+		else
+		{
+			toReturn.AppendFormat(" [{0}]", field.TypeDefinition.DBTypeAsString);
+		}
+		switch((SqlDbTypes)field.TypeDefinition.DBType)
+		{
+			case SqlDbTypes.Decimal:
+			case SqlDbTypes.Numeric:
+				toReturn.AppendFormat(" ({0}, {1})", field.TypeDefinition.Precision, field.TypeDefinition.Scale);
+				break;
+			case SqlDbTypes.Char:
+			case SqlDbTypes.NChar:
+				toReturn.AppendFormat(" ({0}) COLLATE SQL_Latin1_General_CP1_CI_AS", field.TypeDefinition.Length);
+				break;
+			case SqlDbTypes.NVarChar:
+			case SqlDbTypes.VarChar:
+				if(field.TypeDefinition.Length < 2147483647)
+				{
+					toReturn.AppendFormat(" ({0}) COLLATE SQL_Latin1_General_CP1_CI_AS", field.TypeDefinition.Length);
+				}
+				else
+				{
+					// SqlServer 2005+ MAX 
+					toReturn.Append(" (MAX) COLLATE SQL_Latin1_General_CP1_CI_AS");
+				}
+				break;
+			case SqlDbTypes.VarBinary:
+				if(field.TypeDefinition.Length < 2147483647)
+				{
+					toReturn.AppendFormat(" ({0})", field.TypeDefinition.Length);
+				}
+				else
+				{
+					// SqlServer 2005+ MAX 
+					toReturn.Append(" (MAX)");
+				}
+				break;
+		}
+		if(field.IsIdentity)
+		{
+			toReturn.Append(" IDENTITY (1,1)");
+		}
+		if(!field.IsNullable)
+		{
+			toReturn.Append(" NOT");
+		}
+		toReturn.Append(" NULL");
+		return toReturn.ToString();
+	}
+~>

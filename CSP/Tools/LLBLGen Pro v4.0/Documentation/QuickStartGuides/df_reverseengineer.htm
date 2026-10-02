@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>LLBLGen Pro quick start guide: Reverse engineer entities from a database</title>
+	<link rel="STYLESHEET" type="text/css" href="stylesheets/general.css">
+</head>
+
+<body>
+
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td>
+			<H1>Reverse engineer entities from a database&nbsp;&nbsp;<img src="pics/CatalogsRootIcon_v3.png" width="16" height="16" alt="" border="0"></H1>
+		</td>
+		<td align="right" nowrap>
+			<br>
+			<a href="javascript:history.go(-1)" class="nohover"><img src="pics/back.gif" width="30" height="23" border="0" alt="back"></a>&nbsp;&nbsp;
+			<a href="index.htm" title="home" class="nohover"><img src="pics/home.gif" width="30" height="23" alt="home" border="0"></a>
+		</td>
+	</tr>
+</table>
+<br clear="all"><br>
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td width="40" valign="top">
+			<img src="pics/1.png" width="30" height="30" alt="1." border="0">
+		</td>
+		<td class="content">
+			Right-Click the node 'Relational Model Data' in the <a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/ProjectExplorer.htm" target="_blank" title="more information" class="info">Project Explorer</a> 
+			and select <i>Add Relational Model data from a Database</i> from the context menu.<br>
+			<img src="pics/df_reverseengineer1.png" width="509" height="205" alt="Add Relational Model data from a Database" border="0"><br>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/2.png" width="30" height="30" alt="2." border="0">
+		</td>
+		<td class="content">
+			The <a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/RelationalModelDataRetrievalWizard.htm" target="_blank" title="more information" class="info">Relational Model Data Retrieval Wizard</a> 
+			is started. Complete the wizard's steps to obtain the relational model data from your database. Check at least 1 table with some fields.<br>
+			<img src="pics/df_reverseengineer2.png" width="677" height="452" alt="Relational Model Data Retrieval Wizard 1" border="0"><br><br>
+			<img src="pics/df_reverseengineer3.png" width="679" height="455" alt="Relational Model Data Retrieval Wizard 2" border="0"><br><br>
+			<img src="pics/df_reverseengineer4.png" width="679" height="454" alt="Relational Model Data Retrieval Wizard 3" border="0"><br><br>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/3.png" width="30" height="30" alt="3." border="0">
+		</td>
+		<td class="content">
+			You now have a Relational Model Data storage with Relational Model Data in the project. Go to the 
+			<a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/CatalogExplorer.htm" target="_blank" title="more information" class="info">Catalog Explorer</a> 
+			on the right-hand side of the program and examine what's been retrieved by LLBLGen Pro.<br>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/4.png" width="30" height="30" alt="4." border="0">
+		</td>
+		<td class="content">
+			In Catalog Explorer, Right-click the catalog node - or schema node - and select <i>Reverse Engineer Tables to Entity Definitions...</i> from the context menu.<br>
+			<img src="pics/df_reverseengineer5.png" width="603" height="425" alt="Reverse Engineer Tables to Entity Definitions" border="0"><br>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/5.png" width="30" height="30" alt="5." border="0">
+		</td>
+		<td class="content">
+			The <a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/ReverseEngineeringElementEditor.htm" target="_blank" title="more information" class="info">Reverse Engineering Element Editor</a> 
+			is opened. Examine the names pre-generated and check all checkboxes in front of the elements in the grid. Then click the <b>Add to Project</b> button.<br>
+			<img src="pics/df_reverseengineer6.png" width="701" height="516" alt="Reverse Engineering Element Editor" border="0"><br>
+			The Project Explorer now shows one or more entity definitions. You now have reverse-engineered tables, their fields, primary key constraints and FK constraints to an Abstract Entity Model with entity definitions, fields, identifying field sets and relationships.
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" height="10" style="background-image: url(pics/hline.png); background-repeat: no-repeat;">&nbsp;</td>
+	</tr>
+</table>
+<br clear="all">
+<table cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="2">
+			<img src="pics/nextstep.png" width="257" height="20" alt="next step" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td width="90">&nbsp;</td>
+		<td class="content">
+			<a href="generatecode.htm">Generate source code</a>
+		</td>
+	</tr>
+</table>
+<br><br>
+</body>
+</html>

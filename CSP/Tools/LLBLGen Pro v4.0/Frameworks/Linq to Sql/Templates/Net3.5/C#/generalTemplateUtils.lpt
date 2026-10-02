@@ -1,0 +1,197 @@
+﻿<$ System.Data.Linq.dll $>
+<[ System.Data ]>
+<[ System.Data.Linq]>
+<[ SD.LLBLGen.Pro.ApplicationCore.Interfaces ]>
+<~
+	// produces an operand string which is usable as an operand in the 'on' clause of a linq join statement. 
+	// if fields is just 1 field, it returns sourceName.suffix + field.Name.
+	// if fields are more than 1 field, it returns: sourceName.suffix+field1.name, sourceName.suffix + field2.name etc. wrapped in a string
+	// produced by the compound pattern which should be 'new {{{0}}}' in C#. 
+	internal static string ProduceLinqOnClauseOperand(string sourceName, string suffix, IEnumerable<IFieldElementCore> fields, string compoundPattern)
+	{
+		List<string> fieldFragments = new List<string>();
+		List<IFieldElementCore> fieldsList = fields.ToList();
+		foreach(var field in fieldsList)
+		{
+			fieldFragments.Add(string.Format("{0}.{1}{2}", sourceName, suffix, field.Name));
+		}
+		if(fieldFragments.Count<1)
+		{
+			return string.Format("{0}.{1}", sourceName, suffix);
+		}
+		if(fieldFragments.Count > 1)
+		{
+			for(int i=0;i<fieldFragments.Count;i++)
+			{
+				string fragmentSuffix = string.Empty;
+				if(fieldsList[i].IsOptional)
+				{
+					fragmentSuffix = ".Value";
+				}
+				fieldFragments[i] = string.Format("F{0}={1}{2}", i, fieldFragments[i], fragmentSuffix);
+			}
+		}
+		return fieldFragments.Count==1? fieldFragments[0] : string.Format(compoundPattern, string.Join(", ", fieldFragments.ToArray()));
+	}
+
+
+	// Produces the type string for the DbType property of the Column attribute on the property of a field
+	internal static string ProduceDbTypeString(IProjectElementFieldMapTargetElement targetField)
+	{
+		return ProduceDbTypeString(targetField, false);
+	}
+
+	// gets all the attributes defined on the element specified, with all macro's evaluated.
+	internal static IEnumerable<string> GetAttributes(IOutputSettingValuesTarget element, Project currentProject)
+	{
+		return element.GetAttributes(currentProject);
+	}
+
+	// returns all inherited types (base class from settings, additional interfaces from settings) as a comma separated string
+	// doesn't look at supertypes for inheritance scenario's. Filters out empty names.
+	internal static string GetInheritedTypesAsString(IOutputSettingValuesTarget element, string baseClassSettingName, Project currentProject)
+	{
+		List<string> inheritedTypes = new List<string>();
+		inheritedTypes.Add((element.OutputSettingValues.GetRealStringSettingValue(baseClassSettingName, currentProject) ?? string.Empty).Trim());
+		inheritedTypes.AddRange(element.GetAdditionalInterfaces(currentProject));
+		return string.Join(", ", inheritedTypes.Where(s=>s.Trim().Length>0).ToArray());
+	}
+	
+	// returns all inherited types (base class from settings, additional interfaces from settings) as a comma separated string
+	// doesn't look at supertypes for inheritance scenario's. Filters out empty names.
+	internal static string GetInheritedTypesAsStringVBNet(IOutputSettingValuesTarget element, string baseClassSettingName, Project currentProject)
+	{
+		StringBuilder builder = new StringBuilder();
+		string baseClass = (element.OutputSettingValues.GetRealStringSettingValue(baseClassSettingName, currentProject) ?? string.Empty).Trim();
+		if(!string.IsNullOrEmpty(baseClass))
+		{
+			builder.AppendFormat("\t\tInherits {0}", baseClass);
+		}
+		foreach(var additionalInterface in element.GetAdditionalInterfaces(currentProject).Where(s=>s.Trim().Length>0))
+		{
+			builder.AppendFormat("\t\tImplements {0}", additionalInterface);
+		}
+		return builder.ToString();
+	}
+	
+		
+	// produces the .net type string for the field specified. takes settings into account
+	internal static string ProduceDotNetTypeName(IFieldElementCore field, Project currentProject, string nullablePattern)
+	{
+		// Linq to sql doesn't support valuetypedefinitions as field types, only .NET types, so it's safe to pass FieldType.RepresentedType.
+		return ProduceDotNetTypeName(field.FieldType.RepresentedType, currentProject, field.IsOptional, nullablePattern);
+	}
+
+	// produces the .net type string for the type specified. takes settings into account
+	internal static string ProduceDotNetTypeName(Type dotNetType, Project currentProject, bool isOptional, string nullablePattern)
+	{
+		Type toPass = dotNetType;
+		if((toPass==typeof(byte[])) && currentProject.GetRealBoolSettingValue("PreferBinaryTypeOverByteArray"))
+		{
+			toPass = typeof(System.Data.Linq.Binary);
+		}
+		return GeneratorUtils.ProduceDotNetTypeName(toPass, isOptional, nullablePattern);
+	}
+
+
+	// produces the .net type string for the field specified. takes settings into account
+	internal static string ProduceDotNetTypeNameVBNet(IFieldElementCore field, Project currentProject, string nullablePattern)
+	{
+		// Linq to sql doesn't support valuetypedefinitions as field types, only .NET types, so it's safe to pass FieldType.RepresentedType.
+		return ProduceDotNetTypeNameVBNet(field.FieldType.RepresentedType, currentProject, field.IsOptional, nullablePattern);
+	}
+
+
+	// produces the .net type string for the type specified. takes settings into account
+	internal static string ProduceDotNetTypeNameVBNet(Type dotNetType, Project currentProject, bool isOptional, string nullablePattern)
+	{
+		Type toPass = dotNetType;
+		if(toPass==typeof(byte[]))
+		{
+			if(currentProject.GetRealBoolSettingValue("PreferBinaryTypeOverByteArray"))
+			{
+				toPass = typeof(System.Data.Linq.Binary);
+			}
+			else
+			{
+				return "System.Byte()";
+			}
+		}
+		return GeneratorUtils.ProduceDotNetTypeName(toPass, isOptional, nullablePattern);
+	}
+
+	
+	// Produces the type string for the DbType property of the Column attribute on the property of a field
+	internal static string ProduceDbTypeString(IProjectElementFieldMapTargetElement targetField, bool alwaysNullable)
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.Append(targetField.DbTypeAsString);
+		switch(targetField.DbTypeAsString)
+		{
+			case "binary":
+			case "char":
+			case "nchar":
+				builder.AppendFormat("({0})", targetField.Length);
+				break;
+			case "nvarchar":
+			case "varbinary":
+			case "varchar":
+				string size = targetField.Length.ToString();
+				if(targetField.Length> 8000)
+				{
+					// Sqlserver 2005+
+					size = "MAX";
+				}
+				builder.AppendFormat("({0})", size);
+				break;
+			case "decimal":
+				builder.AppendFormat("({0},{1})", targetField.Precision, targetField.Scale);
+				break;
+		}
+		if(!alwaysNullable)
+		{
+			if(!targetField.IsNullable)
+			{
+				builder.Append(" NOT");
+			}
+			builder.Append(" NULL");
+		}
+		if(targetField.IsIdentity)
+		{
+			builder.Append(" IDENTITY");
+		}
+		return builder.ToString();
+	}
+	
+	// Converts the passed in parameter direction to a usable string form for the external mapping file.
+	internal static string ConvertParameterDirectionToString(ParameterDirection direction)
+	{
+		string toReturn="In";
+		switch(direction)
+		{
+			case ParameterDirection.Input:
+				toReturn="In";
+				break;
+			case ParameterDirection.Output:
+				toReturn="Out";
+				break;
+			case ParameterDirection.InputOutput:
+				toReturn="InOut";
+				break;
+		}
+		return toReturn;
+	}
+	
+	// Creates the full target name (with [] and optional catalog name) for the target specified.
+	internal static string ProduceTargetFullName(bool hasMultipleCatalogs, IProjectElementMapTargetElement target)
+	{
+		DBSchema schema = target.ContainingSchema;
+		StringBuilder builder = new StringBuilder();
+		if(hasMultipleCatalogs)
+		{
+			builder.AppendFormat("[{0}].", schema.ParentCatalog.CatalogName);
+		}
+		builder.AppendFormat("[{0}].[{1}]", schema.SchemaOwner, target.Name);
+		return builder.ToString();
+	}
+~>

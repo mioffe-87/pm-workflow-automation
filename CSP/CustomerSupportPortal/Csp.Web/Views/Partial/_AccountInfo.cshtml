@@ -1,0 +1,106 @@
+﻿@using Csp.Web.DataTransferObjects
+@using Kendo.Mvc.UI;
+@using Csp.Api.Security;
+@model AccountInfoDto
+
+@{
+    var actionHelper = Model.ActionHelper;
+}
+
+<script type="text/javascript">
+    var @(UniqueId.AccountInfo)AccountInfoTabs = (function () {
+        var lastSelectedAccountInfoTab = -1;
+
+        function onAccountInfoTabStripSelect(e) {
+            lastSelectedAccountInfoTab = $(e.item).index();
+        }
+
+        function onAccountInfoTabStripContentLoad(e) {
+            var eItem = $(e.item);
+            var tabStrip = eItem.closest('.k-tabstrip').data("kendoTabStrip");
+
+            var isFirstTabSelection = lastSelectedAccountInfoTab === -1;
+            var isMostRecentlySelectedTab = lastSelectedAccountInfoTab === eItem.index();
+            if (isFirstTabSelection || isMostRecentlySelectedTab) {
+                //Proceed as normal - this tab should load
+            } else {
+                //This tab should not load
+                tabStrip.deactivateTab(eItem);
+            }
+
+            deactivateUnselectedTabs(tabStrip);
+        }
+
+        var callonce = true;
+
+        function deactivateUnselectedTabs(tabStrip) {
+            if (callonce) {
+                callonce = false;
+
+                var tabs = tabStrip.items();
+                var current = tabStrip.select();
+                for (var i = 0; i < tabs.length; i++) {
+                    //var tab = $(tabs[i]);
+                    var isCurrentTab = i === current.index();
+
+                    if (!isCurrentTab) {
+                        var contentHolder = tabStrip.contentHolder(i);
+                        $(contentHolder).css('display', 'none');
+                    }
+                }
+            }
+        }
+
+        return {
+            onAccountInfoTabStripSelect: onAccountInfoTabStripSelect,
+            onAccountInfoTabStripContentLoad: onAccountInfoTabStripContentLoad
+        };
+    })();
+</script>
+
+<div>
+
+    @(Html.Kendo().TabStrip()
+                        .Animation(false)
+                        .Name((string)UniqueId.AccountInfoTabId)
+                        .Events(e => e.Select((string)UniqueId.AccountInfo + "AccountInfoTabs.onAccountInfoTabStripSelect").ContentLoad((string)UniqueId.AccountInfo + "AccountInfoTabs.onAccountInfoTabStripContentLoad"))
+                        .HtmlAttributes(new { @class = "subTabs" })
+                        .Items(tabstrip =>
+                        {
+                            var tab = tabstrip.Add().Text("Account Information");
+
+                            if (Model.PartialId.HasValue && User.HasPermission(Permission.EditSupportAccount)) {
+                                if (Model.SelectedTab == AccountInfoTabs.Home) {
+                                    tab.LoadContentFrom("Edit", "SupportAccount", new
+                                    {
+                                        id = actionHelper.Id
+                                    }).Selected(true);
+                                }
+                            }
+                            else if (Model.PartialId.HasValue && User.HasPermission(Permission.ViewSupportAccount)) {
+                                if (Model.SelectedTab == AccountInfoTabs.Home) {
+                                    tab.LoadContentFrom("View", "SupportAccount", new
+                                    {
+                                        id = actionHelper.Id
+                                    }).Selected(true);
+                                }
+                            }
+                            else {
+                                tab.Enabled(false);
+                            }
+
+                            tab = tabstrip.Add().Text("ASC Preferences")
+                                .LoadContentFrom("ManageAscPreferences", "SupportAccount", new
+                                {
+                                    id = actionHelper.Id
+                                });
+
+                            if (Model.SelectedTab == AccountInfoTabs.AscPreferences) {
+                                tab.Selected(true);
+                            }
+                        }
+
+                        )
+                    )
+
+</div>

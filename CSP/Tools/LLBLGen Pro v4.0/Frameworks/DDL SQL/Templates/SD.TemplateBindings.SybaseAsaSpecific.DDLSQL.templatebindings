@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="SD.TemplateBindings.SybaseAsaSpecific.DDLSQL" description="Sybase ASA specific template bindings for DDL SQL generation" 
+						precedenceLevel="10" databaseDriverID="3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+	<supportedPlatforms>
+		<platform name="RDBMS"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="DDL SQL" />
+	</supportedFrameworks>
+	<language name="SQL">
+		<templateBinding templateID="SD_DDLSQL_AlterTableFieldInclude" filename="SybaseAsaSpecific\AlterTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateForeignKeyConstraintInclude" filename="SybaseAsaSpecific\CreateForeignKeyConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreatePrimaryKeyConstraintInclude" filename="SybaseAsaSpecific\CreatePrimaryKeyConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateSchemaInclude" filename="SybaseAsaSpecific\CreateSchemaInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateTableFieldInclude" filename="SybaseAsaSpecific\CreateTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateTableInclude" filename="SybaseAsaSpecific\CreateTableInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_CreateUniqueConstraintInclude" filename="SybaseAsaSpecific\CreateUniqueConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropForeignKeyConstraintInclude" filename="SybaseAsaSpecific\DropConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropPrimaryKeyConstraintInclude" filename="SybaseAsaSpecific\DropPrimaryKeyConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropTableFieldInclude" filename="SybaseAsaSpecific\DropTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropTableInclude" filename="SybaseAsaSpecific\DropTableInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_DropUniqueConstraintInclude" filename="SybaseAsaSpecific\DropConstraintInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_FieldCreationInclude" filename="SybaseAsaSpecific\FieldCreationInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_RenameTableFieldInclude" filename="SybaseAsaSpecific\RenameTableFieldInclude.lpt" templateLanguage="C#" includeOnly="true" />
+		<templateBinding templateID="SD_DDLSQL_RenameTableInclude" filename="SybaseAsaSpecific\RenameTableInclude.lpt" templateLanguage="C#" includeOnly="true" />
+	</language>
+</templateBindings>

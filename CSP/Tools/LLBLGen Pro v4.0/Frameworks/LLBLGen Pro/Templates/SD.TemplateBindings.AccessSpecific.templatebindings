@@ -1,0 +1,25 @@
+﻿<?xml version="1.0"?>
+<templateBindings xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd" name="SD.TemplateBindings.AccessSpecific"
+				  description ="Template bindings for the templates which are specific for MS Access based databases."
+				  databaseDriverID="4F77DEE6-918E-4a53-8B3B-A076B00A3E0D" precedenceLevel="10">
+	<supportedPlatforms>
+		<platform name=".NET 3.5"/>
+		<platform name=".NET 4.0"/>
+		<platform name=".NET 4.5"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="LLBLGen Pro Runtime Framework"/>
+	</supportedFrameworks>
+
+	<language name="C#">
+		<!-- DB Specific template bindings -->
+		<templateBinding templateID="SD_DQEReferenceXmlIncludeTemplate" filename="AccessSpecific\Shared\dqeReferenceXmlInclude.template" templateLanguage="TDL" />
+		<!-- DB Specific include template bindings -->
+		<templateBinding templateID="SD_DQENamespaceIncludeTemplate" filename="AccessSpecific\C#\dqeNamespaceInclude.template" />
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_DQEReferenceXmlIncludeTemplate" filename="AccessSpecific\Shared\dqeReferenceXmlInclude.template" templateLanguage="TDL" />
+		<!-- DB Specific include template bindings -->
+		<templateBinding templateID="SD_DQENamespaceIncludeTemplate" filename="AccessSpecific\VB.NET\dqeNamespaceInclude.template" />
+	</language>
+</templateBindings>

@@ -1,0 +1,46 @@
+﻿@model Csp.Web.DataTransferObjects.CsspInfoDto
+<div class="horizontal-form-element">
+    @if (Model.Cssp != null && ((string.IsNullOrEmpty(Model.Cssp.DistiName) == false && Model.Cssp.DistiName != "null") || (string.IsNullOrEmpty(Model.Cssp.AscName) == false && Model.Cssp.AscName != "null")))
+    {
+        <div class="fieldset">
+            <fieldset>
+                <legend>CSSP Information</legend>
+                <div>&nbsp;</div>
+                @if (string.IsNullOrEmpty(Model.Cssp.DistiName) == false && Model.Cssp.DistiName != "null")
+                {
+                    <p>
+                        <span style="font-size: 1.2em">Distributor: @Model.Cssp.DistiName</span>
+                    </p>
+                }
+                @if (string.IsNullOrEmpty(Model.Cssp.AscName) == false && Model.Cssp.AscName != "null")
+                {
+                    <p>
+                        <span style="font-size: 1.2em">Authorized Service Center: @Model.Cssp.AscName</span>
+                    </p>                    
+                }
+                @if (Model.Cssp.CanGeneratePrelicenseKeys)
+                {
+                    <p>
+                    <span style="font-size: 1.2em">Pre-Licensing is Enabled</span>&nbsp;<span class="k-icon k-i-tick" style="margin-bottom: 2px">&nbsp;</span>
+                    </p>                    
+                }
+            </fieldset>
+        </div>
+    }
+    <div class="fieldset">
+        <fieldset>
+            <legend>Resources</legend>
+            <div>&nbsp;</div>
+            <p>
+                <a href="https://live.paloaltonetworks.com/t5/CSSP-Articles/CSSP-Portal-User-Guide/ta-p/94455" class="marketing-font" target="_blank">CSSP Portal User Guide</a>
+            </p>
+            <p>
+                <a href="https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/tech-briefs/cssp-getting-starting-guide.pdf" class="marketing-font" target="_blank">CSSP Getting Started Guide</a>
+            </p>
+            <p>
+                <a href="https://www.paloaltonetworks.com/partners/cloud-security-service-provider-program" class="marketing-font" target="_blank">CSSP Program Guide</a>
+            </p>
+        </fieldset>
+    </div>
+</div>
+

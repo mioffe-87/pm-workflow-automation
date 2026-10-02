@@ -1,0 +1,71 @@
+﻿@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.CsspOrdersDto
+
+<script id="client-template" type="text/x-kendo-template">
+    @(Html.Kendo().Grid(Model.OrderItems)
+          .Name("grid_#=CsspShoppingCartId#")
+          .Columns(columns =>
+          {
+              columns.Bound(item => item.AuthorizationCode).Width(100).Encoded(false);
+              columns.Bound(item => item.CsspShoppingCartItemId).Width(100).Hidden();
+              columns.Bound(item => item.UseCount).Title("Quantity").Width(100);
+              columns.Bound(item => item.PartNumber).Title("Product SKU").Width(300);
+              columns.Bound(item => item.SkuDescription);
+          })
+          .DataSource(dataSource =>
+              dataSource.Ajax().Read(read => read.Action("OrderItems_Read", "Cssp", new {orderId = "#=CsspShoppingCartId#"}))
+          )
+          .ToClientTemplate()
+          )
+</script>
+
+<script>
+    function getSearchParams() {
+        var params = SetAntiForgery();
+
+        params.orderNumber = $('#FindOrder').val();
+
+        return params;
+    }
+
+    function dataBound(e) {
+        this.expandRow(this.tbody.find("tr.k-master-row").first());
+    }
+
+    $(function() {
+        $('#@UniqueId.CsspFindOrder').click(function () {
+            $('#@UniqueId.CsspOrderHistoryGrid').data('kendoGrid').dataSource.read();
+        });
+    })
+</script>
+<div>
+    <div class="grid-header">
+    <div class="grid-right">
+        <div class="grid-filter">
+            @Html.Label("FindOrder", "Order Number:")
+        </div>
+        <div class="grid-filter">
+            @Html.TextBox("FindOrder", Model.OrderNumber)
+            <input type="button" value="Search" id="@UniqueId.CsspFindOrder" class="k-button" />
+        </div>
+    </div>
+</div>
+
+    @(Html.Kendo().Grid(Model.OrdersList)
+          .Name((string) UniqueId.CsspOrderHistoryGrid)
+          .Columns(cols =>
+          {
+              cols.Bound(x => x.CsspShoppingCartId).Title("Order Id").Hidden();
+              cols.Bound(x => x.CsspCartNumber).Title("Order Number");
+              cols.Bound(x => x.OrderStatus).Title("Order Status&nbsp;&nbsp;<span class=\"csp-tooltip\"><i class=\"icon-question-sign icon-large\" onclick=\"SupportPortal.Help(this, 28);\"></i></span>").Width(100).Encoded(false);
+              cols.Bound(x => x.OrderedBy).Title("Ordered By").Width(200);
+              cols.Bound(x => x.OrderDate).Title("Order Date").Format("{0:M/d/yyyy h:mm tt}").Width(200);
+          })
+          .Events(events => events.DataBound("dataBound"))
+          .DataSource(dataSource => dataSource
+              .Ajax().Read(read => read.Action("OrderHistory_Read", "Cssp").Data("getSearchParams"))
+          )
+          .ClientDetailTemplateId("client-template")
+          )
+
+</div>

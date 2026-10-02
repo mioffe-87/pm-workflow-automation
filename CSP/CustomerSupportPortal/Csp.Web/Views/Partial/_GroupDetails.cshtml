@@ -1,0 +1,125 @@
+﻿@using Csp.Api.Security;
+@using Csp.Web.Controllers
+@using Csp.Web.DataTransferObjects
+@using Kendo.Mvc.UI;
+@model GroupDto
+
+@{
+    var actionHelper = Model.ActionHelper;
+}
+
+<script type="text/javascript">
+    var @(UniqueId.group)groupDetails = (function() {
+        var lastSelectedDevicesTab = -1;
+
+        function onDevicesTabStripSelect(e) {
+            lastSelectedDevicesTab = $(e.item).index();
+        }
+
+        function onDevicesTabStripContentLoad(e) {
+            var eItem = $(e.item);
+            var tabStrip = eItem.closest('.k-tabstrip').data("kendoTabStrip");
+
+            var isFirstTabSelection = lastSelectedDevicesTab == -1;
+            var isMostRecentlySelectedTab = lastSelectedDevicesTab == eItem.index();
+            if (isFirstTabSelection || isMostRecentlySelectedTab) {
+                //Proceed as normal - this tab should load
+            } else {
+                //This tab should not load
+                tabStrip.deactivateTab(eItem);
+            }
+
+            deactivateUnselectedTabs(tabStrip);
+        }
+
+        var callonce = true;
+
+        function deactivateUnselectedTabs(tabStrip) {
+            if (callonce) {
+                callonce = false;
+
+                var tabs = tabStrip.items();
+                var current = tabStrip.select();
+                for (var i = 0; i < tabs.length; i++) {
+                    //var tab = $(tabs[i]);
+                    var isCurrentTab = i == current.index();
+
+                    if (!isCurrentTab) {
+                        var contentHolder = tabStrip.contentHolder(i);
+                        $(contentHolder).css('display', 'none');
+                    }
+                }
+            }
+        }
+
+        return {
+            onDevicesTabStripSelect: onDevicesTabStripSelect,
+            onDevicesTabStripContentLoad: onDevicesTabStripContentLoad
+        };
+    })();
+</script>
+
+<div>
+
+    @Html.Hidden("Pageflag", 0)
+    @(Html.Kendo().TabStrip()
+             .Name((string)UniqueId.grouptabStrip)
+             .Animation(false)
+             .Events(e => e.Select((string)UniqueId.group + "groupDetails.onDevicesTabStripSelect").ContentLoad((string)UniqueId.group + "groupDetails.onDevicesTabStripContentLoad"))
+             .Items(tabstrip => {
+
+                 if (User.HasPermission(Permission.ViewGroupDevices)) {
+
+                     var tab = tabstrip.Add().Text("Devices");
+
+                     if (Model.GroupDestination.HasValue && Model.GroupDestination.Value == GroupDestination.DevicesProd) {
+                         tab.Content(Html.Action(actionHelper.ProductionDevices, ControllerFields.GroupController, new { id = Model.Group.Id }).ToString());
+                         tab.Selected(true);
+                     } else {
+                         tab.LoadContentFrom(actionHelper.ProductionDevices, ControllerFields.GroupController, new { id = Model.Group.Id });
+                     }
+
+
+                     tab = tabstrip.Add().Text("Spares");
+
+                     if (Model.GroupDestination.HasValue && Model.GroupDestination.Value == GroupDestination.DevicesSpare) {
+                         tab.Content(Html.Action(actionHelper.SpareDevices, ControllerFields.GroupController, new { id = Model.Group.Id }).ToString());
+                         tab.Selected(true);
+                     } else {
+                         tab.LoadContentFrom(actionHelper.SpareDevices, ControllerFields.GroupController, new { id = Model.Group.Id });
+                     }
+                 }
+
+
+                 if (User.HasPermission(Permission.ViewGroupMemberships)) {
+                     var tab = tabstrip.Add().Text(Constants.GROUP_MEMBERS)
+                     .LoadContentFrom(actionHelper.Users, actionHelper.Controller, new { id = Model.Group.Id });
+
+                     if (Model.GroupDestination == GroupDestination.Memberships) {
+                         tab.Selected(true);
+                     }
+                 }
+             })
+        )
+</div>
+
+<script>
+    $(document).ready(function () {
+        var window = $(groupWindowId).data("kendoWindow");
+        //window.title("Group: @Html.Raw(CurrentState.GetGroupName())");
+        window.title("Group: @CurrentState.GetGroupName()");
+    });
+
+    var Grtabstrip = $("#@UniqueId.grouptabStrip").data("kendoTabStrip");
+    if (Grtabstrip != undefined) {
+        if ("@actionHelper.FormAction" == "@actionHelper.Create") {
+            Grtabstrip.enable(Grtabstrip.tabGroup.children("li:eq(1)"), false); // disable tab 1 Group Devices
+            Grtabstrip.enable(Grtabstrip.tabGroup.children("li:eq(2)"), false); // disable tab 1 Group Members
+        }
+        else {
+            Grtabstrip.enable(Grtabstrip.tabGroup.children("li:eq(1)"), true); // enable tab 1 Group Devices
+            Grtabstrip.enable(Grtabstrip.tabGroup.children("li:eq(2)"), true); // enable tab 1 Group Members
+        }
+    }
+
+</script>

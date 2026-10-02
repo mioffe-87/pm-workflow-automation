@@ -1,0 +1,13 @@
+cookie-path=/
+obfuscate-password=false
+cipher-suite=2
+session-cookie=true
+token-name=support_otk
+password=UGluZyAxMjM0
+cookie-domain=.paloaltonetworks.com
+token-notbefore-tolerance=300
+token-renewuntil=43200
+use-sunjce=false
+secure-cookie=false
+token-lifetime=28800
+use-cookie=true

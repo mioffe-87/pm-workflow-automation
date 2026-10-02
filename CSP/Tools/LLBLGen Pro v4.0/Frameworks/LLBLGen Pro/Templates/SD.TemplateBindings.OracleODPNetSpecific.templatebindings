@@ -1,0 +1,27 @@
+﻿<?xml version="1.0"?>
+<templateBindings xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd" name="SD.TemplateBindings.OracleODPNetSpecific"
+				  description ="Template bindings for the templates which are specific for Oracle based databases using ODP.NET."
+				  databaseDriverID="A8034CB0-319D-4cdd-BC7D-1E7CFDBA3B74" precedenceLevel="10">
+	<supportedPlatforms>
+		<platform name=".NET 3.5"/>
+		<platform name=".NET 4.0"/>
+		<platform name=".NET 4.5"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="LLBLGen Pro Runtime Framework"/>
+	</supportedFrameworks>
+	
+	<language name="C#">
+		<!-- DB Specific template bindings -->
+		<templateBinding templateID="SD_DQEReferenceXmlIncludeTemplate" filename="OracleODPNetSpecific\Shared\dqeReferenceXmlInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ProcedureNameIncludeTemplate" filename="OracleODPNetSpecific\C#\procedureNameInclude.template" templateLanguage="TDL"/>
+		<!-- DB Specific include template bindings -->
+		<templateBinding templateID="SD_DQENamespaceIncludeTemplate" filename="OracleODPNetSpecific\C#\dqeNamespaceInclude.template" />
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_DQEReferenceXmlIncludeTemplate" filename="OracleODPNetSpecific\Shared\dqeReferenceXmlInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ProcedureNameIncludeTemplate" filename="OracleODPNetSpecific\VB.NET\procedureNameInclude.template" templateLanguage="TDL"/>
+		<!-- DB Specific include template bindings -->
+		<templateBinding templateID="SD_DQENamespaceIncludeTemplate" filename="OracleODPNetSpecific\VB.NET\dqeNamespaceInclude.template" />
+	</language>
+</templateBindings>

@@ -1,0 +1,50 @@
+﻿@using Csp.Api.HelperClasses
+@model Csp.Web.DataTransferObjects.DeviceCategoryDto
+
+@{
+    ActionHelper actionHelper = Model.ActionHelper;
+}
+
+<div id="containerAddUpdateDeviceCategory">
+    @using (Ajax.BeginForm(actionHelper.AddUpdateDeviceCategory, ControllerFields.DeviceController, new AjaxOptions {
+        UpdateTargetId = "containerAddUpdateDeviceCategory",
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();"
+    }, new { id = "DeviceCategoryForm" })) {
+        @Html.AntiForgeryToken()
+        Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+        
+        <div class="fieldset fieldset-padded">
+            <div>
+                <div class="csp-label" style="width: 150px;">@Html.Label(ApiConstants.DEVICE_CATEGORY + " Name: ")</div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.DeviceCategory.DeviceCategoryName)
+                    @Html.TextBoxFor(model => model.DeviceCategory.DeviceCategoryName)
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+
+            <div>
+                <div class="csp-label" style="width: 150px;">@Html.Label("Description: ")</div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.DeviceCategory.Description)
+                    @Html.TextAreaFor(model => model.DeviceCategory.Description, new { @class = "csp-comments", maxlength = 100 })
+                </div>
+            </div>
+
+            <div>
+                <div class="csp-label" style="width: 150px;">
+                    @Html.HiddenFor(model => model.DeviceCategory.DeviceCategoryId)
+                </div>
+            </div>
+        </div>      
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input type="submit" id="btnAddNewDeviceCategory" value="Submit" class="k-button csp-submit" />
+        </div>
+    }
+
+</div>
+<script>
+    $.validator.unobtrusive.parse("#DeviceCategoryForm");
+</script>

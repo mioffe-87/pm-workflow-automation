@@ -1,0 +1,26 @@
+﻿@using Csp.Api.Logic
+@using Csp.Api.Services.Contracts
+@{
+    var configValues = new ConfigValues();
+}
+<div id="footer" style="white-space: nowrap;">
+    <div>
+        <div style="float: left">
+            <div id="FooterPhone">SALES: 866.320.4788</div>
+        </div>
+        <div style="float: right">
+            <div id="FooterCopyright">
+                Copyright © 2007-@DateTime.Now.Year Palo Alto Networks
+            </div>
+        </div>
+        @* Must put 'center' content after the floating divs above otherwise we get weird positioning *@
+        <div style="margin: 0 auto; width: 400px;">
+            <ul>
+                <li><a target="_self" href="@configValues.GetAppSetting(AppSettings.HeaderFooterBaseUrl)legal/privacy.html">Privacy Policy</a></li>
+                <li><a target="_self" href="@configValues.GetAppSetting(AppSettings.HeaderFooterBaseUrl)legal.html">Legal Notices</a></li>
+                <li><a target="_self" href="@configValues.GetAppSetting(AppSettings.HeaderFooterBaseUrl)site-index.html">Site Index</a></li>
+                <li><a target="_blank" href="@configValues.GetAppSetting(AppSettings.HeaderFooterBaseUrl)company/subscriptions.html">Subscriptions</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

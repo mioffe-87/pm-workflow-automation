@@ -1,0 +1,487 @@
+﻿@model Csp.Web.DataTransferObjects.SupportAccountDto
+@using System.Globalization
+@using Csp.Api.Model.Enums
+@using Kendo.Mvc.UI;
+@using Csp.Api.Security;
+@using NPOI.SS.Formula.Functions
+
+@{
+    var actionHelper = Model.ActionHelper;
+    var canViewAccountType = User.HasPermission(Permission.ViewAccountType);
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+
+    string modelAddress = "SupportAccount.Address.";
+    var uniqueId = (string)UniqueId.SupportAccountEdit + modelAddress.Replace(".", "");
+    var countryDropDownId = uniqueId + "CountryDropDownId";
+    var countryDropDownName = modelAddress + "CountryID";
+    var regionDropDownId = uniqueId + "RegionDropDownId";
+    var regionTextId = uniqueId + "RegionTextId";
+    var regionTextHiddenId = uniqueId + "RegionTextHiddenId";
+    var regionName = modelAddress + "Region";
+    var regionTextDivId = uniqueId + "RegionTextDivId";
+    var regionDropDownDivId = uniqueId + "RegionDropDownDivId";
+    var imgPreviewDivId = uniqueId + "ImgPreviewDivId";
+    var ssoConfigurationUrl = Model.ThirdPartySsoConfigUrl;
+}
+
+<style>
+     .alignedcheckbox label {
+         display: block;
+         padding-left: 15px;
+         text-indent: -15px;
+         cursor: pointer;
+     }
+    .alignedcheckbox input {
+        width: 13px;
+        height: 13px;
+        padding: 0;
+        margin:0;
+        vertical-align: bottom;
+        position: relative;
+        top: -3px;
+    }
+     .noContent li:before {
+         content: none !important;
+     }
+
+     .noContent li:first-child {
+         margin-bottom: 0px !important;
+     }
+     .label-blue {
+         color: blue;
+     }
+</style>
+
+
+<script>
+    $.validator.unobtrusive.parse("#SupportAccountForm");
+
+    function ReloadCompanyName() {
+        $("#SiteMap").load("@Url.Action("Index", ControllerFields.BreadcrumbController)");
+
+        var companyLogo = $("#@imgPreviewDivId").html();
+        var companyName = "@Model.SupportAccount.Name";
+
+        if (companyLogo && companyLogo.indexOf("csp-company-logo") != -1) {
+            companyName = companyLogo + " " + companyName;
+        }
+
+        $("#SupportAccountTitle").html(companyName);
+    }
+
+    function @(uniqueId)OnCountryDropdownChange() {
+        SupportPortal.OnCountryDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionTextDivId", "@regionDropDownDivId", "@countryDropDownId");
+    }
+
+    function @(uniqueId)OnRegionDropdownChange() {
+        SupportPortal.OnRegionDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionDropDownId", "@regionDropDownDivId", "@Constants.DropDownRegionSelect");
+    }
+
+    function @(uniqueId)OnRegionTextChange() {
+        SupportPortal.OnRegionTextChange("@regionTextHiddenId", "@regionTextId");
+    }
+
+    function @(uniqueId)FilterCountry() {
+        return { countryId: $("#@countryDropDownId").val() };
+    }
+
+    function @(uniqueId)OnCompanyLogoUploadSuccess(e) {
+        if (e.operation != "upload") return;
+
+        var result = jQuery.parseJSON(e.XMLHttpRequest.responseText);
+
+        if (result != undefined && result.Success) {
+            $("#@imgPreviewDivId").html(result.Content);
+        } else {
+            if (result != undefined && result.Message != '') {
+                SupportPortal.ClearNotification();
+                SupportPortal.Notification(result.Message, SupportPortal.NotificationType.Error);
+            }
+        }
+    }
+
+    function activateAccountStep1() {
+
+        $('#ActivateAccount').slideUp();
+
+        var email = window.PortalContext.email;
+        var supportAccountId = '@Model.SupportAccount.Id';
+        var accountConversionDeviceCode = $('#AccountConversionDeviceCode').val();
+        var accountConversionCustomerCode = $('#AccountConversionCustomerCode').val();
+
+        
+        $.ajax({
+            type: 'GET',
+            beforeSend: function (request) {
+                request.setRequestHeader('Authorization', 'Bearer ' + window.PortalContext.authToken);
+            },
+            dataType: 'json',
+            url: '/api/EvalRequest/ConvertEvalToCust?email=' + email + '&supportAccountId=' + supportAccountId + '&deviceCode=' + accountConversionDeviceCode + '&customerCode=' + accountConversionCustomerCode,
+            success: function (data) {
+                activateAccountStep1Response(data);
+            }
+        });
+    }
+
+    function activateAccountStep1Response(data) {
+
+        if (data.Error && data.Error.length > 0) {
+            cancelFinalizeActivation();
+            $('#AccountActivationErrors').text(data.Error);
+            $('#AccountActivationErrors').slideDown();
+            return;
+        } else {
+            $('#AccountActivationErrors').hide();
+        }
+
+        if (data.IsActiveOtherAccount) {
+            $('#EvalConversionCompanyDetails').html('The <b>' + data.CompanyName +
+                '</b> account is already active.  Click Continue and you will be added to the account otherwise click Cancel and contact Support.');
+            $('#FinalizeActivation').text('Continue');
+        } else {
+            $('#EvalConversionCompanyDetails').html('For this asset, the company on record is <b>' + data.CompanyName +
+            '</b>.  Click Continue to activate the account otherwise Cancel and contact Support.');
+            $('#FinalizeActivation').text('Continue');
+        }
+
+        $('#EvalConversionCompanyDetails').slideDown();
+        $('#FinalizeActivationButtons').slideDown();
+    }
+
+    function finalizeActivation() {
+        $('#ConvertAccount').val('true');
+        $('#SubmitButton').click();
+    }
+
+    function cancelFinalizeActivation() {
+        $('#FinalizeActivationButtons').slideUp();
+        $('#ActivateAccount').slideDown();
+        $('#EvalConversionCompanyDetails').html('');
+    }
+
+    function updateComplete() {
+        SupportPortal.UnBlockUI();
+        ReloadCompanyName();
+        $('#EvalConversionArea').toggle($('#AccountType').val() == 'Eval');
+    }
+
+    $(function () {
+        $('#ActivateAccount').click(activateAccountStep1);
+        $('#FinalizeActivation').click(finalizeActivation);
+        $('#CancelFinalizeActivation').click(cancelFinalizeActivation);
+    });
+</script>
+
+<div id="supportAccountDiv" style="overflow:auto">
+
+    @using (Ajax.BeginForm(actionHelper.FormAction, actionHelper.Controller, null, new AjaxOptions { UpdateTargetId = "supportAccountDiv", OnBegin = "SupportPortal.BlockUI();", OnComplete = "updateComplete();" }, new { id = "SupportAccountForm" })) {
+        var showSAPId = Model.SupportAccount.SAPMasterId > 0;
+       
+        @Html.AntiForgeryToken()      
+       
+        @Html.HiddenFor(model => model.SupportAccount.Id)
+        @Html.HiddenFor(model => model.SupportAccount.LastUpdate)
+        @Html.HiddenFor(model => model.SupportAccount.LastUpdateByUserAccountId)
+        @Html.HiddenFor(model => model.SupportAccount.IsActive)
+        @Html.HiddenFor(model => model.ConvertAccount)
+        //@Html.HiddenFor(model => model.SupportAccount.IsJiveSupportCenterMember)
+        //@Html.HiddenFor(model => model.SupportAccount.IsJiveTrainingCenterMember)
+        //@Html.HiddenFor(model => model.SupportAccount.HasJiveDirectCustomerSupport)
+        @Html.HiddenFor(model => model.SupportAccount.AccountTypeId)
+        
+        <div class="csp-content-sections-parent static-sized-content">
+            <div class="horizontal-form-element">
+                <div class="fieldset">
+                    <fieldset>
+                        <legend>Company Information</legend>
+
+                        @if (showSAPId) {
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label("Customer ID: ")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.DisplayFor(model => model.SupportAccount.SAPMasterId)
+                                </div>
+                            </div>
+                        }
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Name: ")
+                            </div>
+                            <div class="csp-field">
+                                @if (User.HasPermission(Permission.EditCompanyName)) {
+                                    @Html.ValidationMessageFor(model => model.SupportAccount.Name)
+                                    @Html.TextBoxFor(model => model.SupportAccount.Name, new { maxlength = 500 })
+                                    <span class="csp-required">*</span>
+                                } else {
+                                    <div>@Model.SupportAccount.Name</div>
+                                }
+                            </div>
+                        </div>
+
+                        @{ Html.EnableClientValidation(false); }
+
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Address 1: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.SupportAccount.Address.Address1)
+                                @Html.TextBoxFor(model => Model.SupportAccount.Address.Address1, new { maxlength = 255 })
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Address 2: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.SupportAccount.Address.Address2)
+                                @Html.TextBoxFor(model => Model.SupportAccount.Address.Address2, new { maxlength = 255 })
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("City: ")
+                            </div>
+
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.SupportAccount.Address.City)
+                                @Html.TextBoxFor(model => model.SupportAccount.Address.City, new { maxlength = 100 })
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Country: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => Model.SupportAccount.Address.CountryId)
+                                @(Html.Kendo().DropDownListFor(model => Model.SupportAccount.Address.CountryId)
+                                      .HtmlAttributes(new { @class = "k-dropdown", @id = countryDropDownId, @name = countryDropDownName })
+                                      .Events(e => e.Change(@uniqueId + "OnCountryDropdownChange").DataBound(@uniqueId + "OnCountryDropdownChange"))
+                                      .OptionLabel(Constants.DropDownCountrySelect)
+                                      .DataValueField("Id")
+                                      .DataTextField("Name")
+                                      .DataSource(source => source.Read(read => {
+
+                                                                                    if (read != null) {
+
+                                                                                        read.Action("GetCountries", "Base");
+                                                                                    }
+                                      })).Value(Model.SupportAccount.Address.CountryId.ToString()))
+                            </div>
+                        </div>
+                        <div>
+
+                            <input id="@regionTextHiddenId" name="@regionName" type="hidden" value="@Model.SupportAccount.Address.Region"/>
+
+                            <div class="csp-label">
+                                @Html.Label("Region/State: ")
+                            </div>
+                            <div class="csp-field">
+                                <div id="@regionTextDivId">
+                                    @Html.ValidationMessageFor(model => Model.SupportAccount.Address.Region)
+                                    @Html.TextBoxFor(model => Model.SupportAccount.Address.Region, new { @id = regionTextId, Name = regionTextId, onchange = uniqueId + "OnRegionTextChange()" })
+                                </div>
+                                <div id="@regionDropDownDivId" style="display:none;">
+                                    @Html.ValidationMessageFor(model => Model.SupportAccount.Address.Region)
+                                    @(Html.Kendo().DropDownListFor(model => Model.SupportAccount.Address.Region)
+                                          .OptionLabel(Constants.DropDownRegionSelect)
+                                          .HtmlAttributes(new { @class = "k-dropdown", @id = regionDropDownId, name = regionDropDownId })
+                                          .Events(e => e.Change(uniqueId + "OnRegionDropdownChange").DataBound(uniqueId + "OnRegionDropdownChange"))
+                                          .DataValueField("Name")
+                                          .DataTextField("Name")
+                                          .DataSource(source => source.Read(read => read.Action("GetRegions", "Base").Data(uniqueId + "FilterCountry")).ServerFiltering(true))
+                                          .Value(Model.SupportAccount.Address.Region)
+                                          .AutoBind(false)
+                                          .CascadeFrom(countryDropDownId)
+                                          )
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Postal Code: ")
+                            </div>
+
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.SupportAccount.Address.PostalCode)
+                                @Html.TextBoxFor(model => model.SupportAccount.Address.PostalCode, new { maxlength = 15 })
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Phone Number: ")
+                            </div>
+
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.SupportAccount.PhoneNumber)
+                                @Html.TextBoxFor(model => model.SupportAccount.PhoneNumber, new { maxlength = 40 })
+                            </div>
+                        </div>
+                        
+                        @{ Html.EnableClientValidation(true); }
+
+                    </fieldset>
+                </div>
+
+                <div class="fieldset">
+                    <fieldset>
+                    <legend class="marketing-legend">Current Roles</legend>
+                    <div>
+                        @foreach (var role in Model.CurrentRoles)
+                        {
+                            <label>@role</label> <br/>
+                        }
+                    </div>
+                    </fieldset>
+                </div>
+            </div>
+        <div class="horizontal-form-element">
+            @if (Model.RegistrationCodeStatus != null)
+            {
+                <div class="fieldset">
+                    <fieldset>
+                        <legend>Account Registration Link <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 19);"></i></span></legend>
+                        @{
+                            var registrationCodeActiveDisplay = Model.RegistrationCodeStatus.RegistrationCodeIsActive ? "block" : "none";
+                            var registrationCodeInactiveDisplay = Model.RegistrationCodeStatus.RegistrationCodeIsActive ? "none" : "block";
+                        }
+
+                        <div id="RegistrationCodeActive" style="display: @(registrationCodeActiveDisplay);">
+                            <p style="width: 600px; white-space: normal;">An Account Registration Link is active for this account.  Share this link with users to allow them access to your account. Creating a new registration link or disabling this feature will prevent users from registering using the existing Link.</p>
+                            <div class="alert alert-info" style="width: 600px; white-space: normal;">@Model.RegistrationCodeStatus.SelfServiceRegistrationCodeUrl</div>
+                            <a href="javascript: void(0)" onclick="$('#RegenerateRegCode').click();" style="margin-right: 10px;">Regenerate</a>
+                            <a href="javascript: void(0)" onclick="$('#DisableRegCode').click();">Disable</a>
+                            <button id="RegenerateRegCode" type="submit" name="registrationCodeAction" class="k-button" style="display: none;" value="regenerate">Regenerate</button>
+                            <button id="DisableRegCode" type="submit" name="registrationCodeAction" class="k-button" style="display: none;" value="disable">Disable</button>
+                        </div>
+                        <div id="RegistrationCodeInactive" style="display: @(registrationCodeInactiveDisplay);">
+                            <p>No Account Registration Link is active for this account.</p>
+                            <a href="javascript: void(0)" onclick="$('#GenerateRegCode').click();">Generate Link</a>
+                            <button id="GenerateRegCode" type="submit" name="registrationCodeAction" value="generate" class="k-button" style="display: none;">Generate Link</button>
+                        </div>
+                    </fieldset>
+                </div>
+            }
+         @if (Model.IsDomainAdministrator)
+         {
+
+             if (Model.ShowThirdPartyIdpSettings)
+             {
+                 <div class="fieldset">
+                     <fieldset>
+                         <legend>SSO Settings</legend>
+                         <div class="alignedcheckbox">
+                             <label><a href="@ssoConfigurationUrl" target="_blank">@(Model.ThirdPartyIdpEntityId != null ? "View" : "Configure") Single Sign-On settings for your domain</a></label>
+                         </div>
+                     </fieldset>
+                 </div>
+             }
+             <div class="fieldset">
+                 <fieldset>
+                     <legend>Allow Access to Palo Alto Networks Support</legend>
+                     <p>Allow Palo Alto Networks Support teams to login to your account as an administrator when troubleshooting open cases.</p>
+                     <div>
+                         <ul class="noContent">
+                             <li>
+                                 @Html.RadioButtonFor(model => model.ImpersonateSetting, ImpersonateStatus.RequireConsent, ImpersonateStatus.RequireConsent)
+                                 <span> Require approval for each access request </span>
+                             </li>
+                             <li>
+                                 @Html.RadioButtonFor(model => model.ImpersonateSetting, ImpersonateStatus.Allow, ImpersonateStatus.Allow)
+                                 <span> Always allow Support access with notification to administrators for each request</span>
+                             </li>
+                             <li>
+                                 @Html.RadioButtonFor(model => model.ImpersonateSetting, ImpersonateStatus.Deny, ImpersonateStatus.Deny)
+                                 <span> Never allow access </span>
+                             </li>
+                         </ul>
+                     </div>
+                 </fieldset>
+             </div>
+         }
+            <div class="fieldset">
+                <fieldset>
+                    <legend>New User Settings <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 20);"></i></span></legend>
+                    <div class="alignedcheckbox">
+                        <label>
+                            @Html.CheckBoxFor(x => x.RegistrationRequiresSuApproval)
+                            Requires Super User Approval
+                        </label>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="fieldset">
+                <fieldset>
+                    <legend>FedRamp Account - <span class="label-blue">@(Model.IsFedRampAccount ? "Yes" : "No")</span></legend>
+                </fieldset>
+            </div>
+
+            <div class="fieldset">
+                <fieldset>
+                    <legend>MSSP Account - <span class="label-blue">@(Model.IsMSSPAccount ? "Yes" : "No")</span></legend>
+                </fieldset>
+            </div>
+           
+            <div class="fieldset">
+                <fieldset>
+                    <legend>Default Roles For New Memberships <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 3);"></i></span></legend>
+                    <div>
+                        @Html.EditorFor(model => model.RoleAssignment)
+                    </div>
+                </fieldset>
+            </div>
+            @Html.HiddenFor(x => x.AccountType)
+            @if (Model.AccountType == "Eval") {
+                <div class="fieldset" id="EvalConversionArea">
+                    <fieldset>
+                        <legend>Eval Account</legend>
+                        <div class="text-info">
+                            *To activate your Support Account, enter the following information.
+                        </div>
+                        <div>
+                            <div class="csp-label" style="width: 15em;">
+                                @Html.Label("Serial Number or Auth Code: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(x => x.AccountConversionDeviceCode)
+                                @Html.TextBoxFor(model => model.AccountConversionDeviceCode)
+                            </div>
+                        </div>
+                        <div>
+                            <div class="csp-label" style="width: 15em;">
+                                @Html.Label("Sales Order Number or Customer ID: ")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(x => x.AccountConversionCustomerCode)
+                                @Html.TextBoxFor(model => model.AccountConversionCustomerCode)
+                            </div>
+                        </div>
+                        <div id="AccountActivationErrors" style="display: none;" class="text-error"></div>
+                        <div>
+                            <button type="button" id="ActivateAccount" class="k-button k-primary">Activate this Account</button>
+                        </div>
+                        <div id="EvalConversionCompanyDetails" style="display: none;">
+                        </div>
+                        <div id="FinalizeActivationButtons" style="display: none;">
+                            <button type="button" id="FinalizeActivation" class="k-button k-primary"></button>
+                            <button type="button" id="CancelFinalizeActivation" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </fieldset>
+                </div>
+            }
+
+        </div>
+        </div>
+        <br style="clear: left;" />
+        <div class="csp-submit-container" style="padding-right:200px">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input id="SubmitButton" type="submit" value="Submit" data-link-type="company-account" class="k-button k-primary csp-submit" />
+        </div>
+    }
+
+</div>
+

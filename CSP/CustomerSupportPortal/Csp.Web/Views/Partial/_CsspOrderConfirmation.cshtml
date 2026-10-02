@@ -1,0 +1,26 @@
+﻿@model Csp.Web.DataTransferObjects.CsspInfoDto
+<div id="DivCsspOrderConfirmation">
+    <div class="csp-content-sections-parent">
+        <fieldset>
+            <legend>
+                Order Confirmation
+            </legend>
+            <div>&nbsp;</div>
+            <div class="alert alert-success fade in">
+                <div style="padding: 10px;">
+                    <span class="k-icon k-i-tick">&nbsp;</span> Thank you, your order has been placed. You will recieve a confirmation email shortly.&nbsp;Your Order Number is <strong>@Model.CartNumber</strong>
+                    <div>&nbsp;</div>
+                    <div style="white-space: normal;">If you have not received your master auth codes within 48 hours of submitting your order, please contact your Palo Alto Networks Channel Business Manager.  Please ensure that you’ve allowed enough time for the order to be processed before checking status.</div>
+                </div>
+            </div>
+            <div>&nbsp;</div>
+            <div class="csp-submit-container">
+                        <button id="btnContinueShopping" class="k-button csp-submit" type="button" onclick="shoppingCart.continueShopping()">Continue Shopping <span class="k-icon k-i-arrowhead-e"></span></button>
+            </div>
+        </fieldset>
+
+    </div>
+</div>
+<script>
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+</script>

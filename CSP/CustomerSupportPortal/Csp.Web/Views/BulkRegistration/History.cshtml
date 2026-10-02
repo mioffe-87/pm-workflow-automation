@@ -1,0 +1,63 @@
+﻿@model Csp.Web.DataTransferObjects.BulkRegistrationHistoryDto
+@{
+    var actionHelper = Model.ActionHelper;
+    
+    ViewBag.Title = "Bulk Registration History";
+    ViewBag.IsGlobal = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+
+    @Html.Partial("../Partial/_CompanyLogoName")
+
+    <div class="contextTitle">Bulk Registration History</div>
+
+    <div class="k-tabstrip">
+        <div class="k-content k-state-active">
+
+            @if (Model == null && Model.BulkRegistrations == null) {
+                <div class="row-fluid">
+                    No history found.
+                </div>
+            } else {
+                if (Model.BulkRegistrations != null && Model.BulkRegistrations.Any())
+                {
+                    <div class="row-fluid" id="dynamicUpdates">
+                        @(Html.Kendo().Grid(Model.BulkRegistrations)
+                              .Name("BulkRegistrationsGrid")
+                              .Sortable()
+                              .Columns(columns =>
+                                  {
+                                      columns.Bound(c => c.ActivationDate).Format(SiteHelper.DateFormatString);
+                                      columns.Bound(c => c.Username).Title("User");
+                                      columns.Bound(c => c.NoOfDevicesRegistered).Title("No Of Devices Registered");
+                                      columns.Bound(c => c.NoOfLicensesApplied).Title("No Of Licenses Applied");
+                                      //columns.Template(@<text><a href="/BulkRegistration/ViewHistory/@item.BulkRegistrationId">View</a></text>).ClientTemplate("<a href=\"/BulkRegistration/ViewHistory/#: BulkRegistrationId #\">View</a>").Title("");
+                                      columns.Template(c => Html.ActionLink("View", "ViewHistory", "BulkRegistration", new
+                                      {
+                                          id = Model.SupportAccountId, bulkRegistrationId = c.BulkRegistrationId
+                                      }, null))
+                                          .ClientTemplate(Html.ActionLink("View", "ViewHistory", "BulkRegistration", new
+                                          {
+                                              id = "SupportAccountId",
+                                              bulkRegistrationId = "BulkRegistrationId"
+                                          }, null).ToHtmlString().Replace("SupportAccountId", Model.SupportAccountId.ToString()).Replace("BulkRegistrationId", "#=BulkRegistrationId#"));
+                                  })
+                              .DataSource(dataSource => dataSource
+                                    .Ajax()
+                                    .ServerOperation(false) 
+                                )
+                              )
+                    </div>
+                }
+                else
+                {
+                    <div class="row-fluid">
+                    No history found.
+                </div>
+                }
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+Meeting assets for CSR AI assistant- sync are ready! - Summary Attendees: Marina Ioffe (Organizer), Siddhartha Sunkoju September 24
+CSR AI Admin Assistant Implementation
+Marina and Siddhartha discussed the implementation of a CSR AI admin assistant, focusing on case categorization and AI agent selection. They decided that if a case is categorized as admin, the AI admin assistant should be launched instead of Hermes AI, and they need to build a process to determine which AI agent to surface based on case attributes. Siddhartha clarified that this change would involve not showing Hermes AI for admin cases when agents view the cases.
+
+New AI Admin Assistant Implementation
+Siddhartha and Marina discussed the implementation of a new AI admin assistant and the evaluation process it would undergo before rendering assistance. They clarified which Hermes functionalities, including Ask AI, AI summary, and Key Actions Required, would be integrated into or replaced by the new AI admin assistant. Marina confirmed they wanted to include features similar to the original Hermes assistant, such as AI summary and evidence/reasoning, within the new AI assistant.
+
+AI Admin Assistant Implementation Discussion
+Marina and Siddhartha discussed the implementation of an AI admin assistant that would determine whether to handle a case based on initial evaluation. Siddhartha raised concerns about the timing of the AI's decision-making process and how to handle cases where the AI determines it cannot assist. Marina suggested showing the AI summary in two locations and controlling only the "Ask AI" button, which would be the primary interface for the AI's involvement in case handling.
+
+Ask AI Implementation Strategy Discussion
+Marina and Siddhartha discussed the implementation of two different Ask AI buttons and decided to keep the current setup simple by controlling only the button functionality without modifying the tab. They debated the timing of case eligibility evaluation, with Marina suggesting it should happen before the CSR agent opens the Salesforce case rather than during case creation. The discussion focused on maintaining separation between the Ask AI and admin assistant components while determining how to handle admin cases.
+
+AI Assistant Eligibility Process Discussion
+Siddhartha and Marina discussed the process for determining AI assistant eligibility for admin cases, agreeing that the evaluation should happen immediately when a case is created and a boolean flag should be set to indicate AI eligibility. They clarified that federal cases should not trigger the AI assistant

@@ -1,0 +1,12 @@
+{
+  "ServerUri": "http://10.101.7.47:9000/",
+  "Organization": null,
+  "ProjectKey": "CSP-SonarQube",
+  "ProjectName": "CSP",
+  "Profiles": {
+    "CSharp": {
+      "ProfileKey": "AWd2DdgYGL1IKU-kvnuy",
+      "ProfileTimestamp": "2018-12-03T21:51:18Z"
+    }
+  }
+}

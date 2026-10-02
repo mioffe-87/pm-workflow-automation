@@ -1,0 +1,171 @@
+﻿@using Kendo.Mvc.UI
+@using Csp.Web.HelperClasses;
+@model Csp.Web.DataTransferObjects.SupportAccountMembershipListDto
+
+@{ 
+    ActionHelper actionHelper = Model.ActionHelper; 
+}
+
+@Html.Hidden(("IsSupportAccountMembershipGridPostBack"), "")
+<script>
+
+    function onSupportAccountMembershipDataBound(e) {
+
+
+        $("#AccountGrid tbody tr .Groups").each(function () {
+
+            var currentDataItem = $("#AccountGrid").data("kendoGrid").dataItem($(this).closest("tr"));
+
+            var htmlstring = '';
+            for (i = 0 ; i < currentDataItem.Groups.length ; i++) {
+                if (currentDataItem.Groups[i].SupportAccountGroupName != null)
+                    htmlstring += "<a href='#'>" + currentDataItem.Groups[i].SupportAccountGroupName + '</a><br/>';
+            }
+            $(this).context.innerHTML = htmlstring;
+
+        })
+
+        if (document.getElementById("IsSupportAccountMembershipGridPostBack").value == "") {
+            $("#SupportAccountMembershipGrid").data("kendoGrid").dataSource._total = "@Convert.ToInt32(Model.DataParameters.TotalRecordCount)";
+              document.getElementById("IsSupportAccountMembershipGridPostBack").value = "1";
+          }
+      }
+
+
+      function SearchSupportAccountMembership() {
+
+          var grid = $("#SupportAccountMembershipGrid").data("kendoGrid").dataSource;
+          grid.filter(
+          {
+              field: document.getElementById("cmbSupportAccountSearchEntity").value,
+              operator: "eq",
+              value: document.getElementById('txtSupportAccountSearchValue').value
+          }
+          );
+          grid.read();
+      }
+</script>
+<fieldset>
+    <legend>User Accounts</legend>
+</fieldset>
+<div class="width-height">
+
+
+    <div class="grid-header">
+        <div class="grid-right">
+
+            <div class="grid-filter">
+                <span class="filter_by">Filter By:</span>
+
+
+                @(Html.Kendo().DropDownList()
+          .Name("cmbSupportAccountSearchEntity")
+          .DataTextField("Text")
+          .DataValueField("Value")
+          .BindTo(new List<SelectListItem>() {
+              new SelectListItem() {
+                  Text = "Company Name",
+                  Value = "CompanyName"
+              },
+              new SelectListItem() {
+                  Text = "Phone Number",
+                  Value = "PhoneNumber"
+              },
+              new SelectListItem() {
+                  Text = "Description",
+                  Value = "Description"
+              }, 
+              new SelectListItem() {
+                  Text = "Customer Number",
+                  Value = "CustomerNumber"
+              },
+			   new SelectListItem() {
+                  Text = "Location",
+                  Value = "City"
+              },
+			  new SelectListItem() {
+                  Text = "Address",
+                  Value = "Address1"
+              },
+			   new SelectListItem() {
+                  Text = "Region",
+                  Value = "Region"
+              },
+			  
+			     new SelectListItem() {
+                  Text = "Country",
+                  Value = "Country"
+              },
+              
+          })
+          .Value("CompanyName")
+    )
+            </div>
+
+            <div class="grid-filter">
+                <div class="grid-filter k-textbox" id="Textbox">
+                    <input type="text" id="txtSupportAccountSearchValue" class="k-textbox" />
+                </div>
+            </div>
+
+
+            <div class="grid-filter">
+                <input type="button" value="Search" onclick="SearchSupportAccountMembership()" class="k-button" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-content">
+    @{
+        if (Model != null && Model.SupportAccountMemberships != null) {
+
+            var maxPageSizeForms = Convert.ToInt32(Model.SupportAccountMemberships.Count);
+            var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+            if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                pageSizeOptionsForms.Add(maxPageSizeForms);
+            }
+            
+        @(Html.Kendo().Grid(Model.SupportAccountMemberships)
+            .Name("SupportAccountMembershipGrid")
+            .Columns(columns => {
+
+                columns.Bound(p => p.CompanyName).Width(150).Template(cp => Html.ActionLink(cp.CompanyName, "MyAccounts", ControllerFields.SupportAccountController, new {
+                    id = cp.Id
+                }, null)).Width(150).Filterable(false).Sortable(true).ClientTemplate(Html.ActionLink("#=CompanyName#", "MyAccounts", ControllerFields.SupportAccountController, new {
+                    Id = "Sid"
+                }, null).ToHtmlString().Replace("Sid", "#=Id#")).Column.Title = "Company Name";
+
+                columns.Bound(p => p.CustomerNumber).Width(150).Column.Title = "Customer Number";
+                columns.Bound(p => p.Address1).Width(150).Column.Title = "Address";
+                columns.Bound(p => p.City).Width(150).Column.Title = "City";
+                columns.Bound(p => p.Country).Width(150).Column.Title = "Country";
+                columns.Bound(p => p.Region).Width(150).Column.Title = "Region";
+                columns.Bound(p => p.PhoneNumber).Width(150).Column.Title = "Phone Number";
+            })
+            .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+            .Sortable()
+            .Events(e => e.DataBound("onSupportAccountMembershipDataBound"))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .Model(model => model.Id(p => p.Id))
+                .PageSize(Model.DataParameters.PaginationCount)
+                .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                .Read(read => read.Action(actionHelper.SupportAccounts, actionHelper.Controller, new {
+                    Id = actionHelper.Id
+                }))
+            ))
+        }
+    }
+
+
+</div>
+
+
+
+
+
+
+
+
+

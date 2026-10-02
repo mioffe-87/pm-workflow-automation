@@ -1,0 +1,84 @@
+﻿@using System.Configuration
+@using Csp.Api.Security
+@using Csp.Web.HelperClasses
+@using Newtonsoft.Json;
+
+@helper AddContext() {
+    <script type="text/javascript">
+        (function () {
+            var escapeEl = document.createElement('textarea');
+
+            window.escapeHTML = function (html) {
+                escapeEl.textContent = html;
+                return escapeEl.innerHTML;
+            };
+
+            window.unescapeHTML = function (html) {
+                escapeEl.innerHTML = html;
+                return escapeEl.innerText;
+                //return escapeEl.textContent;
+            };
+
+            // load deferred styles
+            var loadDeferredStyles = function() {
+                var addStylesNode = document.getElementById("deferredStyles");
+
+                if (addStylesNode) {
+                    var replacement = document.createElement("div");
+                    replacement.innerHTML = addStylesNode.textContent;
+                    document.body.appendChild(replacement)
+                    addStylesNode.parentElement.removeChild(addStylesNode);
+                }
+            };
+
+            var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+            if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+            else window.addEventListener('load', loadDeferredStyles);
+        })();
+        var result = unescapeHTML('@SiteHelper.GetAuthToken(User.Identity.Name)');
+        var jwtTokenResponse = JSON.parse(result);
+        var portalData = {
+            email: unescapeHTML('@User.Identity.Name'),
+            displayName: unescapeHTML('@CurrentState.GetDisplayName()'),
+            organization: '@ConfigurationManager.AppSettings["CoveoOrganizationId"].ToString()',
+            searchHub: '@ConfigurationManager.AppSettings["CoveoSearchHub"].ToString()',
+            searchPageUrl: '@SiteHelper.GetCoveoSearchPageUrl()',
+            searchToken: '@SiteHelper.GetCoveoSearchToken()',
+            searchDataSource: unescapeHTML('@SiteHelper.GetCoveoSearchDataSource()'),
+            selfHelpDataSource: unescapeHTML('@SiteHelper.GetCoveoSelfHelpDataSource()'),
+            restEndpointUrl: '@ConfigurationManager.AppSettings["CoveoSearchRestEndpointUrl"].ToString()',
+            supportAccountId: '@CurrentState.GetSupportAccountId()',
+            supportAccountName: unescapeHTML('@CurrentState.GetSupportAccountName()'),
+            authToken: jwtTokenResponse.AccessToken,
+            isCSP: true,
+            hasMultipleAccounts: function () { return @Json.Encode(CurrentState.HasMultipleAccounts()); } (),
+            hasDirectMembership: function () { return @Json.Encode(CurrentState.HasDirectMembership()); } (),
+            userTypeKey: '@SiteHelper.GetUserTypeKey()',
+            userType: '@SiteHelper.GetUserType(User.Identity.Name)',
+            envType: '@SiteHelper.GetCoveoEnvType()',
+            userAccountId: '@SiteHelper.GetUserAccountId()',
+            relatedThreadsDataSource: unescapeHTML('@SiteHelper.GetCoveoRelatedThreadsDataSource()'),
+            salesforceUsername: '@CurrentState.GetSalesforceLoginId()',
+            isAuthUser: function () { return (unescapeHTML('@User.Identity.Name') && '@CurrentState.GetSupportAccountId()') ? 'true' : 'false'; }(),
+            isAscUser: function () { return @Json.Encode(CurrentState.HasASCRole()); }(),
+            captchPublicKey: '@ConfigurationManager.AppSettings["recaptchaPublickey"].ToString()',
+            applicationHost: '@ConfigurationManager.AppSettings["ApplicationUrl"]',
+            isPilotCustomer: function () { return @Json.Encode(CurrentState.IsPilotCustomer()); }(),
+            isImpersonateSession: function () { return @Json.Encode(CurrentState.GetIsImpersonated());} (),
+            impersonateStatus: '@CurrentState.GetImpersonateSettingAsString()',
+            theme: '@CurrentState.GetUserSelectedTheme()',
+            isAiEligible: function () { return @Json.Encode(CurrentState.GetIsAiEligible()); }(),
+            isClassicEligible: function () { return @Json.Encode(CurrentState.GetIsClassicEligible()); }(),
+            showHomepageBanner: function () { return @Json.Encode(CurrentState.GetShowHomepageBanner()); }(),
+            contactNumber: '@CurrentState.GetUserContactInformation()',
+
+
+        };
+        //Append Pendo keys to portal context only if the user is Authenticated.
+        if (unescapeHTML('@User.Identity.Name') && '@CurrentState.GetSupportAccountId()') {
+            portalData["pendoKey"] = '@ConfigurationManager.AppSettings["PendoApiKey"].ToString()'
+        }
+        PortalContext = portalData;
+    </script> 
+}

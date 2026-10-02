@@ -1,0 +1,81 @@
+﻿@model Csp.Web.DataTransferObjects.ProductModelDto
+
+
+<div id="containerAddUpdateProductModel">
+    @using (Ajax.BeginForm("AddUpdateProductModel", "ProductModel", new { }, new AjaxOptions {
+        UpdateTargetId = "containerAddUpdateProductModel",
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();"
+    }, new { id = "ProductModelForm" })) {
+
+        Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+        <div class="main">
+            <div class="csp-label">@Html.Label("*Name: ")</div>
+            <div class="csp-field">
+                @Html.ValidationMessageFor(model => model.ProductModel.Name)
+                @Html.TextBoxFor(model => model.ProductModel.Name)
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="csp-label">@Html.Label("Product Line: ")</div>
+            <div class="csp-field">
+                @Html.ValidationMessageFor(model => model.ProductModel.ProductLine)
+                @Html.TextBoxFor(model => model.ProductModel.ProductLine)
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="csp-label">@Html.Label("Platform: ")</div>
+            <div class="csp-field">
+                @Html.ValidationMessageFor(model => model.ProductModel.Platform)
+                @Html.TextBoxFor(model => model.ProductModel.Platform)
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="csp-label">@Html.Label("Minimum Required Version: ")</div>
+            <div class="csp-field">
+                @Html.ValidationMessageFor(model => model.ProductModel.MinimumRequiredVersion)
+                @Html.TextBoxFor(model => model.ProductModel.MinimumRequiredVersion)
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="csp-label">@Html.Label("Maximum Supported Version: ")</div>
+            <div class="csp-field">
+                @Html.ValidationMessageFor(model => model.ProductModel.MaximumSupportedVersion)
+                @Html.TextBoxFor(model => model.ProductModel.MaximumSupportedVersion)
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="csp-label">
+                @Html.HiddenFor(model => model.ProductModel.ModelId)
+                @Html.HiddenFor(model => model.ProductModelName)
+            </div>
+            <div class="csp-field">
+                <input type="submit" id="btnAddNewProductModel" value="Submit" class="k-button" />
+                <input type="button" value="Cancel" class="k-button" id="btncancel" onclick="closeParentWindow(); " />
+            </div>
+        </div>
+        <br />
+    }
+
+</div>
+
+
+<script>
+    function closeParentWindow() {
+        $("#ProductModelWindow").data("kendoWindow").close();
+    }
+
+    $.validator.unobtrusive.parse("#ProductModelForm");
+
+    $(function () {
+        setTimeout(function () {
+            $('#ProductModel_Name').focus();
+        }, 500);
+    });
+
+</script>

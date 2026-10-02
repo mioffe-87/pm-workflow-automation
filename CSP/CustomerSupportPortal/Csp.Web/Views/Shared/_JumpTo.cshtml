@@ -1,0 +1,32 @@
+﻿<p>@(Html.Kendo().DropDownList()
+            .Name(UniqueId.JumpToDdl)
+            .HtmlAttributes(new { @class = "k-dropdown" })
+            .OptionLabel("- Go To -")
+            .DataValueField("Value")
+            .DataTextField("Text")
+            .Height(900)
+            //.BindTo(@JumpToMenuItems)
+            .Value(Constants.DropDownPleaseSelect))
+</p>
+<script>
+    function jumpToSubmit() {
+        var selected = $('#@UniqueId.JumpToDdl');
+
+        if (selected.val() != null && selected.val() != '') {
+            if (selected.val().indexOf("http") !== -1) {
+                window.open(selected.val(), '_blank');
+            } else {
+                location.href = selected.val();
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        var jumpToDropdown = document.getElementById('@UniqueId.JumpToDdl');
+        jumpToDropdown.selectedIndex = 0;
+
+        var ddlJumpTo = $('#@UniqueId.JumpToDdl').data('kendoDropDownList');
+        ddlJumpTo.bind("change", jumpToSubmit);
+    });
+</script>
+

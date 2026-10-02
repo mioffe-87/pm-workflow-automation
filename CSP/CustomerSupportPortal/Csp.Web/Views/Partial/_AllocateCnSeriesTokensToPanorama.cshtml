@@ -1,0 +1,271 @@
+﻿@using System.Linq
+@model Csp.Web.DataTransferObjects.AllocateCnSeriesTokensDto
+@{ 
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+}
+<style type="text/css">
+    #AllocateCnSeriesTokenGrid { width:100%; }
+    #AllocateCnSeriesTokenGrid input { width: calc(100% - 5px);border-radius: 0; }
+    #AllocateCnSeriesTokenGrid input[type="number"] { width: calc(100% - 10px);border-radius: 0;padding: 3px 4px;margin: 0;text-align:right; }
+    .error { color:red; }
+    .confirmation-alert { font-weight: bold;background-color: #F7DA42;padding: 5px 10px;color: darksalmon;border-bottom: solid 2px darksalmon; }
+    .confirmation-alert .confirmation-normal { padding:5px 0;    margin-left: 10px; }
+    .confirmation-normal { font-weight: bold;font-size: 14px;padding: 5px 35px;color:#333; }
+    .confirmation-warning { font-weight:bold;color:red;padding:5px 35px; }
+    .result-message-success { background-color:lightgreen;border-bottom:solid 2px green;margin:10px 20px;padding:5px 10px; }
+    .result-message-success .fa { color:green;font-size:20px; }
+    .result-message-error { background-color:#FFD1D1;border-bottom:solid 2px red;margin:10px 20px;padding:5px 10px; }
+    .result-message-error .fa { color:red;font-size:20px; }
+</style>
+
+<script>
+    var step = 0;
+    var maxAvailableTokens = @Model.AvailableTokens;
+    var cnxAuthCodes = '@string.Join(",", Model.Cnxs)'.split(',');
+    var selectedCnxAuthCode = null;
+    var selectedAvailablePanoramas = null;
+    var listOfAvailablePanoramas = null;
+
+    function CloseMe(obj) {
+        $(obj).closest(".k-window-content").data("kendoWindow").close();
+    }
+
+    function DeletePanorama(rowId) {
+        var dataGrid = $("#AllocateCnSeriesTokenGrid");
+        var dataGridSource = dataGrid.data("kendoGrid").dataSource;
+        var deleteGridItem = dataGridSource.data().find(function(i) { return i.Id === rowId; });
+        var moveItem = { Id: deleteGridItem.Id, CnxAuthCode: deleteGridItem.CnxAuthCode, SerialNumber: deleteGridItem.SerialNumber, ModelName: deleteGridItem.ModelName, Tokens: 0 };
+        dataGridSource.data().remove(deleteGridItem);
+        var ddlDataSource = $("#AllocateTokensToAvailablePanoramas").data('kendoDropDownList').dataSource;
+        ddlDataSource.insert(moveItem);
+        listOfAvailablePanoramas = ddlDataSource.data().map(function (i) { return { Id: i.Id, CnxAuthCode: i.CnxAuthCode, SerialNumber: i.SerialNumber, ModelName: i.ModelName, Tokens: 0 }; });
+        var gridData = dataGrid.data("kendoGrid").dataSource.data();
+        dataGrid.find('tbody tr[role="row"]').each(function (i, el) {
+            var ridTds = $(el).attr('rid', gridData[i].Id).find('td');
+            $(ridTds[4]).html('<input type="number" max="10000" min="1" value="' + gridData[i].Tokens + '" id="tokensInput' + gridData[i].Id + '" onchange="DataRowTokensChanged(' + gridData[i].Id + ')" onkeyup="DataRowTokensChanged(' + gridData[i].Id + ')" />');
+            $(ridTds[5]).html('<input type="button" value="Delete" name="btnDelete" id="btnDelete" class="k-button" onclick="DeletePanorama(' + gridData[i].Id + ')" />');
+        });
+        selectedAvailablePanoramas = null;
+        UpdateUi();
+    }
+
+    function CnxAuthCodeChanged(e) {
+        if (this.selectedIndex > 0) {
+            selectedCnxAuthCode = this.selectedIndex;
+        } else {
+            selectedCnxAuthCode = null;
+        }
+        UpdateUi();
+    }
+
+    function CnxAuthCodeDataBound(e) {
+        listOfAvailablePanoramas = this.dataSource.data().map(function (i) { return { Id: i.Id, CnxAuthCode: i.CnxAuthCode, SerialNumber: i.SerialNumber, ModelName: i.ModelName, Tokens: 0 }; });
+    }
+
+    function NewPanoramaChanged(e) {
+        if (this.selectedIndex > 0) {
+            selectedAvailablePanoramas = this.selectedIndex;
+        } else {
+            selectedAvailablePanoramas = null;
+        }
+        UpdateUi();
+    }
+
+    function NewPanoramaDataBound(e) {
+        listOfAvailablePanoramas = this.dataSource.data().map(function (i) { return { Id: i.Id, CnxAuthCode: i.CnxAuthCode, SerialNumber: i.SerialNumber, ModelName: i.ModelName, Tokens: 0 }; });
+    }
+
+    function DataRowTokensChanged(rowId) {
+        $("#AllocateCnSeriesTokenGrid").data('kendoGrid').dataSource.data().find(function (i) { return i.Id === rowId }).Tokens = parseInt($('#tokensInput' + rowId).val());
+        UpdateUi();
+    }
+
+    function AddPanorama() {
+        var item = listOfAvailablePanoramas[selectedAvailablePanoramas - 1];
+        var ddlDataSource = $("#AllocateTokensToAvailablePanoramas").data('kendoDropDownList').dataSource;
+        item.CnxAuthCode = cnxAuthCodes[selectedCnxAuthCode - 1];
+        ddlDataSource.remove(ddlDataSource.data()[selectedAvailablePanoramas - 1]);
+        listOfAvailablePanoramas = ddlDataSource.data().map(function (i) { return { Id: i.Id, CnxAuthCode: i.CnxAuthCode, SerialNumber: i.SerialNumber, ModelName: i.ModelName, Tokens: 0 }; });
+        var dataGrid = $("#AllocateCnSeriesTokenGrid");
+        dataGrid.data("kendoGrid").dataSource.insert(item);
+        var gridData = dataGrid.data("kendoGrid").dataSource.data();
+        dataGrid.find('tbody tr[role="row"]').each(function (i, el) {
+            var ridTds = $(el).attr('rid', gridData[i].Id).find('td');
+            $(ridTds[4]).html('<input type="number" max="10000" min="1" value="' + gridData[i].Tokens + '" id="tokensInput' + gridData[i].Id + '" onchange="DataRowTokensChanged(' + gridData[i].Id + ')" onkeyup="DataRowTokensChanged(' + gridData[i].Id + ')" />');
+            $(ridTds[5]).html('<input type="button" value="Delete" name="btnDelete" id="btnDelete" class="k-button" onclick="DeletePanorama(' + gridData[i].Id + ')" />');
+        });
+        selectedAvailablePanoramas = null;
+        UpdateUi();
+    }
+
+    function UpdateUi() {
+        $('#errorMessageRoot').hide();
+        $('#errorMessage').html('');
+        var data = $("#AllocateCnSeriesTokenGrid").data("kendoGrid").dataSource.data();
+        if (selectedCnxAuthCode
+            && selectedAvailablePanoramas
+            && data.length < @Model.MaxNewRecords) {
+            $('#btnAdd').prop('disabled', false);
+        } else {
+            $('#btnAdd').prop('disabled', true);
+            if (data.length >= @Model.MaxNewRecords) {
+                $('#errorMessageRoot').show();
+                $('#errorMessage').html('Maximum ' + @Model.MaxNewRecords + ' panoramas can allocate tokens at one time.');
+            }
+        }
+        var currentNewTokens = data.reduce(function (a, b) { return a + (b['Tokens'] || 0); }, 0);
+        if (data.length > 0
+            && currentNewTokens > 0
+            && currentNewTokens <= maxAvailableTokens) {
+            $('#AlocateTokensSubmit').prop('disabled', false);
+        } else {
+            $('#AlocateTokensSubmit').prop('disabled', true);
+        }
+        if (currentNewTokens > maxAvailableTokens) {
+            $('#errorMessageRoot').show();
+            $('#errorMessage').html('You are trying to allocate ' + currentNewTokens + ' tokens when maximum ' + maxAvailableTokens + ' are available.');
+        }
+    }
+
+    function ValidateForm() { 
+        var theForm = $('#allocateCnSeriesTockensToPanoramaForm'); 
+        var isValid = theForm.validate().form(); 
+        if (!isValid) {
+            return false;
+        }
+        if (step === 0) { // proceed to submission step
+            theForm[0].PanoramasString.value = JSON.stringify($("#AllocateCnSeriesTokenGrid").data('kendoGrid').dataSource.data().map(function (i) { return { Id: i.Id, CnxAuthCode: i.CnxAuthCode, SerialNumber: i.SerialNumber, ModelName: i.ModelName, Tokens: i.Tokens }; }));
+            step = 1;
+            $('#AlocateTokensSubmit').val('Confirm');
+            $('#btnCancel').val('Cancel');
+            $('.k-window-title').text('Token Allocation Confirmation');
+            $('.step0').hide();
+            $('.step1').show();
+            $('#resultMessageRoot').show();
+            var data = $("#AllocateCnSeriesTokenGrid").data('kendoGrid').dataSource.data();
+            var totalAllocate = data.reduce(function (a, b) { return a + (b['Tokens'] || 0); }, 0);
+            var r0 = '<div class="confirmation-alert fa fa-exclamation-triangle"><span class="confirmation-normal">By clicking Confirm, you will allocate ' + totalAllocate + ' token' + (totalAllocate > 1 ? 's' : '') + ' to the selected panorama' + (data.length > 1 ? 's' : '') + '. Do you really want to do this?<span></div>';
+            var r1 = '<div class="confirmation-normal">Please validate the Panorama' + (totalAllocate > 1 ? 's' : '') + ' serial number' + (data.length > 1 ? 's' : '') + ' before allocating the token' + (totalAllocate > 1 ? 's' : '') + ':</div>';
+            var r2 = '<div class="confirmation-normal">';
+            for (var i = 0; i < data.length; i++) {
+                r2 += '<div>&#149 CN-X Auth-Code: ' + data[i].CnxAuthCode + ', Serial #: ' + data[i].SerialNumber + ', Token' + (data[i].Tokens > 1 ? 's' : '') + ': '  + data[i].Tokens + '</div>';
+            };
+            r2 += '</div>';
+            var r3 = '<div class="confirmation-warning">Once allocated, you cannot reverse the transaction.</div>';
+            $('#confirmationMessage').html(r0 + r1 + r2 + r3);
+        } else if (step === 1) { // proceed to result step
+            step = 2;
+            $('#AlocateTokensSubmit').hide();
+            $('#btnCancel').hide();
+            $('.k-window-title').text('Token Allocation Result');
+            $('.step1').hide();
+            $('.step2').show();
+            SupportPortal.BlockUI();
+            return true;
+        }
+        return false;
+    }
+
+    function SuccessAllocation(e, a, r) { 
+        var message = '';
+        if (e.Notifications
+            && e.Notifications.length > 0) {
+            for(var i = 0; i < e.Notifications.length; i++) {
+                message += '<div class="' + (e.Notifications[i].State === 1 ? 'result-message-success' : 'result-message-error') + '"><span class="' + (e.Notifications[i].State === 1 ? 'fa fa-check-circle' : 'fa fa-times-circle') + '">&nbsp;</span>' + e.Notifications[i].Message + '</div>';
+            }
+        }
+        $('#resultMessage').html(message);
+    }
+</script>
+
+<fieldset id="resultMessageRoot" style="display:none;">
+    <div id="resultMessage"></div>
+</fieldset>
+<div class="fieldset" style="position: absolute;bottom: 5px;width: calc(100% - 15px);">
+    <div class="csp-submit-container">
+        <input type="button" id="btnClose" value="Close" name="btnCancel" class="k-button" onclick="CloseMe(this)" style="margin-top:5px;" />&nbsp;&nbsp;
+    </div>
+</div>
+<div id="containerAllocateCnSeriesTokenToPanoramaDiv">
+    @using (Ajax.BeginForm("AllocateTokensToPanorama", "CnSeries", new { }, new AjaxOptions {
+        OnBegin = "ValidateForm",
+        OnComplete = "SupportPortal.UnBlockUI",
+        OnSuccess = "SuccessAllocation",
+        UpdateTargetId = "containerAllocateCnSeriesTokenToPanoramaDiv"
+    }, new { id = "allocateCnSeriesTockensToPanoramaForm" })) {
+        @Html.AntiForgeryToken()
+        <fieldset class="step0">
+            <legend> If your panorama is not listed in the list, please click <a href="/SupportAccount/RegisterDevice/@CurrentState.GetSupportAccountId()">here</a> to register your panorama.</legend>
+            <div class="fieldset fieldset-padded">
+                <div class="csp-label">
+                    @Html.Label("CN-X Authorization Code:")
+                </div>
+                <div class="csp-field">
+                    @(Html.Kendo().DropDownListFor(model => Model.Cnxs)
+                        .Name("AllocateTokensToCnx")
+                        .HtmlAttributes(new { style = "width:100%" })
+                        .OptionLabel("Select CN-X Authorization Code ...")
+                        .Height(310)
+                        .BindTo(Model.Cnxs)
+                        .Events(e => e.Change("CnxAuthCodeChanged").DataBound("CnxAuthCodeDataBound"))
+                    )
+                </div>
+                <div class="csp-field">
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+                <br />
+                <div class="csp-label">
+                    @Html.Label("Panorama Serial Number: ")
+                </div>
+                <div class="csp-field">
+                    @(Html.Kendo().DropDownListFor(model => Model.AvailablePanoramas)
+                        .Name("AllocateTokensToAvailablePanoramas")
+                        .HtmlAttributes(new { style = "width:100%" })
+                        .OptionLabel("Select Panorama Serial Number ...")
+                        .DataTextField("SerialNumber")
+                        .DataValueField("Id")
+                        .Height(310)
+                        .BindTo(Model.AvailablePanoramas)
+                        .Events(e => e.Change("NewPanoramaChanged").DataBound("NewPanoramaDataBound"))
+                    )
+                </div>
+                <div class="csp-field">
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="button" value="Add" name="btnAdd" id="btnAdd" disabled="disabled" class="k-button" onclick="AddPanorama()" />&nbsp;&nbsp;
+                </div>
+            </div>
+        </fieldset>
+        <div class="step0">
+        @(Html.Kendo().Grid(Model.Panoramas)
+            .Name("AllocateCnSeriesTokenGrid")
+            .Columns(cols => {
+                cols.Bound(x => x.Id).Hidden(true);
+                cols.Bound(x => x.CnxAuthCode).Title("Auth Code");
+                cols.Bound(x => x.SerialNumber).Title("Serial Number").Sortable(false).Width(100);
+                cols.Bound(x => x.ModelName).Title("Model Name");
+                cols.Bound(x => x.Tokens).Title("Tokens");
+                cols.Bound(x => x.Id).Width(70).Title("Actions");
+            })
+            .DataSource(dataSource => dataSource.Ajax().Model(model => { model.Id(p => p.Id); }).ServerOperation(false))
+        )
+        </div>
+        <fieldset id="errorMessageRoot"  class="step0"style="display:none;">
+            <div id="errorMessage" class="fieldset error"></div>
+        </fieldset>
+        <fieldset id="confirmationMessageRoot"  class="step1" style="display:none;">
+            <div id="confirmationMessage" class="">
+            </div>
+        </fieldset>
+        <fieldset>
+            <div class="fieldset" style="position: absolute;bottom: 5px;width: calc(100% - 15px);">
+                <div class="csp-submit-container">
+                    <input type="submit" id="AlocateTokensSubmit" disabled="disabled" value="Allocate Tokens" class="k-button csp-submit"  />&nbsp;&nbsp;&nbsp;
+                    <input type="button" id="btnCancel" value="Cancel" name="btnCancel" class="k-button" onclick="CloseMe(this)" />&nbsp;&nbsp;
+                </div>
+            </div>
+        </fieldset>
+        <input id="PanoramasString" name="PanoramasString" type="hidden" value="[]">
+        <input id="MaxNewRecords" name="MaxNewRecords" type="hidden" value="@Model.MaxNewRecords">
+        <input id="AvailableTokens" name="AvailableTokens" type="hidden" value="@Model.AvailableTokens">
+    }
+</div>

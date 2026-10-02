@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ExternalJumpToUrls>
+  <ExternalJumpToUrl displayText="Support Overview"   externalUrl="support/tabs/overview.html" />
+  <ExternalJumpToUrl displayText="Account Management" externalUrl="support/tabs/account-management.html" />
+  <ExternalJumpToUrl displayText="Announcements"      externalUrl="support/tabs/announcements.html" />
+  <ExternalJumpToUrl displayText="Resources"          externalUrl="support/tabs/resources.html" />
+</ExternalJumpToUrls>

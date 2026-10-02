@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preset name="SD.Presets.SelfServicing.TwoClasses" lastModifiedOn="2013-02-20T15:58:49.8435074+01:00" createdBy="Solutions Design" isSealed="true" xmlns="http://sd/llblgen/pro/presetElementDefinitions.xsd">
+	<supportedPlatforms>
+	    <platform name=".NET 3.5" />
+	    <platform name=".NET 4.0" />
+	    <platform name=".NET 4.5" />
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="LLBLGen Pro Runtime Framework"/>
+	</supportedFrameworks>
+	<supportedTemplateGroups>
+		<templateGroup name="SelfServicing" />
+	</supportedTemplateGroups>
+	<taskPresets>
+		<taskGroupPreset name="SD.Tasks.SelfServicing" forSpecificDatabase="All">
+			<taskPreset name="SD.Tasks.SelfServicing.EntityBaseClassesGenerator" />
+			<taskPreset name="SD.Tasks.SelfServicing.EntityCollectionClassesGenerator" />
+			<taskPreset name="SD.Tasks.SelfServicing.DaoClassesGenerator" />
+			<taskPreset name="SD.Tasks.SelfServicing.TypedListDaoClassGenerator" />
+			<taskPreset name="SD.Tasks.SelfServicing.DaoFactoryClassGenerator" />
+			<taskPreset name="SD.Tasks.SelfServicing.CommonDaoBaseClassGenerator" />
+			<taskPreset name="SD.Tasks.SelfServicing.TransactionClassGenerator" />
+			<taskGroupPreset name="SD.Tasks.Generic.FileCreators">
+				<taskPreset name="SD.Tasks.Generic.AssemblyInfoFileGenerator">
+					<parameters>
+						<parameter name="failWhenExistent" value="true" />
+					</parameters>
+				</taskPreset>
+				<taskPreset name="SD.Tasks.Generic.ConstantsEnumsFileGenerator" />
+				<taskPreset name="SD.Tasks.Generic.AppConfigFileGenerator" />
+				<taskPreset name="SD.Tasks.Generic.FieldInfoProviderClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.TypeDefaultValueClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.InheritanceInfoProviderClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.EntityRelationsClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.DynamicRelationClassGenerator" />
+				<taskPreset name="SD.Tasks.SelfServicing.CommonBaseClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.LinqMetaDataClassGenerator"/>
+				<taskPreset name="SD.Tasks.Generic.QuerySpecFactoryClassGenerator"/>
+				<taskPreset name="SD.Tasks.Generic.EntityClassesGenerator">
+					<parameters>
+						<parameter name="templateID" value="SD_EntityUsingEntityBaseTemplate" />
+					</parameters>
+				</taskPreset>
+				<taskPreset name="SD.Tasks.Generic.EntityFactoryClassesGenerator" />
+				<taskPreset name="SD.Tasks.Generic.EntityFieldFactoryClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.EntityFieldsFactoryClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.TvfCallFactoryClassGenerator">
+				<parameters>
+					<parameter name="elementFilter" value="TvfCalls.Any()" />
+				</parameters>
+				</taskPreset>
+				<taskPreset name="SD.Tasks.Generic.PersistenceInfoProviderClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.ResultsetFieldsClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.FieldCreationClassesGenerator" />
+				<taskPreset name="SD.Tasks.Generic.ActionProceduresClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.RetrievalProceduresClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.TypedListClassGenerator" />
+				<taskPreset name="SD.Tasks.SelfServicing.TypedViewClassGenerator" />
+				<taskPreset name="SD.Tasks.Generic.ValidatorClassesGenerator" isEnabled="false" />
+			</taskGroupPreset>
+			<taskPreset name="SD.Tasks.SelfServicing.VsNetProjectFileCreator">
+				<parameters>
+					<parameter name="templateID" value="SD_VsNetTemplate" />
+				</parameters>
+			</taskPreset>
+		</taskGroupPreset>
+	</taskPresets>
+</preset>

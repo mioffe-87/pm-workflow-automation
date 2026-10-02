@@ -1,0 +1,111 @@
+﻿@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.CsatLineChartDto
+
+@if (Model.MultipleAscLineChart != null && Model.MultipleAscLineChart.Count>0)
+{
+    @(Html.Kendo().Chart(Model.MultipleAscLineChart)
+                              .Name(ViewData["Id"].ToString() + "LineChart")
+                              .Title(t => t.Text(ViewData["Title"].ToString()).Font("bold  16px Georgia, sans-serif").Color("#0070C0"))
+                              .Legend(legend => legend
+                                  .Position(ChartLegendPosition.Top)
+                              )
+                              .ChartArea(chartArea => chartArea
+                                  .Background("transparent")
+                              )
+                              .SeriesDefaults(series => series.Line().Width(2))
+                              .Series(series =>
+                              {
+                                  series.Line(model => model.TotalCount).Name("Partner").Color("#00689a").Width(3).Labels(l => l.Visible(true).Font("bold  12px Arial,Helvetica,sans-serif").Position(ChartPointLabelsPosition.Left));
+                                  if (ViewData["DisplayTarget"].ToString() != "0")
+                                  {
+                                      series.Line(model => model.TargetCount).Name("Target").Color("#FF0000").DashType(ChartDashType.Dash);
+                                  }
+                              })
+                              .CategoryAxis(axis => axis
+                                  .Categories(model => model.Category)
+                                  .Crosshair(c => c.Visible(true))
+                              )
+                              .ValueAxis(axis => axis.Numeric().Labels(labels => labels.Format(ViewData["Format"].ToString()))
+                                .Line(line => line.Visible(true))
+                              )
+                              .Tooltip(tooltip => tooltip
+                                  .Visible(true)
+                                  .Format(ViewData["Format"].ToString())
+                              )
+                              )
+}
+else if (Model.SingleAscLineChart != null && Model.SingleAscLineChart.Count>0)
+{
+    @(Html.Kendo().Chart(Model.SingleAscLineChart)
+                              .Name(ViewData["Id"].ToString() + "LineChart")
+                              .Title(t => t.Text(ViewData["Title"].ToString()).Font("bold  16px Georgia, sans-serif").Color("#0070C0"))
+                              .Legend(legend => legend
+                                  .Position(ChartLegendPosition.Top)
+                              )
+                              .ChartArea(chartArea => chartArea
+                                  .Background("transparent")
+                              )
+                              .SeriesDefaults(series => series.Line().Width(2))
+                              .Series(series =>
+                              {
+                                  series.Line(model => model.WorldWideAverage).Name(Model.TheatreTextForChart).Color("#9BBB59");
+                                  series.Line(model => model.TotalCount).Name("Partner").Color("#00689a").Width(3).Labels(l => l.Visible(true).Font("bold  12px Arial,Helvetica,sans-serif").Position(ChartPointLabelsPosition.Left));
+                                  if (ViewData["DisplayTarget"].ToString() != "0")
+                                  {
+                                      series.Line(model => model.TargetCount).Name("Target").Color("#FF0000").DashType(ChartDashType.Dash);
+                                  }
+                              })
+                              .CategoryAxis(axis => axis
+                                  .Categories(model => model.Category)
+                                  .Crosshair(c => c.Visible(true))
+                              )
+                              .ValueAxis(axis => axis.Numeric().Labels(labels => labels.Format(ViewData["Format"].ToString()))
+                                .Line(line => line.Visible(true))
+                              )
+                              .Tooltip(tooltip => tooltip
+                                  .Visible(true)
+                                  .Format(ViewData["Format"].ToString())
+                              )
+                              )
+}
+else if (Model.LineChart != null)
+{
+    @(Html.Kendo().Chart(Model.LineChart)
+          .Name(ViewData["Id"].ToString() + "LineChart")
+          .Title(t => t.Text(ViewData["Title"].ToString()).Font("bold  16px Georgia, sans-serif").Color("#0070C0"))
+          .Legend(legend => legend
+              .Position(ChartLegendPosition.Top)
+          )
+          .ChartArea(chartArea => chartArea.Background("transparent")
+          )
+          .SeriesDefaults(series => series.Line().Width(2))
+          .Series(series =>
+          {
+              if (ViewData["PartnerProfile"] != null)
+              {
+                  series.Line(model => model.PartnerTotalCount).Name("Partner").Color("#00689a").Width(5).Labels(l => l.Visible(true).Font("bold  12px Arial,Helvetica,sans-serif").Position(ChartPointLabelsPosition.Left));
+              }
+              series.Line(model => model.AmericasTotalCount).Name("Americas").Color("#C0504D");
+              series.Line(model => model.EmeaTotalCount).Name("EMEA").Color("#9BBB59");
+              series.Line(model => model.JapanTotalCount).Name("Japan").Color("#8064A2");
+              series.Line(model => model.ApacTotalCount).Name("APAC").Color("#4BACC6");
+              if (ViewData["DisplayTarget"].ToString() != "0")
+              {
+                  series.Line(model => model.TargetCount).Name("Target").Color("#FF0000").DashType(ChartDashType.Dash);
+              }
+          })
+          .CategoryAxis(axis => axis
+              .Categories(model => model.Category)
+              .Crosshair(c => c.Visible(true))
+          )
+          .ValueAxis(axis => axis.Numeric().Labels(labels => labels.Format(ViewData["Format"].ToString()))
+              .Line(line => line.Visible(true))
+
+
+          )
+          .Tooltip(tooltip => tooltip
+              .Visible(true)
+              .Format(ViewData["Format"].ToString())
+          )
+          )
+}

@@ -1,0 +1,1305 @@
+﻿    @using System.Configuration
+@using Csp.Api.HelperClasses
+@using Kendo.Mvc.UI;
+@using Csp.Api.Security;
+@using NPOI.SS.Formula.Functions
+@model  Csp.Web.DataTransferObjects.DeviceListDto
+
+@{
+    var actionHelper = Model.ActionHelper;
+    //var deviceTitle = Html.Raw(Common.GetCurrentDeviceTitle());
+    var deviceTitle = Common.GetCurrentDeviceTitle();
+    var caseHistoryUrl = ConfigurationManager.AppSettings["caseHistoryUrl"];
+    var groupId = (Model.ActionHelper.Controller == ControllerFields.GroupController) ? Model.ActionHelper.Id : 0;
+    var supportAccountId = CurrentState.GetSupportAccountId();
+}
+
+
+@Html.Hidden((string)UniqueId.isPostBackId, "")
+
+<style>
+    div.childtable, div.childtable tr, div.childtable tr th, div.childtable thead {
+        background-color: inherit; /*Use the parent row's colors'*/
+    }
+
+    div.licenserow {
+        height: 25px;
+        white-space: nowrap;
+    }
+
+    div.TransferCancelled {
+        color: orange;
+    }
+
+    div.TransferPending {
+        color: green;
+    }
+
+    div.TransferRejected {
+        color: red;
+    }
+</style>
+
+
+<script>
+
+    function @(UniqueId.device)onCloseDeviceWindow() {
+        var window = $("#@UniqueId.deviceWindowId").data("kendoWindow");
+        window.refresh();
+        SupportPortal.OnWindowClose("@UniqueId.gridId");
+    }
+
+
+    function @(UniqueId.device)onOpenDeviceWindow() {
+
+        SupportPortal.OnWindowOpen("@UniqueId.deviceWindowId");
+
+    }
+
+    function OnDevicesCmbChange() {
+        var cmbId = "#@(UniqueId.searchFieldId)";
+        $('#@UniqueId.textDivId input:text').val('');
+        var selectedValue = $(cmbId).data("kendoDropDownList").value();
+        if (selectedValue == "DeviceCategoryId") {
+            $('#@UniqueId.textDivId').css('display', 'none');
+            $('#@UniqueId.deviceCategoryDropDownDivId').css('display', 'block');
+            $('#@UniqueId.DateSearchDiv').css('display', 'none');
+        } else if (selectedValue == "ExpiresBy") {
+            $('#@UniqueId.textDivId').css('display', 'none');
+            $('#@UniqueId.deviceCategoryDropDownDivId').css('display', 'none');
+            $('#@UniqueId.DateSearchDiv').css('display', 'block');
+        } else {
+            $('#@UniqueId.textDivId').css('display', 'block');
+            $('#@UniqueId.deviceCategoryDropDownDivId').css('display', 'none');
+            $('#@UniqueId.DateSearchDiv').css('display', 'none');
+        }
+    }
+
+    function @(UniqueId.device)DeleteDeviceDetails(e) {
+
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var row = $(e.currentTarget).closest("tr");
+        var deviceid = dataItem.DeviceId;
+        var direction = "/@ControllerFields.GroupController/RemoveDevice?groupId=@actionHelper.Id&deviceId=" + deviceid;
+
+
+        SupportPortal.Confirmation("@Constants.DeletePreMessage Device?", function () { @(UniqueId.device)removeDevice(); }, null, null);
+
+        function @(UniqueId.device)removeDevice() {
+            $.ajax({
+                url: direction,
+                type: 'Post',
+                data: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                cache: false,
+                success: function (result) {
+
+                    if (result == "Success") {
+                        row.hide();
+                        var grid = $("#@UniqueId.gridId").data("kendoGrid").dataSource;
+                        grid.read();
+                    } else {
+                        row.show();
+                    }
+                },
+                error: function () {
+                    row.show();
+
+                }
+            });
+
+        }
+
+    }
+
+
+    function @(UniqueId.device)onDeviceDataBound() {
+        var deviceName = "#@UniqueId.gridId tbody tr .DeviceName";
+        $(deviceName).each(function () {
+            var currentDataItem = $("#@UniqueId.gridId").data("kendoGrid").dataItem($(this).closest("tr"));
+            if (currentDataItem == undefined)
+                return true;//continue
+            console.log(currentDataItem);
+            //Show/Hide Action Buttons
+            if (currentDataItem.ShowNfrLicense == false) {
+                $(this).closest('tr').find('a.k-grid-ActivateEvalLicense').remove();
+            }
+
+            if (currentDataItem.ShowTrialLicense == false) {
+                $(this).closest('tr').find('a.k-grid-ActivateTrialLicense').remove();
+            }
+
+            if (currentDataItem.ShowTransferLicense == false) {
+                $(this).closest('tr').find('a.k-grid-TransferLicenses').remove();
+            }
+        });
+
+        var ctrlName = "#@UniqueId.isPostBackId";
+
+        if ($(ctrlName).val() == "") {
+            $("#@UniqueId.gridId").data("kendoGrid").dataSource._total = "@Convert.ToInt32(Model.DataParameters.TotalRecordCount)";
+            $(ctrlName).val("1");
+        }
+
+        delayExpandRow(this);
+    }
+
+    var loadedFirst = false;
+    function delayExpandRow(row) {
+
+        if (loadedFirst) {
+            setTimeout(function () { row.expandRow(row.tbody.find("tr.k-master-row")); }, 1000);
+        } else {
+            loadedFirst = true;
+            row.expandRow(row.tbody.find("tr.k-master-row"));
+        }
+    }
+
+    function @(UniqueId.device)onLicenseDataBound(e) {
+
+        var currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        var numberOfDaysToSubtract = 31;
+
+        var lastColIndex = null;
+
+        var grid = this;
+        grid.tbody.find('>tr').each(function () {
+
+            var dataItem = grid.dataItem(this);
+            console.log(dataItem);
+            var expirationDate = dataItem.ExpirationDate;
+            if (!expirationDate) return true;
+
+            var expirationDateWarning = new Date(expirationDate.getTime());
+
+            expirationDateWarning.setDate(expirationDate.getDate() - numberOfDaysToSubtract);
+
+            if (!lastColIndex) {
+                lastColIndex = $(this).find('td').length;
+            }
+
+            if (expirationDate < currentDate) {
+                $(this).find('td:nth-child(' + lastColIndex + ')').addClass("expired-license");
+            } else if (expirationDateWarning < currentDate) {
+                $(this).find('td:nth-child(' + lastColIndex + ')').addClass("expiration-warning-License");
+            }
+
+            if (dataItem.IsPerpetual) {
+                $(this).find('td:nth-child(' + lastColIndex + ')').text('Perpetual');
+            }
+
+            if (dataItem.CsspProvisionedDevice) {
+                $(this).find('td:nth-child(' + lastColIndex + ')').text('NA');
+            }
+
+            if (dataItem.LicenseNameDisplay == 'Lab Bundle') {
+                $(this).find('td:nth-child(' + lastColIndex + ')').text('');
+            }
+
+
+
+        });
+    }
+
+    function @(UniqueId.device)SearchDeviceData() {
+
+        var params = @(UniqueId.device)getSearchParams();
+
+        var grid = $("#@UniqueId.gridId").data("kendoGrid");
+        var gridData = grid.dataSource;
+        gridData.filter(
+            {
+                field: params.field,
+                operator: "eq",
+                value: params.value
+            }
+        );
+
+        grid.collapseRow(grid.tbody.find("tr.k-master-row"));
+    }
+
+    function @(UniqueId.device)onDevicesEnterPress(e) {
+
+        if (e.keyCode == 13) {
+            @(UniqueId.device)SearchDeviceData();
+            return false;
+        }
+
+        return true;
+    }
+
+    function DeviceTagChangeHandler(e) {
+        @(UniqueId.device)SearchDeviceData();
+        return false;
+    }
+
+    function @(UniqueId.device)getSearchParams() {
+
+        var selectedValue = $("#@UniqueId.searchFieldId").val();
+
+        if (selectedValue == "ExpiresBy") {
+            var searchDatePicker = $('#@UniqueId.SearchDateValue');
+            if (searchDatePicker.val() != "") {
+
+                var dt = new Date(searchDatePicker.val());
+                var dtString = dt.getFullYear() + "-" + ((dt.getMonth() + 1) > 9 ? (dt.getMonth() + 1) : "0" + (dt.getMonth() + 1)) + "-" + (dt.getDate() > 9 ? dt.getDate() : "0" + dt.getDate());
+                $("#@UniqueId.searchValueId").val(dtString);
+            }
+            else {
+                $("#@UniqueId.searchValueId").val("");
+            }
+        }
+        else if (selectedValue == "DeviceCategoryId") {
+            var deviceCategoryDropDown = $("#@UniqueId.deviceCategoryFieldId");
+            if (deviceCategoryDropDown.val() > 0)
+                $("#@UniqueId.searchValueId").val(deviceCategoryDropDown.val());
+            else {
+                $("#@UniqueId.searchValueId").val("");
+            }
+        }
+
+         return {
+            field: $("#@UniqueId.searchFieldId").val(),
+                value: $("#@UniqueId.searchValueId").val()
+            };
+        }
+
+        function @(UniqueId.device)getGridParams() {
+
+        var params = @(UniqueId.device)getSearchParams();
+
+        var p = SetAntiForgery();
+        p.searchField = params.field;
+        p.searchValue = params.value;
+            p.hideExpiredLicenses = hideExpiredLicenses;
+        return p;
+    }
+
+    $("#@UniqueId.searchFieldId").change(function () {
+
+        $("#@UniqueId.searchValueId").select();
+        $("#@UniqueId.searchFieldId").data("kendoDropDownList").focus();
+    });
+
+
+    function @(UniqueId.device)showEditDeviceDetailWindow(deviceId) {
+        var direction = "/@ControllerFields.DeviceController/@actionHelper.Details?deviceId=" + deviceId;
+        var window = $("#@UniqueId.deviceWindowId").data("kendoWindow");
+        window.content(" ");
+        window.refresh();
+        window.refresh(direction);
+        window.setOptions({
+            minHeight: 250,
+            maxWidth: 580,
+            position: {
+                top: 100, // or "100px"
+                left: "27%"
+            }
+        });
+        window.open();
+    }
+
+    function showPendingDeviceTransferDetailWindow(e) {
+        var self = this;
+        var grid = $('#' + deviceGridId).data('kendoGrid');
+        var row = $(e.target).closest("tr");
+        var item = grid.dataItem(row);
+        var deviceId = item.get('DeviceId');
+
+        var direction = "/@ControllerFields.DeviceController/@actionHelper.GetPendingDeviceTransferDetails?deviceId=" + deviceId;
+        var window = $("#@UniqueId.pendingDeviceTransferDetailsWindowId").data("kendoWindow");
+        window.content(SupportPortal.AjaxLoadingMessage());
+        window.refresh();
+        window.refresh(direction);
+        window.setOptions({
+            minHeight: 200,
+            width:750
+        });
+        window.open();
+        window.center();
+
+    }
+
+    function @(UniqueId.device)showAscContactDetailsWindow(id) {
+
+        var direction = "/@ControllerFields.SupportAccountController/@actionHelper.GetAscContactInfo/" + id;
+        var window = $("#@UniqueId.ascContactDetailsWindowId").data("kendoWindow");
+        window.content(SupportPortal.AjaxLoadingMessage());
+        window.refresh();
+        window.refresh(direction);
+        window.setOptions({
+            minHeight: 100
+        });
+        window.open();
+        window.center();
+    }
+
+    function @(UniqueId.device)ActivateDeviceLicensecenterWindow(e) {
+        e.sender.center();
+    }
+
+
+    function @(UniqueId.device)closeActivateDeviceLicense() {
+        var window = $("#@UniqueId.deviceActivationWindowId").data("kendoWindow");
+        window.close();
+        window.content(" ");
+    }
+
+
+
+    function @(UniqueId.device)closeDeviceDetailWindowclose() {
+        var window = $("#@UniqueId.deviceWindowId").data("kendoWindow");
+        window.close();
+        window.content(" ");
+    }
+
+    function @(UniqueId.device)setWindowTitle() {
+        var window = $("#@UniqueId.deviceWindowId").data("kendoWindow");
+        var title = '@deviceTitle';
+        if (title == null || title.length === 0) {
+            title = 'Device';
+        }
+        window.title(title);
+    }
+
+    function @(UniqueId.device)openTrialEvalLicenseWindow(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        @(UniqueId.device)openTrialLicenseWindow('Eval', dataItem.SerialNumber);
+    }
+
+    function @(UniqueId.device)openTrialTrialLicenseWindow(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        @(UniqueId.device)openTrialLicenseWindow('Trial', dataItem.SerialNumber);
+    }
+
+    function @(UniqueId.device)openTrialLicenseWindow(mode, serialNumber) {
+
+        var direction = '/@ControllerFields.LicenseController/@actionHelper.ActivateTrialLicense?serialNumber=' + serialNumber + '&mode=' + mode;
+        var window = $("#@UniqueId.activateTrialLicenseWindow").data("kendoWindow");
+
+        window.setOptions({
+            minWidth: 500,
+            minHeight: 250
+        });
+        window.title("Feature Evaluation Activation");
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+
+    function @(UniqueId.device)openLicenseTransferWindow(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var direction = '/License/Transfer?deviceId=' + dataItem.DeviceId;
+
+        var window = $('#@UniqueId.TransferLicensesWindow').data('kendoWindow');
+
+        window.setOptions({
+            minWidth: 800,
+            minHeight: 250
+        });
+        window.title("Transfer License");
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+
+    function @(UniqueId.device)onOpenTrialLicenseActivationWindow() {
+        SupportPortal.OnWindowOpen("@UniqueId.activateTrialLicenseWindow");
+
+    }
+
+    function @(UniqueId.device)onOpenTransferLicensesWindow() {
+        SupportPortal.OnWindowOpen('@UniqueId.TransferLicensesWindow');
+    }
+
+    function @(UniqueId.device)onCloseTrialLicenseActivationWindow() {
+        var window = $("#@UniqueId.activateTrialLicenseWindow").data("kendoWindow");
+        window.content("");
+        window.refresh();
+        SupportPortal.OnWindowClose(deviceGridId);
+    }
+
+    function @(UniqueId.device)onCloseTransferLicensesWindow() {
+        var window = $('#@UniqueId.TransferLicensesWindow').data('kendoWindow');
+        window.content('');
+        window.refresh();
+        SupportPortal.OnWindowClose(deviceGridId);
+    }
+
+    var @(UniqueId.devices)deviceButtons = (function () {
+
+        function openAddDeviceToGroupWindow() {
+            var isProductionDeviceList = '@Model.IsProductionDeviceList';
+            var addDeviceToGroupTitle = (isProductionDeviceList.toLowerCase() === "true") ? "Add Device to Group" : "Add Spare to Group";
+            var direction = "/@ControllerFields.DeviceController/@actionHelper.AddDeviceToGroup?groupId=@actionHelper.Id&isProd=@Model.IsProductionDeviceList";
+            var window = $("#@UniqueId.addDeviceToGroupWindowId").data("kendoWindow");
+            window.content(" ");
+            window.setOptions({
+                minWidth: 400,
+                minHeight: 110
+            });
+            window.bind('open', onOpenAddDeviceGroupWindow);
+            window.bind('close', onCloseAddDeviceGroupWindow);
+            window.title(addDeviceToGroupTitle);
+            window.refresh();
+            window.refresh(direction);
+            window.open();
+            window.center();
+        }
+
+        function onOpenAddDeviceGroupWindow() {
+            SupportPortal.OnWindowOpen("@UniqueId.addDeviceToGroupWindowId");
+        }
+
+        function onCloseAddDeviceGroupWindow() {
+            var window = $("#@UniqueId.addDeviceToGroupWindowId").data("kendoWindow");
+            window.content("");
+            window.refresh();
+
+            SupportPortal.OnWindowClose(deviceGridId);
+        }
+
+        function openDeviceTypeWindow() {
+            var direction = "/@ControllerFields.DeviceController/@actionHelper.DeviceType";           
+            if (@groupId > 0) {
+                direction = direction + "?id=" + @supportAccountId + "&groupId=" + @groupId;
+            } else {
+                direction = direction + "?id=" + @supportAccountId;
+            }            
+            var window = $("#@UniqueId.deviceTypeWindowId").data("kendoWindow");
+            window.content(SupportPortal.AjaxLoadingMessage());
+            window.setOptions({
+                minHeight: 220,
+                animation: {
+                    open: {
+                        effects: "slideIn:down fadeIn",
+                        duration: 500
+                    }, close: {
+                        effects: "fadeOut",
+                        duration: 300
+                    }
+                }
+            });
+            window.title("Device Type");
+            window.refresh();
+            window.refresh(direction);
+            window.open();
+            window.center();
+        }
+
+       function openRegisterDeviceWindow() {
+            var deviceType = $("#hdnDeviceType").val();
+            var cloudType = $("#hdnCloudType").val();
+            var direction = "/@ControllerFields.DeviceController/@actionHelper.RegisterDevice";
+
+            if (@groupId > 0) {
+                direction = direction + "?id=" + @supportAccountId + "&groupId=" + @groupId;
+            } else {
+                direction = direction + "?id=" + @supportAccountId;
+            }
+
+            if (deviceType == 2) {
+                direction = "/@ControllerFields.DeviceController/@actionHelper.RegisterDevice?id=@actionHelper.Id&isCloudDevice=true&cloudType="+cloudType;
+            }
+            var window = $("#@UniqueId.registerDeviceWindowId").data("kendoWindow");
+            window.content(" ");
+            window.setOptions({
+                minHeight: 500,
+                position: {
+                    top: 100, // or "100px"
+                    left: "27%"
+                },
+                animation: {
+                    open: {
+                        effects: "slideIn:down fadeIn",
+                        duration: 500
+                    }, close: {
+                        effects: "fadeOut",
+                        duration: 300
+                    }
+                }
+            });
+            window.bind('open', onOpenRegisterDeviceWindow);
+            window.bind('close', onCloseRegisterDeviceWindow);
+            window.title("Device Registration");
+            window.refresh();
+            window.refresh(direction);
+            window.open();
+            window.center();
+        }
+
+        function onOpenRegisterDeviceWindow() {
+            SupportPortal.OnWindowOpen("@UniqueId.registerDeviceWindowId");
+        }
+
+        function onCloseRegisterDeviceWindow() {
+            var window = $("#@UniqueId.registerDeviceWindowId").data("kendoWindow");
+            window.content("");
+            window.refresh();
+
+            SupportPortal.OnWindowClose(deviceGridId);
+        }
+
+
+
+        function openDeviceTransferWindow() {
+            var direction = "/DeviceTransfer/ReviewTransfers";
+            var window = $("#@UniqueId.ReviewDeviceTransfersWindow").data("kendoWindow");
+            window.content(" ");
+            window.setOptions({
+                minWidth: "70%",
+                minHeight: 500
+                //Width:"auto"
+            });
+            window.bind('open', onOpenDeviceTransferWindow);
+            window.bind('close', onCloseDeviceTransferWindow);
+            window.title("Review Device Transfers");
+            window.refresh();
+            window.refresh(direction);
+            window.open();
+            window.center();
+        }
+
+        function onOpenDeviceTransferWindow() {
+            SupportPortal.OnWindowOpen('@UniqueId.ReviewDeviceTransfersWindow');
+        }
+
+        function onCloseDeviceTransferWindow() {
+            SupportPortal.OnWindowClose(deviceGridId);
+        }
+
+        function exportProductionAssetsToCsv() {
+
+            var id = @actionHelper.Id;
+
+            var searchField = $("#@UniqueId.searchFieldId").val();
+            var searchValue = $("#@UniqueId.searchValueId").val();
+            var hideExpiredLicenses= '@Model.HideExpiredLicenses';
+
+            location.href = '@Url.Action((Model.IsProductionDeviceList ? actionHelper.ProductionDevices : actionHelper.SpareDevices) +
+                "Report", actionHelper.Controller)?id=' + id + '&searchField='
+                    + searchField + '&searchValue=' + searchValue + '&hideExpiredLicenses=' + hideExpiredLicenses;
+        }
+
+        function openDeactivateLicensesWindow() {
+
+            var direction = "/License/DeactivateLicenses";
+            var window = $("#@UniqueId.deactivateLicensesWindowId").data("kendoWindow");
+            window.content(" ");
+            window.setOptions({
+                minHeight: 400
+            });
+            window.bind('open', onOpenDeactivateLicensesWindow);
+            window.bind('close', onCloseDeactivateLicensesWindow);
+            window.title("Deactivate Licenses");
+            window.refresh();
+            window.refresh(direction);
+            window.open();
+            window.center();
+        }
+
+        function onOpenDeactivateLicensesWindow() {
+            SupportPortal.OnWindowOpen("@UniqueId.deactivateLicensesWindowId");
+        }
+
+        function onCloseDeactivateLicensesWindow() {
+            var window = $("#@UniqueId.deactivateLicensesWindowId").data("kendoWindow");
+            window.content("");
+            window.refresh();
+
+            SupportPortal.OnWindowClose(deviceGridId);
+        }
+
+        return {
+            openAddDeviceToGroupWindow: openAddDeviceToGroupWindow,
+            openDeviceTypeWindow: openDeviceTypeWindow,
+            openRegisterDeviceWindow: openRegisterDeviceWindow,
+            openDeviceTransferWindow: openDeviceTransferWindow,
+            openDeactivateLicensesWindow: openDeactivateLicensesWindow,
+            exportProductionAssetsToCsv: exportProductionAssetsToCsv
+        };
+    })();
+
+    var @(UniqueId.device)licensePopup = (function () {
+
+
+        function onOpenLicenseWindow() {
+
+            SupportPortal.OnWindowOpen("@UniqueId.licenseWindowId");
+        }
+
+        function onCloseLicenseWindow() {
+            var window = $("#@UniqueId.licenseWindowId").data("kendoWindow");
+            window.content("");
+            window.refresh();
+            SupportPortal.OnWindowClose("@UniqueId.gridId");
+        }
+
+        function editLicenses(e) {
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            console.log(dataItem);
+            var isCsspDevice = false;
+
+            if (dataItem.ExpirationDate.indexOf('Pay Per Use') > 0) {
+                isCsspDevice = true;
+            }
+
+            var deviceId = dataItem.DeviceId;
+
+            var direction = "/@ControllerFields.LicenseController/DeviceLicenses?id=" + deviceId + "&isCsspDevice=" + isCsspDevice;
+            var window = $("#@UniqueId.licenseWindowId").data("kendoWindow");
+            window.content(" ");
+            window.refresh();
+            window.refresh(direction);
+            window.setOptions({
+                minHeight: 730
+            });
+            window.open();
+            window.center();
+        }
+
+        return {
+            onOpenLicenseWindow: onOpenLicenseWindow,
+            onCloseLicenseWindow: onCloseLicenseWindow,
+            editLicenses: editLicenses
+        };
+    })();
+
+    function kendoGridNewLines(text) {
+        //var regexp = new RegExp('\n', 'g');
+        //return text.replace(regexp, '<br>');
+        return text;
+    }
+
+    $(document).ready(function () {
+        addDeviceToGroupWindow = "#@UniqueId.addDeviceToGroupWindowId";
+        registerDeviceWindow = "#@UniqueId.registerDeviceWindowId";
+        deviceTypeWindowId = "#@UniqueId.deviceTypeWindowId";
+        deviceWindowId = "#@UniqueId.deviceWindowId";
+        deviceGridId = "@UniqueId.gridId";
+
+        setTimeout(function() {
+            $("#@UniqueId.searchValueId").focus();
+        }, 500);
+
+        setTimeout(function() {
+            $('#' + deviceGridId).data('kendoGrid').table.on('click', '.pending-device-transfer', showPendingDeviceTransferDetailWindow);
+        });
+    });
+
+    function SetDeviceType(obj) {
+        var deviceType = $('input:radio[name=DeviceType]:checked').val();
+        $("#hdnDeviceType").val(deviceType);
+        var cloudType = $("#ddCloudTypes").val();
+        $("#hdnCloudType").val(cloudType);
+        if (deviceType == "2" && cloudType == "") {
+            $("#cloudValidationMessage").show();
+        } else {
+            $("#cloudValidationMessage").hide();
+            $(obj).closest(".k-window-content").data("kendoWindow").close();
+            @(UniqueId.devices)deviceButtons.openRegisterDeviceWindow();
+        }
+    }
+
+    function GetAscContactLink(data) {
+        if (data && data.ASCId && data.ASCName) {
+            return '<a href="javascript:void(0);" onclick="@(UniqueId.device)showAscContactDetailsWindow(' + data.ASCId + ')">' + data.ASCName + '</a>';
+        }
+
+        return '';
+    }
+
+    function GetActionsLink(data) {
+        //Malbork always has 1 license
+        if (data.Licenses && data.Licenses.length === 1 && data.Licenses[0].Pandbidentification) {
+            var pattern = new RegExp('^(REN)*TRAPSMA(L|LUS|LLAB|LNFR)');
+            if (pattern.test(data.Licenses[0].Pandbidentification)) {
+                return '<span class=" "></span>';
+            }
+        }
+
+        //Block AuthCode Activation for CGX devices
+        if(data.ProductFamily === 'CGX')
+        {
+            return '<span class=" "></span>';
+        }
+
+        var isCsspDevice = false;
+        if (data.ExpirationDate.indexOf('Pay Per Use') > 0) {
+            isCsspDevice = true;
+        }
+        return '<a class="k-button k-button-icontext k-grid-csp-edit" href="javascript:void(0);" onclick="EditLicenseClick(' + data.DeviceId + ',' + isCsspDevice + ')"><span class=" "></span></a>';
+    }
+
+    function EditLicenseClick(deviceId, isCsspDevice) {
+        var direction = "/@ControllerFields.LicenseController/DeviceLicenses?id=" + deviceId + "&isCsspDevice=" + isCsspDevice;
+        var window = $("#@UniqueId.licenseWindowId").data("kendoWindow");
+        window.content(" ");
+        window.refresh();
+        window.refresh(direction);
+        window.setOptions({
+            minHeight: 730
+        });
+        window.open();
+        window.center();
+    }
+
+    function @(UniqueId.device)showCaseHistory(serialNumber) {
+        var caseHistoryUrl= "@caseHistoryUrl" + serialNumber;
+        var caseHistoryUrlDec = caseHistoryUrl.replace("&amp;","&");
+        window.open(caseHistoryUrlDec,"_blank");
+    }
+
+
+    //show master authcode info
+    function showMasterAuthCodeInfo(masterAuthCodeLicenseId, serialNumber, modelName, authCode) {
+        var direction = "/License/ShowMasterAutoCodeInfo?masterAutocodeLicId=" + masterAuthCodeLicenseId + "&serialNumber=" + serialNumber + "&modelName=" + modelName + "&authCode=" + authCode;
+        var window = $('#@UniqueId.showMasterAuthCodeInfoWindowsId').data("kendoWindow");
+        window.content(" ");
+        window.refresh();
+        window.refresh(direction);
+        window.setOptions({
+            minHeight: 240
+        });
+        window.open();
+        window.center();
+    }
+
+    var hideExpiredLicenses = '@Model.HideExpiredLicenses';
+    function @(UniqueId.devices)hideExpiredLicenses() {
+
+        var params = @(UniqueId.device)getSearchParams();
+
+        //toggle the flag
+        if (hideExpiredLicenses === 'True' || hideExpiredLicenses === true)
+           hideExpiredLicenses = false;
+        else
+           hideExpiredLicenses= true;
+
+
+        // toggle the button text
+        if (hideExpiredLicenses) {
+            $('#btnExpiredLicenses').val('Show Expired License(s)');
+        } else {
+            $('#btnExpiredLicenses').val('Hide Expired License(s)');
+       }
+
+        //refresh the grid based on flag
+        $('#@UniqueId.gridId').data('kendoGrid').dataSource.read({
+            id: @actionHelper.Id,
+            hideExpiredLicenses: hideExpiredLicenses,
+            searchField:params.field,
+            searchValue:params.value
+        });
+    }
+
+    function getMagicLinkTooltip(e) {
+        var content = e.target.next("div").html();
+        return content;
+    }
+
+
+</script>
+<input type="hidden" id="hdnDeviceType" name="hdnDeviceType"/>
+<input type="hidden" id="hdnCloudType" name="hdnCloudType"/>
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)UniqueId.ascContactDetailsWindowId)
+        .Visible(false)
+        .Modal(true)
+        .Draggable(true)
+        .Width(400)
+        .Title("Asc Contact Information")
+    )
+</div>
+
+<div>
+    @(
+    Html.Kendo().Window()
+        .Name((string)UniqueId.addDeviceToGroupWindowId)
+        .Visible(false)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title("Add Device to Group")
+          )
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.deviceTypeWindowId)
+        .Visible(false)
+        .Width(900)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title("Device Type")
+)
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.registerDeviceWindowId)
+        .Visible(false)
+        .Width(500)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title("Device Registration")
+)
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.ReviewDeviceTransfersWindow)
+        .Visible(false)
+        .Width(500)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title("Device Registration")
+)
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.deviceCategoriesWindow)
+        .Visible(false)
+        .Width(800)
+        .Height(450)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title(ApiConstants.DEVICE_CATEGORY)
+)
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.deviceWindowId)
+        .Events(events => events
+                              .Close((string)UniqueId.device + "onCloseDeviceWindow")
+                              .Open((string)UniqueId.device + "onOpenDeviceWindow")
+        )
+        .Modal(true)
+        .Width(600)
+        .Visible(false)
+        .Draggable()
+        .Title("Device:")
+          )
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.licenseWindowId)
+        .Events(events => events
+                              .Close((string)UniqueId.device + "licensePopup.onCloseLicenseWindow")
+                              .Open((string)UniqueId.device + "licensePopup.onOpenLicenseWindow")
+        )
+        .Modal(true)
+        .Width(640)
+        .Visible(false)
+        .Draggable()
+        .Title("Device Licenses")
+          )
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.activateTrialLicenseWindow)
+        .Visible(false)
+        .Modal(true)
+        .Draggable()
+        .Title("Trial License Activation")
+        .Events(events => events
+                                .Close((string)UniqueId.device + "onCloseTrialLicenseActivationWindow")
+                                .Open((string)UniqueId.device + "onOpenTrialLicenseActivationWindow")
+                                )
+    )
+</div>
+
+<div>
+    @(
+    Html.Kendo().Window()
+        .Name((string) UniqueId.TransferLicensesWindow)
+        .Visible(false)
+        .Modal(true)
+        .Draggable()
+        .Title("Transfer License")
+        .Events(events => events
+            .Close((string) UniqueId.device + "onCloseTransferLicensesWindow")
+            .Open((string) UniqueId.device + "onOpenTransferLicensesWindow")
+        )
+          )
+</div>
+
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.deactivateLicensesWindowId)
+        .Visible(false)
+        .Width(500)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title("Deactivate Licenses")
+)
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)UniqueId.pendingDeviceTransferDetailsWindowId)
+          .Visible(false)
+          .Modal(true)
+          .Draggable(true)
+          .Width(600)
+          .Title("Pending Device Transfer Details")
+          )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)UniqueId.showMasterAuthCodeInfoWindowsId)
+          .Visible(false)
+          .Modal(true)
+          .Draggable(true)
+          .Width(460)
+          .Title("DEVICE:")
+    )
+</div>
+
+@{
+    var title = Model.IsProductionDeviceList ? "Devices" : "Spares";
+}
+<div id="@UniqueId.DownloadsWindow"></div>
+<div class="contextTitle"> @title </div>
+
+@{
+     
+    <div class="grid-header" style="height: inherit;">
+        <div class="grid-left">
+            @if (actionHelper.Controller == ControllerFields.GroupController) {
+                if (User.HasPermission(Permission.CreateGroup) || User.HasPermission(Permission.EditGroup)) {
+                    var addDeviceText = Model.IsProductionDeviceList ? "Add Device to Group" : "Add Spare to Group";   
+                <input type="button" id="@UniqueId.addDeviceToGroupButtonId" class="k-button k-primary" onclick="@(UniqueId.devices)deviceButtons.openAddDeviceToGroupWindow()" value="@addDeviceText" />
+                }
+            }
+
+            @if (actionHelper.Controller == ControllerFields.SupportAccountController || actionHelper.Controller == ControllerFields.GroupController) {
+
+                if (User.HasPermission(Permission.RegisterDevice)) {
+
+                    var registerDeviceText = Model.IsProductionDeviceList ? "Register New Device" : "Register New Spare";
+
+                    if (Model.IsProductionDeviceList && actionHelper.Controller == ControllerFields.SupportAccountController)
+                    {
+                        <input class="k-button k-primary" type="button" value="@registerDeviceText" data-link-type='devices' data-link-field='register new' onclick="window.location.href= '@Url.Action("RegisterDevice", "SupportAccount",new { id= Model.ActionHelper.Id })';"/>
+                        <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 6);"></i></span>
+                    }
+                    else
+                    { 
+                        <input type="button" id="@UniqueId.registerDeviceButtonId" @Html.Raw(Model.IsProductionDeviceList ?  "data-link-type='devices' data-link-field='register new'" : "data-link-type='register-spare'") class="k-button" onclick="@(UniqueId.devices)deviceButtons.openDeviceTypeWindow()" value="@registerDeviceText" />
+                        <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 6);"></i></span>
+                    }
+                    <input class="k-button" type="button" value="Run Day 1 Config" data-link-type='devices' data-link-field='run day 1 config' onclick="window.location.href= '@Url.Action("Day1Config", "SupportAccount",new { id= Model.ActionHelper.Id })';"/>
+                }
+                
+                if(Model.IsProductionDeviceList){
+                <input type="button" class="k-button" data-link-type="devices" data-link-field="deactivate" value="Deactivate License(s)" onclick="@(UniqueId.devices)deviceButtons.openDeactivateLicensesWindow(); " />
+                }
+
+                if (Model.ShowReviewPendingTransfersButton) {
+                <input class="k-button k-primary" type="button" value="Review Pending Device Transfers" onclick="@(UniqueId.devices)deviceButtons.openDeviceTransferWindow(); " />
+                }
+                
+            }
+             @if(actionHelper.Controller == ControllerFields.SupportAccountController){
+                if (User.HasPermission(Permission.EditDeviceTags))
+                {
+                    <input class="k-button" type="button" value="Device Tag" onclick="window.location.href= '@Url.Action("DeviceCategories", "Device",new { id= Model.ActionHelper.Id })';"/>
+            
+                }
+
+
+                 if (Model.IsProductionDeviceList)
+                 {
+                     var btnExpiredLicensesText = Model.HideExpiredLicenses ? "Show Expired License(s)" : "Hide Expired License(s)";
+                     <input type="button" class="k-button" id="btnExpiredLicenses" value="@btnExpiredLicensesText" onclick="@(UniqueId.devices)hideExpiredLicenses(); "/>
+
+
+                     if (User.HasPermission(Permission.BulkDeviceTransfer) && Model.ShowBulkDeviceTransferButton)
+                     {
+                         <input class="k-button" type="button" value="Bulk Device Transfer" onclick="window.location.href = '@Url.Action("BulkDeviceTransfer", "SupportAccount", new {id = Model.ActionHelper.Id})';"/>
+
+                     }
+                 }
+             }
+            else{
+                if (User.HasPermission(Permission.EditDeviceTags))
+                {
+                    <input class="k-button" type="button" value="Device Tag" onclick="window.location.href= '@Url.Action("DeviceCategories", "Device",new {})';"/>
+            
+                }
+            }
+            
+
+        </div>
+        <div class="grid-right">
+
+            <div class="grid-filter">
+                @{
+                    if (Model.IsProductionDeviceList) {
+                    @(Html.Kendo().DropDownList()
+                        .Name((string)UniqueId.searchFieldId)
+                        .Events(events => events.Change("OnDevicesCmbChange"))
+                        .OptionLabel("Filter By")
+                        .OptionLabelTemplate("<span class='grid-filter__dropdown-placeholder'>Filter By</span>")
+                        .DataTextField("Text")
+                        .DataValueField("Value")
+
+                        .BindTo(new List<SelectListItem>
+                            {
+                                new SelectListItem
+                                    {
+                                        Text = "Serial Number",
+                                        Value = "SerialNumber"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Authorization Code",
+                                        Value = "AuthorizationCodes"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Expires By",
+                                        Value = "ExpiresBy"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Model Name",
+                                        Value = "ModelName"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Device Name",
+                                        Value = "DeviceName"
+                                    },
+
+                                new SelectListItem
+                                    {
+                                        Text = "Authorized Support Center",
+                                        Value = "ASCName"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = ApiConstants.DEVICE_CATEGORY,
+                                        Value = "DeviceCategoryId"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Remarks",
+                                        Value = "Comments"
+                                    }
+
+                            })
+                        )
+                    }
+                    @* Must be "Spares" tab -- Don't show 'Authorized Support Center' column *@
+                    else
+                    {
+                    @(Html.Kendo().DropDownList()
+                        .Name((string)UniqueId.searchFieldId)
+                        .Events(events => events.Change("OnDevicesCmbChange"))
+                        .DataTextField("Text")
+                        .DataValueField("Value")
+
+                        .BindTo(new List<SelectListItem>
+                            {
+                                new SelectListItem
+                                    {
+                                        Text = "Serial Number",
+                                        Value = "SerialNumber"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Model Name",
+                                        Value = "ModelName"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Device Name",
+                                        Value = "DeviceName"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "City",
+                                        Value = "City"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Postal Code",
+                                        Value = "PostalCode"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = ApiConstants.DEVICE_CATEGORY,
+                                        Value = "DeviceCategoryId"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Remarks",
+                                        Value = "Comments"
+                                    }
+
+                            })
+                        )
+                    }
+                }
+            </div>
+
+            <div class="grid-filter">
+                    <div class="grid-filter" id="@UniqueId.textDivId">
+                        @Html.TextBox((string)UniqueId.searchValueId, Model.DefaultDeviceCode, new {
+                       onkeypress = "return " + (string)UniqueId.device + "onDevicesEnterPress(event)",
+                       @class = "grid-filter__search-input",
+                       placeholder = "Search",
+                       aria_label = "Search"
+                   })
+                        <button aria-label="search" type="button" class="grid-filter__search-button" onclick="@(UniqueId.device)SearchDeviceData()">
+                            <span aria-hidden="true" class="fa fa-search" />
+                        </button>
+                    </div>
+                <div class="grid-filter" id="@UniqueId.deviceCategoryDropDownDivId" style="display: none;">
+                    @(Html.Kendo().DropDownList()
+                            .Name((string)UniqueId.deviceCategoryFieldId)
+                            .Events(events => events.Change("DeviceTagChangeHandler"))
+                            .OptionLabel(Constants.DropDownPleaseSelect)
+                            .DataValueField("DeviceCategoryId")
+                            .DataTextField("DeviceCategoryName")
+                            .BindTo(Model.AllDeviceCategories))
+                </div>
+                <div id="@UniqueId.DateSearchDiv" class="filter-datepicker">
+                    @{
+                        var defaultDate = DateTime.Now.AddMonths(3);
+                    }
+                    @(Html.Kendo().DatePicker()
+                          .Name(UniqueId.SearchDateValue)
+                          .Value(defaultDate)
+                          .HtmlAttributes(new {
+                              onkeypress = "return " + (string)UniqueId.device + "onDevicesEnterPress(event)",
+                              @class = "grid-filter__date-input",
+                          }))
+                </div>
+            </div>
+        </div>
+    </div>
+     
+}
+  
+
+    <div class="grid-content">
+
+
+
+    @{
+        if (Model != null && Model.Devices != null) {
+            var maxPageSizeForms = Convert.ToInt32(Model.Devices.Count);
+            var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+            if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                pageSizeOptionsForms.Add(maxPageSizeForms);
+            }
+
+        @(Html.Kendo().Grid(Model.Devices)
+                  .Name((string)UniqueId.gridId)
+                  .HtmlAttributes(new { @class = "proddevicegrid" })
+                  .Columns(columns => {
+
+                      columns.Bound(p => p.SerialNumber).Filterable(false).Sortable(true).Template(t => "<a href='javascript: " + UniqueId.device + "showEditDeviceDetailWindow(" + t.DeviceId + ")'>" + t.SerialNumber + "</a>" + t.DeviceTransferMessage).ClientTemplate
+                          ("<a href='javascript: " + UniqueId.device + "showEditDeviceDetailWindow(#: DeviceId #)'>#: SerialNumber #</a>#= DeviceTransferMessage #").Encoded(false);
+                      
+        
+
+                      columns.Bound(x => x.ModelName).Filterable(false).Sortable(true);
+                      columns.Bound(x => x.DeviceName).Filterable(false).Sortable(true).ClientTemplate("#= kendoGridNewLines(DeviceName) #").Encoded(false);
+                      if (actionHelper.Controller != ControllerFields.GroupController) {
+                          columns.Bound(x => x.Group).Filterable(false).Sortable(false).ClientTemplate("#= kendoGridNewLines(Group) #").Encoded(false);
+                      }
+                      if (Model.IsProductionDeviceList) {
+                          columns.Bound(x => x.License).Filterable(false).Sortable(false).ClientTemplate("#= kendoGridNewLines(License) #").Encoded(false);
+                          //columns.Command(com => com.Custom("csp-edit").Text(" ").Click((string)UniqueId.device + "licensePopup.editLicenses")).Title("Actions");
+                          columns.Bound(x => x.Group).Filterable(false).Sortable(false).Title("Actions").ClientTemplate("#=GetActionsLink(data)#").Encoded(false);
+                          columns.Bound(x => x.AuthCode).Filterable(false).Sortable(false).ClientTemplate("#= kendoGridNewLines(AuthCode) #").Encoded(false);
+                          columns.Bound(x => x.ExpirationDate).Filterable(false).Sortable(false).ClientTemplate("#= kendoGridNewLines(ExpirationDate) #").Encoded(false);
+                          columns.Bound(x => x.ASCName).Filterable(false).Sortable(true).Title("ASC").Template(@<text></text>).ClientTemplate("#=GetAscContactLink(data)#").Encoded(false);
+                      }
+                      else
+                      {
+                          columns.Bound(x => x.City).Filterable(false).Sortable(true);
+                          columns.Bound(x => x.RegionState).Filterable(false).Sortable(true);
+                          columns.Bound(x => x.PostalCode).Filterable(false).Sortable(true);
+                          columns.Bound(x => x.Country).Filterable(false).Sortable(true);
+                      }
+                    
+                              
+                       columns.Bound(x => x.DeviceTag).Filterable(false).Sortable(true).ClientTemplate("#= kendoGridNewLines(DeviceTag) #").Encoded(false);
+                       columns.Bound(x => x.PanOsVersion).Filterable(false).Sortable(false).Title("OS Release").ClientTemplate("#= (PanOsVersion == null) ? '' : PanOsVersion #").Encoded(false);
+                       columns.Bound(x => x.HyperVisorVersion).Filterable(false).Sortable(false).Title("Virtual Platform").ClientTemplate("#= (HyperVisorVersion == null) ? '' : HyperVisorVersion #").Encoded(false);
+
+                       if (actionHelper.Controller != ControllerFields.SupportAccountController) {
+                           if ((User.HasPermission(Permission.CreateGroup) || User.HasPermission(Permission.EditGroup)) && (actionHelper.Controller == ControllerFields.GroupController)) {
+                               columns.Command(command => command.Custom("csp-delete").Text(" ").Click((string)UniqueId.device + "DeleteDeviceDetails")).Width(30).Title("Action").HtmlAttributes(new { title = "Delete", href = "javascript:void(0);" });
+                           }
+                       }
+                  })
+                                  .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                                  .Sortable()
+                                  .Filterable()
+                                  .Resizable(resize => resize.Columns(true))
+                                  .Events(e => e.DataBound((string)UniqueId.device + "onDeviceDataBound"))
+                                  .ToolBar(toolBar => {
+                                      toolBar.Custom()
+                                      .Text("Export To CSV")
+                                      .HtmlAttributes(new { id = "export", data_link_type = "export-csv-assets" })
+                                      .Url("javascript: " + UniqueId.devices + "deviceButtons.exportProductionAssetsToCsv();");
+                                  })
+                                  .DataSource(dataSource => dataSource
+                                                                    .Ajax()
+                                                                    .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                                                    .Model(model => model.Id(p => p.DeviceId))
+                                                                    .Destroy(update => update.Action("EditingInline_Destroy", "Grid"))
+                                                                    .PageSize(Model.DataParameters.PaginationCount)
+                                                                    .Read(read => read.Action(Model.IsProductionDeviceList ? actionHelper.ProductionDevices : actionHelper.SpareDevices, actionHelper.Controller, new {
+                                                                        actionHelper.Id
+                                                                    }).Data(UniqueId.device + "getGridParams"))
+                                  )
+            )
+
+            @(Html.Kendo().Tooltip()
+                .For("#" + (string)UniqueId.gridId)
+                .Filter(".forMagicLink")
+                .ContentHandler("getMagicLinkTooltip")
+                .Position(TooltipPosition.Right)
+                .AutoHide(true)
+                )
+        }
+    }
+
+</div>
+

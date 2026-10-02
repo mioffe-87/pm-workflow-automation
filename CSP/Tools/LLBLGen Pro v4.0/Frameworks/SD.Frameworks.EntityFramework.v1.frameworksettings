@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" ?>
+<frameworkSettings xmlns="http://sd/llblgen/pro/frameworkSettingsDefinition.xsd">
+	<supportedFrameworks>
+		<framework name="Entity Framework v1"/>
+	</supportedFrameworks>
+	<settingDefinitions>
+		<!-- project level settings -->
+		<settingDefinition name="PublicPropertyGettersAndSetters" category="General" default="true" type="bool" 
+						   description="This setting controls whether the generated entity, value type and typed list classes have public getters and setters for properties, like the properties for entity fields. If set to false, the properties will be generated as private for entity and typed view classes and internal for typed list classes. The context class will always have public properties."
+						   targetElement="1"/>
+		
+		<settingDefinition name="ProviderManifestTokenValue" category="General" default="" type="string" 
+						   description="This setting specifies the value which is emitted into the SSDL for 'ProviderManifestToken'. This value is necessary sometimes for some providers to be able to generate proper SQL. For example for SQL Server this is the version number, e.g. 2000, 2005 or 3.5 if you're targeting SQL CE Desktop."
+						   targetElement="1"/>
+
+		<!-- entity level settings -->
+		<settingDefinition name="EntityBaseClassName"
+						   description="The name of the base class for a generated entity class. The following macros are available: {$Name} for the entity name without group name, {$GroupName} for the name of the group the entity is in, {$FullName} for the group name plus entity name. Sub-types will always inherit from their super-type and not from the class specified. Be sure the class specified derives (in)directly from the generated CommonEntityBase class."
+						   default="" category="General" type="string" targetElement="2" defaultSource="EntityBaseClassNameDefault" canBeEmpty="true"/>
+
+		<settingDefinition name="EmitKnownTypeAttributesForWCF" category="General" default="false" type="bool" 
+						   description="This setting controls whether the code generator will add KnownType attributes to the generated entity classes for all types used in the class (true) or not (false, default). KnownTypeAttribute is used for WCF serialization and should be used in combination with Data Contracts."
+						   defaultSource="EmitKnownTypeAttributesForWCFDefault" targetElement="2"/>
+		
+		<!-- navigator settings -->
+		<settingDefinition name="UseCascadeDeletes" default="false" type="bool" description="This setting controls whether the related entity / entities over this navigator should be automatically deleted when this entity is deleted (true) or should be left alone (false, default). Ignored for navigators mapped onto M:N relationships and navigators which are on the FK side of the relationship."
+							targetElement="768" canBeEmpty="true" category="General" />
+		
+		<!-- value type level settings -->
+		<settingDefinition name="ValueTypeBaseClassName"
+						   description="The name of the base class for a generated valuetype class. The following macros are available: {$Name} for the valuetype name without group name, {$GroupName} for the name of the group the valuetype is in, {$FullName} for the group name plus valuetype name. Be sure the class specified derives (in)directly from the generated CommonValueTypeBase class."
+						   default="" category="General" type="string" targetElement="4" defaultSource="ValueTypeBaseClassNameDefault" canBeEmpty="true"/>
+		
+		
+		<!-- field level settings -->
+		<settingDefinition name="UseForOptimisticConcurrencyChecks" category="General" default="false" type="bool" 
+						   description="This setting controls whether the field is used in optimistic concurrency checks (true) or not (false, default)."
+						   targetElement="64"/>
+
+		
+		<!-- typed list level settings -->
+		<settingDefinition name="TypedListRowBaseClassName"
+						   description="The name of the base class for a generated typed list row class. The following macros are available: {$Name} for the typed list name without group name, {$GroupName} for the name of the group the typed list is in, {$FullName} for the group name plus typed list name."
+						   default="" category="General" type="string" targetElement="8" defaultSource="TypedListRowBaseClassNameDefault" canBeEmpty="true"/>
+		
+		
+		<!-- defaults which control other settings -->
+		<settingDefinition name="EntityBaseClassNameDefault"
+						   description="This setting specifies the default value for the EntityBaseClassName setting of an entity."
+						   default="CommonEntityBase" category="Defaults" targetElement="1" type="string" canBeEmpty="true"/>
+
+		<settingDefinition name="ValueTypeBaseClassNameDefault"
+						   description="This setting specifies the default value for the ValueTypeBaseClassName setting of a valuetype."
+						   default="CommonValueTypeBase" category="Defaults" targetElement="1" type="string" canBeEmpty="true"/>
+
+		<settingDefinition name="TypedListRowBaseClassNameDefault"
+						   description="This setting specifies the default value for the TypedListRowBaseClassName setting of a typed list."
+						   default="" category="Defaults" targetElement="1" type="string" canBeEmpty="true"/>
+
+		<settingDefinition name="EmitKnownTypeAttributesForWCFDefault"
+						   description="This setting specifies the default value for the EmitKnownTypeAttributesForWCF setting of an entity."
+						   default="false" category="Defaults" targetElement="1" type="bool"/>
+	</settingDefinitions>
+	<valueLists/>
+</frameworkSettings>

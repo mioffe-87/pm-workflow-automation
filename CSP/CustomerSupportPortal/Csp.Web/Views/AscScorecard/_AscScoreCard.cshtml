@@ -1,0 +1,384 @@
+﻿@using Csp.Web.DataTransferObjects
+@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.AscScoreCardDto
+
+@*@if (Model.PartnerProfile!=null)
+{
+    
+<div class="contextTitle">@CurrentState.GetSupportAccountName()</div>
+}*@
+<div class="row">
+    @{Html.RenderPartial("../AscScorecard/_DeviceCustomerInfo", Model);}
+
+    <div class="tabel-cell " style="padding: 5px; width: 32%">
+        <div class="greyDivWithBorder" style="width: 100%">
+            <div class="titleRoundedDiv1">
+                <div class="row">
+                    <div style="width: 80%" class="tabel-cell">
+                        @if (Model.IsincludeCurrentPartial=="1")
+                        {
+                            @Html.Raw("ASC Dashboard (Most Recent Partial Quarter)")
+                        }
+                        else
+                        {
+                            @Html.Raw("ASC Dashboard (Most Recent Full Quarter)")
+                        }
+                    </div>
+                    <div class="tabel-cell pull-right">
+                        <span class="csp-white-tooltip"><i class="icon-question-sign icon-large"
+                            onclick="SupportPortal.Help(this,34,{ title: ' ASC DASHBOARD (MOST RECENT FULL/PARTIAL QUARTER)',height:125,width:450});"></i></span>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+
+            <div class="table-cell-withoutmargin" style="width: 100%; background-color: #ffffff">
+                <div style="width: 100%">
+                    <div class="table-cell-withoutmargin wrapText" style="width: 31%; margin: 0 auto; padding: 5px;">
+                        <div class="boldCenterAlignText">Frontline </div>
+                    </div>
+                    <div class="table-cell-withoutmargin wrapText" style="width: 31%; margin: 0 auto; padding: 5px;">
+                        <div class="boldCenterAlignText">Resolution Rate</div>
+                    </div>
+                    <div class="table-cell-withoutmargin wrapText" style="width: 29%; margin: 0 auto; padding: 5px;">
+                        <div class="boldCenterAlignText">Customer Sat </div>
+                    </div>
+                </div>
+
+                <div class="table-cell-withoutmargin" style="width: 100%; border-bottom: 2px solid  #C2D3E8;">
+                </div>
+
+                <div style="width: 100%">
+                    <div class="table-cell-withoutmargin" style="width: 31%;">
+                        @if (Model.FrontlineComplianceCurrentQuater != null)
+                        {
+                            var frontlinebgColor = string.IsNullOrEmpty(Model.FrontlineComplianceCurrentQuater.Alert) 
+                                                   || Model.FrontlineComplianceCurrentQuater.Alert.ToLower().Equals("true") ? "#DD406C" : "#98a822"; 
+
+                            @(Html.Kendo().RadialGauge()
+                              .Name("frontlineGauge")
+                              .HtmlAttributes(new { style = "height:150px;width: 100%; margin: 0 auto;" })
+                              .Pointer(pointer => pointer.Value(Model.FrontlineComplianceCurrentQuater.Actual))
+                              .Scale(scale => scale
+                                                  .MinorUnit(5)
+                                                  .StartAngle(-60)
+                                                  .EndAngle(240)
+                                                  .Max(100)
+                                                  .Min(0)
+                                                  .MinorTicks(minor => minor.Size(3).Color("#000000"))
+                                                  .MajorTicks(major => major.Size(5).Color("#000000"))
+                                                  .Labels(labels => labels
+                                                                        .Position(GaugeRadialScaleLabelsPosition.Inside)
+                                                                        .Font("font: 10px Arial,Helvetica,sans-serif")
+                                                  )
+                                                  .Ranges(ranges => ranges.Add().From(Model.FrontlineComplianceCurrentQuater.TargetStart).To(Model.FrontlineComplianceCurrentQuater.TargetEnd).Color("#98a822"))
+                              )
+                              )
+                            <div style="background: @frontlinebgColor" class="frontlineText">
+                                <span style="font-weight: bold; font-size: 14px; vertical-align: middle;">@Model.FrontlineComplianceCurrentQuater.Actual%</span><br />
+                            </div>
+                        
+                        }
+                    </div>
+                    <div class="table-cell-withoutmargin" style="padding: 5px; width: 31%; text-align: center;">
+                        @if (Model.ResolutionRateComplianceCurrentQuater != null)
+                        {
+                            @(Html.Kendo().RadialGauge()
+                                  .Name("resolutionGauge")
+                                  .Pointer(pointer => pointer.Value(Model.ResolutionRateComplianceCurrentQuater.Actual))
+                                  .HtmlAttributes(new { style = "height:150px;width: 100%;margin: 0 auto;" })
+                                  .Scale(scale => scale
+                                                      .MinorUnit(5)
+                                                      .StartAngle(-60)
+                                                      .EndAngle(240)
+                                                      .Max(100)
+                                                      .MinorTicks(minor => minor.Size(3).Color("#000000"))
+                                                      .MajorTicks(major => major.Size(5).Color("#000000"))
+                                                      .Labels(labels => labels.Font("font: 10px Arial,Helvetica,sans-serif")
+                                                                              .Position(GaugeRadialScaleLabelsPosition.Inside)
+                                                      )
+                                                      .Ranges(ranges => ranges.Add().From(Model.ResolutionRateComplianceCurrentQuater.TargetStart).To(Model.ResolutionRateComplianceCurrentQuater.TargetEnd).Color("#98a822"))
+                                  )
+                                  )
+                           
+                            var resolutionbgColor = string.IsNullOrEmpty(Model.ResolutionRateComplianceCurrentQuater.Alert) || 
+                                                    Model.ResolutionRateComplianceCurrentQuater.Alert.ToLower().Equals("true") ? "#DD406C" : "#98a822";
+                            
+
+                            <div style="background: @resolutionbgColor" class="resolutionText">
+                                <span style="font-weight: bold; font-size: 14px; vertical-align: middle;">@Model.ResolutionRateComplianceCurrentQuater.Actual%</span><br />
+                            </div>
+                        }
+                    </div>
+                    <div class="table-cell-withoutmargin" style="padding: 5px; width: 31%">
+                        @if (Model.CustomerSatComplianceCurrentQuater != null)
+                        {
+                            @(Html.Kendo().RadialGauge()
+                              .Name("customerSatGauge")
+                              .Pointer(pointer => pointer.Value(Model.CustomerSatComplianceCurrentQuater.Actual))
+                              .HtmlAttributes(new { style = "height:150px;width: 100%;margin: 0 auto;" })
+                              .Scale(scale => scale
+                                                  .MinorUnit(5)
+                                                  .StartAngle(-60)
+                                                  .EndAngle(240)
+                                                  .Max(100)
+                                                  .MinorTicks(minor => minor.Size(3).Color("#000000"))
+                                                  .MajorTicks(major => major.Size(5).Color("#000000"))
+                                                  .Labels(labels => labels.Font("font: 10px Arial,Helvetica,sans-serif")
+                                                                          .Position(GaugeRadialScaleLabelsPosition.Inside)
+                                                  )
+                                                  .Ranges(ranges => ranges.Add().From(Model.CustomerSatComplianceCurrentQuater.TargetStart).To(Model.CustomerSatComplianceCurrentQuater.TargetEnd).Color("#98a822"))
+                              )
+                              )
+                            var customerSatbgColor = string.IsNullOrEmpty(Model.CustomerSatComplianceCurrentQuater.Alert) 
+                                                     || Model.CustomerSatComplianceCurrentQuater.Alert.ToLower().Equals("true") ? "#DD406C" : "#98a822"; 
+
+                            <div style="background: @customerSatbgColor" class="customerSatText">
+                                <span style="font-weight: bold; font-size: 14px; vertical-align: middle;">@Model.CustomerSatComplianceCurrentQuater.Actual%</span><br />
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    @{Html.RenderPartial("../AscScorecard/_Metrics", Model.FrontlineMetricsConsolidated, new ViewDataDictionary { { "Id", "FrontlineMetrics" }, 
+      { "PartnerName", Model.HasPartnerProfile?(Model.IsInternal ? Model.PartnerProfile.PartnerName:CurrentState.GetSupportAccountName() ):string.Empty },
+      { "DisplayPartnerGrid", (Model.Theatre.ToUpper()!="ALL" && (string.IsNullOrEmpty(Model.SFDCAccountId) || Model.SFDCAccountId.ToUpper()=="ALL")) || Model.MultipleAsc ? true:false },
+      { "Title", "Frontline Metrics" },
+      { "HelpMessage", "35" },{ "HelpMessageWidth", "400" },
+      { "ColumnTitle", "Frontline" },
+      { "IsLastFiveQtr", Model.IsLastFiveQtr } ,
+      {"Exportfunction",String.Format("/AscScorecard/FrontLineMetricsDetail/?isFiveQuater={0}&sfdcAccountId={1}&isInternal={2}&theatre={3}&isIncludeCurrentPartial={4}"
+                  ,Model.IsLastFiveQtr,Model.SFDCAccountId,Model.IsInternal,Model.Theatre,Model.IsincludeCurrentPartial)}});}
+
+</div>
+
+<div class="row">
+    @{Html.RenderPartial("../AscScorecard/_Metrics", Model.ResolutionMetricsConsolidated, new ViewDataDictionary { { "Id", "ResolutionMetrics" }, 
+      { "PartnerName", Model.HasPartnerProfile?( Model.IsInternal ? Model.PartnerProfile.PartnerName: CurrentState.GetSupportAccountName() ) : string.Empty}, 
+      { "DisplayPartnerGrid", (Model.Theatre.ToUpper()!="ALL" && (string.IsNullOrEmpty(Model.SFDCAccountId) || Model.SFDCAccountId.ToUpper()=="ALL")) || Model.MultipleAsc ? true:false },
+      { "Title", "Resolution Rate Metrics" },
+       { "HelpMessage", "36" },{ "HelpMessageWidth", "400" },
+      { "ColumnTitle", "Resolution" },
+      { "IsLastFiveQtr", Model.IsLastFiveQtr } ,
+      {"Exportfunction",String.Format("/AscScorecard/ResolutionMetricsDetail/?isFiveQuater={0}&sfdcAccountId={1}&isInternal={2}&theatre={3}&isIncludeCurrentPartial={4}"
+                       ,Model.IsLastFiveQtr,Model.SFDCAccountId,Model.IsInternal,Model.Theatre,Model.IsincludeCurrentPartial)} });}
+
+</div>
+
+<div class="row">
+    <div class="tabel-cell" style="padding: 5px; width: 98%">
+        <div class="titleRoundedDiv" style="width: 98% !important;">
+            <div class="row">
+                <div style="width: 80%" class="tabel-cell">
+                    Customer Satisfaction Metrics
+                </div>
+                <div class="tabel-cell pull-right">
+                    <span class="csp-white-tooltip"><i class="icon-question-sign icon-large"
+                        onclick="SupportPortal.Help(this,37,{ title: ' Customer Satisfaction Metrics',height:150});"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="table-cell-withoutmargin" style="padding: 10px; width: 23%">
+            @* <div class="blueRoundedDiv">Top 3%</div>*@
+            @* @if (Model.CsatTop3LineChart != null && Model.CsatTop3LineChart.Count > 0){*@
+            <div class="greyRoundedDiv" style="width: 98%">
+                @*<div class="row"><a class='csatTop3Chartexport-img btn btn-primary pull-right' title="Export to Image"><i class="icon-download-alt"></i></a></div>*@
+
+                <div class="row" style="margin-left: 0px;">
+                    @{
+                        Html.RenderPartial("../AscScorecard/_CsatLineChart", Model.CsatTop3LineChart, new ViewDataDictionary { { "Id", "csatTop3" }, { "Title", "% of Top 3 Survey Scores" }, 
+                        { "PartnerProfile", Model.PartnerProfile } ,{"DisplayTarget","1"},{"Format","{0}%"}});
+                    }
+
+                </div>
+            </div>
+            @* }*@
+        </div>
+        <div class="table-cell-withoutmargin" style="padding: 10px; width: 23%">
+            @*<div class="blueRoundedDiv">Responses</div>*@
+            @*@if (Model.CsatResponseLineChart != null && Model.CsatResponseLineChart.Count > 0) {
+                *@<div class="greyRoundedDiv" style="width: 98%">
+                    @*<div class="row"><a class='csatResponseChartexport-img btn btn-primary pull-right' title="Export to Image"><i class="icon-download-alt"></i></a></div>*@
+
+                <div class="row" style="margin-left: 0px;">
+                    @{
+                        Html.RenderPartial("../AscScorecard/_CsatLineChart", Model.CsatResponseLineChart, new ViewDataDictionary { { "Id", "csatResponse" }, { "Title", "# of Survey Responses" },
+                        { "PartnerProfile", Model.PartnerProfile },{"DisplayTarget","0"},{"Format","{0}"} });
+                    }
+                    
+                </div>
+                </div>
+
+        </div>
+        <div class="table-cell-withoutmargin" style="padding-bottom: 10px; padding-left: 10px; padding-top: 10px; width: 24%">
+
+            @(Html.Kendo().Grid<CommentsDto>(Model.Comments)
+                  .Name("commentsGrid")
+                  .Columns(columns =>
+                  {
+                      columns.Bound(c => c.SurveyResponse).Title("What could we do differently to improve?")
+                          .Template(@<text> <span style='color: #C3C0C3;'>&#8220;</span> @item.SurveyResponse <span style='color: #C3C0C3;'>&#8221;</span>  <span style='color: #C3C0C3;'>@String.Format("{0:MM/dd/yyyy}", item.ResponseDate)</span></text>);
+                  })
+                  .HtmlAttributes(new { style = "height: 400px;" })
+                  .Scrollable()
+                  )
+
+            <br />
+            <div class="pull-right">
+                <a class="k-button k-button-icontext" title="Export to CSV" data-link-type="export-csv-assets"
+                   href="@(String.Format("/AscScorecard/CustomerCommentsDownload/?isFiveQuater={0}&sfdcAccountId={1}&isInternal={2}&theatre={3}&isIncludeCurrentPartial={4}",
+                               Model.IsLastFiveQtr, Model.SFDCAccountId, Model.IsInternal, Model.Theatre, Model.IsincludeCurrentPartial))">
+                    Export to CSV</a>
+            </div>
+
+        </div>
+        <div class="table-cell-withoutmargin" style="padding-bottom: 10px; padding-left: 10px; padding-top: 10px; width: 24%">
+
+            @(Html.Kendo().Grid<CommentsDto>(Model.CommentsResultFromQuest)
+                      .Name("commentsHighScoreGrid")
+                      .Columns(columns =>
+                      {
+                          columns.Bound(c => c.SurveyResponse).Title("What do you feel is done exceptionally well?")
+                                 .Template(@<text> <span style='color: #C3C0C3;'>&#8220;</span> @item.SurveyResponse <span style='color: #C3C0C3;'>&#8221;</span>  <span style='color: #C3C0C3;'>@String.Format("{0:MM/dd/yyyy}", item.ResponseDate)</span></text>);
+                      })
+                      .HtmlAttributes(new { style = "height: 400px;" })
+                      .Scrollable()
+                      )
+
+            <br />
+            <div class="pull-right">
+                <a  class="k-button k-button-icontext" title="Export to CSV" data-link-type="export-csv-assets"
+                    href= "@(String.Format("/AscScorecard/CustomerHighScoreCommentsDownload/?isFiveQuater={0}&sfdcAccountId={1}&isInternal={2}&theatre={3}&isIncludeCurrentPartial={4}",
+                        Model.IsLastFiveQtr, Model.SFDCAccountId, Model.IsInternal, Model.Theatre, Model.IsincludeCurrentPartial))">
+                   Export to Excel</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="tabel-cell" style="padding: 5px; width: 98%">
+        <div class="titleRoundedDiv" style="width: 98% !important;">
+            <div class="row">
+                <div style="width: 80%" class="tabel-cell">
+                    ASC Support Engineers
+                </div>
+                <div class="tabel-cell pull-right">
+                    <span class="csp-white-tooltip"><i class="icon-question-sign icon-large"
+                        onclick="SupportPortal.Help(this,38,{ title: ' ASC Support Engineers',height:120});"></i></span>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="table-cell-withoutmargin" style="width: 98%">
+            @{var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+          
+                @(Html.Kendo().Grid<SoftwareEngineerDto>()
+              .Name("AscSoftwareEngineerGrid")
+              .Columns(columns =>
+              {
+                  columns.Bound(p => p.Contact_Name).Title("Name")
+                         .HtmlAttributes(new { style = "text-align:left" });
+                  columns.Bound(p => p.Contact_Email).Title("Email").HtmlAttributes(new { style = "text-align:left" });
+                  columns.Bound(p => p.Total_Case_Count).Title("# of cases logged")
+                      .HtmlAttributes(new { style = "text-align:left" });
+                  columns.Bound(p => p.Frontline_Case_Count).Title("# of Frontline")
+                      .HtmlAttributes(new { style = "text-align:left" });
+                  columns.Bound(p => p.Percentage_Tagged_Frontline).Title("% Frontline").Format("{0}%")
+                      .HtmlAttributes(new { style = "text-align:left" })
+                       .ClientTemplate("#= AscScoreCard.SupportEnggNonCompliant(data,'Percentage_Tagged_Frontline')#");
+                  columns.Bound(p => p.Pcnse).Title("PCNSE").HtmlAttributes(new { style = "text-align:left" })
+                       .ClientTemplate("#= AscScoreCard.SupportEnggNonCompliant(data,'Pcnse')#");
+                  columns.Bound(p => p.Pcnsa).Title("PCNSA").HtmlAttributes(new { style = "text-align:left" })
+                       .ClientTemplate("#= AscScoreCard.SupportEnggNonCompliant(data,'Pcnsa')#");
+                  columns.Bound(p => p.Ace).Title("ACE").HtmlAttributes(new { style = "text-align:left" })
+                       .ClientTemplate("#= AscScoreCard.SupportEnggNonCompliant(data,'Ace')#");
+                  columns.Bound(p => p.TrafficRedirector).Title("TRAFFICREDIRECTOR").HtmlAttributes(new { style = "text-align:left" })
+                       .ClientTemplate("#= AscScoreCard.SupportEnggNonCompliant(data,'TrafficRedirector')#");
+              })
+              .AutoBind(true)
+              .Sortable(sortable => sortable
+                                        .AllowUnsort(false)
+                                        .SortMode(GridSortMode.SingleColumn)
+              )
+              .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray())
+
+              )
+              .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                            .ServerOperation(true)
+                                            .PageSize(10)
+                                            .Sort(sort => sort.Add("Total_Case_Count").Descending())
+                                            .Model(model => model.Id(p => p.Contact_Name))
+                                            .Read(read => read.Action("GetAscSoftwareEngineer", "AscScorecard").Data("AscScoreCard.SearchParameter('" + Model.IsInternal + "')"))
+              )
+              )
+            }
+            <br />
+            <div class="pull-right">
+                <a class="k-button k-button-icontext" title="Export to CSV" data-link-type="export-csv-assets"
+                   href="@(String.Format("/AscScorecard/AscSupportEngineerDownload/?isFiveQuater={0}&sfdcAccountId={1}&isInternal={2}&theatre={3}&isIncludeCurrentPartial={4}",
+                               Model.IsLastFiveQtr, Model.SFDCAccountId, Model.IsInternal, Model.Theatre, Model.IsincludeCurrentPartial))">
+                    Export to CSV
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+
+
+
+<script type="text/javascript">
+
+    @*$(".csatResponseChartexport-img").click(function () {
+
+        var chart = $("#csatResponseLineChart").getKendoChart();
+        chart.exportImage().done(function (data) {
+            kendo.saveAs({
+                dataURI: data,
+                fileName: "csatResponses.png",
+                proxyURL: "@Url.Action("Export_Save", "Chart_Api")"
+            });
+        });
+
+    });
+    $(".csatTop3Chartexport-img").click(function () {
+
+        var chart = $("#csatTop3LineChart").getKendoChart();
+        chart.exportImage().done(function (data) {
+            kendo.saveAs({
+                dataURI: data,
+                fileName: "csatTop3.png",
+                proxyURL: "@Url.Action("Export_Save", "Chart_Api")"
+            });
+        });
+
+    });*@
+
+    $(document).ready(function() {
+        
+        _.delay(function() {
+            $(".k-chart").width("100%");
+            $(".k-gauge").width("100%");
+            $(".k-grid").width("100%");
+            kendo.resize($(".k-chart"));
+            kendo.resize($(".k-gauge"));
+            kendo.resize($(".k-grid"));
+        }, 0);
+        
+    });
+
+</script>

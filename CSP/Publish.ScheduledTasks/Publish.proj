@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="FullPublish" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(TargetEnvPropsFile)"/>
+
+  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\Web\Microsoft.Web.Publishing.Tasks.dll"/>
+
+  <PropertyGroup>
+    <FullPublishDir>$(OutDir)$(PublishedWebsitesDir)</FullPublishDir>
+    <DateTimeStamp>$([System.DateTime]::Now.ToString("yyyy_MM_dd__HH_mm_ss"))</DateTimeStamp>
+    <MSBuildCommunityTasksPath>$(FullPublishDir)\..\src\CustomerSupportPortal\packages\MSBuildTasks.1.5.0.235\tools</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
+  <UsingTask AssemblyFile="$(FullPublishDir)\MSBuild.Community.Tasks.dll"
+         TaskName="ServiceController" />
+
+  <Target Name="TransformWebConfig">
+    <TransformXml Source="$(FullPublishDir)$(ServiceName).$(OutputType).config"
+                  Transform="$(FullPublishDir)App.$(WebTransform).config"
+                  Destination="$(FullPublishDir)\$(ServiceName).$(OutputType).config" />
+  </Target>
+
+  <Target Name="BackupServerCopy">
+
+    <!--Exec Command="net use $(PublishDestinationPath) $(PublishPassword) /USER:$(PublishUserName)" /-->
+    <!--Exec Command="net use $(BackupDestinationPath) $(PublishPassword) /USER:$(PublishUserName)" /-->
+
+    <ItemGroup>
+      <_ServerBackup Include="$(PublishDestinationPath)\**\*" />
+    </ItemGroup>
+
+    <Copy
+				SourceFiles="@(_ServerBackup)"
+				DestinationFolder="$(BackupDestinationPath)\_BKUP_$(DateTimeStamp)\%(RecursiveDir)" />
+
+    <!--Exec Command="net use $(PublishDestinationPath) /delete"/-->
+    <!--Exec Command="net use $(BackupDestinationPath) /delete"/-->
+  </Target>
+
+  <Target Name="CopyToServer">
+
+    <ItemGroup>
+      <_FilesToDelete Include="$(PublishDestinationPath)**\*" />
+      <!--_FoldersToDelete Include="$([System.IO.Directory]::GetDirectories(&quot;$(PublishDestinationPath)&quot;))" /-->
+    </ItemGroup>
+    <Delete Files="@(_FilesToDelete)" />
+    <!--RemoveDir Directories="@(_FoldersToDelete)" /-->
+
+    <ItemGroup>
+      <_FilesToCopy Include="$(FullPublishDir)**\*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(_FilesToCopy)" DestinationFolder="$(PublishDestinationPath)%(RecursiveDir)" />
+
+  </Target>
+  <Target Name="BeforeBuild">
+    <Servicecontroller Action="Stop" MachineName="$(MachineName)" ServiceName="$(ServiceName)"/>
+    <!--Exec Command="net use \\$(MachineName) $(PublishPassword) /USER:$(PublishUserName)"/>
+    <Exec Command="sc \\$(MachineName) stop $(ServiceName)"/-->
+  </Target>
+  <Target Name="AfterBuild">
+    <Servicecontroller Action="Start" MachineName="$(MachineName)" ServiceName="$(ServiceName)"/>
+    <!--Exec Command="net use \\$(MachineName) $(PublishPassword) /USER:$(PublishUserName)"/>
+    <Exec Command="sc \\$(MachineName) stop $(ServiceName)"/-->
+  </Target>
+
+  <PropertyGroup>
+    <FullPublishDependsOn>
+      TransformWebConfig;
+      BackupServerCopy;
+      CopyToServer;
+    </FullPublishDependsOn>
+  </PropertyGroup>
+
+  <Target Name="FullPublish" DependsOnTargets="$(FullPublishDependsOn)" />
+
+</Project>

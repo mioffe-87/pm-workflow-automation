@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>LLBLGen Pro quick start guide: Add entities</title>
+	<link rel="STYLESHEET" type="text/css" href="stylesheets/general.css">
+</head>
+
+<body>
+
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td>
+			<H1>Add entities&nbsp;&nbsp;<img src="pics/NewEntityIcon_v3.png" width="16" height="16" border="0" alt="New entity"></H1>
+		</td>
+		<td align="right" nowrap>
+			<br>
+			<a href="javascript:history.go(-1)" class="nohover"><img src="pics/back.gif" width="30" height="23" border="0" alt="back"></a>&nbsp;&nbsp;
+			<a href="index.htm" title="home" class="nohover"><img src="pics/home.gif" width="30" height="23" alt="home" border="0"></a>
+		</td>
+	</tr>
+</table>
+<br clear="all"><br>
+
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td width="40" valign="top">
+			<img src="pics/1.png" width="30" height="30" alt="1." border="0">
+		</td>
+		<td class="content">
+			
+			Click the New Entity button on the toolbar. Specify a name for the entity in the dialog and click OK.<br>
+			<img src="pics/addentities1.png" width="647" height="438" alt="Add new entity" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/2.png" width="30" height="30" alt="2." border="0">
+		</td>
+		<td class="content">
+			Right-click the entity you just created in 
+			<a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/ProjectExplorer.htm" target="_blank" title="more information" class="info">Project Explorer</a> 
+			and select Edit... from the context menu. The entity is opened in its <a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/EntityEditor.htm" target="_blank" title="more information" class="info">Entity Editor</a>.<br>
+			<img src="pics/addentities2.png" width="461" height="508" alt="Edit entity" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/3.png" width="30" height="30" alt="3." border="0">
+		</td>
+		<td class="content">
+			Click the top row in the grid on the 
+			<a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/EntityEditor_FieldsTab.htm" target="_blank" title="more information" class="info">Fields tab</a> and specify a 
+			name and a type for the first field, e.g. 'Id' and 'int', using the TAB key to move between columns and complete pre-selections in the columns. Press TAB to move the cursor to the Optional 
+			column and press cntrl-Enter to add the field.<br>
+			<img src="pics/addentities3.png" width="723" height="364" alt="Add fields" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/4.png" width="30" height="30" alt="4." border="0">
+		</td>
+		<td class="content">
+			Press cntrl-shift-F to add a new field, e.g. 'Name' and as type 'string'. Again press cntrl-Enter to add the field.
+			Repeat this a couple of times till you have enough fields in your entity.
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/5.png" width="30" height="30" alt="5." border="0">
+		</td>
+		<td class="content">
+			Click the <i>Edit...</i> button next to the Identifying Fields text box. In the dialog popping up select the Id field you created in step 3 to mark it as the Identifying Field (the 'pk').<br>
+			<img src="pics/addentities4.png" width="285" height="225" alt="Identifying field" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/6.png" width="30" height="30" alt="6." border="0">
+		</td>
+		<td class="content">
+			Repeat these steps to create an entity 'Order' and its fields.
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/7.png" width="30" height="30" alt="7." border="0">
+		</td>
+		<td class="content">
+			Right click the node <i>Relationships</i> of the customer entity in the Project explorer and select <i>New normal relationship</i>.<br>
+			<img src="pics/addentities5.png" width="483" height="384" alt="New normal relationship" border="0"><br>
+			In the Relationship editor, you set define the relationship between Customer and Order and set Customer as the Primary Key side.<br>
+			<img src="pics/addentities6.png" width="613" height="484" alt="Relationship editor" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" height="10" style="background-image: url(pics/hline.png); background-repeat: no-repeat;">&nbsp;</td>
+	</tr>
+</table>
+<br clear="all">
+<table cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="2">
+			<img src="pics/nextstep.png" width="257" height="20" alt="next step" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td width="90">&nbsp;</td>
+		<td class="content">
+			<a href="mf_adddatabase.htm">Add a database</a>
+		</td>
+	</tr>
+</table>
+<br><br>
+</body>
+</html>

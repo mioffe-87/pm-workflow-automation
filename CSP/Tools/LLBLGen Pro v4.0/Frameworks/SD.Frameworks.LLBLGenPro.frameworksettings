@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" ?>
+<frameworkSettings xmlns="http://sd/llblgen/pro/frameworkSettingsDefinition.xsd">
+	<supportedFrameworks>
+		<framework name="LLBLGen Pro Runtime Framework"/>
+	</supportedFrameworks>
+	<settingDefinitions>
+		<!-- project level settings -->
+		<settingDefinition name="ConvertNulledReferenceTypesToDefaultValue"
+						   description="When set to false, an entity field in the LLBLGen Pro Runtime Framework which has a reference type (e.g. string) will return null / Nothing if the value for the field is null / Nothing. When set to true, the default value belonging to that reference type is returned. The default value for a type is produced by the generated class TypeDefaultValue"
+						   category="General" type="bool" default="true" targetElement="1"/>
+		<settingDefinition name="LazyLoadingWithoutResultReturnsNew"
+						   description="When set to true, lazy loading functionality for the LLBLGen Pro Runtime Framework which fetches a m:1 or 1:1 related entity will return a new entity when the related entity to fetch is not found. When set to false, it will return null (Nothing)"
+						   category="Template group specific, Self-servicing" type="bool" default="false" targetElement="1"/>
+		<settingDefinition name="TdlEmitTimeDateInOutputFiles"
+						   description="When set to true, the TDL code emitter will emit the time and date for the &lt;[Time]&gt; statement for the LLBLGen Pro Runtime Framework, otherwise nothing will be emitted for that statement. Set to false if you need files to stay the same if they're not effectively changed, for example for source control systems."
+						   category="General" type="bool" default="true" targetElement="1" />
+		<settingDefinition name="InlineValueTypedFields"
+						   description="When set to true (default), the TDL code emitter will inline all fields inside a ValueType (DDD) as if they're part of the containing entity field. Example: Customer has a field VisitingAddress, which is of type AddressVT, a ValueType. AddressVT has 3 fields: Housenr, Street and City. If InlineValueTypedFields is true, this will create at code generation time the fields Customer.VisitingAddressHousenr, Customer.VisitingAddressCity, Customer.VisitingAddressStreet. When set to false, the framework validator will throw an error, as ValueTyped fields aren't supported as-is by the LLBLGen Pro Runtime Framework. When true, it allows you to define your model using ValueTypes and use the LLBLGen Pro Runtime Framework."
+						   category="General" type="bool" default="true" targetElement="1" />
+		<settingDefinition name="AdapterDbGenericProjectFileSuffix"
+						   description="This value is the suffix appended to the VS.NET project filename for the database generic generated code"
+						   category="Template group specific, Adapter" type="string" targetElement="1"/>
+		<settingDefinition name="AdapterDbGenericSubFolderName"
+						   description="This value is the name for the subfolder in the destination folder in which the generated database generic files are placed"
+						   category="Template group specific, Adapter" type="string" targetElement="1" default="DatabaseGeneric"/>
+		<settingDefinition name="AdapterDbSpecificNamespaceSuffix"
+						   description="This value is the suffix appended to the root namespace for the database specific generated code. Do not prefix this name with a '.', as that's added automatically by the code generator."
+						   category="Template group specific, Adapter" type="string" targetElement="1" default="DatabaseSpecific"/>
+		<settingDefinition name="AdapterDbSpecificProjectFileSuffix"
+						   description="This value is the suffix appended to the VS.NET project filename for the database specific generated code."
+						   category="Template group specific, Adapter" type="string" targetElement="1" default="DBSpecific"/>
+		<settingDefinition name="AdapterDbSpecificSubFolderName"
+						   description="This value is the name for the subfolder in the destination folder in which the generated database specific files are placed."
+						   category="Template group specific, Adapter" type="string" targetElement="1" default="DatabaseSpecific"/>
+
+		<!-- entity level settings -->
+		<settingDefinition name="EntityBaseClassName"
+						   description="The name of the base class for the generated entity class. The following macros are available: {$Name} for the entity name without group name, {$GroupName} for the name of the group the entity is in, {$FullName} for the group name plus entity name. Sub-types will always inherit from their super-type and not from the class specified. The specified class has to inherited (in)directly from the runtime framework's base class for entities: EntityBase (Self-servicing) or EntityBase2 (Adapter)"
+						   default="CommonEntityBase" category="General" type="string" targetElement="2" 
+						   defaultSource="EntityBaseClassNameDefault"
+						   canBeEmpty="false"/>
+
+		<!-- field level settings -->
+		<settingDefinition name="GenerateAsNullableType"
+						   description="When set to true, the field's type will be generated as a Nullable&lt;T&gt; / Nullable(Of T), if the field's type is a value type and the field is nullable"
+						   type="bool" category="General" default="true" defaultSource="GenerateAsNullableTypeDefault" targetElement="3136" />
+		<settingDefinition name="FieldPropertyIsPublic"
+						   description="When set to true (default), the property of an entity field is generated as public. When set to false, the property is generated as internal (friend in VB.NET)"
+						   type="bool" category="General" default="true" defaultSource="FieldPropertyIsPublicDefault" targetElement="64" />
+		<settingDefinition name="NavigatorPropertyIsPublic"
+						   description="When set to true (default), the property of a navigator is generated as public. When set to false, the property is generated as internal (friend in VB.NET)"
+						   type="bool" category="General" default="true" defaultSource="NavigatorPropertyIsPublicDefault" targetElement="768" />
+		
+		<!-- defaults which control other settings -->
+		<settingDefinition name="EntityBaseClassNameDefault"
+						   description="This setting specifies the default value for the EntityBaseClassName setting of an entity."
+						   default="CommonEntityBase" category="Defaults" targetElement="1" type="string" canBeEmpty="false"/>
+		<settingDefinition name="FieldPropertyIsPublicDefault"
+						   description="This setting specifies the default value for the FieldPropertyIsPublic setting of an entity field"
+						   category="General" type="bool" default="true" targetElement="1"/>
+		<settingDefinition name="NavigatorPropertyIsPublicDefault"
+						   description="This setting specifies the default value for the NavigatorPropertyIsPublic setting of an entity field"
+						   category="General" type="bool" default="true" targetElement="1"/>
+		<settingDefinition name="GenerateAsNullableTypeDefault" 
+							description="This setting specifies the default value for the GenerateAsNullableType setting of a new entity field."
+							category="Defaults" default="true" targetElement="1" type="bool"/>
+	</settingDefinitions>
+	<valueLists/>
+</frameworkSettings>

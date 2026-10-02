@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Platform Schema definition. Used for verification of .platform files. -->
+<xs:schema id="platformDefinition" targetNamespace="http://sd/llblgen/pro/platformDefinition.xsd" elementFormDefault="qualified" xmlns="http://sd/llblgen/pro/platformDefinition.xsd" xmlns:mstns="http://sd/llblgen/pro/platformDefinition.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="platform">
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs="1">
+				<xs:sequence minOccurs ="0" maxOccurs="1">
+					<xs:element name="aspects">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="aspect">
+									<xs:complexType>
+										<xs:attribute name="name" use="required">
+											<xs:simpleType>
+												<xs:list itemType="optionalAspectNames" />
+											</xs:simpleType>
+										</xs:attribute>
+										<xs:attribute name="value" type="xs:boolean" use="required" />
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="supportingDrivers">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="supportingDriver">
+									<xs:complexType>
+										<xs:attribute name="id" type="xs:string" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required" />
+			<xs:attribute name="isDefault" type="xs:boolean" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="aspectNames">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="supportsPartialClasses" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="optionalAspectNames">
+		<xs:union memberTypes="xs:string aspectNames"/>
+	</xs:simpleType>
+</xs:schema>

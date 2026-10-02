@@ -1,0 +1,265 @@
+﻿@model Csp.Web.DataTransferObjects.ActivateSaasAuthCodeDto
+@{ 
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+}
+@if (Model.Notifications != null && Model.Notifications.Count > 0 && Model.Notifications[0].Message.Contains("The ability to activate Cortex Data Lake"))
+{
+    <script>
+        $('#pHeader').show();
+        $('#AuthorizationCode').attr("disabled", "disabled");
+        $("#divLoggingRegion").hide();
+        $("#divPanorama").hide();
+    </script>
+}
+else
+{
+    <script>
+        $('#AuthorizationCode').removeAttr("disabled");
+        $('#pHeader').hide();
+    </script>
+}
+<script>
+    var authcodeType ;
+    $(function () {
+        var authCode = '@Model.AuthorizationCode';
+        var region = '@Model.LoggingRegion';
+        if (authCode == null || authCode == "") 
+        {
+            $("#divLoggingRegion").hide();    
+            $("#divLoggingDevices").hide();
+            $("#divPanorama").hide();
+            $("#divLogQuotaCheck").hide();
+        }
+        else
+        {
+            if(region == null)
+                region ="";
+            ShowLoggingRegion(authCode,region);
+        }
+
+        $('#AuthorizationCode').focusout(function () {
+
+            if ($('#AuthorizationCode').val() != null && $('#AuthorizationCode').val() != "") {
+                ShowLoggingRegion($('#AuthorizationCode').val());
+            }
+        });      
+
+    });
+    function GetSupportAccountId() {
+        var params = SetAntiForgery();
+        params.SupportAccountID = $("#SupportAccountID").val();
+        return params;
+    }
+    function ShowLoggingRegion(authCode,region) {
+        var isPanoramaAssociation = '@Model.IsPanoramaAssociation';
+        $.ajax({
+            url: "@Url.Action("GetAuthCodeType", "Saas")?authcode=" + authCode,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function (data) {
+                authcodeType =data;
+                $("#divLoggingRegion").hide();
+                $("#divLoggingDevices").hide();
+                $("#divPanorama").hide();
+                $("#spnPanormadetails").hide();
+                $("#divLogQuotaCheck").hide();
+                $("#lgdHeading").text("Activate Cloud Services Auth-Code");
+                if (data != null && data.Type != null) {
+                    if(data.Type == "MagnifierBeta")
+                    {
+                        $("#divLoggingDevices").show();
+                    }
+                    else if (data.Type == "LoggingService")
+                    {
+                        isPanoramaAssociation = data.IsPanoramaAssociation;
+                        region = data.Region;
+                        $("#divPanorama").show();
+                        $("#divLoggingRegion").show();
+                        $("#spnPanorama").hide();
+                        $("#divLogQuotaCheck").show();
+                        if(region != null && region != "")
+                        {
+                            $("#LoggingRegion").data('kendoDropDownList').value(region);
+                        }
+                        if(isPanoramaAssociation != null && isPanoramaAssociation == true)
+                        {
+                            $("#LoggingRegion").data('kendoDropDownList').readonly();
+                            $('#AuthorizationCode').attr('readonly', true);
+                            $("#spnPanorama").show();
+                            $("#lgdHeading").text("Associate Cloud Services Auth-Code");
+                        }
+
+                    }
+                    else if (data.Type == "Others")
+                    {
+                        $("#divPanorama").show();
+                        $("#spnPanorama").show();
+                    }
+                }       
+            }                     
+        });
+    }
+
+    function Activate(){
+        var region =$("#LoggingRegion").val();
+        var supportAccountID = $("#SupportAccountID").val();
+        $.ajax({
+            url: "@Url.Action("GetFreeLoggingService", "Saas")?region=" + region+"&supportAccountId="+supportAccountID,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function (data) {
+                if(data != null && data != "")
+                {                 
+                    var message = "<div style=\"color: red\"><h4>Free Storage Included Conversion</h4><p><span style=\"font-weight: bold\">Note: </span>This region has Free Storage Included. Please confirm that by activating new Cortex Data Lake, the Free Storage Included will be converted.</span></span></p></div>";
+                    SupportPortal.Confirmation(message, function () { $('form#ActivateSaasForm').trigger('submit'); }, function () { return; }, { width: 400, height: 200, title: 'Notice', yesTitle: 'Continue', noTitle: 'Cancel', actions: {} });               
+               
+                }
+                else{
+                    $('form#ActivateSaasForm').trigger('submit');
+                }
+
+            }                            
+        });
+    }
+
+    function OnPanoramaSelect(){
+        if(authcodeType == "LoggingService")
+            $("#spnPanormadetails").show();
+    }
+
+
+
+</script>
+<div id="containerActivateSaasLicenseDiv">
+    @using (Ajax.BeginForm("ActivateSaasAuthCode", "Saas", new { }, new AjaxOptions
+        {
+            OnBegin = "SupportPortal.BlockUI();",
+            OnComplete = "SupportPortal.UnBlockUI();",
+            UpdateTargetId = "containerActivateSaasLicenseDiv"
+        }, new { id = "ActivateSaasForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.Eula.SelectedEulaId,new { id = "SelectedEulaId", name="SelectedEulaId" })
+        @Html.HiddenFor(model => model.SupportAccountID,new {id="SupportAccountID",name = "SupportAccountID"})
+        <fieldset>
+           <legend id="lgdHeading">Activate Cloud Services Auth-Code</legend> 
+            <div class="fieldset " >
+                <div>
+                    <div id="pHeader">
+                        <p>
+                            Upon activation of your Cloud Service, 
+                            please go to the Cortex Data Lake app on <a href="https://apps.paloaltonetworks.com">hub</a> 
+                            to adjust log quota for this app. <a href="https://www.paloaltonetworks.com/documentation/cloud-services/cloud-services-portal/cloud-services-portal-getting-started/get-started/accessing-applications/assign-cloud-services-roles">More details </a>
+                        </p>
+                    </div>
+                    <div class="csp-label">
+                        @Html.LabelFor(model=>model.AuthorizationCode,"Authorization Code:")
+                    </div>
+
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.AuthorizationCode)
+                        @Html.TextBoxFor(model => model.AuthorizationCode, new {maxlength = "46"})
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+            </div>
+             <div class="fieldset" id="divLoggingDevices">
+                <div>
+                    <div class="csp-label" >
+                        @Html.LabelFor(model=>model.LoggingServiceDevice,"Cortex Data Lake:")
+                    </div>
+
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.LoggingServiceDevice)
+
+                                                    @(Html.Kendo().DropDownListFor(model => model.LoggingServiceDevice)
+                                                    .OptionLabel(Constants.DropDownLoggingServiceSelect)
+                                                    .HtmlAttributes(new { @class = "k-dropdown" })
+                                                    .DataValueField("SerialNumber")
+                                                    .DataTextField("SerialNumber")
+                                                    .DataSource(source => source.Read(read => read.Action("GetLoggingServiceDevices", "Saas").Data("GetSupportAccountId()")))
+                                                    )
+                        <span class="csp-required">*</span>
+                    </div>
+                    </div>
+                           </div>
+            <div class="fieldset" id="divLoggingRegion">
+                        <div>
+                        <div class="csp-label" >
+                        @Html.LabelFor(model=>model.LoggingRegion,"Logging Region:")
+                    </div>
+                     <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.LoggingRegion)
+
+                                                    @(Html.Kendo().DropDownListFor(model => model.LoggingRegion)
+                                                    .OptionLabel(Constants.DropDownLoggingRegionSelect)
+                                                    .HtmlAttributes(new { @class = "k-dropdown" })
+                                                    .DataValueField("Name")
+                                                    .DataTextField("DisplayName")
+                                                    .DataSource(source => source.Read(read => read.Action("GetLoggingRegions", "Saas")))
+                                                    )
+                        <span class="csp-required">*</span>
+                    </div>
+                        </div>
+                </div>
+            <div class="fieldset" id="divPanorama">
+                <div>
+                    <div class="csp-label" >
+                        @Html.LabelFor(model=>model.Panoramas,"Panoramas:")
+                    </div>
+
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.Panoramas)
+                        
+                        @(Html.Kendo().MultiSelectFor(m => m.Panoramas)
+                            .Placeholder(Constants.DropDownPanoramaSelect)
+                            .HtmlAttributes(new { style = "border-style: groove;", @class = "k-dropdown" })
+                            .DataValueField("SerialNumber")
+                            .DataTextField("SerialNumber")
+                            .Events(e =>
+                            {
+                                e.Open("OnPanoramaSelect");
+                            }).MaxSelectedItems(Constants.PanoramaSelectedSerialNumbersMax)
+                            .DataSource(source => source.Read(read => read.Action("GetPanoramaSerialNumbers", "Saas").Data("GetSupportAccountId()")))
+                            )
+                        <span class="csp-required" id="spnPanorama">*</span>
+                    </div>
+                    </div>
+                    <div >
+                        <p id="spnPanormadetails" style="color:red">
+                           This is a one-time action for associating Panorama to Cortex Data Lake and cannot be changed after activation.
+                        </p>
+                    </div>
+                          </div>
+             <div class="fieldset" id="divLogQuotaCheck">
+                        <div>
+                       
+                        @Html.CheckBoxFor(model => model.IsLogQuotaChecked)                   
+                        
+                       &nbsp;&nbsp;&nbsp; To complete setup, Cortex Data Lake quota for firewall logs needs updated <a href="https://apps.paloaltonetworks.com">here</a>. Failure to do so will cause the Cortex Data Lake to purge all incoming firewall logs.
+
+                        </div>
+                </div>
+ 
+        </fieldset>
+        @Html.Partial("../Partial/_Eula", Model.Eula)
+        
+            
+                <div class="csp-submit-container">
+                    <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+                    <input type="button" id="@UniqueId.okButtonId" value="Agree and Submit" class="k-button csp-submit" onclick="Activate()" />&nbsp;&nbsp;&nbsp;
+                <input type="button" value="Refuse" name="btnRefuse" id="btnRefuse" class="k-button" onclick="CloseMe(this)" />&nbsp;&nbsp;
+                </div>
+    }
+</div>
+
+<script>
+    $.validator.unobtrusive.parse("#@UniqueId.ActivateSaasForm");
+   
+    function CloseMe(obj) {
+        $(obj).closest(".k-window-content").data("kendoWindow").close();
+    }
+
+</script>

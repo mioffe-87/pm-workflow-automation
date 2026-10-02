@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<framework xmlns="http://sd/llblgen/pro/frameworkDefinition.xsd" name="DDL SQL" dataFolder="DDL SQL">
+	<supportedDrivers/>
+	<supportedPlatforms>
+		<platform name="RDBMS"/>
+	</supportedPlatforms>
+	<supportedTemplateGroups>
+		<templateGroup name="Update DDL SQL"/>
+		<templateGroup name="Create DDL SQL"/>
+	</supportedTemplateGroups>
+</framework>

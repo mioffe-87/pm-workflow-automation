@@ -1,0 +1,57 @@
+﻿@using Csp.Api.Security;
+@using Kendo.Mvc.UI;
+
+@model Csp.Web.DataTransferObjects.DeviceDto
+
+@{
+    ViewBag.Title = "Device Details";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+
+@*<span class="contextTitle">Device: @CurrentState.GetDeviceSerialNumber()</span>*@
+
+@(Html.Kendo().TabStrip()
+             .Animation(false)
+             .Name("deviceTabStrip")
+             .Items(tabstrip => {
+
+                 if (User.HasPermission(Permission.EditDevice)) {
+                     tabstrip.Add().Text("Device Details")
+                     .Content(Html.Action(Model.ActionHelper.Edit, Model.ActionHelper.Controller, new {
+                         device = Model.Device
+                     }).ToString())
+                     .Selected(true);
+
+                 } else if (User.HasPermission(Permission.ViewDevice)) {
+                     tabstrip.Add().Text("Device Details")
+                     .Content(Html.Action(Model.ActionHelper.View, Model.ActionHelper.Controller, new {
+                         device = Model.Device
+                     }).ToString())
+
+                     .Selected(true);
+
+                 }
+
+                 if (User.HasPermission(Permission.ViewDeviceGroups)) {
+                     tabstrip.Add().Text("Device Groups")
+                     .LoadContentFrom(Model.ActionHelper.Groups, Model.ActionHelper.Controller, new {
+                         deviceId = Model.ActionHelper.Id
+                     });
+                 }
+
+                 /* if(User.HasPermission(Permission. ViewDeviceMemberships)) {
+                      tabstrip.Add().Text("Device Users")
+                      .LoadContentFrom(Model.ActionHelper.Users, Model.ActionHelper.Controller, new {
+                          id = Model.ActionHelper.Id
+                      });
+                  }*/
+             })
+               .Events(e => e.Activate("onTabDeviceAccountActivate"))
+        )
+<script>
+    function onTabDeviceAccountActivate(e) {
+
+    }
+</script>

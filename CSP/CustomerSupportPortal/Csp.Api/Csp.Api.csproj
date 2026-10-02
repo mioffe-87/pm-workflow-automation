@@ -1,0 +1,1808 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CF8D9621-107E-46E7-BBDD-414C3E562AEC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Csp.Api</RootNamespace>
+    <AssemblyName>Csp.Api</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|AnyCPU'">
+    <OutputPath>bin\Production\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|x86'">
+    <OutputPath>bin\x86\Production\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|AnyCPU'">
+    <OutputPath>bin\QA\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|x86'">
+    <OutputPath>bin\x86\QA\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'OrlandoQA|AnyCPU'">
+    <OutputPath>bin\OrlandoQA\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'OrlandoQA|x86'">
+    <OutputPath>bin\x86\OrlandoQA\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA2|AnyCPU'">
+    <OutputPath>bin\QA2\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA2|x86'">
+    <OutputPath>bin\x86\QA2\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production2|AnyCPU'">
+    <OutputPath>bin\Production2\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production2|x86'">
+    <OutputPath>bin\x86\Production2\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ENGQA|AnyCPU'">
+    <OutputPath>bin\ENGQA\</OutputPath>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ENGQA|x86'">
+    <OutputPath>bin\x86\ENGQA\</OutputPath>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT|AnyCPU'">
+    <OutputPath>bin\UAT\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT|x86'">
+    <OutputPath>bin\x86\UAT\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT2|AnyCPU'">
+    <OutputPath>bin\UAT2\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT2|x86'">
+    <OutputPath>bin\x86\UAT2\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SIT|AnyCPU'">
+    <OutputPath>bin\SIT\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SIT|x86'">
+    <OutputPath>bin\x86\SIT\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IRIS|AnyCPU'">
+    <OutputPath>bin\IRIS\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IRIS|x86'">
+    <OutputPath>bin\x86\IRIS\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Stage|AnyCPU'">
+    <OutputPath>bin\Stage\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Stage|x86'">
+    <OutputPath>bin\x86\Stage\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\.sonarlint\csp-sonarqubecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'HERCSIT|AnyCPU'">
+    <OutputPath>bin\HERCSIT\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'HERCSIT|x86'">
+    <OutputPath>bin\x86\HERCSIT\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DR|AnyCPU'">
+    <OutputPath>bin\DR\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DR|x86'">
+    <OutputPath>bin\x86\DR\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper, Version=3.3.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.Net4, Version=3.3.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK">
+      <HintPath>..\packages\AWSSDK.2.3.55.2\lib\net45\AWSSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
+      <HintPath>..\packages\BouncyCastle.Cryptography.2.4.0\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmah">
+      <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ExpressiveAnnotations, Version=2.2.7.0, Culture=neutral, PublicKeyToken=d3e372f3c1e83cec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ExpressiveAnnotations.2.4.0\lib\net40\ExpressiveAnnotations.dll</HintPath>
+    </Reference>
+    <Reference Include="ExpressiveAnnotations.MvcUnobtrusiveValidatorProvider, Version=2.2.4.0, Culture=neutral, PublicKeyToken=d3e372f3c1e83cec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ExpressiveAnnotations.2.4.0\lib\net40\ExpressiveAnnotations.MvcUnobtrusiveValidatorProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FluentValidation.7.4.0\lib\net45\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Api.CommonProtos, Version=2.17.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Api.CommonProtos.2.17.0\lib\net461\Google.Api.CommonProtos.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Api.Gax, Version=4.10.0.0, Culture=neutral, PublicKeyToken=3ec5ea7f18953e47, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Api.Gax.4.10.0\lib\net462\Google.Api.Gax.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis, Version=1.70.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.1.70.0\lib\net462\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth, Version=1.70.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Auth.1.70.0\lib\net462\Google.Apis.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Core, Version=1.70.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Core.1.70.0\lib\net462\Google.Apis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Cloud.Iam.V1, Version=3.3.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Cloud.Iam.V1.3.3.0\lib\net462\Google.Cloud.Iam.V1.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Cloud.PubSub.V1, Version=3.16.0.0, Culture=neutral, PublicKeyToken=185c282632e132a0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Cloud.PubSub.V1.3.16.0\lib\net462\Google.Cloud.PubSub.V1.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.31.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.31.1\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlSanitizationLibrary">
+      <HintPath>..\Csp.Web\Bin\HtmlSanitizationLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.4.2\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DLLs\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4, Version=1.3.8.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Compression.LZ4.1.3.8\lib\net462\K4os.Compression.LZ4.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4.Streams, Version=1.3.8.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Compression.LZ4.Streams.1.3.8\lib\net462\K4os.Compression.LZ4.Streams.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Hash.xxHash, Version=1.0.8.0, Culture=neutral, PublicKeyToken=32cd54395057cec3, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Hash.xxHash.1.0.8\lib\net462\K4os.Hash.xxHash.dll</HintPath>
+    </Reference>
+    <Reference Include="LINQtoCSV">
+      <HintPath>..\packages\LINQtoCSV.1.5.0.0\lib\net35\LINQtoCSV.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.17.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.17\lib\net45\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=9.0.0.7, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.9.0.7\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=9.0.0.7, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.9.0.7\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=9.0.0.7, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.9.0.7\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Abstractions, Version=8.12.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Abstractions.8.12.1\lib\net472\Microsoft.IdentityModel.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=8.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.8.0.2\lib\net472\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=8.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.8.0.2\lib\net472\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=8.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.8.0.2\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DLLs\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DLLs\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DLLs\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DLLs\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DLLs\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=8.0.32.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.8.0.32.1\lib\net48\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data.EntityFramework, Version=8.0.32.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.EntityFramework.8.0.32\lib\net452\MySql.Data.EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PAN.Common.Core">
+      <HintPath>..\..\DLLs\PAN.Common.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=112.1.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.112.1.0\lib\net48\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Salesforce.Common">
+      <HintPath>..\packages\DeveloperForce.Force.1.3.2\lib\Salesforce.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Salesforce.Force">
+      <HintPath>..\packages\DeveloperForce.Force.1.3.2\lib\Salesforce.Force.dll</HintPath>
+    </Reference>
+    <Reference Include="Sap.Data.Hana.v4.5, Version=1.0.102.0, Culture=neutral, PublicKeyToken=0326b8ea63db4bc4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DLLs\Sap.Data.Hana.v4.5.dll</HintPath>
+    </Reference>
+    <Reference Include="SendGridMail">
+      <HintPath>..\..\DLLs\SendGridMail.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\netstandard1.1\System.Buffers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.CodeDom, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.CodeDom.8.0.0\lib\net462\System.CodeDom.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.ConfigurationManager, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Configuration.ConfigurationManager.8.0.0\lib\net462\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=9.0.0.7, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.9.0.7\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=8.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.8.0.2\lib\net472\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Pipelines, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Pipelines.8.0.0\lib\net462\System.IO.Pipelines.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Linq.Async, Version=6.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Async.6.0.3\lib\net48\System.Linq.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Net.Http.WinHttpHandler, Version=8.0.0.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.WinHttpHandler.8.0.2\lib\net462\System.Net.Http.WinHttpHandler.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=8.0.0.4, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.8.0.4\lib\net462\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.3.0\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.3.0\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="ZstdSharp, Version=0.8.1.0, Culture=neutral, PublicKeyToken=8d151af33a4ad5cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZstdSharp.Port.0.8.1\lib\net462\ZstdSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DataAccess\AddressValidationDataAccess.cs" />
+    <Compile Include="DataAccess\AwsDataAccess.cs" />
+    <Compile Include="DataAccess\ConsentRequestDataAccess.cs" />
+    <Compile Include="DataAccess\ConsumerProductDataAccess.cs" />
+    <Compile Include="DataAccess\CsspDataAccess.cs" />
+    <Compile Include="DataAccess\EmailNotificationDataAccess.cs" />
+    <Compile Include="DataAccess\FeatureAccess.cs" />
+    <Compile Include="DataAccess\EndpointDataAccess.cs" />
+    <Compile Include="DataAccess\EulaDataAccess.cs" />
+    <Compile Include="DataAccess\FirewallFlexDataAccess.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\EndpointFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\EndpointLicenseType.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\Eula.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\SaasFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\SearchHelper.cs" />
+    <Compile Include="DataAccess\HelperClasses\SortHelper.cs" />
+    <Compile Include="DataAccess\LicenseManagementDataAccess.cs" />
+    <Compile Include="DataAccess\LogApiCallDataAccess.cs" />
+    <Compile Include="DataAccess\SelfRegistrationCodeDataAccess.cs" />
+    <Compile Include="DataAccess\ElaEsaDataAccess.cs" />
+    <Compile Include="DataAccess\VmRegistrationDataAccess.cs" />
+    <Compile Include="DataAccess\WildfireDataAccess.cs" />
+    <Compile Include="DataAccess\MfaDataAccess.cs" />
+    <Compile Include="DataAccess\OtpDataAccess.cs" />
+    <Compile Include="DataAccess\PartialShipmentDataAccess.cs" />
+    <Compile Include="DataAccess\SaasDataAccess.cs" />
+    <Compile Include="DataAccess\ServiceDataAccess.cs" />
+    <Compile Include="DataAccess\TrapsELADataAccess.cs" />
+    <Compile Include="DataAccess\UserProfileDataAccess.cs" />
+    <Compile Include="DataAccess\IonDataAccess.cs" />
+    <Compile Include="DataAccess\ZtpDataAccess.cs" />
+    <Compile Include="DataAccess\XSOARDataAccess.cs" />
+    <Compile Include="EntityClasses\CustomCode\ICspAuditEntity.cs" />
+    <Compile Include="EntityClasses\CustomCode\ICspUpdateAuditEntity.cs" />
+    <Compile Include="EntityClasses\CustomCode\ICspCreateAuditEntity.cs" />
+    <Compile Include="EntityClasses\CustomCode\Wildfireuseraccount.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Csphelp.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Lookup.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\PanDB_Account.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\PanDB_Device_Master.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\PanDB_Device_Master_Bkp.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\PanDB_Lic_Feature.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\PanDB_Partmaster.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\PanDB_Part_Sub_Type.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\PanDB_Part_Type.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Resourcelink.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Wildfiredevice.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Wildfiredevicelog.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Wildfireuseraccount.cs" />
+    <Compile Include="FirewallFlexDeploymentProfile.cs" />
+    <Compile Include="HelperClasses\ApiConstants.cs" />
+    <Compile Include="HelperClasses\CertificateManager.cs" />
+    <Compile Include="HelperClasses\CronJobHelper.cs" />
+    <Compile Include="HelperClasses\RouteConstraint.cs" />
+    <Compile Include="HelperClasses\ExceptionHelper.cs" />
+    <Compile Include="HelperClasses\LicenseApis.cs" />
+    <Compile Include="HelperClasses\CommonHelper.cs" />
+    <Compile Include="HelperClasses\LicenseEntitlementApis.cs" />
+    <Compile Include="HelperClasses\NovaApis.cs" />
+    <Compile Include="HelperClasses\CsspConstants.cs" />
+    <Compile Include="HelperClasses\CsspOrderProcessor.cs" />
+    <Compile Include="HelperClasses\PanServiceApis.cs" />
+    <Compile Include="HelperClasses\TokenHelper.cs" />
+    <Compile Include="HelperClasses\MagicLinkHelper.cs" />
+    <Compile Include="HelperClasses\TypeCommon.cs" />
+    <Compile Include="Logic\AddressValidationService.cs" />
+    <Compile Include="HelperClasses\Secrets.cs" />
+    <Compile Include="Logic\AssetApiLogic.cs" />
+    <Compile Include="Logic\CommonApiLogic.cs" />
+    <Compile Include="Logic\ConsentRequestLogic.cs" />
+    <Compile Include="HelperClasses\WebCommon.cs" />
+    <Compile Include="Logic\ConsumerProductLogic.cs" />
+    <Compile Include="Logic\FirewallFlexApiLogic.cs" />
+    <Compile Include="Logic\ImpersonateRequestLogic.cs" />
+    <Compile Include="Logic\FirewallFlexLogic.cs" />
+    <Compile Include="Logic\LicenseManagementLogic.cs" />
+    <Compile Include="Logic\ElaEsaLogic.cs" />
+    <Compile Include="Logic\OAuthApiLogic.cs" />
+    <Compile Include="Logic\ScheduledJobsLogic.cs" />
+    <Compile Include="Logic\ServiceLogic.cs" />
+    <Compile Include="Logic\SfdcContactLogic.cs" />
+    <Compile Include="Logic\UserAccountApiLogic.cs" />
+    <Compile Include="Logic\TrainingCreditsApiLogic.cs" />
+    <Compile Include="Logic\WildfireLogic.cs" />
+    <Compile Include="Logic\NetworkSecurityApiLogic.cs" />
+    <Compile Include="Logic\NovaLogic.cs" />
+    <Compile Include="Logic\ExtendedExpertiseLogic.cs" />
+    <Compile Include="Logic\ProductActivationPageService.cs" />
+    <Compile Include="Logic\SettingsLogic.cs" />
+    <Compile Include="Logic\IonLogic.cs" />
+    <Compile Include="Model\ActivationLinksLookupItemDetails.cs" />
+    <Compile Include="Model\ActivationLinksLookupItem.cs" />
+    <Compile Include="Logic\SupportAccountUserLogic.cs" />
+    <Compile Include="Model\DeleteTrialLicenseModel.cs" />
+    <Compile Include="Model\AssetRecycleRequest.cs" />
+    <Compile Include="Model\DeviceTransferRequest.cs" />
+    <Compile Include="Model\DeviceTransferReviewRequest.cs" />
+    <Compile Include="Model\DomainResponse.cs" />
+    <Compile Include="Model\Ela2\Ela8Eligibility.cs" />
+    <Compile Include="Model\Ela2\EsaEligibility.cs" />
+    <Compile Include="Model\Ela2\ElaConversionStatusBase.cs" />
+    <Compile Include="Model\Ela2\ElaConversionStatusData.cs" />
+    <Compile Include="Model\Ela2\ElaConversionStatusDataResponse.cs" />
+    <Compile Include="Model\DeviceIonTransferLicenses.cs" />
+    <Compile Include="Model\DeviceIonTransferDetails.cs" />
+    <Compile Include="Model\DeviceIonDetailsLightInfo.cs" />
+    <Compile Include="Model\BetaAccountsResponse.cs" />
+    <Compile Include="Model\Ela2\EsaEla2EligibilityLink.cs" />
+    <Compile Include="Model\Ela2\Ela2EligibilityModel.cs" />
+    <Compile Include="Model\Ela2\Ela2Eligibility.cs" />
+    <Compile Include="Model\Ela2\Ela2ButtonLinks.cs" />
+    <Compile Include="Model\ConsumerProduct\ConsumerProductOkyoGardeChild.cs" />
+    <Compile Include="Model\ConsumerProduct\ConsumerProductRequest.cs" />
+    <Compile Include="Model\ConsumerProduct\ConsumerProductResponse.cs" />
+    <Compile Include="Model\ConsumerProduct\ConsumerProductOkyoGardeParent.cs" />
+    <Compile Include="Model\Ela2\ElaConversionStatus.cs" />
+    <Compile Include="Model\Ela2\EElaConversionStatus.cs" />
+    <Compile Include="Model\Ela2\ElaConversionStatusLicenseDataResponse.cs" />
+    <Compile Include="Model\Ela2\ElaLicenseConversionStatus.cs" />
+    <Compile Include="Model\Ela2\ErrorDetails.cs" />
+    <Compile Include="Model\ElaEsa\EElaEsaActionStatus.cs" />
+    <Compile Include="Model\ElaEsa\EElaEsaAssetType.cs" />
+    <Compile Include="Model\ElaEsa\EElaEsaAgreementType.cs" />
+    <Compile Include="Model\ElaEsa\ElaCapsPagedResponse.cs" />
+    <Compile Include="Model\ElaEsa\BiElaEsaCapInfo.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaCapInfoWithNewDevice.cs" />
+    <Compile Include="Model\ElaEsa\DecomissionDeviceSAPRequest.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDecomissionDeviceDetail.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDecomissionDevicesSapDevice.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDecomissionDevicesSapEcc.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDecomissionDeviceCompleteDeviceRequest.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDecomissionDeviceCompleteRequest.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDecomedDevice.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDecomRequestParams.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDecomRequestData.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDecomRequest.cs" />
+    <Compile Include="Model\ElaEsa\BiElaEsaDevicePriceInfo.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDevicePriceInfo.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaCapIFullnfo.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaDecomissionDevice.cs" />
+    <Compile Include="Model\ElaEsa\ElaEsaCapInfo.cs" />
+    <Compile Include="Model\ElaEsa\ElaCapsResponse.cs" />
+    <Compile Include="Model\ElaEsa\BiElaEsaDevicePriceInfoComparer.cs" />
+    <Compile Include="Model\Enums\BetaFeature.cs" />
+    <Compile Include="Model\Enums\CronJobEnum.cs" />
+    <Compile Include="Model\Enums\DeploymentProfileRequestType.cs" />
+    <Compile Include="Model\Enums\EFedRampType.cs" />
+    <Compile Include="Model\Enums\FwFlexCreditType.cs" />
+    <Compile Include="Model\Enums\FwFlexUsageDescription.cs" />
+    <Compile Include="Model\Enums\LicenseManagementLicenseType.cs" />
+    <Compile Include="Model\Enums\ManageUserAction.cs" />
+    <Compile Include="Model\Enums\PanoramaType.cs" />
+    <Compile Include="Model\Enums\SearchFieldEnum.cs" />
+    <Compile Include="Model\Enums\SortFieldEnum.cs" />
+    <Compile Include="Model\Enums\SortOrderEnum.cs" />
+    <Compile Include="Model\Flex\CreditDataTraitesModel.cs" />
+    <Compile Include="Model\Flex\DeploymentProfileAttributeValue.cs" />
+    <Compile Include="Model\Flex\AllocateToken.cs" />
+    <Compile Include="Model\Flex\AscAccountInfo.cs" />
+    <Compile Include="Model\Flex\CreditDataFromEntitlement.cs" />
+    <Compile Include="Model\Flex\CreditDetailFromEntitlementItemEntitlement.cs" />
+    <Compile Include="Model\Flex\CreditDetailFromEntitlement.cs" />
+    <Compile Include="Model\Flex\CreditTypeRequest.cs" />
+    <Compile Include="Model\Flex\DeploymentProfile.cs" />
+    <Compile Include="Model\Flex\DeploymentProfileRequest.cs" />
+    <Compile Include="Model\Flex\FirewallRegistrationRequest.cs" />
+    <Compile Include="Model\Flex\TransferDeploymentProfileRequest.cs" />
+    <Compile Include="Model\Flex\FirewallDeactivationRequest.cs" />
+    <Compile Include="Model\Flex\FwSerialAndSubscription.cs" />
+    <Compile Include="Model\Flex\FirewallRegisterRequest.cs" />
+    <Compile Include="Model\Flex\FlexBaseRequestPayload.cs" />
+    <Compile Include="Model\DeploymentProfileModel.cs" />
+    <Compile Include="Model\Flex\FlexBaseResponsePayload.cs" />
+    <Compile Include="Model\Flex\FlexDevice.cs" />
+    <Compile Include="Model\AddressValidation.cs" />
+    <Compile Include="Model\CnAvailablePanorama.cs" />
+    <Compile Include="Model\CnAllocateAuthCode.cs" />
+    <Compile Include="Model\Flex\Hypervisor.cs" />
+    <Compile Include="Model\Flex\PanoramaProvisionModel.cs" />
+    <Compile Include="Model\Flex\PanoramaProvisionRequest.cs" />
+    <Compile Include="Model\Flex\PanoramaProvisionResponse.cs" />
+    <Compile Include="Model\Flex\PanOsVersion.cs" />
+    <Compile Include="Model\Enums\Impersonate.cs" />
+    <Compile Include="Model\Flex\DeploymentProfileAudit.cs" />
+    <Compile Include="Model\Flex\TransferDeploymentProfileResponse.cs" />
+    <Compile Include="Model\Flex\WarmPoolDeviceState.cs" />
+    <Compile Include="Model\GenericPubSubMessageRequest.cs" />
+    <Compile Include="Model\GenericPubSubMessageResponse.cs" />
+    <Compile Include="Model\ImpersonateRequest.cs" />
+    <Compile Include="Model\Flex\FwFlexDateFormatConverter.cs" />
+    <Compile Include="Model\ExtendedExpertise\ExtendedExpertiseAsset.cs" />
+    <Compile Include="Model\ExtendedExpertise\ExtendedExpertiseResponse.cs" />
+    <Compile Include="Model\ExtendedExpertise\ExtendedExpertiseResponseData.cs" />
+    <Compile Include="Model\ExtendedExpertise\ExtendedExpertiseUsageTransaction.cs" />
+    <Compile Include="Model\ExtendedExpertise\ExtendedExpertiseUsageTransactionXrefCData.cs" />
+    <Compile Include="Model\ExtendedExpertise\ExtendedExpertiseUsageTransactionXrefCDataExpertiseDetails.cs" />
+    <Compile Include="Model\ExtendedExpertise\ExtendedExpertiseUsageTransactionXrefCDataSapDetails.cs" />
+    <Compile Include="Model\ExtendedExpertise\ExtendedExpertiseUsageTransactionXrefCDataUserDetails.cs" />
+    <Compile Include="Model\Ion\IonsPageRequest.cs" />
+    <Compile Include="Model\JwtTokenRequest.cs" />
+    <Compile Include="Model\JwtTokenResponse.cs" />
+    <Compile Include="Model\LogApiCall.cs" />
+    <Compile Include="Model\LogsAndNotifications\BffLogInfo.cs" />
+    <Compile Include="Model\LogsAndNotifications\EBffLogLevel.cs" />
+    <Compile Include="Model\LicenseManagement\LicenseManagementActivatedListItem.cs" />
+    <Compile Include="Model\LicenseManagement\LicenseManagementActivationLinkRequest.cs" />
+    <Compile Include="Model\LicenseManagement\LicenseManagementAvailableData.cs" />
+    <Compile Include="Model\LicenseManagement\LicenseManagementAvailableListItem.cs" />
+    <Compile Include="Model\LicenseManagement\LicenseManagementDeactivationRequest.cs" />
+    <Compile Include="Model\LicenseManagement\LicenseManagementDeactivationRequestItem.cs" />
+    <Compile Include="Model\LicenseDeactivate\LicenseDeactivateErrorItem.cs" />
+    <Compile Include="Model\LicenseDeactivate\LicenseDeactivateRequest.cs" />
+    <Compile Include="Model\LicenseDeactivate\LicenseDeactivateResponse.cs" />
+    <Compile Include="Model\MembershipExtensionRequest.cs" />
+    <Compile Include="Model\LogSfdcCaseCreationHistoryRequest.cs" />
+    <Compile Include="Model\LogSfdcCaseCreationHistoryResponse.cs" />
+    <Compile Include="Model\MembershipSfdcContactResponse.cs" />
+    <Compile Include="Model\NotifySuperUserRequest.cs" />
+    <Compile Include="Model\OAuthApi.cs" />
+    <Compile Include="Model\PanService\PanServiceRegenerateMagicLinkLicense.cs" />
+    <Compile Include="Model\PanService\PanServiceRegenerateMagicLinkRequest.cs" />
+    <Compile Include="Model\PanService\PanServiceRegenerateMagicLinkResponse.cs" />
+    <Compile Include="Model\PendingDeviceTransferResponse.cs" />
+    <Compile Include="Model\RmaDepot.cs" />
+    <Compile Include="Model\ScheduledJobs.cs" />
+    <Compile Include="Model\SfdcCaseCreationRequest.cs" />
+    <Compile Include="Model\SfdcCaseCreationResponse.cs" />
+    <Compile Include="Model\SnAuthCode.cs" />
+    <Compile Include="Model\SupportCaseNavigationRequest.cs" />
+    <Compile Include="Model\SupportCaseNavigationResponse.cs" />
+    <Compile Include="Model\SupportMember.cs" />
+    <Compile Include="Model\TrainingPartner.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadResponseTooltipUpgrade.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiActivateResponse.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiResponseBase.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiActivationDetailsResponse.cs" />
+    <Compile Include="Model\Wildfire\WildFireApiActivationProductType.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadContentValue.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadPagination.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadRequestBase.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadResponseVersionUpgrade.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadRequestCellularDbRecord.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadRequestCellularData.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadResponseBase.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadResponseCellularDownloadItem.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadResponseCellularDownloads.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadResponseCellularFilters.cs" />
+    <Compile Include="Model\UpdatesDownload\ContentDownloadSorting.cs" />
+    <Compile Include="Model\Wildfire\WfApiConsumptionHealh.cs" />
+    <Compile Include="Model\Wildfire\WfApiExtConsumptionResponseResultItemUsage.cs" />
+    <Compile Include="Model\Wildfire\WfApiExtConsumptionResponseResultItem.cs" />
+    <Compile Include="Model\Wildfire\WfApiExtConsumptionResponseResultError.cs" />
+    <Compile Include="Model\Wildfire\WfApiExtConsumptionResponseResult.cs" />
+    <Compile Include="Model\Wildfire\WfApiExtConsumptionResponse.cs" />
+    <Compile Include="Model\Wildfire\WfApiExtConsumptionRequest.cs" />
+    <Compile Include="Model\Wildfire\WfApiConsumptionRequest.cs" />
+    <Compile Include="Model\Wildfire\WfApiConsumptionResponse.cs" />
+    <Compile Include="Model\Wildfire\WfApiConsumptionResponseItem.cs" />
+    <Compile Include="Model\Wildfire\WfApiConsumptionResponseItemBase.cs" />
+    <Compile Include="Model\Wildfire\WfApiConsumptionSettings.cs" />
+    <Compile Include="Model\Wildfire\WfApiConsuptionResponseBase.cs" />
+    <Compile Include="Model\Wildfire\WfApiExtConsumptionResponseResultItemUsageData.cs" />
+    <Compile Include="Model\Wildfire\WildfireActivationLicense.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiActivationDetailsRequestData.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiKeysResponse.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiNovaDataEntitlement.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiNovaDataLicenseData.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiNovaDataLicense.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiNova.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiNovaData.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiActivationDetailsRequest.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiActivateRequest.cs" />
+    <Compile Include="Model\Wildfire\WildfireAssetIteemQuantity.cs" />
+    <Compile Include="Model\Wildfire\WildfirePortalItem.cs" />
+    <Compile Include="Model\Wildfire\WildfireAssetItem.cs" />
+    <Compile Include="Model\Wildfire\WildfireApiRequest.cs" />
+    <Compile Include="Model\Wildfire\WildfireAssetsResponse.cs" />
+    <Compile Include="Model\Ion\EDeviceType.cs" />
+    <Compile Include="Model\Ion\IonResponse.cs" />
+    <Compile Include="Model\Ion\IonRequest.cs" />
+    <Compile Include="Model\Ion\IonItem.cs" />
+    <Compile Include="Model\LicenseApi\CdlNotificationRequest.cs" />
+    <Compile Include="Model\LicenseEntitlement\LicenseEntitlementRequest.cs" />
+    <Compile Include="Model\LicenseEntitlement\LicenseEntitlementTenant.cs" />
+    <Compile Include="Model\LicenseEntitlement\LicenseEntitlementEntitlements.cs" />
+    <Compile Include="Model\LicenseEntitlement\LicenseEntitlementNgfw.cs" />
+    <Compile Include="Model\LicenseEntitlement\LicenseEntitlementLicenses.cs" />
+    <Compile Include="Model\LicenseEntitlement\LicenseEntitlementResponse.cs" />
+    <Compile Include="Model\Flex\QuantityAllocation.cs" />
+    <Compile Include="Model\Flex\RequestDetail.cs" />
+    <Compile Include="Model\CornerstoneUserEmailUpdateResponse.cs" />
+    <Compile Include="Logic\IAPClient.cs" />
+    <Compile Include="Logic\OtpLogic.cs" />
+    <Compile Include="Logic\PartialShipmentLogic.cs" />
+    <Compile Include="Logic\SfdcLogic.cs" />
+    <Compile Include="Logic\ServiceProxy.cs" />
+    <Compile Include="Logic\EventPublisher.cs" />
+    <Compile Include="Logic\AscDeviceRegistrationService.cs" />
+    <Compile Include="Logic\AssetHistoryLogic.cs" />
+    <Compile Include="Logic\AwsLogic.cs" />
+    <Compile Include="Logic\AscScoreCardLogic.cs" />
+    <Compile Include="Logic\BootstrapContainerLogic.cs" />
+    <Compile Include="Logic\CloudDeviceLogic.cs" />
+    <Compile Include="Logic\BulkRegistrationLogic.cs" />
+    <Compile Include="Logic\BulkRegistrationService.cs" />
+    <Compile Include="Logic\ConfigValues.cs" />
+    <Compile Include="Logic\CsspLogic.cs" />
+    <Compile Include="Logic\DownloadUrlLogic.cs" />
+    <Compile Include="Logic\EmailNotificationLogic.cs" />
+    <Compile Include="Logic\EncryptionProvider.cs" />
+    <Compile Include="Logic\EpLogic.cs" />
+    <Compile Include="Logic\EulaLogic.cs" />
+    <Compile Include="Logic\EvalAccountCreationService.cs" />
+    <Compile Include="Logic\EvalWebServiceService.cs" />
+    <Compile Include="Logic\HomeLogic.cs" />
+    <Compile Include="Logic\LicensingApiLogic.cs" />
+    <Compile Include="Logic\LoginHistoryLogic.cs" />
+    <Compile Include="Logic\LogLogic.cs" />
+    <Compile Include="Logic\MarketplaceAccountLogic.cs" />
+    <Compile Include="Logic\MfaLogic.cs" />
+    <Compile Include="Logic\PartnerEvalLogic.cs" />
+    <Compile Include="Logic\PermissionService.cs" />
+    <Compile Include="Logic\PingLogic.cs" />
+    <Compile Include="Logic\ReturnsLogic.cs" />
+    <Compile Include="Logic\SaasLogic.cs" />
+    <Compile Include="Logic\Salesforce\RetryAbleException.cs" />
+    <Compile Include="Logic\Salesforce\SalesforceRestApiLogic.cs" />
+    <Compile Include="Logic\TacToolboxApiLogic.cs" />
+    <Compile Include="Logic\TrapsELALogic.cs" />
+    <Compile Include="Logic\ZtpLogic.cs" />
+    <Compile Include="Logic\XSOARLogic.cs" />
+    <Compile Include="Model\AlertModel.cs" />
+    <Compile Include="Model\AppNotification.cs" />
+    <Compile Include="Model\AppNotificationData.cs" />
+    <Compile Include="Model\AscAccountCaseNotification.cs" />
+    <Compile Include="Model\AscScoreCard.cs" />
+    <Compile Include="Logic\Salesforce\RetryAbleHelper.cs" />
+    <Compile Include="Logic\Salesforce\SalesforceLogic.cs" />
+    <Compile Include="Logic\Salesforce\SalesforceSessionManager.cs" />
+    <Compile Include="Logic\Salesforce\SalesforceThrottler.cs" />
+    <Compile Include="Logic\SearchAllLogic.cs" />
+    <Compile Include="Logic\SelfServiceRegistrationCodeService.cs" />
+    <Compile Include="Logic\SiteLicenseLogic.cs" />
+    <Compile Include="Logic\SupportAccountDomainsService.cs" />
+    <Compile Include="Logic\TestLogic.cs" />
+    <Compile Include="Logic\VmRegistrationService.cs" />
+    <Compile Include="Logic\WildfireStoreLogic.cs" />
+    <Compile Include="Logic\WildfireWipeoutService.cs" />
+    <Compile Include="Model\AssetHistoryModel.cs" />
+    <Compile Include="Model\Attributes\EmailAttribute.cs" />
+    <Compile Include="Logic\BulkRegistrationThreadLogic.cs" />
+    <Compile Include="Model\AscContactInfo.cs" />
+    <Compile Include="Model\Attributes\UrlAttribute.cs" />
+    <Compile Include="Model\AutoFocusTrialUser.cs" />
+    <Compile Include="Model\BannerMessage.cs" />
+    <Compile Include="Model\BaseJobResponse.cs" />
+    <Compile Include="Model\BulkDeviceTransferModel.cs" />
+    <Compile Include="Model\BulkOtpModel.cs" />
+    <Compile Include="Model\BulkRegistrationModel.cs" />
+    <Compile Include="Model\ActivationLinkModel.cs" />
+    <Compile Include="Model\ActivationLinkRequest.cs" />
+    <Compile Include="Model\ActivationLinkResponse.cs" />
+    <Compile Include="Model\ActivationLinkLicenseRequest.cs" />
+    <Compile Include="Model\ActivationLinkLicenseResponse.cs" />
+    <Compile Include="Model\ActivationLinksModel.cs" />
+    <Compile Include="Model\CornerstoneAccountData.cs" />
+    <Compile Include="Model\Enums\DeploymentProfileType.cs" />
+    <Compile Include="Model\Enums\FlexTokenType.cs" />
+    <Compile Include="Model\Flex\CreditDataModel.cs" />
+    <Compile Include="Model\CsspProvisionedDevicesMonthlyData.cs" />
+    <Compile Include="Model\Enums\FWFlexRequestType.cs" />
+    <Compile Include="Model\Enums\PartialShipmentRequestType.cs" />
+    <Compile Include="Model\Flex\CreditDetail.cs" />
+    <Compile Include="Model\Flex\CreditTransferDataModel.cs" />
+    <Compile Include="Model\Flex\CreditTransferRequest.cs" />
+    <Compile Include="Model\Flex\TokenSummaryQuantityAllocation.cs" />
+    <Compile Include="Model\Flex\TokenResponse.cs" />
+    <Compile Include="Model\Flex\DepositCreditRequest.cs" />
+    <Compile Include="Model\Flex\SupportAccountLicense.cs" />
+    <Compile Include="Model\Flex\CreditData.cs" />
+    <Compile Include="Model\Flex\TokenTransferHistory.cs" />
+    <Compile Include="Model\LoggingRegions.cs" />
+    <Compile Include="Model\NetworkSecurity.cs" />
+    <Compile Include="Model\OtpHistoryCsv.cs" />
+    <Compile Include="Model\PartialShipment\CategoryTypes.cs" />
+    <Compile Include="Model\PartialShipment\ContactInformation.cs" />
+    <Compile Include="Model\PartialShipment\MasterContract.cs" />
+    <Compile Include="Model\PartialShipment\MasterContractDetail.cs" />
+    <Compile Include="Model\PartialShipment\MasterOrder.cs" />
+    <Compile Include="Model\PartialShipment\MasterContractResponse.cs" />
+    <Compile Include="Model\PanoramaAssociationHistory.cs" />
+    <Compile Include="Model\PanoramaAssociationRequest.cs" />
+    <Compile Include="Model\PanoramaAssociationResult.cs" />
+    <Compile Include="Model\EVmType.cs" />
+    <Compile Include="Model\Enums\EActivationActionType.cs" />
+    <Compile Include="Model\Enums\SfdcEntitlementSearchType.cs" />
+    <Compile Include="Model\Enums\SfdcProductFamily.cs" />
+    <Compile Include="Model\PartialShipment\MasterContractRequest.cs" />
+    <Compile Include="Model\PartialShipment\ShipmentDetails.cs" />
+    <Compile Include="Model\PartialShipment\ShipmentOrderRequest.cs" />
+    <Compile Include="Model\PartialShipment\ShippingMethodResult.cs" />
+    <Compile Include="Model\PartialShipment\ShippingOrder.cs" />
+    <Compile Include="Model\PartialShipment\ShippingOrderDetail.cs" />
+    <Compile Include="Model\PartialShipment\PartialShipmentOrder.cs" />
+    <Compile Include="Model\PartialShipment\PartialShipmentOrderResult.cs" />
+    <Compile Include="Model\PartialShipment\SubOrderRequest.cs" />
+    <Compile Include="Model\ProductActivation\Detail.cs" />
+    <Compile Include="Model\ProductActivation\GroupedData.cs" />
+    <Compile Include="Model\ProductActivation\Order.cs" />
+    <Compile Include="Model\ProductActivation\OrderInfo.cs" />
+    <Compile Include="Model\ProductActivation\Product.cs" />
+    <Compile Include="Model\ProductActivation\ProductActivationItem.cs" />
+    <Compile Include="Model\RbackSupportAccountSnTenantTransferProperties.cs" />
+    <Compile Include="Model\RbackUserRole.cs" />
+    <Compile Include="Model\DisableDeviceRegistrationPinModel.cs" />
+    <Compile Include="Model\OtpSummaryItemBase.cs" />
+    <Compile Include="Model\OtpPinSummaryItem.cs" />
+    <Compile Include="Model\OtpSummary.cs" />
+    <Compile Include="Model\CsspProvisionedDevicesMonthly.cs" />
+    <Compile Include="Model\ElaTokenNotificationModel.cs" />
+    <Compile Include="Model\Enums\NotificationEnum.cs" />
+    <Compile Include="Model\Enums\AppPortalAppType.cs" />
+    <Compile Include="Model\Enums\ClaimType.cs" />
+    <Compile Include="Model\Enums\MultiFactorAuthType.cs" />
+    <Compile Include="Model\Enums\OtpType.cs" />
+    <Compile Include="Model\GenerateOtpModel.cs" />
+    <Compile Include="Model\GenerateRegistrationPinModel.cs" />
+    <Compile Include="Model\GoogleAuthenticatorModel.cs" />
+    <Compile Include="Model\ElaAuthCodeResult.cs" />
+    <Compile Include="Model\ElaTokensGrantModel.cs" />
+    <Compile Include="Model\LoginHistoryModel.cs" />
+    <Compile Include="Model\Enums\AccountType.cs" />
+    <Compile Include="Model\EmailNotification.cs" />
+    <Compile Include="Model\MarketplaceAccount.cs" />
+    <Compile Include="Model\MembershipDetails.cs" />
+    <Compile Include="Model\MenuItem.cs" />
+    <Compile Include="Model\MfaRegistrationModel.cs" />
+    <Compile Include="Model\NotificationEventModel.cs" />
+    <Compile Include="Model\RequestParameters.cs" />
+    <Compile Include="Model\Sfdc\SfdcAscAccount.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementAccount.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementEffectivePeriod.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlement.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementContact.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementLink.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementOrder.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementPartner.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementProduct.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementProductBundleComponent.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementProductConfiguration.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementProductLicenseFeature.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementRequest.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementResponseError.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementSearchCriteria.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementToken.cs" />
+    <Compile Include="Model\Sfdc\SfdcEntitlementSupportAccount.cs" />
+    <Compile Include="Model\OneTimePasswordModel.cs" />
+    <Compile Include="Model\OtpSummaryItem.cs" />
+    <Compile Include="Model\Preferences.cs" />
+    <Compile Include="Model\RegistrationPinModel.cs" />
+    <Compile Include="Model\SalesforceUserModel.cs" />
+    <Compile Include="Model\SupportCaseInfo.cs" />
+    <Compile Include="Model\CloudDeviceModel.cs" />
+    <Compile Include="Model\BulkRegistrationDeviceModel.cs" />
+    <Compile Include="Model\BulkRegistrationHistoryListItem.cs" />
+    <Compile Include="Model\BulkRegistrationLicenseModel.cs" />
+    <Compile Include="Model\ClaimedAssetListItem.cs" />
+    <Compile Include="Model\ConfigModel.cs" />
+    <Compile Include="Model\CoveoConfigModel.cs" />
+    <Compile Include="Model\CsspDownloadLicense.cs" />
+    <Compile Include="Model\CsspEndUser.cs" />
+    <Compile Include="Model\CsspInfo.cs" />
+    <Compile Include="Model\CsspPreLicenseDevice.cs" />
+    <Compile Include="Model\CsspModel.cs" />
+    <Compile Include="Model\CsspOrderHistory.cs" />
+    <Compile Include="Model\CsspOrderHistoryItems.cs" />
+    <Compile Include="Model\CsspProvisionedDevices.cs" />
+    <Compile Include="Model\CsspShoppingCart.cs" />
+    <Compile Include="Model\CsspOrder.cs" />
+    <Compile Include="Model\CsspOrderItems.cs" />
+    <Compile Include="Model\CsspOrderSapInput.cs" />
+    <Compile Include="Model\CsspSku.cs" />
+    <Compile Include="Model\CsspSupportType.cs" />
+    <Compile Include="Model\CsspTerm.cs" />
+    <Compile Include="Model\DeviceRegistrationEsaOptions.cs" />
+    <Compile Include="Model\DeviceRmaJobQueue.cs" />
+    <Compile Include="Model\DeviceTransferWildfireApiKeysExpiration.cs" />
+    <Compile Include="Model\AwsProduct.cs" />
+    <Compile Include="Model\AWSRegion.cs" />
+    <Compile Include="Model\EnterpriseAgreementItem.cs" />
+    <Compile Include="Model\Enums\AutofocusTrialRoleStatus.cs" />
+    <Compile Include="Model\Enums\JobStatus.cs" />
+    <Compile Include="Model\Enums\JobVerdict.cs" />
+    <Compile Include="Model\Enums\LicenseType.cs" />
+    <Compile Include="Model\Enums\MembershipStatus.cs" />
+    <Compile Include="Model\Enums\MembershipType.cs" />
+    <Compile Include="Model\Enums\LicenseFeatureName.cs" />
+    <Compile Include="Model\Enums\MfaRegistrationStatus.cs" />
+    <Compile Include="Model\Enums\ResourceLinkType.cs" />
+    <Compile Include="Model\Enums\RoleType.cs" />
+    <Compile Include="Model\EpAuthCodeDetails.cs" />
+    <Compile Include="Model\EulaModel.cs" />
+    <Compile Include="Model\GoogleApis\GoogleOauth.cs" />
+    <Compile Include="Model\HyperVisor.cs" />
+    <Compile Include="Model\JobQueueRequest.cs" />
+    <Compile Include="Model\JobQueueResponse.cs" />
+    <Compile Include="Model\JobStatusRequest.cs" />
+    <Compile Include="Model\JobStatusResponse.cs" />
+    <Compile Include="Model\MembershipDetailForSfdcContactSync.cs" />
+    <Compile Include="Model\MembershipForSa.cs" />
+    <Compile Include="Model\PanOS.cs" />
+    <Compile Include="Model\PartSubType.cs" />
+    <Compile Include="Model\PingIdResponsePayload.cs" />
+    <Compile Include="Model\PortalDeviceListRequest.cs" />
+    <Compile Include="Model\PortalDeviceListResponse.cs" />
+    <Compile Include="Model\ReleasedLicenseItem.cs" />
+    <Compile Include="Model\ResourceLink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Model\RmaDevice.cs" />
+    <Compile Include="Model\RoleNames.cs" />
+    <Compile Include="Model\FeedInfo.cs" />
+    <Compile Include="Model\SaasAuthCodeDetails.cs" />
+    <Compile Include="Model\SiteLicenseItem.cs" />
+    <Compile Include="Model\SoftwareUpdateFileInfo.cs" />
+    <Compile Include="Model\SoftwareUpdatesChecksumModel.cs" />
+    <Compile Include="Model\RmaDeviceDetails.cs" />
+    <Compile Include="Model\SupportEvent.cs" />
+    <Compile Include="Model\TokenCalculatorRequest.cs" />
+    <Compile Include="Model\TokenCalculatorResponse.cs" />
+    <Compile Include="Model\TrapsELAAuthCodeDetails.cs" />
+    <Compile Include="Model\UseCaseSubscription.cs" />
+    <Compile Include="Model\UserAccountTransferDetails.cs" />
+    <Compile Include="Model\UserProfileModel.cs" />
+    <Compile Include="Model\UserSalesforceInfo.cs" />
+    <Compile Include="Model\SearchAllModel.cs" />
+    <Compile Include="Model\SearchAllViewModel.cs" />
+    <Compile Include="Model\VmElaTokenModel.cs" />
+    <Compile Include="Model\VmItemToDeactivate.cs" />
+    <Compile Include="Model\VmRenewalModel.cs" />
+    <Compile Include="Model\VmUpgrade.cs" />
+    <Compile Include="Model\WildfireApiRequest.cs" />
+    <Compile Include="Model\WildfireApiResponse.cs" />
+    <Compile Include="Model\WildfireUserAccount.cs" />
+    <Compile Include="Model\DeviceCategory.cs" />
+    <Compile Include="HelperClasses\EmailHelper.cs" />
+    <Compile Include="Model\SoftwareKey.cs" />
+    <Compile Include="Model\ConsentModel.cs" />
+    <Compile Include="Model\ExtendedExpertise\ExtendedExpertiseCoreData.cs" />
+    <Compile Include="Model\ExtendedExpertise\ExtendedExpertiseItem.cs" />
+    <Compile Include="Model\XSoar\XsoarMarketplaceErrorLocation.cs" />
+    <Compile Include="Model\XSoar\XsoarMarketplaceError.cs" />
+    <Compile Include="Model\XSoar\XsoarMarketplacePurchaseData.cs" />
+    <Compile Include="Model\XSoar\XsoarMarketplacePurchaseTransaction.cs" />
+    <Compile Include="Model\XSoar\XsoarMarketplacePurchase.cs" />
+    <Compile Include="Model\XSoar\XsoarMarketplacePurchaseDataModel.cs" />
+    <Compile Include="Model\XSoar\XSOARListItem.cs" />
+    <Compile Include="Service References\DeviceAndLicenseService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\LicensingService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Contracts\BootstrapContainerModel.cs" />
+    <Compile Include="Services\Contracts\IConsumerProductDataAccess.cs" />
+    <Compile Include="Services\Contracts\IConsumerProductLogic.cs" />
+    <Compile Include="Services\Contracts\ICommonApiLogic.cs" />
+    <Compile Include="Services\Contracts\IFirewallFlexApiLogic.cs" />
+    <Compile Include="Services\Contracts\IImpersonateRequestLogic.cs" />
+    <Compile Include="Services\Contracts\IAddressValidationDataAccess.cs" />
+    <Compile Include="Services\Contracts\IFirewallFlexDataAccess.cs" />
+    <Compile Include="Services\Contracts\IFirewallFlexLogic.cs" />
+    <Compile Include="Services\Contracts\IAddressValidationService.cs" />
+    <Compile Include="Services\Contracts\ILicenseManagementDataAccess.cs" />
+    <Compile Include="Services\Contracts\ILicenseManagementLogic.cs" />
+    <Compile Include="Services\Contracts\IElaEsaDataAccess.cs" />
+    <Compile Include="Services\Contracts\IOAuthApiLogic.cs" />
+    <Compile Include="Services\Contracts\IScheduledJobsLogic.cs" />
+    <Compile Include="Services\Contracts\IServiceLogic.cs" />
+    <Compile Include="Services\Contracts\ISfdcContactLogic.cs" />
+    <Compile Include="Services\Contracts\IVmRegistrationDataAccess.cs" />
+    <Compile Include="Services\Contracts\ITrainingCreditsApiLogic.cs" />
+    <Compile Include="Services\Contracts\IWildfireDataAccess.cs" />
+    <Compile Include="Services\Contracts\IElaEsaLogic.cs" />
+    <Compile Include="Services\Contracts\IWildfireLogic.cs" />
+    <Compile Include="Services\Contracts\ILicensingApiRepository.cs" />
+    <Compile Include="Services\Contracts\INetworkSecurityApiLogic.cs" />
+    <Compile Include="Services\Contracts\INovaLogic.cs" />
+    <Compile Include="Services\Contracts\IAscDeviceRegistrationRepository.cs" />
+    <Compile Include="Services\Contracts\IAscDeviceRegistrationService.cs" />
+    <Compile Include="Services\Contracts\IAssetHistoryLogic.cs" />
+    <Compile Include="Services\Contracts\IAssetHistoryRepository.cs" />
+    <Compile Include="Services\Contracts\IAutoFocusApiRepository.cs" />
+    <Compile Include="Services\Contracts\IAwsDataAccess.cs" />
+    <Compile Include="Services\Contracts\IAscScoreCardLogic.cs" />
+    <Compile Include="Services\Contracts\IAscScoreCardRepository.cs" />
+    <Compile Include="Services\Contracts\IAwsLogic.cs" />
+    <Compile Include="Services\Contracts\IBootstrapContainerLogic.cs" />
+    <Compile Include="Services\Contracts\IBootstrapContainerRepository.cs" />
+    <Compile Include="Services\Contracts\ICloudDeviceLogic.cs" />
+    <Compile Include="Services\Contracts\ICloudDeviceRepository.cs" />
+    <Compile Include="Services\Contracts\IBulkRegistrationLogic.cs" />
+    <Compile Include="Services\Contracts\IBulkRegistrationRepository.cs" />
+    <Compile Include="Services\Contracts\IBulkRegistrationService.cs" />
+    <Compile Include="Services\Contracts\IConfigValues.cs" />
+    <Compile Include="Services\Contracts\IConsentRequestLogic.cs" />
+    <Compile Include="Services\Contracts\ICsspDataAccess.cs" />
+    <Compile Include="Services\Contracts\ICsspLogic.cs" />
+    <Compile Include="Services\Contracts\ICsspRepository.cs" />
+    <Compile Include="Services\Contracts\IDeviceDataAccess.cs" />
+    <Compile Include="Services\Contracts\IDownloadUrlLogic.cs" />
+    <Compile Include="Services\Contracts\IDpmRepository.cs" />
+    <Compile Include="Services\Contracts\IEmailHelper.cs" />
+    <Compile Include="Services\Contracts\IEmailNotificationDataAccess.cs" />
+    <Compile Include="Services\Contracts\IEmailNotificationLogic.cs" />
+    <Compile Include="Services\Contracts\IEncryptionProvider.cs" />
+    <Compile Include="Services\Contracts\IEPDataAccessLogic.cs" />
+    <Compile Include="Services\Contracts\IEPLogic.cs" />
+    <Compile Include="Services\Contracts\IEpRepository.cs" />
+    <Compile Include="Services\Contracts\IEulaDataAccess.cs" />
+    <Compile Include="Services\Contracts\IEulaLogic.cs" />
+    <Compile Include="Services\Contracts\IEvalAccountCreationRepository.cs" />
+    <Compile Include="Services\Contracts\IEvalAccountCreationService.cs" />
+    <Compile Include="Services\Contracts\IEvalTrackerRepository.cs" />
+    <Compile Include="Services\Contracts\IFileLogger.cs" />
+    <Compile Include="Services\Contracts\ILicenseLogic.cs" />
+    <Compile Include="Services\Contracts\ILicensingApiLogic.cs" />
+    <Compile Include="Services\Contracts\ILogAutoFocusApiCallsRepository.cs" />
+    <Compile Include="Services\Contracts\ILoginHistoryLogic.cs" />
+    <Compile Include="Services\Contracts\ILookupRepository.cs" />
+    <Compile Include="Services\Contracts\IMarketplaceAccountLogic.cs" />
+    <Compile Include="Services\Contracts\IMembershipDataAccess.cs" />
+    <Compile Include="Services\Contracts\IMembershipLogic.cs" />
+    <Compile Include="Services\Contracts\IApplicationSettings.cs" />
+    <Compile Include="Services\Contracts\IConnectionStrings.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\DeviceCategoryListItemFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\DeviceCategoryFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\SoftwareUpdateListItemFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\VirtualMachineFields.cs" />
+    <Compile Include="DataAccess\LicenseTransferDataAccess.cs" />
+    <Compile Include="DataAccess\LogDeviceDataAccess.cs" />
+    <Compile Include="DataAccess\LogTransactionsDataAccess.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\SoftwareUpdateFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\DeviceSetsDeviceFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\ProductModelListItemFields.cs" />
+    <Compile Include="DataAccess\ProductModelDataAccess.cs" />
+    <Compile Include="DataAccess\VirtualMachineDataAccess.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Accounttype.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Accounttypeassignablerole.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Accounttypedefaultrole.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Ascmapping.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Bundle.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Contentupdate.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Country.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Device.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Devicecategory.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Devicedefaultrole.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Deviceset.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Devicesetsdevice.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Devicetransfer.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Devicetransferstate.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Domain.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Groupdefaultrole.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Groupdevice.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Grouplicense.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\License.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Logdevice.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Loglicense.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Lognewuser.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Logregistration.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Logsupportaccount.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Logtransaction.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Loguseraccount.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Membership.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Membershiprole.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Model.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Partmaster.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Partsubtype.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Parttype.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Privilege.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Publicdomainlookup.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Publishtarget.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Region.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Role.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Roleprivilege.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Salesorder.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Salesorderitem.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Sapcustomer.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Softwareupdate.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Supportaccount.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Supportaccountdefaultrole.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Supportaccountdomain.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Supportaccountgroup.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Useraccount.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Userselectedmembership.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Virusupdate.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Vmstubsn.cs" />
+    <Compile Include="EntityClasses\GeneratedCode\Wildfireapikey.cs" />
+    <Compile Include="Exceptions\CspNotificationException.cs" />
+    <Compile Include="HelperClasses\ApiCommon.cs" />
+    <Compile Include="HelperClasses\EnumExtensions.cs" />
+    <Compile Include="Exceptions\CspException.cs" />
+    <Compile Include="Logic\DeviceTransferLogic.cs" />
+    <Compile Include="Logic\LicenseTransferLogic.cs" />
+    <Compile Include="Logic\LoginServiceLogic.cs" />
+    <Compile Include="Logic\LookupLogic.cs" />
+    <Compile Include="Logic\SalesOrderLogic.cs" />
+    <Compile Include="Logic\SoftwareUpdateLogic.cs" />
+    <Compile Include="Logic\ProductModelLogic.cs" />
+    <Compile Include="Logic\VirtualMachineLogic.cs" />
+    <Compile Include="Model\Attributes\IsDateAfterStart.cs" />
+    <Compile Include="DataAccess\AccountTypeDataAccess.cs" />
+    <Compile Include="DataAccess\BaseDataAccess.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\GroupListItemFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\LicenseListItemFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\MembershipListItemFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\SortDirectionExtension.cs" />
+    <Compile Include="HelperClasses\RoleComparer.cs" />
+    <Compile Include="Model\Breadcrumb.cs" />
+    <Compile Include="Model\DeviceCategoryListItem.cs" />
+    <Compile Include="Model\LicenseAuthorizationBundle.cs" />
+    <Compile Include="Model\NameValue.cs" />
+    <Compile Include="Model\SoftwareUpdateListItem.cs" />
+    <Compile Include="Model\Enums\ApplicationType.cs" />
+    <Compile Include="Model\Enums\CountryCode.cs" />
+    <Compile Include="Model\Enums\LookupType.cs" />
+    <Compile Include="Model\LicenseKey.cs" />
+    <Compile Include="Model\SelectorAccountListItem.cs" />
+    <Compile Include="Model\DataParameters.cs" />
+    <Compile Include="DataAccess\DeviceDataAccess.cs" />
+    <Compile Include="DataAccess\DeviceDefaultRolesDataAccess.cs" />
+    <Compile Include="DataAccess\GroupDataAccess.cs" />
+    <Compile Include="DataAccess\GroupDefaultRolesDataAccess.cs" />
+    <Compile Include="DataAccess\GroupDevicesDataAccess.cs" />
+    <Compile Include="DataAccess\HelperClasses\CreateOrUpdate.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\DeviceListItemFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\StringParameterExtension.cs" />
+    <Compile Include="Logic\BaseLogic.cs" />
+    <Compile Include="Logic\DeviceLogic.cs" />
+    <Compile Include="Logic\GroupLogic.cs" />
+    <Compile Include="Logic\LicenseLogic.cs" />
+    <Compile Include="Logic\MembershipLogic.cs" />
+    <Compile Include="Logic\UserAccountLogic.cs" />
+    <Compile Include="Model\AuditCSPModel.cs" />
+    <Compile Include="Model\DeviceListItem.cs" />
+    <Compile Include="Model\Enums\SortDirection.cs" />
+    <Compile Include="Model\GroupListItem.cs" />
+    <Compile Include="Model\GroupMembershipListItem.cs" />
+    <Compile Include="Model\LicenseListItem.cs" />
+    <Compile Include="Model\MembershipListItem.cs" />
+    <Compile Include="Model\ProductModel.cs" />
+    <Compile Include="Model\ProductModelListItem.cs" />
+    <Compile Include="Model\ResponseNotification.cs" />
+    <Compile Include="Model\SupportAccountListItem.cs" />
+    <Compile Include="Model\SupportAccountMembershipListItem.cs" />
+    <Compile Include="Model\VmAuthCodeDetails.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Security\CspPrincipal.cs" />
+    <Compile Include="DataAccess\HelperClasses\ListUpdateHelper.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\DataParameterFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\DatabaseExtension.cs" />
+    <Compile Include="DataAccess\LicenseDataAccess.cs" />
+    <Compile Include="DataAccess\MembershipDataAccess.cs" />
+    <Compile Include="DataAccess\MembershipRolesDataAccess.cs" />
+    <Compile Include="DataAccess\RoleDataAccess.cs" />
+    <Compile Include="DataAccess\SecurityDataAccess.cs" />
+    <Compile Include="DataAccess\SupportAccountDataAccess.cs" />
+    <Compile Include="DataAccess\SupportAccountDefaultRolesDataAccess.cs" />
+    <Compile Include="DataAccess\UserAccountDataAccess.cs" />
+    <Compile Include="Delegates\Delegates.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\AccountTypeFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\AddressFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\AuditCspModelClassFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\CountryFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\DeviceFields.cs" />
+    <Compile Include="HelperClasses\Literals\ExceptionMessages.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\GroupFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\LicenseFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\MembershipFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\PartMasterFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\PartTypeFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\PrivilegeFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\RegionFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\RoleFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\SalesOrderFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\SupportAccountFields.cs" />
+    <Compile Include="DataAccess\HelperClasses\Literals\UserAccountFields.cs" />
+    <Compile Include="Logic\SupportAccountLogic.cs" />
+    <Compile Include="Logic\SecurityLogic.cs" />
+    <Compile Include="Model\AccountType.cs" />
+    <Compile Include="Model\Address.cs" />
+    <Compile Include="Model\Attributes\BaseDataAccessAttribute.cs" />
+    <Compile Include="Model\Attributes\DataAccessModelAttribute.cs" />
+    <Compile Include="Model\Attributes\DataAccessAttribute.cs" />
+    <Compile Include="Model\BaseCSPModel.cs" />
+    <Compile Include="Model\Country.cs" />
+    <Compile Include="Model\Device.cs" />
+    <Compile Include="Model\Group.cs" />
+    <Compile Include="Model\License.cs" />
+    <Compile Include="Model\Membership.cs" />
+    <Compile Include="Model\PartMaster.cs" />
+    <Compile Include="Model\PartType.cs" />
+    <Compile Include="Security\Permission.cs" />
+    <Compile Include="Model\Privilege.cs" />
+    <Compile Include="Model\Region.cs" />
+    <Compile Include="Model\Role.cs" />
+    <Compile Include="Model\SalesOrder.cs" />
+    <Compile Include="Model\Enums\SecurityClassification.cs" />
+    <Compile Include="Model\SupportAccount.cs" />
+    <Compile Include="Model\UserAccount.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\RoleCategory.cs" />
+    <Compile Include="Service References\LoginService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\UpdateService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Contracts\ICountryRepository.cs" />
+    <Compile Include="Services\Contracts\ICurrentStateService.cs" />
+    <Compile Include="Services\Contracts\IDeviceRepository.cs" />
+    <Compile Include="Services\Contracts\IDeviceLogic.cs" />
+    <Compile Include="Services\Contracts\IDeviceTransferLogic.cs" />
+    <Compile Include="Services\Contracts\IDeviceTransferRepository.cs" />
+    <Compile Include="Services\Contracts\IGenericRepository.cs" />
+    <Compile Include="Services\Contracts\IGroupLogic.cs" />
+    <Compile Include="Services\Contracts\IHomeLogic.cs" />
+    <Compile Include="Services\Contracts\ILoginServiceLogic.cs" />
+    <Compile Include="Services\Contracts\ILogLogic.cs" />
+    <Compile Include="Services\Contracts\ILicenseTransferLogic.cs" />
+    <Compile Include="Services\Contracts\ILogDeviceRepository.cs" />
+    <Compile Include="Services\Contracts\ILookupLogic.cs" />
+    <Compile Include="Services\Contracts\IMembershipRepository.cs" />
+    <Compile Include="Services\Contracts\IMfaDataAccess.cs" />
+    <Compile Include="Services\Contracts\IOtpDataAccess.cs" />
+    <Compile Include="Services\Contracts\IPartialShipmentDataAccess.cs" />
+    <Compile Include="Services\Contracts\IPartialShipmentLogic.cs" />
+    <Compile Include="Services\Contracts\IProductActivationPageService.cs" />
+    <Compile Include="Services\Contracts\ISettingsLogic.cs" />
+    <Compile Include="Services\Contracts\ISfdcEntitlementLogic.cs" />
+    <Compile Include="Services\Contracts\IOtpLogic.cs" />
+    <Compile Include="Services\Contracts\IPartnerEvalLogic.cs" />
+    <Compile Include="Services\Contracts\IPartnerEvalRepository.cs" />
+    <Compile Include="Services\Contracts\IPermissionService.cs" />
+    <Compile Include="Services\Contracts\IPingLogic.cs" />
+    <Compile Include="Services\Contracts\IResourceLinkRepository.cs" />
+    <Compile Include="Services\Contracts\IReturnsLogic.cs" />
+    <Compile Include="Services\Contracts\IReturnsRepository.cs" />
+    <Compile Include="Services\Contracts\ISaasDataAccess.cs" />
+    <Compile Include="Services\Contracts\ISaasLogic.cs" />
+    <Compile Include="Services\Contracts\ISaasRegistrationRepository.cs" />
+    <Compile Include="Services\Contracts\ISalesforceLogsRepository.cs" />
+    <Compile Include="Services\Contracts\ISalesforceRestApiLogic.cs" />
+    <Compile Include="Services\Contracts\ISearchAllLogic.cs" />
+    <Compile Include="Services\Contracts\ISearchAllRepository.cs" />
+    <Compile Include="Services\Contracts\ISecurityLogic.cs" />
+    <Compile Include="Services\Contracts\ISecurityRepository.cs" />
+    <Compile Include="Services\Contracts\ISelfServiceRegistrationCodeRepository.cs" />
+    <Compile Include="Services\Contracts\ISelfServiceRegistrationCodeService.cs" />
+    <Compile Include="Services\Contracts\IServiceDataAccess.cs" />
+    <Compile Include="Services\Contracts\ISiteLicenseDetailsRepository.cs" />
+    <Compile Include="Services\Contracts\ISiteLicenseLogic.cs" />
+    <Compile Include="Services\Contracts\ISiteLicenseRepository.cs" />
+    <Compile Include="Services\Contracts\ISoftwareUpdateLogic.cs" />
+    <Compile Include="Services\Contracts\ISupportAccountDevicesRepository.cs" />
+    <Compile Include="Services\Contracts\ISupportAccountDomainsRepository.cs" />
+    <Compile Include="Services\Contracts\ISupportAccountDomainsService.cs" />
+    <Compile Include="Services\Contracts\ISupportAccountGroupRepository.cs" />
+    <Compile Include="Services\Contracts\ISupportAccountLogic.cs" />
+    <Compile Include="Services\Contracts\ISupportAccountRepository.cs" />
+    <Compile Include="Services\Contracts\ILicenseRepository.cs" />
+    <Compile Include="Services\Contracts\ISalesforceService.cs" />
+    <Compile Include="Services\Contracts\ISupportAccountUserLogic.cs" />
+    <Compile Include="Services\Contracts\ITacToolboxApiLogic.cs" />
+    <Compile Include="Services\Contracts\ITestLogic.cs" />
+    <Compile Include="Services\Contracts\ITrapsELADataAccess.cs" />
+    <Compile Include="Services\Contracts\ITrapsELALogic.cs" />
+    <Compile Include="Services\Contracts\IUpdatesRepository.cs" />
+    <Compile Include="Services\Contracts\IUserAccountLogic.cs" />
+    <Compile Include="Services\Contracts\IUserAccountRepository.cs" />
+    <Compile Include="Services\Contracts\IUserProfileDataAccess.cs" />
+    <Compile Include="Services\Contracts\IUserRegistrationRepository.cs" />
+    <Compile Include="Services\Contracts\IVirtualMachineDataAccess.cs" />
+    <Compile Include="Services\Contracts\IVirtualMachineLogic.cs" />
+    <Compile Include="Services\Contracts\ISalesOrderLogic.cs" />
+    <Compile Include="Services\Contracts\ISalesOrderRepository.cs" />
+    <Compile Include="Services\Contracts\IBulkRegistrationThreadLogic.cs" />
+    <Compile Include="Services\Contracts\IVmRegistrationRepository.cs" />
+    <Compile Include="Services\Contracts\IVmRegistrationService.cs" />
+    <Compile Include="Services\Contracts\IWildfireRepository.cs" />
+    <Compile Include="Services\Contracts\IWildfireStore.cs" />
+    <Compile Include="Services\Contracts\IWildfireWipeoutService.cs" />
+    <Compile Include="Services\Contracts\IWildfireWipeoutWebService.cs" />
+    <Compile Include="Services\Contracts\IMfaLogic.cs" />
+    <Compile Include="Services\Contracts\IConsentRequestDataAccess.cs" />
+    <Compile Include="Services\Contracts\IExtendedExpertiseLogic.cs" />
+    <Compile Include="Services\Contracts\IIonLogic.cs" />
+    <Compile Include="Services\Contracts\IIonDataAccess.cs" />
+    <Compile Include="Services\Contracts\IZtpDataAccess.cs" />
+    <Compile Include="Services\Contracts\IZtpLogic.cs" />
+    <Compile Include="Services\Contracts\IXSOARDataAccess.cs" />
+    <Compile Include="Services\Contracts\IXSOARLogic.cs" />
+    <Compile Include="Services\Contracts\IAssetApiLogic.cs" />
+    <Compile Include="Services\Contracts\IUserAccountApiLogic.cs" />
+    <Compile Include="Web References\SalesforceWebApi\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\SAPService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.sonarlint\csp-sonarqubecsharp.ruleset">
+      <Link>csp-sonarqubecsharp.ruleset</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="protos\google\api\annotations.proto" />
+    <None Include="protos\google\api\auth.proto" />
+    <None Include="protos\google\api\backend.proto" />
+    <None Include="protos\google\api\billing.proto" />
+    <None Include="protos\google\api\client.proto" />
+    <None Include="protos\google\api\config_change.proto" />
+    <None Include="protos\google\api\consumer.proto" />
+    <None Include="protos\google\api\context.proto" />
+    <None Include="protos\google\api\control.proto" />
+    <None Include="protos\google\api\distribution.proto" />
+    <None Include="protos\google\api\documentation.proto" />
+    <None Include="protos\google\api\endpoint.proto" />
+    <None Include="protos\google\api\error_reason.proto" />
+    <None Include="protos\google\api\field_behavior.proto" />
+    <None Include="protos\google\api\field_info.proto" />
+    <None Include="protos\google\api\http.proto" />
+    <None Include="protos\google\api\httpbody.proto" />
+    <None Include="protos\google\api\label.proto" />
+    <None Include="protos\google\api\launch_stage.proto" />
+    <None Include="protos\google\api\log.proto" />
+    <None Include="protos\google\api\logging.proto" />
+    <None Include="protos\google\api\metric.proto" />
+    <None Include="protos\google\api\monitored_resource.proto" />
+    <None Include="protos\google\api\monitoring.proto" />
+    <None Include="protos\google\api\policy.proto" />
+    <None Include="protos\google\api\quota.proto" />
+    <None Include="protos\google\api\resource.proto" />
+    <None Include="protos\google\api\routing.proto" />
+    <None Include="protos\google\api\service.proto" />
+    <None Include="protos\google\api\source_info.proto" />
+    <None Include="protos\google\api\system_parameter.proto" />
+    <None Include="protos\google\api\usage.proto" />
+    <None Include="protos\google\api\visibility.proto" />
+    <None Include="protos\google\rpc\code.proto" />
+    <None Include="protos\google\rpc\context\attribute_context.proto" />
+    <None Include="protos\google\rpc\context\audit_context.proto" />
+    <None Include="protos\google\rpc\error_details.proto" />
+    <None Include="protos\google\rpc\http.proto" />
+    <None Include="protos\google\rpc\status.proto" />
+    <None Include="protos\google\type\calendar_period.proto" />
+    <None Include="protos\google\type\color.proto" />
+    <None Include="protos\google\type\date.proto" />
+    <None Include="protos\google\type\datetime.proto" />
+    <None Include="protos\google\type\dayofweek.proto" />
+    <None Include="protos\google\type\decimal.proto" />
+    <None Include="protos\google\type\expr.proto" />
+    <None Include="protos\google\type\fraction.proto" />
+    <None Include="protos\google\type\interval.proto" />
+    <None Include="protos\google\type\latlng.proto" />
+    <None Include="protos\google\type\localized_text.proto" />
+    <None Include="protos\google\type\money.proto" />
+    <None Include="protos\google\type\month.proto" />
+    <None Include="protos\google\type\phone_number.proto" />
+    <None Include="protos\google\type\postal_address.proto" />
+    <None Include="protos\google\type\quaternion.proto" />
+    <None Include="protos\google\type\timeofday.proto" />
+    <None Include="Scripts\jquery-1.9.1.min.map" />
+    <None Include="Service References\DeviceAndLicenseService\Csp.Api.DeviceAndLicenseService.DeviceDetails.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\Csp.Api.DeviceAndLicenseService.DeviceLicenseMatchRet.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\Csp.Api.DeviceAndLicenseService.DeviceLicensesResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\Csp.Api.DeviceAndLicenseService.Finalresponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\Csp.Api.DeviceAndLicenseService.LicenseResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\Csp.Api.DeviceAndLicenseService.LinkByAuthcodeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\Csp.Api.DeviceAndLicenseService.ProdActivationResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\Csp.Api.DeviceAndLicenseService.TenantSignatureInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\License.wsdl" />
+    <None Include="Service References\DeviceAndLicenseService\License.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\License1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\License2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\License3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\License4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.activateSiteLicenseResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.batchGetLicenses2Response.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.batchGetLicensesAfterDate2Response.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.batchGetLicensesAfterDateResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.batchGetLicensesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.batchLicenseRet.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.check_deployment_profileResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.CloudResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.deactivateLicenseResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.deactivateLicenseWithIdResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.deactivateRet.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.DeploymentProfileCheckResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.DlpTenantResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.DeploymentProfileResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.DlpTenantResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.evalRet.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.EvalToProdconversionResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.getlicensesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.licenseCirroResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.licenseit2Response.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.licenseitResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.licenseRet.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.license_fetchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.PanoramaHA.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.PANResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.PreLicenseResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.ProcessResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.renewalCheckRet.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.renewitResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.SAP_RenewalCheckResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.SAP_renewalResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.TokensRet.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\Csp.Api.LicensingService.TransferResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LicensingService\licenseservice2.wsdl" />
+    <None Include="Service References\LicensingService\licenseservice21.wsdl" />
+    <None Include="Service References\LoginService\Csp.Api.LoginService.UserProfile.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\LoginService\LoginService.wsdl" />
+    <None Include="Service References\LoginService\LoginService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\LoginService\LoginService1.wsdl" />
+    <None Include="Service References\LoginService\LoginService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\LoginService\LoginService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\UpdateService\Csp.Api.UpdateService.GlobalProtect.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\UpdateService\Csp.Api.UpdateService.PANUpdateResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\UpdateService\Csp.Api.UpdateService.SWVersionInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\UpdateService\UpdateService2.wsdl" />
+    <None Include="Web References\SalesforceWebApi\ProductionWSDL.wsdl" />
+    <None Include="Web References\SalesforceWebApi\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\SAPService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\SAPService\SI_QuoteCreate_OB.wsdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\DeviceAndLicenseService\" />
+    <WCFMetadataStorage Include="Service References\LicensingService\" />
+    <WCFMetadataStorage Include="Service References\LoginService\" />
+    <WCFMetadataStorage Include="Service References\UpdateService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\LoginService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\LoginService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\LoginService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\UpdateService\UpdateService2.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\UpdateService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\UpdateService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\UpdateService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HelperClasses\ExceptionHandler\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\.sonarlint\csp-sonarqube\CSharp\SonarLint.xml">
+      <Link>SonarLint.xml</Link>
+    </AdditionalFiles>
+    <Content Include="Scripts\expressive.annotations.validate.js" />
+    <Content Include="Scripts\jquery-1.8.3.intellisense.js" />
+    <Content Include="Scripts\jquery-1.8.3.js" />
+    <Content Include="Scripts\jquery-1.8.3.min.js" />
+    <Content Include="Scripts\jquery-1.9.1.intellisense.js" />
+    <Content Include="Scripts\jquery-1.9.1.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <None Include="Service References\LicensingService\licenseservice23.disco" />
+    <None Include="Service References\LicensingService\licenseservice22.disco" />
+    <None Include="Service References\LicensingService\licenseservice21.disco" />
+    <None Include="Service References\LicensingService\licenseservice2.disco" />
+    <None Include="Service References\LicensingService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\LicensingService\configuration.svcinfo" />
+    <None Include="Service References\LicensingService\configuration91.svcinfo" />
+    <None Include="Service References\DeviceAndLicenseService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\DeviceAndLicenseService\configuration.svcinfo" />
+    <None Include="Service References\DeviceAndLicenseService\configuration91.svcinfo" />
+    <None Include="Service References\DeviceAndLicenseService\License.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="C:\Users\jravindrakum\Documents\CSP\DLLs\QuoteCreateprod.wsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\SAPService\</RelPath>
+      <UpdateFromURL>C:\Users\jravindrakum\Documents\CSP\DLLs\QuoteCreateprod.wsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Csp_Api_SAPService_SI_QuoteCreate_OBService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="C:\Users\mdokey\Source\Repos\CSP_Prod_WSDL\ProductionWSDL.xml">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\SalesforceWebApi\</RelPath>
+      <UpdateFromURL>C:\Users\mdokey\Source\Repos\CSP_Prod_WSDL\ProductionWSDL.xml</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Csp_Api_SalesforceWebApi_SforceService</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\Google.Api.CommonProtos.2.17.0\build\Google.Api.CommonProtos.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Google.Api.CommonProtos.2.17.0\build\Google.Api.CommonProtos.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
+  <Import Project="..\packages\Google.Api.CommonProtos.2.17.0\build\Google.Api.CommonProtos.targets" Condition="Exists('..\packages\Google.Api.CommonProtos.2.17.0\build\Google.Api.CommonProtos.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

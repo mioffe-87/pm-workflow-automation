@@ -1,0 +1,15 @@
+inputSet:
+  identifier: tag
+  name: Tag
+  orgIdentifier: iad
+  projectIdentifier: csp
+  pipeline:
+    identifier: csp
+    properties:
+      ci:
+        codebase:
+          build:
+            type: tag
+            spec:
+              tag: <+trigger.tag>
+  object Object: pipeline.properties.ci.codebase

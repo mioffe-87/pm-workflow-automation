@@ -1,0 +1,16 @@
+﻿<[SD.Tools.BCLExtensions.CollectionsRelated]>
+<%
+	Project currentProject = _executingGenerator.ProjectDefinition;
+	bool emitForeignKeyFields = currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+	bool emitAddToEntitySetMethodsInContext = currentProject.GetRealBoolSettingValue("EmitAddToEntitySetMethodsInContext");
+	bool enableLazyLoadingOnContext = currentProject.GetRealBoolSettingValue("EnableLazyLoadingOnContext");
+	bool enableProxyCreationOnContextForPOCO = false;
+	string entitySetType = "ObjectSet";
+	bool useObjectSet = true;
+	bool useEFSpecificProcCalls = true;
+	bool isForv1StyleEntities = false;
+	bool isForSelfTrackingEntities = true;
+	bool isForPOCOEntities = false;
+	bool isForDbContextAPI = false;
+	bool setContextClassNameEqualToEdmxModelContainerName = currentProject.GetRealBoolSettingValue("SetContextClassNameEqualToEdmxModelContainerName");
+%><# SD_EF_ContextInclude #>

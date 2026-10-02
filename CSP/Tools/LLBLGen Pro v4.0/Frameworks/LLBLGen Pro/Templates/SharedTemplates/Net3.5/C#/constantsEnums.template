@@ -1,0 +1,71 @@
+﻿///////////////////////////////////////////////////////////////
+// This is generated code. 
+//////////////////////////////////////////////////////////////
+// Code is generated using LLBLGen Pro version: <[LLBLGenVersion]>
+// Code is generated on: <[Time]>
+// Code is generated using templates: <[TemplateName]>
+// Templates vendor: Solutions Design.
+// Templates version: <[TemplateVersion]>
+//////////////////////////////////////////////////////////////
+using System;
+
+namespace <[RootNamespace]>
+{
+<[Foreach Entity]>	/// <summary>Index enum to fast-access EntityFields in the IEntityFields collection for the entity: <[CurrentEntityName]>.</summary>
+	public enum <[CurrentEntityName]>FieldIndex
+	{
+<[Foreach EntityField IncludeInherited CommaCrLf]>		///<summary><[EntityFieldName]>. <[If Not EntityFieldContainedInCurrentEntity]>Inherited from <[EntityFieldEntityName]><[EndIf]></summary>
+		<[EntityFieldName]><[If IsPrimaryKey]><[If Not EntityFieldContainedInCurrentEntity]><[If IsInHierarchyType TargetPerEntity]>_<[EntityFieldEntityName]><[EndIf]><[EndIf]><[EndIf]><[NextForeach]><[If HasFields]>,<[Else]><[If IsSubType]>,<[EndIf]><[EndIf]>
+		/// <summary></summary>
+		AmountOfFields
+	}
+<[NextForeach]>
+<[Foreach TypedView]>	/// <summary>Index enum to fast-access Typed View EntityFields in the IEntityFields collection for the typed view : <[CurrentTypedViewName]>.</summary>
+	public enum <[CurrentTypedViewName]>FieldIndex
+	{
+<[Foreach TypedViewField CommaCrLf]>		///<summary><[TypedViewFieldName]></summary>
+		<[TypedViewFieldName]><[NextForeach]><[If HasFields]>,<[EndIf]>
+		/// <summary></summary>
+		AmountOfFields
+	}
+<[NextForeach]>
+<[ Foreach TypedList]>	/// <summary>Index enum to fast-access TypedList Fields in the Columns collection of the Typed List: <[ CurrentTypedListName ]></summary>
+	public enum <[CurrentTypedListName]>TypedListFieldIndex
+	{
+<[Foreach TypedListField CommaCrLf]>		///<summary><[TypedListFieldName]></summary>
+		<[TypedListFieldName]><[NextForeach]><[If HasFields]>,<[EndIf]>
+		/// <summary></summary>
+		AmountOfFields
+	}
+<[ NextForeach ]>
+<[If HasEntity]>	/// <summary>Enum definition for all the entity types defined in this namespace. Used by the entityfields factory.</summary>
+	public enum EntityType
+	{
+<[Foreach Entity CommaCrLf]>		///<summary><[CurrentEntityName]></summary>
+		<[CurrentEntityName]>Entity<[NextForeach]>
+	}
+<[EndIf]>
+<[If HasTypedView]>	/// <summary>Enum definition for all the typed view types defined in this namespace. Used by the entityfields factory.</summary>
+	public enum TypedViewType
+	{
+<[Foreach TypedView CommaCrLf]>		///<summary><[CurrentTypedViewName]></summary>
+		<[CurrentTypedViewName]>TypedView<[NextForeach]>
+	}
+<[EndIf]>
+	#region Custom ConstantsEnums Code
+	<[ UserCodeRegion "CustomUserConstants" ]>
+	// __LLBLGENPRO_USER_CODE_REGION_START CustomUserConstants
+	// __LLBLGENPRO_USER_CODE_REGION_END
+	<[ EndUserCodeRegion ]>
+	#endregion
+
+	#region Included code
+<# Custom_ConstantsEnumsTemplate #>
+	#endregion
+}
+<[If Not HasEntity]>
+// empty namespace declarations
+namespace <[RootNamespace]>.EntityClasses
+{
+}
+<[EndIf]>

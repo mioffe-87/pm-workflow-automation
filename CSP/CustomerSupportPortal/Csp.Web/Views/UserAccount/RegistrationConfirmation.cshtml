@@ -1,0 +1,64 @@
+﻿@model Csp.Web.DataTransferObjects.RegistrationConfirmationViewModel
+@{
+    ViewBag.Title = "New User Registration Confirmation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    var resendUserActivationEmailUrl = '@Url.Action("ResendUserActivationEmail", "UserAccount")';
+
+    function ResendEmailConfirmation() {
+        $.ajax({
+            url: resendUserActivationEmailUrl,
+            type: 'POST',
+            dataType: 'HTML',
+            data: JSON.stringify({
+                email: '@Model.EmailAddress',
+                name: '@Model.Name'              
+            }),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+                $('div#resendConfirmationMessage').empty();
+                $(result).appendTo('div#resendConfirmationMessage');
+            },
+            error: function (request, error) {
+
+            }
+        });
+    }
+</script>
+<div id="resendConfirmationMessage"></div>
+<div class="content">
+    <div class="container" style="width: 850px;">
+        <div class="page-title">
+            <span id="Title" class="contextTitle" style="margin-left: 0px;">New User Registration Confirmation</span>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="row-fluid">
+                    <div class="span4">
+                        <div class="control-group">
+                            An email confirmation has been sent to the email address @Model.EmailAddress. Click here to resend <a href="javascript:ResendEmailConfirmation();">email confirmation</a>
+                            if confirmation is not received.
+                        </div>
+                        @if (Model.IsMembershipPending)
+                        {
+                            <div class="control-group">
+                                <br/>
+                                This account requires Super User approval. Your Super User has been notified.<br/>
+                                <br/>
+                                You will receive another notification after your Super User approves or denies your access.
+                            </div>
+                        }
+
+                        @if (Model.IsAlreadySignedIn)
+                        {
+                            <div class="control-group">
+                                Please <a href="@Url.Action("Logout", "Home")">log out</a> of your public domain before using your new Support Portal account.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

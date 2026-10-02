@@ -1,0 +1,14 @@
+﻿<[ SD.Tools.BCLExtensions.CollectionsRelated ]>
+<%
+	Project currentProject = _executingGenerator.ProjectDefinition;
+	bool emitForeignKeyFields = currentProject.GetRealBoolSettingValue("EmitForeignKeyFields");
+	bool canHandleFkUCOneToOne = true;
+	bool canHandleTypedViewsOnResultset = true;
+	bool emitEnums=true;
+	string ssdlNamespaceName="http://schemas.microsoft.com/ado/2009/11/edm/ssdl";
+	string csdlNamespaceName="http://schemas.microsoft.com/ado/2009/11/edm";
+	string mslNamespaceName="http://schemas.microsoft.com/ado/2009/11/mapping/cs";
+	string designerNamespace="http://schemas.microsoft.com/ado/2009/11/edmx";
+%><?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+<# SD_EF_EdmxInclude #>

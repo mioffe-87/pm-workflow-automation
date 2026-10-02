@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<platform xmlns="http://sd/llblgen/pro/platformDefinition.xsd" name ="RDBMS">
+	<aspects/>
+</platform>

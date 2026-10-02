@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+      <Title>Fetch all entities of a given type into a typed entity collection Instance</Title>
+      <Shortcut>llblS_FetchAllEntities</Shortcut>
+      <Description>Code snippet to fetch all entities of a given type into a new typed entity collection instance, selfservicing specific. </Description>
+      <Author>Solutions Design</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal Editable="true">
+          <ID>CollectionType</ID>
+          <ToolTip>The type of the collection to fetch data into</ToolTip>
+          <Default>MyEntityCollection</Default>
+       </Literal>
+       <Literal Editable="true">
+          <ID>EntityCollectionVariable</ID>
+          <ToolTip>The variable which holds the typed entity collection instance reference</ToolTip>
+          <Default>myCollection</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp"><![CDATA[$CollectionType$ $EntityCollectionVariable$ = new $CollectionType$();
+$EntityCollectionVariable$.GetMulti(null);
+$end$]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

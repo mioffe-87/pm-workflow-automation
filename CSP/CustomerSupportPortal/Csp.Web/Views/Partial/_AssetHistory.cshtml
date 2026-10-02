@@ -1,0 +1,403 @@
+﻿@using Csp.Api.Model
+@using Csp.Api.Security;
+@model Csp.Web.DataTransferObjects.AssetHistoryDto
+@{ 
+    ActionHelper actionHelper = Model.ActionHelper;
+    var assetHistoryGridId = UniqueId.assetHistoryGridId;
+    var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+    var isAsc = User.RoleSecurities.IsAscUser(Model.ActionHelper.Id);
+}
+<style>
+    .device-details, .license-details {
+        list-style: none;
+    }
+
+    #@assetHistoryGridId .k-hierarchy-cell > .k-icon.k-plus {
+        background-image: url('/Content/images/plus.png');
+        background-position: 0 0;
+        width: 23px;
+        height: 22px;
+    }
+
+    #@assetHistoryGridId .k-hierarchy-cell > .k-icon.k-minus {
+        background-image: url('/Content/images/minus.png');
+        background-position: 0 0;
+        width: 23px;
+        height: 22px;
+    }
+
+    #@assetHistoryGridId .k-grid-norecords-template {
+        border: 0px;
+    }
+</style>
+<script>
+    var assetHistoryGridId = '@assetHistoryGridId';
+
+    function GetReportCriteria() {
+        return {
+            code: $('#Keyword').val(),
+            startDate: $('#StartDate').val(),
+            endDate: $('#EndDate').val()
+        };
+    }
+
+    function SearchAssetHistory() {
+        var filterType = $('input[name="AssetHistoryFilter"]:checked').val()
+        var keyword = $('#Keyword').val();
+        var startDate = kendo.parseDate($('#StartDate').val());
+        var endDate = kendo.parseDate($('#EndDate').val());
+
+        SupportPortal.ClearNotification();
+
+        if (filterType === "DateRange") {
+            if (startDate == null || endDate == null) {
+                SupportPortal.Notification('Invalid dates. Please enter valid Start Date and End Date.', SupportPortal.NotificationType.Error);
+                return;
+            }
+
+            var now = new Date();
+            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            if (startDate > endDate) {
+                SupportPortal.Notification('Start Date cannot be later than End Date.', SupportPortal.NotificationType.Error);
+                return;
+            }
+            else if (startDate > today || endDate > today) {
+                SupportPortal.Notification('Start Date and End Date cannot be future dates.', SupportPortal.NotificationType.Error);
+                return;
+            }
+            else if (startDate < endDate.setMonth(endDate.getMonth() - 2)) {
+                SupportPortal.Notification('Date range cannot exceed more than 2 months.', SupportPortal.NotificationType.Error);
+                return;
+            }
+        }
+        else {
+            if (!keyword) {
+                SupportPortal.Notification('Please enter a valid Serial Number/Authorization Code.', SupportPortal.NotificationType.Error);
+                return;
+            }
+        }
+
+        var grid = $('#' + assetHistoryGridId).data('kendoGrid');
+
+        if (grid.dataSource.page() != 1) {
+            grid.dataSource.page(1);
+        }
+        else {
+            grid.dataSource.read();
+        }
+
+        return false;
+    }
+
+    function OnGridAssetHistoryError(e) {
+        var status = e.status;
+
+        SupportPortal.ClearNotification();
+
+        if (status === "customerror") {
+            SupportPortal.Notification(e.errors, SupportPortal.NotificationType.Error);
+        }
+    }
+
+    function OnGridAssetHistoryRequestEnd(e) {
+        //SupportPortal.UnBlockUI();
+    }
+
+    function OnAssetTypeNavigate(data) {
+        var html = '';
+        var action = '';
+
+        if (data.AssetTypeDisplayName === 'Device') {
+            action = '/SupportAccount/Assets/' + data.SupportAccountId + '?assettype=Prod&asset_filter=' + data.Code;
+
+            html = kendo.format("<a href='{0}'>{1}</a>",
+                action,
+                data.Code
+            );
+        }
+        else if (data.AssetTypeDisplayName === 'Spare') {
+            action = '/SupportAccount/Assets/' + data.SupportAccountId + '?assettype=Spare&asset_filter=' + data.Code;
+
+            html = kendo.format("<a href='{0}'>{1}</a>",
+                action,
+                data.Code
+            );
+        }
+        else {
+            html = data.Code;
+        }
+
+        return html;
+    }
+
+    function OnSupportAccountNavigate(data) {
+        var html = '';
+        var action = '';
+
+        if (data.HasMembership) {
+            action = '/SupportAccount/MyAccounts/' + data.SupportAccountId;
+
+            html = kendo.format("<a href='{0}'>{1}</a>",
+                action,
+                data.SupportAccountName
+            );
+        }
+        else {
+            html = data.SupportAccountName;
+        }
+
+        return html;
+    }
+
+    function OnGridAssetHistoryDetailInit(e) {
+        var detailRow = e.detailRow;
+        var tabStrip = detailRow.find(".k-tabstrip").data("kendoTabStrip");
+
+        if (e.data.AssetTypeDisplayName === "Device") {
+            detailRow.find(".spare-licenses").kendoGrid({
+                dataSource: {
+                    data: e.data.SpareLicenseTransferDetails,
+                    serverPaging: false,
+                    serverSorting: false,
+                    serverFiltering: false,
+                },
+                scrollable: false,
+                sortable: true,
+                columns: [
+                    { field: "TransferStatus", title: "Transfer Status" },
+                    { field: "TransferredByEmail", title: "Transferred By Email" },
+                    { title: "Transferred Date", template: "#=DisplayDetails(DateTransferred, 'date')#" },
+                    { field: "TransferredByName", title: "Transferred By Name" },
+                    { field: "SourceSerialNumber", title: "Source Serial Number" },
+                    { field: "DestinationSerialNumber", title: "Destination Serial Number" }
+                ],
+                noRecords: true,
+                messages: {
+                    noRecords: "No licenses found"
+                }
+            });
+        }
+        else if (e.data.AssetTypeDisplayName === "Spare") {
+            detailRow.find(".spare-licenses").kendoGrid({
+                dataSource: {
+                    data: e.data.SpareLicenseTransferDetails,
+                    serverPaging: false,
+                    serverSorting: false,
+                    serverFiltering: false,
+                },
+                scrollable: false,
+                sortable: true,
+                columns: [
+                    { field: "TransferStatus", title: "Transfer Status" },
+                    { field: "TransferredByEmail", title: "Transferred By Email" },
+                    { title: "Transferred Date", template: "#=DisplayDetails(DateTransferred, 'date')#" },
+                    { field: "TransferredByName", title: "Transferred By Name" },
+                    { field: "SourceSerialNumber", title: "Source Serial Number" },
+                    { field: "DestinationSerialNumber", title: "Destination Serial Number" }
+                ],
+                noRecords: true,
+                messages: {
+                    noRecords: "No licenses found"
+                }
+            });
+        }
+        else {
+            if (tabStrip.tabGroup.children("li").find(".tab-spare-registration").length > 0) {
+                tabStrip.remove($(tabStrip.tabGroup.children("li").find(".tab-spare-registration").closest('li')));
+            }
+        }
+    }
+
+    function OnGridAssetHistoryDetailBound(e) {
+        var rowCount = $('#' + assetHistoryGridId).data('kendoGrid').dataSource.total();
+
+        if (rowCount > 0) {
+            EnableExportToExcel();
+        }
+        else {
+            DisableExportToExcel();
+        }
+    }
+
+    function EnableExportToExcel() {
+        $('.btn-export-excel').removeClass('k-state-disabled');
+
+    }
+
+    function DisableExportToExcel() {
+        $('.btn-export-excel').addClass('k-state-disabled');
+    }
+
+    function DisplayDetails(value, type) {
+        if (type === 'date') {
+            return (value) ? SupportPortal.FormatDate(value) : '';
+        }
+        else {
+            return (value) ? value : '';
+        }
+    }
+
+    function DisplayDetailsTitle(value) {
+        if (value === 'Device') {
+            return 'Device Registration';
+        }
+        else {
+            return 'Authcode Activation';
+        }
+    }
+
+    function ExportToExcel(e) {
+        if ($(e).hasClass('k-state-disabled')) {
+            return false;
+        }
+
+        var filterType = $('input[name="AssetHistoryFilter"]:checked').val();
+        var keyword = $('#Keyword').val();
+        var startDate = kendo.parseDate($('#StartDate').val());
+        var endDate = kendo.parseDate($('#EndDate').val());
+
+        SupportPortal.ClearNotification();
+
+        if (filterType === "DateRange") {
+            if (startDate == null || endDate == null) {
+                SupportPortal.Notification('Invalid dates. Please enter valid Start Date and End Date.', SupportPortal.NotificationType.Error);
+                return false;
+            }
+
+            var now = new Date();
+            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            if (startDate > endDate) {
+                SupportPortal.Notification('Start Date cannot be later than End Date.', SupportPortal.NotificationType.Error);
+                return false;
+            }
+            else if (startDate > today || endDate > today) {
+                SupportPortal.Notification('Start Date and End Date cannot be future dates.', SupportPortal.NotificationType.Error);
+                return false;
+            }
+            else if (startDate < endDate.setMonth(endDate.getMonth() - 2)) {
+                SupportPortal.Notification('Date range cannot exceed more than 2 months.', SupportPortal.NotificationType.Error);
+                return false;
+            }
+        }
+        else {
+            if (!keyword) {
+                SupportPortal.Notification('Please enter a valid Serial Number/Authorization Code.', SupportPortal.NotificationType.Error);
+                return false;
+            }
+        }
+
+        var msg = $('<h4 style="width: 100%; height: 100%; top: 0px; left: 0px;"><img style="height: 40px; vertical-align: middle; padding-right:10px" src="../../Images/spinner.gif" />Downloading  file. Please wait...</h4>');
+
+
+        $.blockUI({
+            message: msg
+        });
+        
+        var exportUrl = '/AssetHistory/ExportAssetHistory?code=' + keyword + '&startDate=' + $('#StartDate').val() + '&endDate=' + $('#EndDate').val();
+
+        $.fileDownload(exportUrl, {
+            successCallback: function (url) {
+                $.unblockUI();
+            },
+            failCallback: function (responseHtml, url) {
+                if (responseHtml == undefined || responseHtml == "") {
+                    responseHtml = "There was an error generating your file, please refresh your report and try again.";
+                }
+
+                $.unblockUI();
+                var errorMsg = $('<h4 style="width: 100%; height: 100%; top: 0px; left: 0px;">' + responseHtml + '</h4>');
+
+
+                $.blockUI({
+                    message: errorMsg
+                });
+                $('.blockOverlay').attr('title', 'Click to unblock').click($.unblockUI);
+            }
+        });
+
+        return false;
+    }
+
+    $(document).ready(function () {
+        DisableExportToExcel();
+    });
+</script>
+<script id="template" type="text/kendo-tmpl">
+    @(Html.Kendo().TabStrip()
+            .Name("tabStrip_#=AssetType#_#=Id#")
+            .SelectedIndex(0)
+            .Animation(animation => animation.Open(open => open.Fade(FadeDirection.In)))
+            .Items(items =>
+            {
+                items.Add().Text("#=DisplayDetailsTitle(AssetTypeDisplayName)#").Content(
+                    @"<table>
+                    #if(AssetType == 'Device'){#
+                        <tr>
+                            <td>Registered By: #=DisplayDetails(RegisteredByName)#</td>
+                        </tr>
+                        <tr>
+                            <td>Registered By Email: #=DisplayDetails(RegisteredByEmail)#</td>
+                        </tr>
+                        <tr>
+                            <td>Date Registered: #=DisplayDetails(DateRegistered, 'date')#</td>
+                        </tr>
+                    #}else{#
+                        <tr>
+                            <td>Date Activated: #=DisplayDetails(DateRegistered, 'date')#</td>
+                        </tr>
+                    #}#
+                    </table>"
+                );
+                items.Add().Text("Transfer Licenses to Spare").SpriteCssClasses("tab-spare-registration").Content(@<text>
+                    <div class="spare-licenses"></div>
+                </text>
+                );
+            })
+                    .ToClientTemplate())
+</script>
+<div class="contextTitle">Asset History</div>
+@{ Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications); }
+@Html.Partial("../Partial/_AssetHistorySearchFilters", Model.AssetHistory.SearchModel)
+<br />
+<div class="grid-asset-history">
+    <div class="grid-content">
+    @(Html.Kendo().Grid<AssetHistoryListItem>()
+            .Name((string)assetHistoryGridId)
+            .AutoBind(false)
+            .PrefixUrlParameters(false)
+            .EnableCustomBinding(true)
+            .ClientDetailTemplateId("template")
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.AssetTypeDisplayName).Title("Asset Type").Width(80);
+                columns.Bound(p => p.Code).Title("Serial Number/Auth Code").Template(@<text></text>).ClientTemplate("#=OnAssetTypeNavigate(data)#");
+                columns.Bound(p => p.Name).Title("Model/Feature Name");
+                if (isAsc) {
+                    columns.Bound(p => p.SupportAccountId).Title("Support Account").Template(@<text></text>).ClientTemplate("#=OnSupportAccountNavigate(data)#");                                
+                }
+                columns.Bound(p => p.DateRegistered).Title("Date Registered").Format(SiteHelper.DateFormatString);
+                columns.Bound(p => p.DatePurchased).Title("Date Purchased").Format(SiteHelper.DateFormatString);
+            })
+            .ToolBar(toolbar =>
+                  {
+                      toolbar.Template(@<text>
+                                            <a class="k-button k-button-icontext" title="Export to CSV" data-link-type="export-csv-assets"
+                                                href="javascript:void(0);" onclick="ExportToExcel(this);">
+                                                Export to CSV</a>
+                                        </text>);
+                  })
+            .DataSource(dataSource => dataSource
+                  .Ajax()
+                  .PageSize(10)
+                  .Read(read => read.Action("GetAssetHistory", "AssetHistory").Data("GetReportCriteria"))
+                  .Events(e => e.Error("OnGridAssetHistoryError").RequestEnd("OnGridAssetHistoryRequestEnd"))
+            )
+            .Events(e => e.DetailInit("OnGridAssetHistoryDetailInit").DataBound("OnGridAssetHistoryDetailBound"))
+            .Pageable(pageable => pageable.ButtonCount(2).PageSizes(pageSizeOptionsForms.ToArray()))
+            .Sortable()
+            .Resizable(resize => resize.Columns(true))
+    )
+    </div>
+</div>

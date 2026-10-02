@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+      <Title>Fetch an entity using the PK into a new instance</Title>
+      <Shortcut>llblA_FetchSingleEntityPK</Shortcut>
+      <Description>Code snippet to fetch a single entity using the PK into a new instance, adapter specific. </Description>
+      <Author>Solutions Design</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal Editable="true">
+          <ID>AdapterVariable</ID>
+          <ToolTip>The variable which holds the DataAccessAdapter instance reference</ToolTip>
+          <Default>adapter</Default>
+       </Literal>
+       <Literal Editable="true">
+          <ID>EntityVariable</ID>
+          <ToolTip>The variable which holds the Entity instance reference</ToolTip>
+          <Default>toFetch</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>EntityType</ID>
+          <ToolTip>The type of the entity to fetch</ToolTip>
+          <Default>MyEntity</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>FetchResultVariable</ID>
+          <ToolTip>The variable in which to store the fetch result</ToolTip>
+          <Default>fetchResult</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>PKValue</ID>
+          <ToolTip>The primary key value(s) to specify. Specify comma's if the entity has a compound PK</ToolTip>
+          <Default>_id</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp"><![CDATA[$EntityType$ $EntityVariable$ = new $EntityType$($PKValue$);
+      
+using(DataAccessAdapter $AdapterVariable$ = new DataAccessAdapter())
+{
+	bool $FetchResultVariable$ = $AdapterVariable$.FetchEntity($EntityVariable$);
+	if(!$FetchResultVariable$)
+	{
+		// Not found. Place handle code here.
+		$end$
+	}
+}]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

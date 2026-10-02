@@ -1,0 +1,793 @@
+﻿<[SD.Tools.Algorithmia.GeneralDataStructures]>
+<[SD.LLBLGen.Pro.ApplicationCore.Configuration]>
+<%
+	// this include template requires the following variables to be set:
+	// currentProject (Project). The active current project object.
+	// emitForeignKeyFields (bool)
+	// canHandleFkUCOneToOne (bool)
+	// canHandleTypedViewsOnResultset (bool)
+	// ssdlNamespaceName (string)
+	// csdlNamespaceName (string)
+	// mslNamespaceName (string)
+	// emitEnums (bool)
+	
+	// all entities mapped onto views are valid as otherwise the project isn't valid: all entities mapped onto a view have a valid PK and
+	// for all views which have entities mapped onto them it's true that all entities mapped onto a view V have the same view fields as PK.
+	
+	var renamedTargetsPerDriverID = new Dictionary<string, Dictionary<IProjectElementMapTargetElement, string>>();
+	var renamedFkConstraintsPerDriverID = new Dictionary<string, Dictionary<DBForeignKeyConstraint, string>>();
+	var renamedStoredProcsPerDriverID = new Dictionary<string, Dictionary<DBStoredProcedure, string>>();
+	var renamedTvfsPerDriverID = new Dictionary<string, Dictionary<DBTableValuedFunction, string>>();
+	var typedViewsMappedOntoResultset = new HashSet<TypedViewDefinition>();
+%>	<edmx:Runtime>
+		<edmx:StorageModels>
+<%	string driverID = _executingGenerator.DriverID;
+	var driverInstance = CoreStateSingleton.GetInstance().GetDriverInstanceFromCache(driverID, false);
+	var allMappedTargets = GeneratorUtils.GetAllMappedTargetsInScope(_executingGenerator, driverID);
+	// single catalog only. Validation already blocks multiple catalog projects
+	var catalogToTarget = allMappedTargets.Select(t=>t.ContainingSchema.ParentCatalog).Distinct().FirstOrDefault();
+	if(catalogToTarget!=null)
+	{
+		string databaseShortName = _executingGenerator.GetDatabaseShortNameForDriverID(driverID).Replace(" ","");
+		string storeName = string.Format("{0}.{1}.Store", _executingGenerator.ActiveSourceElementsContainerName, databaseShortName);
+		string providerManifestToken = currentProject.GetRealStringSettingValue("ProviderManifestTokenValue");
+		string providerName = SD_EF_GeneralUtils.DriverIdToProviderName(driverID);
+%>			<Schema Namespace="<%=storeName%>" Alias="Self" 
+					Provider="<%=providerName%>" ProviderManifestToken="<%=providerManifestToken%>"
+					xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="<%=ssdlNamespaceName%>">
+				<EntityContainer Name="<%=_executingGenerator.ActiveSourceElementsContainerName%><%=databaseShortName%>Container">
+<%		var allMappedTargetsToEmit = new HashSet<IProjectElementMapTargetElement>();
+		foreach(var mappedTarget in allMappedTargets)
+		{
+			switch(mappedTarget.ElementType)
+			{
+				case ProjectElementMapTargetElementType.Table:
+				case ProjectElementMapTargetElementType.View:
+				case ProjectElementMapTargetElementType.StoredProcedure:
+					allMappedTargetsToEmit.Add(mappedTarget);
+					break;
+				case ProjectElementMapTargetElementType.StoredProcedureResultset:
+					var mappedTargetAsResultset = (DBStoredProcedureResultset)mappedTarget;
+					allMappedTargetsToEmit.Add(mappedTargetAsResultset.OwningStoredProcedure);
+					continue;
+			}
+		}
+		var allEntitiesMappedOnView = new MultiValueDictionary<IProjectElementMapTargetElement, EntityDefinition>();
+		var allMappedEntitiesPerTarget = currentProject.GetAllMappedEntitiesPerTarget(driverID);
+		foreach(var kvp in allMappedEntitiesPerTarget.Where(v=>v.Key.ElementType!=ProjectElementMapTargetElementType.Table))
+		{
+			if(allMappedTargetsToEmit.Contains(kvp.Key))
+			{
+				allEntitiesMappedOnView.Add(kvp.Key, kvp.Value);
+			}
+		}
+
+		// we'll rename any duplicate name we run into due to schema usage. 
+		var targetNamesInUse = new HashSet<string>();
+		var renamedTargets = new Dictionary<IProjectElementMapTargetElement, string>();
+		renamedTargetsPerDriverID.Add(driverID, renamedTargets);
+		var fkConstraints = new HashSet<DBForeignKeyConstraint>();
+		foreach(var mappedTarget in allMappedTargetsToEmit.Where(mt=>mt.ElementType!=ProjectElementMapTargetElementType.StoredProcedure).OrderBy(mt=>mt.FullName))
+		{
+			fkConstraints.AddRange(mappedTarget.ForeignKeyConstraints.Where(fk=>!fk.MarkedForDeletion && allMappedTargetsToEmit.Contains(fk.PKSide)));
+			string nameToUse;
+			bool renamed = SD_EF_GeneralUtils.ProduceUniqueTargetName(mappedTarget, mappedTarget.Name, targetNamesInUse, renamedTargets, out nameToUse);
+%>					<EntitySet Name="<%=nameToUse%>" EntityType="Self.<%=nameToUse%>" Schema="<%=mappedTarget.ContainingSchema.SchemaOwner%>"<% if(renamed) {%> Table="<%=mappedTarget.Name%>" <%}%> />
+<%		}
+
+		var fkConstraintNamesInUse = new HashSet<string>();
+		var renamedFkConstraints = new Dictionary<DBForeignKeyConstraint, string>();
+		renamedFkConstraintsPerDriverID.Add(driverID, renamedFkConstraints);
+		foreach(var fkConstraint in fkConstraints)
+		{
+			// fk side is always mentioned first, so role names of fk's to self will be named consistently.
+			string fkSideRoleName = renamedTargets.GetValue(fkConstraint.AppliesToTable) ?? fkConstraint.AppliesToTable.Name;
+			string pkSideRoleName = renamedTargets.GetValue(fkConstraint.PKSide) ?? fkConstraint.PKSide.Name;
+			string fkSideEntitySetName = fkSideRoleName;
+			string pkSideEntitySetName = pkSideRoleName;
+			if(fkConstraint.AppliesToTable==fkConstraint.PKSide)
+			{
+				pkSideRoleName+="1";
+			}
+			string fkNameToUse;
+			SD_EF_GeneralUtils.ProduceUniqueTargetName(fkConstraint, fkConstraint.ConstraintName, fkConstraintNamesInUse, renamedFkConstraints, out fkNameToUse);
+%>					<AssociationSet Name="<%=fkNameToUse%>" Association="Self.<%=fkNameToUse%>">
+						<End Role="<%=fkSideRoleName%>" EntitySet="<%=fkSideEntitySetName%>"/>
+						<End Role="<%=pkSideRoleName%>" EntitySet="<%=pkSideEntitySetName%>"/>
+					</AssociationSet>
+<%		}
+%><%=DotNetTemplateEngine.GetUserCodeRegion("SSDLEntityContainerCustomCode", "<!--", "-->", string.Empty, false)%>
+				</EntityContainer>
+<%		foreach(var mappedTarget in allMappedTargetsToEmit.OrderBy(mt=>mt.FullName))
+		{
+			string targetName = renamedTargets.GetValue(mappedTarget) ?? mappedTarget.Name;
+			switch(mappedTarget.ElementType)
+			{
+				case ProjectElementMapTargetElementType.Table:
+				case ProjectElementMapTargetElementType.View:
+%>				<EntityType Name="<%=targetName%>">
+<%					var pkFields = mappedTarget.PrimaryKeyFields.OrderBy(f=>f.OrdinalPosition);
+					if(mappedTarget.ElementType == ProjectElementMapTargetElementType.View)
+					{
+						// obtain the first entity mapped onto this view, obtain its mapping and the identifying field's targets as pk fields.
+						var firstEntity = allEntitiesMappedOnView.GetValues(mappedTarget, true).FirstOrDefault();
+						if(firstEntity!=null)
+						{
+							var firstEntityMapping = currentProject.GetGroupableModelElementMapping(firstEntity, driverID);
+							pkFields = firstEntityMapping.GetAllIdentifyingFieldMappings(false).Select(fm=>fm.MappedTarget).OrderBy(t=>t.OrdinalPosition);
+						}
+					}
+					if(pkFields.Count() > 0)
+					{
+%>					<Key>
+<%						foreach(var pkField in pkFields)
+						{
+%>						<PropertyRef Name="<%=pkField.FieldName%>"/>
+<%						}
+%>					</Key>
+<%					}
+					foreach(var field in mappedTarget.Fields.Cast<IProjectElementFieldMapTargetElement>().OrderBy(f=>f.OrdinalPosition))
+					{
+						bool forceIsComputed = false;
+						bool emitSRIDValue = false;
+						int sridValueToEmit = 0;
+						string dbTypeAsString = SD_EF_GeneralUtils.ProduceProperDbTypeString(field.DbTypeAsString, driverID, field, out forceIsComputed, out emitSRIDValue, out sridValueToEmit);
+						forceIsComputed |= field.IsComputed;
+%>					<Property Name="<%=field.FieldName%>" Type="<%=dbTypeAsString%>"<%=SD_EF_GeneralUtils.CreateDbTypeSpecification(field, forceIsComputed)%> <% if(emitSRIDValue) {%>SRID="<%=sridValueToEmit%>"<%}%> />
+<%					}
+%>				</EntityType>
+<%					break;
+				case ProjectElementMapTargetElementType.StoredProcedure:
+					break;
+				default:
+					continue;
+			}
+		}
+		
+		foreach(var fkConstraint in fkConstraints)
+		{
+			string fkNameToUse = renamedFkConstraints.GetValue(fkConstraint) ?? fkConstraint.ConstraintName;
+			string fkSideRoleName = renamedTargets.GetValue(fkConstraint.AppliesToTable) ?? fkConstraint.AppliesToTable.Name;
+			string pkSideRoleName = renamedTargets.GetValue(fkConstraint.PKSide) ?? fkConstraint.PKSide.Name;
+			string fkSideEntitySetName = fkSideRoleName;
+			string pkSideEntitySetName = pkSideRoleName;
+			if(fkConstraint.AppliesToTable==fkConstraint.PKSide)
+			{
+				pkSideRoleName+="1";
+			}
+			string pkSideMultiplicity=string.Empty;
+			string fkSideMultiplicity=string.Empty;
+			pkSideMultiplicity = fkConstraint.ForeignKeyFields.Any(f=>f.IsNullable)  ? "0..1" : "1";
+			switch(fkConstraint.DetermineRelationshipType())
+			{
+				case DBRelationshipType.OneToOne:
+					fkSideMultiplicity = fkConstraint.FkFieldsFormFullPk ? "0..1" : "*";	// EF can't deal with FK/UC-PK 1:1 relationships as it doesnt recognize UCs
+					break;
+				case DBRelationshipType.ManyToOne:
+					fkSideMultiplicity = "*";
+					break;
+			}
+%>				<Association Name="<%=fkNameToUse%>">
+					<End Role="<%=fkSideRoleName%>" Type="Self.<%=fkSideEntitySetName%>" Multiplicity="<%=fkSideMultiplicity%>" />
+					<End Role="<%=pkSideRoleName%>" Type="Self.<%=pkSideEntitySetName%>" Multiplicity="<%=pkSideMultiplicity%>" />
+					<ReferentialConstraint>
+						<Principal Role="<%=pkSideRoleName%>">
+<%			foreach(var pkField in fkConstraint.PrimaryKeyFields)
+			{
+%>							<PropertyRef Name="<%=pkField.FieldName%>"/>
+<%			}
+%>						</Principal>
+						<Dependent Role="<%=fkSideRoleName%>">
+<%			foreach(var fkField in fkConstraint.ForeignKeyFields)
+			{
+%>							<PropertyRef Name="<%=fkField.FieldName%>"/>
+<%			}
+%>						</Dependent>
+					</ReferentialConstraint>
+				</Association>
+<%		}
+
+		var spResultsetInfos = GeneratorUtils.GetAllSPResultsetMappingInfos(_executingGenerator, driverID);
+		foreach(var resultsetInfo in spResultsetInfos)
+		{
+			var toAdd = from m in resultsetInfo.MappingsPerResultset
+						from me in m.Value
+						select (TypedViewDefinition)me.MappedElement;
+			typedViewsMappedOntoResultset.AddRange(toAdd);
+		}
+		var procNamesInUse = new HashSet<string>();
+		var renamedProcs = new Dictionary<DBStoredProcedure, string>();
+		renamedStoredProcsPerDriverID.Add(driverID, renamedProcs);
+		var allProcsWithMappedResultsets = new HashSet<DBStoredProcedure>(spResultsetInfos.Select(si=>si.StoredProcedureDefinition));
+		foreach(var proc in allProcsWithMappedResultsets)
+		{
+			string procName;
+			SD_EF_GeneralUtils.ProduceUniqueTargetName(proc, proc.Name, procNamesInUse, renamedProcs, out procName);
+%>				<Function Name="<%=procName%>" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="<%=proc.ContainingSchema.SchemaOwner%>">
+<%			foreach(var parameterKvp in proc.Parameters.OrderBy(pi=>pi.Key))
+			{
+				string parameterName = CoreUtils.MakeCLSCompliantName(parameterKvp.Value.ParameterName, null, false, false, false);
+%>					<Parameter Name="<%=parameterName%>" Type="<%=parameterKvp.Value.DbTypeAsString%>" Mode="<%=SD_EF_GeneralUtils.ConvertParameterDirectionToString(parameterKvp.Value.Direction)%>"/> 
+<%			}
+%>				</Function>		
+<%		}
+
+		// value1 in pair is tvf call mapping, value2 is resultset mapping.
+		var allTvfMappings = GeneratorUtils.GetAllTvfCallMappingsInScope(_executingGenerator, driverID);
+		typedViewsMappedOntoResultset.AddRange(allTvfMappings.Select(p=>p.Value2.MappedElement).Distinct().OfType<TypedViewDefinition>().ToList());
+		var tvfs = allTvfMappings.Select(p=>p.Value1.MappedTarget).Distinct().Cast<DBTableValuedFunction>();
+		var tvfNamesInUse = new HashSet<string>();
+		var renamedTvfs = new Dictionary<DBTableValuedFunction, string>();
+		renamedTvfsPerDriverID.Add(driverID, renamedTvfs);
+		foreach(var tvf in tvfs)
+		{
+			string tvfName;
+			SD_EF_GeneralUtils.ProduceUniqueTargetName(tvf, tvf.Name, tvfNamesInUse, renamedTvfs, out tvfName);
+%>				<Function Name="<%=tvfName%>" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="<%=tvf.ContainingSchema.SchemaOwner%>">
+<%			foreach(var parameterKvp in tvf.Parameters.OrderBy(pi=>pi.Key))
+			{
+				string parameterName = CoreUtils.MakeCLSCompliantName(parameterKvp.Value.ParameterName, null, false, false, false);
+%>					<Parameter Name="<%=parameterName%>" Type="<%=parameterKvp.Value.DbTypeAsString%>" Mode="<%=SD_EF_GeneralUtils.ConvertParameterDirectionToString(parameterKvp.Value.Direction)%>"/> 
+<%			}
+%>					<ReturnType>
+						<CollectionType>
+							<RowType>
+<%			foreach(var field in tvf.Resultset.Fields.Cast<IProjectElementFieldMapTargetElement>().OrderBy(f=>f.OrdinalPosition))
+			{
+				bool forceIsComputed = false;
+				bool emitSRIDValue = false;
+				int sridValueToEmit = 0;
+				string dbTypeAsString = SD_EF_GeneralUtils.ProduceProperDbTypeString(field.DbTypeAsString, driverID, field, out forceIsComputed, out emitSRIDValue, out sridValueToEmit);
+				forceIsComputed |= field.IsComputed;
+%>								<Property Name="<%=field.FieldName%>" Type="<%=dbTypeAsString%>"<%=SD_EF_GeneralUtils.CreateDbTypeSpecification(field, forceIsComputed)%> <% if(emitSRIDValue) {%>SRID="<%=sridValueToEmit%>"<%}%> />
+<%			}
+%>							</RowType>
+						</CollectionType>
+					</ReturnType>
+				</Function>		
+<%		}
+%><%=DotNetTemplateEngine.GetUserCodeRegion("SSDLCustomCode", "<!--", "-->", string.Empty, false)%><# SD_EF_CustomEdmxSSDLInclude #>
+			</Schema>
+<%	}
+%>		</edmx:StorageModels>
+		<edmx:ConceptualModels>
+			<Schema Namespace="<%=_executingGenerator.ActiveSourceElementsContainerName%>Model" Alias="Self" xmlns="<%=csdlNamespaceName%>"	<% if(emitEnums) {%> xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration"<%}%>>
+				<EntityContainer Name="<%=_executingGenerator.ActiveSourceElementsContainerName%>Entities">
+<%	foreach(var entity in _executingGenerator.Entities.Where(e=>!e.IsSubType && !e.IsPureManyToManyIntermediate).OrderBy(e=>e.Name))
+	{
+%>					<EntitySet Name="<%=entity.Name%>" EntityType="Self.<%=entity.Name%>"/>	
+<%	}
+
+	var allRelationshipsToEmit = GeneratorUtils.GetAllRelationshipsInScope(_executingGenerator);
+	foreach(var relationship in allRelationshipsToEmit)
+	{
+		if(relationship.RelationshipType==EntityRelationshipType.ManyToMany)
+		{
+			// M:N relationships which aren't pure (so they're objectified, the intermediate entity has non-pk fields) aren't supported by the EF.
+			if(!((IndirectRelationshipEdge)relationship).IsPureManyToMany)
+			{
+				continue;
+			}
+		}
+		else
+		{
+			if(((NormalRelationshipEdge)relationship).EntityFkSide.IsPureManyToManyIntermediate)
+			{
+				continue;
+			}
+		}
+		EntityDefinition pkSide;
+		EntityDefinition fkSide;
+		string pkSideRoleName;
+		// fk side is always mentioned first (if applicable), so role names of fk's to self will be named consistently.
+		SD_EF_GeneralUtils.DeterminePkFkSideAndPkRoleName(relationship, out pkSideRoleName, out fkSide, out pkSide);
+		string relationshipName = _executingGenerator.GetUniqueRelationshipNameForRelationship(relationship);
+%>					<AssociationSet Name="<%=relationshipName%>" Association="Self.<%=relationshipName%>">
+						<End Role="<%=fkSide.Name%>" EntitySet="<%=SD_EF_GeneralUtils.GetRealEntitySetName(currentProject, fkSide)%>"/>
+						<End Role="<%=pkSideRoleName%>" EntitySet="<%=SD_EF_GeneralUtils.GetRealEntitySetName(currentProject, pkSide)%>"/>
+					</AssociationSet>
+<%	}
+
+	var spResultsetMappingInfos = GeneratorUtils.GetAllSPResultsetMappingInfos(_executingGenerator);
+	foreach(var spResultsetInfo in spResultsetMappingInfos)
+	{
+		DBStoredProcedure targetProc = spResultsetInfo.StoredProcedureDefinition;
+		foreach(var mappingCombination in spResultsetInfo.GetAllDifferentMappingCombinationsOnResultsets())
+		{
+			// EF can only deal with 1 resultset per proc call
+			var typedViewMapped = mappingCombination.Select(tvm=>tvm.MappedElement).FirstOrDefault() as TypedViewDefinition;
+			if(typedViewMapped==null)
+			{
+				continue;
+			}
+			string methodName = string.Format("Get{0}TypedView", typedViewMapped.Name);
+%>					<FunctionImport Name="<%=methodName%>" ReturnType="Collection(<%=_executingGenerator.ActiveSourceElementsContainerName%>Model.<%=typedViewMapped.Name%>TypedViewRow)">
+<%			foreach(var parameterKvp in targetProc.Parameters.OrderBy(pi=>pi.Key))
+			{
+				var parameter = parameterKvp.Value;
+				string parameterName = CoreUtils.MakeCLSCompliantName(parameter.ParameterName, null, false, false, false);
+%>						<Parameter Name="<%=parameterName%>" <%=SD_EF_GeneralUtils.ConvertDotNetTypeToTypeString(parameter.TypeDefinition.DBTypeAsNETType, parameter.TypeDefinition.Length, parameter.TypeDefinition.Precision, parameter.TypeDefinition.Scale, string.Empty, currentProject, emitEnums)%> Mode="<%=SD_EF_GeneralUtils.ConvertParameterDirectionToString(parameter.Direction)%>"/> 
+<%			}
+%>					</FunctionImport>
+<%		}
+	}
+	
+	foreach(var tvfMappingPair in GeneratorUtils.GetAllTvfCallMappingsInScope(_executingGenerator, driverID))
+	{
+		var tvfCallMapping = tvfMappingPair.Value1 as TvfCallMapping;
+		var tvfCall = tvfCallMapping.MappedTvfCall;
+		var returnElementMapping = tvfMappingPair.Value2;
+		var returnElement = returnElementMapping.MappedElement;
+		var methodName = tvfCall.Name;
+		var targetTvf = tvfCallMapping.MappedTarget as DBTableValuedFunction;
+		string codeElementSuffix = "TypedViewRow";
+		bool emitEntitySet = false;
+		if(returnElement is EntityDefinition)
+		{
+			codeElementSuffix = string.Empty;
+			emitEntitySet = true;
+		}
+%>					<FunctionImport Name="<%=methodName%>" ReturnType="Collection(<%=_executingGenerator.ActiveSourceElementsContainerName%>Model.<%=returnElement.Name%><%=codeElementSuffix%>)"<%if(emitEntitySet) {%> EntitySet="<%=returnElement.Name%>"<%}%> IsComposable="true">
+<%		foreach(var parameterKvp in targetTvf.Parameters.OrderBy(pi=>pi.Key))
+		{
+			var parameter = parameterKvp.Value;
+			string parameterName = CoreUtils.MakeCLSCompliantName(parameter.ParameterName, null, false, false, false);
+%>						<Parameter Name="<%=parameterName%>" <%=SD_EF_GeneralUtils.ConvertDotNetTypeToTypeString(parameter.TypeDefinition.DBTypeAsNETType, parameter.TypeDefinition.Length, parameter.TypeDefinition.Precision, parameter.TypeDefinition.Scale, string.Empty, currentProject, emitEnums)%> Mode="<%=SD_EF_GeneralUtils.ConvertParameterDirectionToString(parameter.Direction)%>"/> 
+<%		}
+%>					</FunctionImport>
+<%	}
+%><%=DotNetTemplateEngine.GetUserCodeRegion("CSDLEntityContainerCustomCode", "<!--", "-->", string.Empty, false)%>
+				</EntityContainer>
+<%	foreach(var entity in _executingGenerator.Entities.Where(e=>!e.IsPureManyToManyIntermediate).OrderBy(e=>e.Name))
+	{
+%>				<EntityType Name="<%=entity.Name%>"<%if(entity.IsSubType) {%> BaseType="Self.<%=entity.GetSuperType().Name%>" <%}%>>
+<%		if(!entity.IsSubType)
+		{
+%>					<Key>
+<%			foreach(var pkField in entity.IdentifyingFields.OrderBy(f=>f.Name))
+			{
+%>						<PropertyRef Name="<%=pkField.Name%>"/>
+<%			}
+%>					</Key>
+<%		}
+
+		var fieldsToTraverse = entity.Fields.Where(f=>!f.IsDiscriminator).OrderBy(f=>f.Name).ToList();
+		if(!emitForeignKeyFields)
+		{
+			fieldsToTraverse = fieldsToTraverse.Where(f=>!f.IsForeignKeyField || (f.IsForeignKeyField && f.IsPartOfIdentifyingFields)).ToList();
+		}
+		foreach(var field in fieldsToTraverse)
+		{
+			bool isUsedForOptimisticConcurrencyChecks = field.OutputSettingValues.GetRealBoolSettingValue("UseForOptimisticConcurrencyChecks", currentProject) &&
+																	(field.FieldType.KindOfType==FieldTypeKind.DotNetType);
+%>					<Property Name="<%=field.Name%>"<% if(!field.IsOptional) {%> Nullable="false"<%}%> <%=SD_EF_GeneralUtils.CreateFieldTypeSpecification(field, currentProject, emitEnums)%><% if(isUsedForOptimisticConcurrencyChecks) {%> ConcurrencyMode="Fixed" <%}%> />
+<%		}
+		var allRelationshipInfosToTraverse = GeneratorUtils.GetAllRelationshipInfosForEntity(_executingGenerator, entity);
+		foreach(var relationshipInfo in allRelationshipInfosToTraverse)
+		{
+			if(relationshipInfo.NavigatorIsHidden)
+			{
+				continue;
+			}
+			if(relationshipInfo.RelationshipType==EntityRelationshipType.ManyToMany)
+			{
+				// M:N relationships which aren't pure (so they're objectified, the intermediate entity has non-pk fields) aren't supported by the EF.
+				if(!((IndirectRelationshipEdge)relationshipInfo.Relationship).IsPureManyToMany)
+				{
+					continue;
+				}
+			}
+			else
+			{
+				if(relationshipInfo.NormalRelationship.EntityFkSide.IsPureManyToManyIntermediate)
+				{
+					continue;
+				}
+			}
+			EntityDefinition pkSide;
+			EntityDefinition fkSide;
+			string pkSideRoleName;
+			// fk side is always mentioned first (if applicable), so role names of fk's to self will be named consistently.
+			SD_EF_GeneralUtils.DeterminePkFkSideAndPkRoleName(relationshipInfo.Relationship, out pkSideRoleName, out fkSide, out pkSide);
+			string fromRole = relationshipInfo.IsOnPkSide ? pkSideRoleName : fkSide.Name;
+			string toRole = relationshipInfo.IsOnPkSide ? fkSide.Name : pkSideRoleName;
+			if(relationshipInfo.Relationship.RelationshipType==EntityRelationshipType.ManyToMany)
+			{
+				if(relationshipInfo.ViaStartNavigator)
+				{
+					// pkSide is startvertex, as returned by SD_EF_GeneralUtils.DeterminePkFkSideAndPkRoleName, as the relationship is a m:n relationship
+					fromRole = pkSide.Name;
+					toRole = fkSide.Name;
+				}
+			}
+%>					<NavigationProperty Name="<%=relationshipInfo.Navigator%>" Relationship="Self.<%=_executingGenerator.GetUniqueRelationshipNameForRelationship(relationshipInfo.Relationship)%>" FromRole="<%=fromRole%>" ToRole="<%=toRole%>" />
+<%		}
+%>				</EntityType>
+<%	}
+
+	foreach(var complexType in _executingGenerator.ValueTypes.Cast<GroupableModelElement>()
+								.Union(typedViewsMappedOntoResultset.Cast<GroupableModelElement>())
+								.OrderBy(ct=>ct.Name))
+	{
+		string complexTypeName = complexType.Name;
+		if(complexType is TypedViewDefinition)
+		{
+			complexTypeName += "TypedViewRow";
+		}
+%>				<ComplexType Name="<%=complexTypeName%>">
+<%		foreach(var field in complexType.Fields.OrderBy(f=>f.Name))
+		{
+%>					<Property Name="<%=field.Name%>"<% if(!field.IsOptional) {%> Nullable="false"<%}%> <%=SD_EF_GeneralUtils.CreateFieldTypeSpecification(field, currentProject, emitEnums)%> />
+<%		}
+%>				</ComplexType>
+<%	}
+
+	if(emitEnums)
+	{
+		foreach(var enumShortCut in currentProject.GetCustomTypeShortcutClones()
+										.Where(ts=>(ts.KindOfType == FieldTypeKind.DotNetType) && (ts.RepresentedType!=null) && ts.RepresentedType.IsEnum))
+		{
+%>				<EnumType Name="<%=enumShortCut.RepresentedType.Name%>" cg:ExternalTypeName="<%=enumShortCut.RepresentedType.FullName%>" />
+<%		}
+	}
+
+	foreach(var relationship in allRelationshipsToEmit)
+	{
+		if(relationship.RelationshipType==EntityRelationshipType.ManyToMany)
+		{
+			// M:N relationships which aren't pure (so they're objectified, the intermediate entity has non-pk fields) aren't supported by the EF.
+			if(!((IndirectRelationshipEdge)relationship).IsPureManyToMany)
+			{
+				continue;
+			}
+		}
+		else
+		{
+			if(((NormalRelationshipEdge)relationship).EntityFkSide.IsPureManyToManyIntermediate)
+			{
+				continue;
+			}
+		}
+		EntityDefinition pkSide;
+		EntityDefinition fkSide;
+		string pkSideRoleName;
+		// fk side is always mentioned first (if applicable), so role names of fk's to self will be named consistently.
+		SD_EF_GeneralUtils.DeterminePkFkSideAndPkRoleName(relationship, out pkSideRoleName, out fkSide, out pkSide);
+		string relationshipName = _executingGenerator.GetUniqueRelationshipNameForRelationship(relationship);
+		string pkSideMultiplicity;
+		string fkSideMultiplicity;
+		var relationshipAsNormalRelationship = relationship as NormalRelationshipEdge;
+		bool startUseCascade = relationship.GetStartNavigatorAsObject().OutputSettingValues.GetRealBoolSettingValue("UseCascadeDeletes", currentProject);
+		bool endUseCascade = relationship.GetEndNavigatorAsObject().OutputSettingValues.GetRealBoolSettingValue("UseCascadeDeletes", currentProject);
+		bool pkSideUseCascade = endUseCascade;
+		if(relationshipAsNormalRelationship==null)
+		{
+			// m:n. can't have cascades
+			pkSideUseCascade = false;
+		}
+		else
+		{
+			if(relationshipAsNormalRelationship.StartEntityIsPkSide)
+			{
+				pkSideUseCascade = startUseCascade;
+			}
+		}
+		SD_EF_GeneralUtils.DetermineNormalRelationshipMultiplicities(relationshipAsNormalRelationship, out fkSideMultiplicity, out pkSideMultiplicity);
+%>				<Association Name="<%=relationshipName%>">
+					<End Role="<%=fkSide.Name%>" Type="Self.<%=fkSide.Name%>" Multiplicity="<%=fkSideMultiplicity%>" />
+					<End Role="<%=pkSideRoleName%>" Type="Self.<%=pkSide.Name%>" Multiplicity="<%=pkSideMultiplicity%>"<% if(pkSideUseCascade) {%> >
+						<OnDelete Action="Cascade"/>
+					</End>
+<%		}
+		else
+		{
+			// emit the closing bracket for the <End element
+%> />
+<%		}
+
+		if(relationshipAsNormalRelationship!=null)
+		{
+			if(emitForeignKeyFields || (relationshipAsNormalRelationship.FieldRelationships.All(fr=>fr.FkField.IsPartOfIdentifyingFields)))
+			{
+%>					<ReferentialConstraint>
+						<Principal Role="<%=pkSideRoleName%>">
+<%				foreach(var fieldRelationship in relationshipAsNormalRelationship.FieldRelationships)
+				{
+%>							<PropertyRef Name="<%=fieldRelationship.PkField.Name%>" />
+<%				}
+%>						</Principal>
+						<Dependent Role="<%=fkSide.Name%>">
+<%				foreach(var fieldRelationship in relationshipAsNormalRelationship.FieldRelationships)
+				{
+%>							<PropertyRef Name="<%=fieldRelationship.FkField.Name%>" />
+<%				}
+%>						</Dependent>
+					</ReferentialConstraint>	
+<%			}
+		}
+%>				</Association>
+<%	}
+%><%=DotNetTemplateEngine.GetUserCodeRegion("CSDLCustomCode", "<!--", "-->", string.Empty, false)%><# SD_EF_CustomEdmxCSDLInclude #>
+			</Schema>
+		</edmx:ConceptualModels>
+		<edmx:Mappings>
+			<Mapping Space="C-S" xmlns="<%=mslNamespaceName%>">
+<%	if(catalogToTarget!=null)
+	{
+		string databaseShortName = _executingGenerator.GetDatabaseShortNameForDriverID(driverID).Replace(" ","");
+%>				<EntityContainerMapping StorageEntityContainer="<%=_executingGenerator.ActiveSourceElementsContainerName%><%=databaseShortName%>Container"
+										CdmEntityContainer="<%=_executingGenerator.ActiveSourceElementsContainerName%>Entities">
+<%		var renamedTargets = renamedTargetsPerDriverID.GetValue(driverID) ?? new Dictionary<IProjectElementMapTargetElement, string>();
+		foreach(var entity in _executingGenerator.Entities.Where(e=>!e.IsSubType && !e.IsPureManyToManyIntermediate).OrderBy(e=>e.Name))
+		{
+%>					<EntitySetMapping Name="<%=entity.Name%>">
+<%			var allEntityTypesToEmit = currentProject.GetAllSubtypesForEntity(entity).ToList();
+			allEntityTypesToEmit.Add(entity);	// entity itself isn't included in the list of subtypes of itself.
+			foreach(var entityTypeToEmit in allEntityTypesToEmit)
+			{
+				var mapping = currentProject.GetGroupableModelElementMapping(entityTypeToEmit, driverID);
+				string targetName = renamedTargets.GetValue(mapping.MappedTarget) ?? mapping.MappedTarget.Name;
+				// EF's TPEH inheritance mapping is cumbersome as there's no documentation which rules to apply to. A workaround is for all subtypes in a 
+				// TPEH hierarchy to re-map the inherited fields of the supertype, unless they're the subhierarchy root, then they just have to map
+				// their own fields. A type which has subtypes can't be defined as 'IsTypeOf(...)', as the Condition element will cause a problem.
+				// Instead the type should be defined without IsTypeOf(). In all other cases, IsTypeOf() has to be specified. 
+				bool emitWithIsTypeOf = (entityTypeToEmit.InheritanceType==InheritanceHierarchyType.None) || (entityTypeToEmit.InheritanceType==InheritanceHierarchyType.TargetPerEntity);
+				if(entityTypeToEmit.InheritanceType==InheritanceHierarchyType.TargetPerEntityHierarchy)
+				{
+					emitWithIsTypeOf = !currentProject.GetAllDirectSubtypesForEntity(entityTypeToEmit).Any();
+				}
+				if(emitWithIsTypeOf)
+				{
+%>						<EntityTypeMapping TypeName="IsTypeOf(<%=_executingGenerator.ActiveSourceElementsContainerName%>Model.<%=entityTypeToEmit.Name%>)">
+<%				}
+				else
+				{
+%>						<EntityTypeMapping TypeName="<%=_executingGenerator.ActiveSourceElementsContainerName%>Model.<%=entityTypeToEmit.Name%>">
+<%				}
+%>							<MappingFragment StoreEntitySet="<%=targetName%>">
+<%				StringBuilder fieldMappingOutputBuilder = new StringBuilder();
+				var fieldMappingsToTraverse = GeneratorUtils.GetAllFieldMappingsToTraverseForEntity(currentProject, mapping);
+				EmitFieldMappings(0, fieldMappingsToTraverse, 8, fieldMappingOutputBuilder, emitForeignKeyFields);
+				string fieldMappingOutput = fieldMappingOutputBuilder.ToString();
+				if(!string.IsNullOrEmpty(fieldMappingOutput))
+				{
+%><%=fieldMappingOutput.ToString()%><%
+				}
+				
+				if(entityTypeToEmit.InheritanceType==InheritanceHierarchyType.TargetPerEntityHierarchy)
+				{
+					var discriminatorFieldMapping = GeneratorUtils.GetDiscriminatorFieldMapping(entityTypeToEmit, _executingGenerator, driverID);
+%>								<Condition ColumnName="<%=discriminatorFieldMapping.MappedTarget.FieldName%>" Value="<%=GeneratorUtils.GetDiscriminatorValueAsString(entityTypeToEmit, _executingGenerator, false, "{0}")%>" />
+<%				}
+%>							</MappingFragment>
+						</EntityTypeMapping>
+<%			}
+%>					</EntitySetMapping>
+<%		}
+		foreach(var relationship in allRelationshipsToEmit)
+		{
+			if(relationship.RelationshipType==EntityRelationshipType.ManyToMany)
+			{
+				// M:N relationships which aren't pure (so they're objectified, the intermediate entity has non-pk fields) aren't supported by the EF.
+				if(!((IndirectRelationshipEdge)relationship).IsPureManyToMany)
+				{
+					continue;
+				}
+			}
+			else
+			{
+				if(((NormalRelationshipEdge)relationship).EntityFkSide.IsPureManyToManyIntermediate)
+				{
+					continue;
+				}
+			}
+			if(emitForeignKeyFields && (relationship.RelationshipType!=EntityRelationshipType.ManyToMany))
+			{
+				// as FK fields are emitted, associationsets don't have to be mapped explicitly, except intermediate m:n relationships
+				continue;
+			}
+			string relationshipName = _executingGenerator.GetUniqueRelationshipNameForRelationship(relationship);
+			EntityDefinition firstSide;		// fk side (normal relationships), end entity (m:n relationships)
+			EntityDefinition secondSide;	// pk side (normal relationships), start entity (m:n relationships)
+			string secondSideRoleName;
+			
+			SD_EF_GeneralUtils.DeterminePkFkSideAndPkRoleName(relationship, out secondSideRoleName, out firstSide, out secondSide);
+			var storeEntity = firstSide;
+			if(relationship.RelationshipType==EntityRelationshipType.ManyToMany) 
+			{
+				storeEntity = ((IndirectRelationshipEdge)relationship).DetermineIntermediateEntity();
+			}
+			var storeEntityMapping = currentProject.GetGroupableModelElementMapping(storeEntity, driverID);
+			var firstSideMapping = currentProject.GetGroupableModelElementMapping(firstSide, driverID);
+			// there now have to be emitted two EndProperty elements. 
+			// For normal relationships: the first EndProperty is for the firstSide, which will contain the PK fields of the firstSide (FK side)
+			// with the mappings. The second is for the secondSide, which will contain the PK fields of the PK side, with the mapping of the _FK_ field 
+			// referencing it.
+			// for m:n relationships: the first EndProperty is the start entity, the second EndProperty is the end entity. The store entity is the
+			// intermediate entity. Scalar properties are the pk fields of the start/end entity and the column name they're mapped on is the target field
+			// of the fk field in the intermediate entity they're mapped on.
+			var dataFirstEndProperty = new Dictionary<IFieldElementCore, IProjectElementFieldMapTargetElement>();
+			var dataSecondEndProperty = new Dictionary<IFieldElementCore, IProjectElementFieldMapTargetElement>();
+			var relationshipAsNormalRelationship = relationship as NormalRelationshipEdge;
+			if(relationship.RelationshipType==EntityRelationshipType.ManyToMany) 
+			{
+				var relationshipAsIndirectRelationshipEdge = (IndirectRelationshipEdge)relationship;
+				// start entity 1:n intermediate entity
+				foreach(var fieldRelationship in relationshipAsIndirectRelationshipEdge.FirstRelationship.FieldRelationships)
+				{
+					var fkField = fieldRelationship.FkField;
+					var pkField = fieldRelationship.PkField;
+					// start entity is second side, which is used in the second End property
+					dataSecondEndProperty.Add(pkField, storeEntityMapping.GetFieldMappingOfField(fkField).MappedTarget);
+				}
+
+				// end entity 1:n intermediate entity
+				foreach(var fieldRelationship in relationshipAsIndirectRelationshipEdge.SecondRelationship.FieldRelationships)
+				{
+					var fkField = fieldRelationship.FkField;
+					var pkField = fieldRelationship.PkField;
+					// end entity is first side, which is used in the first End property
+					dataFirstEndProperty.Add(pkField, storeEntityMapping.GetFieldMappingOfField(fkField).MappedTarget);
+				}
+			}
+			else
+			{
+				// normal relationships
+				var pkFieldMapping = firstSideMapping;
+				var firstSideFieldMappings = GeneratorUtils.GetAllFieldMappingsToTraverseForEntity(currentProject, firstSideMapping);
+				if(firstSide.IsSubType && (firstSide.InheritanceType==InheritanceHierarchyType.TargetPerEntityHierarchy))
+				{
+					// get mapping of subhierarchy root, as pk fields are only mapped in subhierarchy root.
+					var subHierarchyRoot = currentProject.GetSubHierarchyRootForEntity(firstSide);
+					pkFieldMapping = currentProject.GetGroupableModelElementMapping(subHierarchyRoot, driverID);
+				}
+				foreach(var pkField in firstSide.IdentifyingFields)
+				{
+					dataFirstEndProperty.Add(pkField, pkFieldMapping.GetFieldMappingOfField(pkField).MappedTarget);
+				}
+				foreach(var fieldRelationship in relationshipAsNormalRelationship.FieldRelationships)
+				{
+					var fkField = fieldRelationship.FkField;
+					var pkField = fieldRelationship.PkField;
+					var fkFieldMapping = firstSideFieldMappings.Where(efm=>efm.MappedFieldWrapper.Equals(new MappableFieldWrapper(fkField)))
+												.FirstOrDefault();
+					dataSecondEndProperty.Add(pkField, fkFieldMapping.MappedTarget);
+				}
+			}
+%>					<AssociationSetMapping Name="<%=relationshipName%>" TypeName="<%=_executingGenerator.ActiveSourceElementsContainerName%>Model.<%=relationshipName%>" StoreEntitySet="<%=renamedTargets.GetValue(storeEntityMapping.MappedTarget) ?? storeEntityMapping.MappedTarget.Name%>" >
+						<EndProperty Name="<%=firstSide.Name%>">
+<%			foreach(var kvp in dataFirstEndProperty)
+			{
+%>							<ScalarProperty Name="<%=kvp.Key.Name%>" ColumnName="<%=kvp.Value.FieldName%>"/>
+<%			}
+%>						</EndProperty>
+						<EndProperty Name="<%=secondSideRoleName%>">
+<%			foreach(var kvp in dataSecondEndProperty)
+			{
+%>							<ScalarProperty Name="<%=kvp.Key.Name%>" ColumnName="<%=kvp.Value.FieldName%>"/>
+<%			}
+%>						</EndProperty>
+<%			if(relationshipAsNormalRelationship!=null)
+			{
+				foreach(var fkField in relationshipAsNormalRelationship.GetFkFieldsFromFkSide())
+				{
+					var fieldMapping = firstSideMapping.GetFieldMappingOfField(fkField);
+					if(fkField.IsOptional)
+					{
+%>						<Condition ColumnName="<%=fieldMapping.MappedTarget.FieldName%>" IsNull="false" />
+<%					}
+				}
+			}
+%>					</AssociationSetMapping>
+<%		}
+
+		spResultsetMappingInfos = GeneratorUtils.GetAllSPResultsetMappingInfos(_executingGenerator, driverID);
+		var renamedProcs = renamedStoredProcsPerDriverID.GetValue(driverID) ?? new Dictionary<DBStoredProcedure, string>();
+		string storeName = string.Format("{0}.{1}.Store", _executingGenerator.ActiveSourceElementsContainerName, databaseShortName);
+		foreach(var spResultsetInfo in spResultsetMappingInfos)
+		{
+			DBStoredProcedure targetProc = spResultsetInfo.StoredProcedureDefinition;
+			string procName = renamedProcs.GetValue(targetProc) ?? targetProc.Name;
+			foreach(var mappingCombination in spResultsetInfo.GetAllDifferentMappingCombinationsOnResultsets())
+			{
+				List<string> viewNamesUsed = mappingCombination.Select(m=>m.MappedElement.Name).ToList();
+				string methodName = string.Format("Get{0}TypedView", string.Join("", viewNamesUsed.ToArray()));
+%>					<FunctionImportMapping FunctionImportName="<%=methodName%>" FunctionName="<%=storeName%>.<%=procName%>">
+						<ResultMapping>
+<%				foreach(var viewMapping in mappingCombination)
+				{
+					StringBuilder fieldMappingOutputBuilder = new StringBuilder();
+					EmitFieldMappings(0, viewMapping.FieldMappings, 8, fieldMappingOutputBuilder, false);
+%>							<ComplexTypeMapping TypeName="<%=_executingGenerator.ActiveSourceElementsContainerName%>Model.<%=viewMapping.MappedElement.Name%>TypedViewRow">
+<%=fieldMappingOutputBuilder.ToString()%>
+							</ComplexTypeMapping>
+<%				}
+%>						</ResultMapping>
+					</FunctionImportMapping>
+<%			}
+		}
+		
+		var renamedTvfs = renamedTvfsPerDriverID.GetValue(driverID) ?? new Dictionary<DBTableValuedFunction, string>();
+		foreach(var tvfMappingPair in GeneratorUtils.GetAllTvfCallMappingsInScope(_executingGenerator, driverID))
+		{
+			var tvfCallMapping = tvfMappingPair.Value1 as TvfCallMapping;
+			var returnElementMapping = tvfMappingPair.Value2;
+			var tvfName = renamedTvfs.GetValue(tvfCallMapping.MappedTarget as DBTableValuedFunction) ?? tvfCallMapping.MappedTarget.Name;
+%>					<FunctionImportMapping FunctionImportName="<%=tvfCallMapping.MappedTvfCall.Name%>" FunctionName="<%=storeName%>.<%=tvfName%>">
+						<ResultMapping>
+<%			StringBuilder fieldMappingOutputBuilder = new StringBuilder();
+			EmitFieldMappings(0, returnElementMapping.FieldMappings, 8, fieldMappingOutputBuilder, false);
+			string mappingType = "ComplexTypeMapping";
+			string codeElementSuffix = "TypedViewRow";
+			if(returnElementMapping.MappedElement is EntityDefinition)
+			{
+				mappingType = "EntityTypeMapping";
+				codeElementSuffix = string.Empty;
+			}
+%>							<<%=mappingType%> TypeName="<%=_executingGenerator.ActiveSourceElementsContainerName%>Model.<%=returnElementMapping.MappedElement.Name%><%=codeElementSuffix%>">
+<%=fieldMappingOutputBuilder.ToString()
+%>							</<%=mappingType%>>
+						</ResultMapping>
+					</FunctionImportMapping>
+<%		}
+		
+%><%=DotNetTemplateEngine.GetUserCodeRegion("MSLEntityContainerMappingCustomCode", "<!--", "-->", string.Empty, false)%>
+				</EntityContainerMapping>
+<%	}
+%><%=DotNetTemplateEngine.GetUserCodeRegion("MSLCustomCode", "<!--", "-->", string.Empty, false)%><# SD_EF_CustomEdmxMSLInclude #>
+			</Mapping>
+		</edmx:Mappings>
+	</edmx:Runtime>
+	<!-- Designer element for auto-embedding the .edmx file into the compiled assembly as separated resource files and to validate it on build. -->
+	<edmx:Designer xmlns="<%=designerNamespace%>">
+		<edmx:Connection>
+			<DesignerInfoPropertySet>
+				<DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+			</DesignerInfoPropertySet>
+		</edmx:Connection>
+		<edmx:Options>
+			<DesignerInfoPropertySet>
+				<DesignerProperty Name="ValidateOnBuild" Value="true" />
+			</DesignerInfoPropertySet>
+		</edmx:Options>	
+<%=DotNetTemplateEngine.GetUserCodeRegion("DesignerCustomCode", "<!--", "-->", string.Empty, false)%>		
+	</edmx:Designer>
+</edmx:Edmx>
+<~
+	// emits field mappings for an entity element. It can deal with complex types as well. Used in MSL.
+	// Only emits ScalarProperty or ComplexProperty.
+	private void EmitFieldMappings(int pathIndex, IEnumerable<FieldMapping> fieldMappings, int baseIndent, StringBuilder output, bool emitForeignKeyFields)
+	{
+		var fieldMappingsToTraverse = fieldMappings.Where(fm=>!fm.MappedFieldInstance.IsDiscriminator);
+		if(!emitForeignKeyFields)
+		{
+			fieldMappingsToTraverse = fieldMappingsToTraverse.Where(fm=>!(fm.MappedFieldInstance.IsForeignKeyField && !fm.MappedFieldInstance.IsPartOfIdentifyingFields)); 
+		}
+		var groupedMappings = from fm in fieldMappingsToTraverse
+							  group fm by fm.MappedFieldWrapper.Path[pathIndex] into g
+							  select g;
+
+		string indents = new string('\t', baseIndent + pathIndex);
+
+		foreach(var mappingGroup in groupedMappings)
+		{
+			bool doRecursion = false;
+			if(mappingGroup.Key.FieldType.KindOfType==FieldTypeKind.ValueTypeDefinition)
+			{
+				output.AppendFormat("{0}<ComplexProperty Name=\"{1}\" TypeName=\"{2}Model.{3}\">\n", indents, mappingGroup.Key.Name, 
+						_executingGenerator.ActiveSourceElementsContainerName, ((ValueTypeDefinition)mappingGroup.Key.FieldType).Name);
+				doRecursion = true;
+			}
+			foreach(var field in mappingGroup.Where(f=>f.MappedFieldWrapper.Path[pathIndex]==f.MappedFieldInstance))
+			{
+				output.AppendFormat("{0}<ScalarProperty Name=\"{1}\" ColumnName=\"{2}\" />\n", doRecursion ? indents + "\t" : indents, 
+										field.MappedFieldInstance.Name, field.MappedTarget.FieldName);
+			}
+			if(doRecursion)
+			{
+				EmitFieldMappings(pathIndex + 1, mappingGroup, baseIndent, output, emitForeignKeyFields);
+				output.AppendFormat("{0}</ComplexProperty>\n", indents);
+			}
+		}
+	}
+~>

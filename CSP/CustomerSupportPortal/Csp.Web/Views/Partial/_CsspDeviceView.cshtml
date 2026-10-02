@@ -1,0 +1,389 @@
+﻿ @model  Csp.Web.DataTransferObjects.CsspProvisionedDevicesDto
+<style type="text/css">
+    .prov-devices-tabs-root.expanded { min-height:300px; }
+    .prov-devices-tabs-root > .k-grid-toolbar { display:grid; grid-template-columns: 170px 150px 210px auto; }
+    .prov-devices-disclosure { color:#f00;font-size:12px;padding-left:15px;padding-right:15px; }
+    .k-grid-Export-Monthly { position:relative; }
+    .k-grid-Export-Monthly > ul { width: 206px;position: absolute;top: 30px;left: -1px;z-index: 1; }
+    .k-grid-Export-Monthly .amber-menu .ant-menu-item { width: 175px;margin: 0 !important;padding-top: 0 !important;padding-bottom: 0 !important;cursor:pointer; }
+    .subTabs .k-grid-Export-Monthly li:before { display:none !important; content:'' !important; }
+    .k-grid-Export-Monthly li > i { position: absolute;right: 3px;margin-right:0; }
+    .k-grid-Export-Monthly span.menu-icon { margin-left: 5px;margin-top: 5px; }
+</style>
+<script>
+    var provisionedDevices = {
+
+        SelectedDevices: [],
+
+        FlipExportTo: (function(monthYear) {
+            if ($('.k-grid-Export-Monthly ul:visible').length === 0) {
+                $('.prov-devices-tabs-root').addClass('expanded');
+                $('.k-grid-Export-Monthly ul').removeClass('hide');
+                $('.k-grid-Export-Monthly span.menu-icon').removeClass('fa-caret-down');
+                $('.k-grid-Export-Monthly span.menu-icon').addClass('fa-caret-up');
+            } else {
+                $('.prov-devices-tabs-root').removeClass('expanded');
+                $('.k-grid-Export-Monthly ul').addClass('hide');
+                $('.k-grid-Export-Monthly span.menu-icon').removeClass('fa-caret-up');
+                $('.k-grid-Export-Monthly span.menu-icon').addClass('fa-caret-down');
+            }
+        }),
+
+        ExportToCSV: (function() {
+            var supportAccountId = "@Model.SupportAccountId";
+            var searchField = $("#CsspCmbProvisionedDevices").val();
+            var searchValue = $("#txtCsspProvisionedDevicesSearchValue").val();
+            if (searchValue == "") {
+                searchValue = $("#hdnSelectedCsspAuthCode").val();
+            }
+            if (typeof searchValue === "undefined") {
+                searchValue = "";
+            }
+            //"SearchAvailable", "EP"
+            location.href = '@Url.Action("ProvisionedDevicesReport", "CSSP")?supportAccountId=' + supportAccountId + '&searchField='
+                    + searchField + '&searchValue=' + searchValue;
+        }),
+
+        ExportMonthlyToCSV: (function(key) {
+            location.href = '@Url.Action("ProvisionedDevicesMonthlyReport", "CSSP")?supportAccountId=@(Model.SupportAccountId)&key=' + key;
+        }),
+
+        onCloseDeviceWindow: (function() {
+            var window = $("#@UniqueId.endUserInfoId").data("kendoWindow");
+            window.content("");
+            window.refresh();
+            SupportPortal.OnWindowClose("@UniqueId.gridId");
+        }), 
+
+        onOpenDeviceWindow: (function() {
+            SupportPortal.OnWindowOpen("@UniqueId.endUserInfoId");
+        }),
+
+        AddEndUserInfo: (function () {
+            @{
+                if (!Model.HasCsspAccess)
+                {
+                    <text>return false;</text>
+                }
+            }
+            var direction = '';
+            if (provisionedDevices.SelectedDevices.length <= 0) {
+                return;
+            }
+
+            if (provisionedDevices.SelectedDevices.length == 1) {
+                direction = "/Cssp/EndUserDetails/?supportAccountId=" + @Model.SupportAccountId + "&deviceId=" + provisionedDevices.SelectedDevices.toString();
+            } else {
+                direction = "/Cssp/EndUsersDetails/?supportAccountId=" + @Model.SupportAccountId + "&csvDeviceIds=" + provisionedDevices.SelectedDevices.toString();
+            }
+
+
+            var window = $("#@UniqueId.endUserInfoId").data("kendoWindow");
+            window.content(" ");
+            window.refresh();
+            window.refresh(direction);
+            window.setOptions({
+                minHeight: 800
+            });
+            window.open();
+            window.center();
+        }),
+
+        onCsspDevicesEnterPress: (function(e) {
+            if (e.keyCode == 13) {
+                provisionedDevices.SearchCsspDeviceData();
+                return false;
+            }
+            return true;
+        }),
+
+        onDeviceDataBound: (function () {
+
+            var isCsspUser = "@Model.HasCsspAccess";
+            
+
+            $(".k-grid-AddEndUser").find("span").addClass("k-icon k-add");
+            var grid = $('#@UniqueId.gridId').data('kendoGrid');
+            var gridData = grid.dataSource.view();
+            for (var i = 0; i < gridData.length; i++) {
+                var currentUid = gridData[i].uid;
+                var currenRow = grid.table.find("tr[data-uid='" + currentUid + "']");
+                var endUserInfo = $(currenRow).find(":checkbox");
+
+                var editButton = $(currenRow).find(".k-grid-csp-download");
+               
+                if (isCsspUser == "False")
+                     editButton.addClass("k-state-disabled");
+                else
+                    {
+                    editButton.removeClass("k-state-disabled");
+                   // editButton.addClass("k-state-enable");
+                   }
+
+                if (provisionedDevices.SelectedDevices.indexOf(endUserInfo.attr('id').replace('chkCsspEndUserDevice', '')) >= 0)
+                    endUserInfo.prop("checked", true);
+
+                if (gridData[i].HasEndUserInfo == true) {
+                    endUserInfo.prop("disabled", true);
+
+                    if (endUserInfo.prop("checked"))
+                    {
+                       var index = provisionedDevices.SelectedDevices.indexOf(endUserInfo.attr('id').replace('chkCsspEndUserDevice', ''));
+                        provisionedDevices.SelectedDevices.splice(index, 1);
+                        endUserInfo.prop("checked", false);
+                    }                   
+                }
+               
+            }
+            $("#lblTotalDevices").html( provisionedDevices.SelectedDevices.length ==0?"":"You have selected " + provisionedDevices.SelectedDevices.length + " item(s).");
+
+        }),
+
+        SearchCsspDeviceData: (function() {
+            var searchField = $("#CsspCmbProvisionedDevices").val();
+            if (searchField == "AuthorizationCodes") {
+                var searchVal = $("#txtCsspProvisionedDevicesSearchValue").val();
+                $("#hdnSelectedCsspAuthCode").val(searchVal);
+            }
+            $('#@UniqueId.gridId').data('kendoGrid').dataSource.read();
+        }),
+
+        getCsspSearchParams: (function () {
+            console.log(' Search value is ' + $("#txtCsspProvisionedDevicesSearchValue").val());
+            return {
+                field: $("#CsspCmbProvisionedDevices").val(),
+                value: $("#txtCsspProvisionedDevicesSearchValue").val()
+            };
+        }),
+
+        getCsspGridParams: (function() {
+            var params = provisionedDevices.getCsspSearchParams();
+
+            if (params.value == "" || params.value == "null") {
+                params.value = $("#hdnSelectedCsspAuthCode").val();
+            }
+
+            var p = SetAntiForgery();
+            p.supportAccountId = "@Model.SupportAccountId";
+            p.searchField = params.field;
+            p.searchValue = params.value;
+            return p;
+        }),
+
+        makeReadOnly: (function() {
+            $("#enduserinfo").css(
+            {
+                'opacity': '.5',
+                'pointer-events': 'none',
+                'cursor': 'default'
+            });
+        }),
+
+        SetSelectedDevices: (function (obj) {
+            if (obj.checked) {
+                provisionedDevices.SelectedDevices.push(obj.id.replace('chkCsspEndUserDevice', ''));
+            }
+            else {
+                var index = provisionedDevices.SelectedDevices.indexOf(obj.id.replace('chkCsspEndUserDevice', ''));
+                provisionedDevices.SelectedDevices.splice(index,1);
+            }
+            $("#lblTotalDevices").html(provisionedDevices.SelectedDevices.length == 0 ? "" : "You have selected " + provisionedDevices.SelectedDevices.length + " device(s).");
+        }),
+
+        Download: (function(e) {
+            e.preventDefault();
+
+             @{
+                if (!Model.HasCsspAccess)
+                {
+                    <text>return false;</text>
+                }
+            }
+
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            
+
+            var downloadUrl = "/Cssp/DownloadPreLicenseKeysOnTheFly/?csvDeviceIds=" + dataItem.id + "&supAccountId=" + @Model.SupportAccountId + "&selectAll=false&searchField=AuthorizationCodes&searchValue=";
+            window.location = downloadUrl;
+          
+        }),
+    }
+    $(function() {
+        @{
+            if (!Model.HasCsspAccess)
+            {
+                <text>provisionedDevices.makeReadOnly();</text>
+            }
+        }
+        $("#txtCsspProvisionedDevicesSearchValue").val($("#hdnSelectedCsspAuthCode").val());
+    })
+</script>
+<div class="grid-header" style="height: inherit;">
+    <div class="grid-left">
+        <label id="lblTotalDevices" ></label>
+    </div>
+    <div class="grid-right">
+        <div class="grid-filter">
+            <span class="filter_by">Filter By:</span>
+            @(Html.Kendo().DropDownList()
+                  .Name("CsspCmbProvisionedDevices")
+                  .HtmlAttributes(new
+                  {
+                      Class = "k-dropdown",
+                      style = "margin: 0.25em 0.25em;"
+                  })
+                  .DataTextField("Text")
+                  .DataValueField("Value")
+
+                  .BindTo(new List<SelectListItem>
+                  {
+                      new SelectListItem
+                      {
+                          Text = "Serial Number",
+                          Value = "SerialNumber"
+                      },
+                      new SelectListItem
+                      {
+                          Text = "Authorization Code",
+                          Value = "AuthorizationCodes"
+                      },
+                      new SelectListItem
+                      {
+                          Text = "Customer Reference Id",
+                          Value = "EndUserAccountId"
+                      },
+                      new SelectListItem
+                      {
+                          Text = "EndUser Company",
+                          Value = "EndUserCompany"
+                      },
+                      new SelectListItem
+                      {
+                          Text = "EndUser Contact Email",
+                          Value = "EndUserContactEmail"
+                      }
+                  })
+                  .Value("AuthorizationCodes")
+                  )
+        </div>
+        <div class="grid-filter">
+            <div class="grid-filter">
+                @Html.TextBox("txtCsspProvisionedDevicesSearchValue", Model.DefaultDeviceCode, new { onkeypress = "return provisionedDevices.onCsspDevicesEnterPress(event)" })
+            </div>
+        </div>
+        <div class="grid-filter">
+            <input type="button" value="Search" onclick="provisionedDevices.SearchCsspDeviceData()" class="k-button"/>
+        </div>
+    </div>
+</div>
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.endUserInfoId)
+        .Events(events => events
+                              .Close("provisionedDevices.onCloseDeviceWindow")
+                              .Open("provisionedDevices.onOpenDeviceWindow")
+        )
+        .Modal(true)
+        .Width(700)
+        .Visible(false)
+        .Draggable()
+        .Title("End User Account Information:")
+          )
+</div>
+<div class="grid-content">
+
+   
+  @*  //JavaScript
+    <script type="text/javascript">
+        function clickhere(parameter1) {
+            window.location.href = '@Url.Action("Event", "Home")' +
+        '?parameter1=' + parameter1;
+    }
+    </script>*@
+
+
+    @{
+        if (Model != null && Model != null)
+        {
+            var maxPageSizeForms = Convert.ToInt32(Model.DataParameters.TotalRecordCount);
+            var pageSizeOptionsForms = new List<int> { 50, 100 };
+            if (maxPageSizeForms > pageSizeOptionsForms.Max())
+            {
+                pageSizeOptionsForms.Add(maxPageSizeForms);
+            }
+        @(Html.Kendo().Grid(Model.Devices)
+                  .Name((string)UniqueId.gridId)
+                  .HtmlAttributes(new { @class = "proddevicegrid prov-devices-tabs-root" })
+                  .Columns(columns =>
+                  {
+                      columns.Bound(x => x.DeviceId).ClientTemplate(@"<input type=""checkbox"" id=""chkCsspEndUserDevice#=DeviceId#""  name=""chkCsspEndUserDevice#=DeviceId#"" onclick=""provisionedDevices.SetSelectedDevices(this);"" ; />").Sortable(false).Title("Select").Width(75);
+                      columns.Bound(p => p.DeviceId).Hidden(true);
+                      columns.Bound(p => p.SerialNumber);
+                      columns.Bound(x => x.Model);
+                      columns.Bound(x => x.ProvisionedDate).Format("{0:dd/MM/yyyy}");
+                      columns.Bound(x => x.EndUserCompany);
+                      columns.Bound(x => x.EndUserCustomerAccountId).Title("Customer Reference Id");
+                      columns.Bound(x => x.EndUserContactEmail);
+                      columns.Bound(x => x.EndUserPhoneNumber);
+                      columns.Bound(x => x.EndUserFullAddress).Encoded(false);
+                      columns.Command(command =>
+                      {
+                          command.Custom("csp-download").Text(" ").Click("provisionedDevices.Download").HtmlAttributes(new {title = "Download", href = "javascript:void(0);"});
+                         
+                      }).Width(110).Title("License Keys");      
+                      
+                      
+                              
+                     
+                  })
+                  .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                  .Resizable(resize => resize.Columns(true))
+                  .Events(e => e.DataBound("provisionedDevices.onDeviceDataBound"))
+                  .ToolBar(toolBar =>
+                  {
+                      toolBar.Template(@<text>
+    <a class="k-button k-button-icontext k-grid-AddEndUser" href="" id="enduserinfo" style="color: #999999;text-decoration: none;pointer-events: none;cursor: default;">
+        <span class="k-icon k-add"></span>
+        Add End User Info
+    </a>
+
+    <a class="k-button k-button-icontext k-grid-Export-All" onclick="javascript: provisionedDevices.ExportToCSV()" id="export">
+        Export All
+    </a>
+
+    <span class="k-button k-button-icontext k-grid-Export-Monthly" onclick="javascript: provisionedDevices.FlipExportTo()" id="export-monthly">
+        <span>Download Usage Report</span>
+        <span class="menu-icon fa fa-caret-down"></span>
+        <ul class="ant-menu amber-menu amber-no-transition ant-menu-light ant-menu-root ant-menu-inline hide" role="menu">
+            @if (Model != null
+                && Model.DownLoadUsageReportMonths != null)
+            {
+                foreach (var monthYear in Model.DownLoadUsageReportMonths)
+                {
+            <li class="ant-menu-item amber-menu-item" role="menuitem" onclick="javascript: provisionedDevices.ExportMonthlyToCSV('@(monthYear.Key)')">
+                <a href="javascript: function () {};">@monthYear.Value</a>
+                <i class="menu-icon fa fa-download"></i>
+            </li>
+                }
+            }
+        </ul>
+    </span>
+
+    <span class="prov-devices-disclosure">
+        Your <i>prior</i> month's report will become available on the second day of the current month. Please contact csspreports@paloaltonetworks.com to access reports that are more than 6 months old.
+    </span>
+                                        </text>);
+                  })
+                  .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                                    .Model(model => model.Id(p => p.DeviceId))
+                                                    .PageSize(Model.DataParameters.PaginationCount)
+                                                    .Read(read => read.Action("ProvisionedDevices", "Cssp").Data("provisionedDevices.getCsspGridParams"))
+                  )
+              )
+        }
+    }
+
+</div>

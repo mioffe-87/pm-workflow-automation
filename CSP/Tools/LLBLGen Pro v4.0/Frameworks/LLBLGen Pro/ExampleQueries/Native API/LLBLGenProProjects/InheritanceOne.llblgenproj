@@ -1,0 +1,1197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--LLBLGen Pro v3.0 project file. Do not manually edit this file. Incorrect references could lead to an unloadable project file.-->
+<Project Version="3.0" TargetFrameworkName="LLBLGen Pro Runtime Framework">
+  <Properties>
+    <Abbreviations />
+    <Property Name="AdditionalTaskPerformerFolder" Value="" />
+    <Property Name="AdditionalTasksFolder" Value="" />
+    <Property Name="AdditionalTemplatesFolder" Value="" />
+    <Property Name="AdditionalTypeConverterFolder" Value="" />
+    <Property Name="AddNewElementsAfterRefresh" Value="0" />
+    <Property Name="AddNewFieldsAfterRefresh" Value="0" />
+    <Property Name="AddNewViewsAsEntitiesAfterRefresh" Value="0" />
+    <Property Name="AutoAddManyToManyRelationships" Value="false" />
+    <Property Name="AutoAssignSequencesToIntegerPks" Value="true" />
+    <Property Name="AutoAssignTypeConverterToFieldMapping" Value="false" />
+    <Property Name="CleanUpVsNetProjects" Value="true" />
+    <Property Name="ConnectionStringKeyNamePattern" Value="ConnectionString.{$ProviderName}" />
+    <Property Name="EncodingToUse" Value="0" />
+    <Property Name="EnforcePascalCasingAlways" Value="true" />
+    <Property Name="EntityFieldNameStripPattern" Value="{}{}" />
+    <Property Name="EntityNameStripPattern" Value="{tbl_}{}" />
+    <Property Name="ExcludableOrphanedElementDetectedAction" Value="3" />
+    <Property Name="FailCodeGenerationOnWriteError" Value="false" />
+    <Property Name="FieldMappedOntoRelatedFieldPattern" Value="{$RelatedFieldName}" />
+    <Property Name="FkFieldsAreNamedAfterTargetField" Value="true" />
+    <Property Name="ForeignKeyFieldPattern" Value="{$NavigatorName}{$RelatedFieldName}" />
+    <Property Name="GroupUsage" Value="0" />
+    <Property Name="IdentifyingFieldsFollowDBPrimaryKeyConstraints" Value="0" />
+    <Property Name="InsertUnderscoreAtWordBreakCaseSensitiveDBs" Value="false" />
+    <Property Name="LengthPrecisionScaleFollowDBLengthPrecisionScale" Value="0" />
+    <Property Name="MakeElementNamePascalCasing" Value="true" />
+    <Property Name="MetaDataElementNameCasingCaseSensitiveDBs" Value="3" />
+    <Property Name="NavigatorMappedOntoManyToManyPattern" Value="{$EndEntityName}CollectionVia{$IntermediateEntityName}" />
+    <Property Name="NavigatorMappedOntoOneManyToOnePattern" Value="{$EndEntityName}" />
+    <Property Name="NavigatorMappedOntoOneToManyPattern" Value="{$EndEntityName}" />
+    <Property Name="NonExcludableOrphanedElementDetectedAction" Value="3" />
+    <Property Name="PreferDecimalOverCurrencyTypes" Value="true" />
+    <Property Name="PreferNaturalCharacterTypes" Value="true" />
+    <Property Name="PreferVariableLengthTypes" Value="true" />
+    <Property Name="ProjectCreator" Value="FB" />
+    <Property Name="ProjectName" Value="InheritanceOne" />
+    <Property Name="RelationshipsFollowDBForeignKeyConstraints" Value="0" />
+    <Property Name="RemoveUnderscoresFromElementName" Value="true" />
+    <Property Name="RemoveUnmappedElementsAfterRefresh" Value="0" />
+    <Property Name="RetrieveDBCustomProperties" Value="false" />
+    <Property Name="RootNamespace" Value="" />
+    <Property Name="SequencePattern" Value="SEQ_{$EntityName}" />
+    <Property Name="SetGroupNameAfterSchemaName" Value="true" />
+    <Property Name="StoredProcNameStripPattern" Value="{pr_}{}" />
+    <Property Name="StoreTimeLastGeneratedIntoProject" Value="false" />
+    <Property Name="SyncMappedElementNamesAfterRefresh" Value="0" />
+    <Property Name="SyncMetaDataElementNameAfterRename" Value="0" />
+    <Property Name="SyncRenamedMappedElementNamesAfterRefresh" Value="0" />
+    <Property Name="TypedViewFieldNameStripPattern" Value="{}{}" />
+    <Property Name="TypedViewNameStripPattern" Value="{vw_}{}" />
+    <Property Name="UniqueConstraintsFollowDBUniqueConstraints" Value="0" />
+    <Property Name="UpdateCustomPropertiesAfterRefresh" Value="0" />
+  </Properties>
+  <TypeShortcuts />
+  <CodeGenerationCyclePreferences>
+    <OutputType Value="3">
+      <LastUsedPreferences>
+        <DestinationRootFolder Value="C:\temp\generatortest\test4" />
+        <FrameworkName Value="LLBLGen Pro Runtime Framework" />
+        <LanguageName Value="C#" />
+        <PlatformName Value=".NET 3.5" />
+        <PresetName Value="SD.Presets.SelfServicing.General2008" />
+        <RootNamespace Value="InheritanceOne" />
+        <TemplateGroup Value="SelfServicing" />
+        <TemplateBindings>
+          <Binding Name="SD.TemplateBindings.SqlServerSpecific.NET20" />
+          <Binding Name="SD.TemplateBindings.SharedTemplates.NET20" />
+          <Binding Name="SD.TemplateBindings.Linq" />
+        </TemplateBindings>
+      </LastUsedPreferences>
+    </OutputType>
+    <OutputType Value="2">
+      <LastUsedPreferences>
+        <DestinationRootFolder Value="c:\Temp\UnitTesterDDLSQL" />
+        <FrameworkName Value="DDL SQL" />
+        <LanguageName Value="SQL" />
+        <PlatformName Value="RDBMS" />
+        <PresetName Value="SD.Presets.DDLSQL.UpdateScript" />
+        <RootNamespace Value="" />
+        <TemplateGroup Value="Update DDL SQL" />
+        <TemplateBindings>
+          <Binding Name="SD.TemplateBindings.SqlServerSpecific.DDLSQL" />
+          <Binding Name="SD.TemplateBindings.SharedTemplates.DDLSQL" />
+        </TemplateBindings>
+      </LastUsedPreferences>
+    </OutputType>
+  </CodeGenerationCyclePreferences>
+  <OutputSettingValues>
+    <SettingValues>
+      <SettingValue Name="1:AdapterDbGenericProjectFileSuffix" Value="" Type="18" />
+      <SettingValue Name="1:AdapterDbGenericSubFolderName" Value="DatabaseGeneric" Type="18" />
+      <SettingValue Name="1:AdapterDbSpecificNamespaceSuffix" Value="DatabaseSpecific" Type="18" />
+      <SettingValue Name="1:AdapterDbSpecificProjectFileSuffix" Value="DBSpecific" Type="18" />
+      <SettingValue Name="1:AdapterDbSpecificSubFolderName" Value="DatabaseSpecific" Type="18" />
+      <SettingValue Name="1:ConvertNulledReferenceTypesToDefaultValue" Value="true" Type="3" />
+      <SettingValue Name="1:GenerateAsNullableTypeDefault" Value="true" Type="3" />
+      <SettingValue Name="1:LazyLoadingWithoutResultReturnsNew" Value="true" Type="3" />
+      <SettingValue Name="1:TdlEmitTimeDateInOutputFiles" Value="true" Type="3" />
+    </SettingValues>
+  </OutputSettingValues>
+  <CodeGenerationMetaDataDefaults>
+    <TargetElement Type="256">
+      <Defaults>
+        <Attributes>
+          <Attribute Value="Browsable($true)" />
+        </Attributes>
+      </Defaults>
+    </TargetElement>
+  </CodeGenerationMetaDataDefaults>
+  <EntityModel>
+    <ValueTypeDefinitions />
+    <EntityDefinitions>
+      <EntityDefinition Name="Archive" InheritanceType="1" DiscriminatorValue="4" DiscriminatorValueType="4">
+        <Fields>
+          <Field Name="PackType" Type="string" IsOptional="true" MaxLength="10" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Board" InheritanceType="1" DiscriminatorValue="B" DiscriminatorValueType="5">
+        <Fields>
+          <Field Name="MeetingRoomCode" Type="string" IsOptional="true" MaxLength="10" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="BoardMember" InheritanceType="2">
+        <Fields>
+          <Field Name="CompanyCarId" Type="int" IsOptional="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="BoardMemberCore">
+        <Fields>
+          <Field Name="BoardMemberId" Type="int" IsPrimaryKey="true" IsAutoCreated="true" />
+          <Field Name="CompanyCarId" Type="int" IsOptional="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="BritishSportsCar" InheritanceType="1" DiscriminatorValue="5" DiscriminatorValueType="2" />
+      <EntityDefinition Name="Clerk" InheritanceType="2">
+        <Fields>
+          <Field Name="JobDescription" Type="string" MaxLength="50" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="CompanyCar" IsAbstract="true" InheritanceType="1" DiscriminatorValue="1" DiscriminatorValueType="2">
+        <Fields>
+          <Field Name="Brand" Type="string" MaxLength="50" />
+          <Field Name="CarId" Type="int" IsPrimaryKey="true" />
+          <Field Name="CarType" Type="short" IsReadOnly="true" IsDiscriminator="true" />
+          <Field Name="Price" Type="decimal" Precision="19" Scale="4" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Department" InheritanceType="1" DiscriminatorValue="G" DiscriminatorValueType="5">
+        <Fields>
+          <Field Name="DepartmentId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="DepartmentType" Type="string" IsReadOnly="true" MaxLength="10" IsDiscriminator="true" />
+          <Field Name="Name" Type="string" MaxLength="50" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Employee" IsAbstract="true" InheritanceType="2">
+        <Fields>
+          <Field Name="Id" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="Name" Type="string" MaxLength="50" />
+          <Field Name="StartDate" Type="datetime" />
+          <Field Name="WorksForDepartmentId" Type="int" IsOptional="true" IsAutoCreated="true" />
+        </Fields>
+        <UniqueConstraints>
+          <UniqueConstraint Name="IXEmployee">
+            <Field Name="Name" />
+          </UniqueConstraint>
+        </UniqueConstraints>
+      </EntityDefinition>
+      <EntityDefinition Name="Employee2" InheritanceType="2">
+        <Fields>
+          <Field Name="EmployeeNumber" Type="int" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="EmployeeRole" InheritanceType="1" DiscriminatorValue="Employee" DiscriminatorValueType="5" />
+      <EntityDefinition Name="EmployeeRoleBenefits">
+        <Fields>
+          <Field Name="Id" Type="int" IsPrimaryKey="true" />
+          <Field Name="Name" Type="string" IsOptional="true" MaxLength="50" />
+          <Field Name="RoleId" Type="int" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="FamilyCar" InheritanceType="1" DiscriminatorValue="2" DiscriminatorValueType="2">
+        <Fields>
+          <Field Name="HasDrawHook" Type="bool" IsOptional="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="File" InheritanceType="1" DiscriminatorValue="3" DiscriminatorValueType="4">
+        <Fields>
+          <Field Name="Filesize" Type="int" IsOptional="true" />
+          <Field Name="ParentId" Type="int" IsOptional="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Folder" InheritanceType="1" DiscriminatorValue="2" DiscriminatorValueType="4">
+        <Fields>
+          <Field Name="ParentId" Type="int" IsOptional="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="FolderFile" IsAbstract="true" InheritanceType="1" DiscriminatorValue="1" DiscriminatorValueType="4">
+        <Fields>
+          <Field Name="Discriminator" Type="byte" IsReadOnly="true" IsDiscriminator="true" />
+          <Field Name="Id" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="Name" Type="string" MaxLength="50" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="GermanFamilyCar" InheritanceType="1" DiscriminatorValue="6" DiscriminatorValueType="2" />
+      <EntityDefinition Name="ItalianSportsCar" InheritanceType="1" DiscriminatorValue="4" DiscriminatorValueType="2" />
+      <EntityDefinition Name="JapaneseFamilyCar" InheritanceType="1" DiscriminatorValue="7" DiscriminatorValueType="2" />
+      <EntityDefinition Name="Manager" InheritanceType="2">
+        <Fields>
+          <Field Name="ManagesDepartmentId" Type="int" IsOptional="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="ManagerRole" InheritanceType="1" DiscriminatorValue="Manager" DiscriminatorValueType="5" />
+      <EntityDefinition Name="Marketing" InheritanceType="1" DiscriminatorValue="M" DiscriminatorValueType="5">
+        <Fields>
+          <Field Name="MeetingRoomCode" Type="string" IsOptional="true" MaxLength="10" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="MtoMintermediateAb">
+        <Fields>
+          <Field Name="Ida" Type="int" IsPrimaryKey="true" IsAutoCreated="true" />
+          <Field Name="Idb" Type="int" IsPrimaryKey="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="MtoMsubA" InheritanceType="2">
+        <Fields>
+          <Field Name="Age" Type="int" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="MtoMsubB" InheritanceType="2">
+        <Fields>
+          <Field Name="Age" Type="int" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="MtoMsuperA" InheritanceType="2">
+        <Fields>
+          <Field Name="Id" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="Name" Type="string" MaxLength="50" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="MtoMsuperB" InheritanceType="2">
+        <Fields>
+          <Field Name="Id" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="Name" Type="string" MaxLength="50" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Paycheck">
+        <Fields>
+          <Field Name="Amount" Type="decimal" Precision="19" Scale="4" />
+          <Field Name="PaycheckId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="PersonId" Type="int" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Person" InheritanceType="2">
+        <Fields>
+          <Field Name="FirstName" Type="string" MaxLength="50" />
+          <Field Name="LastName" Type="string" MaxLength="50" />
+          <Field Name="PersonId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Role" IsAbstract="true" InheritanceType="1" DiscriminatorValue="Generic" DiscriminatorValueType="5">
+        <Fields>
+          <Field Name="RoleId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+          <Field Name="RoleName" Type="string" IsReadOnly="true" MaxLength="50" IsDiscriminator="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="SportsCar" InheritanceType="1" DiscriminatorValue="3" DiscriminatorValueType="2">
+        <Fields>
+          <Field Name="IsCabrio" Type="bool" IsOptional="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Sub" InheritanceType="2">
+        <Fields>
+          <Field Name="Age" Type="int" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Super" InheritanceType="2">
+        <Fields>
+          <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="Name" Type="string" MaxLength="50" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="User">
+        <Fields>
+          <Field Name="FirstName" Type="string" MaxLength="50" />
+          <Field Name="LastName" Type="string" MaxLength="50" />
+          <Field Name="UserId" Type="int" IsReadOnly="true" IsPrimaryKey="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="UserRole">
+        <Fields>
+          <Field Name="RoleId" Type="int" IsPrimaryKey="true" IsAutoCreated="true" />
+          <Field Name="UserId" Type="int" IsPrimaryKey="true" IsAutoCreated="true" />
+        </Fields>
+      </EntityDefinition>
+    </EntityDefinitions>
+    <Relationships>
+      <NormalRelationship Name="BoardMember.CompanyCar-CompanyCar.BoardMember" Start=":BoardMember" End=":CompanyCar" StartNavigator="CompanyCar" EndNavigator="BoardMember" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="CompanyCarId" PkField="CarId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="BoardMemberCore.CompanyCar-CompanyCar.BoardMemberCore" Start=":BoardMemberCore" End=":CompanyCar" StartNavigator="CompanyCar" EndNavigator="BoardMemberCore" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="CompanyCarId" PkField="CarId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="BoardMemberCore.Manager-Manager.BoardMemberCore" Start=":BoardMemberCore" End=":Manager" StartNavigator="Manager" EndNavigator="BoardMemberCore" Type="1">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="BoardMemberId" PkField="Id" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Employee.WorksForDepartment-Department.Employees" Start=":Employee" End=":Department" StartNavigator="WorksForDepartment" EndNavigator="Employees" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="WorksForDepartmentId" PkField="DepartmentId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="EmployeeRole.EmployeeRoleBenefits-EmployeeRoleBenefits.EmployeeRole" Start=":EmployeeRole" End=":EmployeeRoleBenefits" StartNavigator="EmployeeRoleBenefits" EndNavigator="EmployeeRole" Type="2" StartIsOptional="true" StartIsPkSide="true">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="RoleId" PkField="RoleId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="File.ParentFolder-Folder.ContainedFiles" Start=":File" End=":Folder" StartNavigator="ParentFolder" EndNavigator="ContainedFiles" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="ParentId" PkField="Id" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Folder.ParentFolder-Folder.SubFolders" Start=":Folder" End=":Folder" StartNavigator="ParentFolder" EndNavigator="SubFolders" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="ParentId" PkField="Id" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Manager.ManagesDepartment-Department.Managers" Start=":Manager" End=":Department" StartNavigator="ManagesDepartment" EndNavigator="Managers" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="ManagesDepartmentId" PkField="DepartmentId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="MtoMintermediateAb.MtoMsuperA-MtoMsuperA.MtoMintermediateAb" Start=":MtoMintermediateAb" End=":MtoMsuperA" StartNavigator="MtoMsuperA" EndNavigator="MtoMintermediateAb" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="Ida" PkField="Id" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="MtoMintermediateAb.MtoMsuperB-MtoMsuperB.MtoMintermediateAb" Start=":MtoMintermediateAb" End=":MtoMsuperB" StartNavigator="MtoMsuperB" EndNavigator="MtoMintermediateAb" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="Idb" PkField="Id" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Paycheck.Employee2-Employee2.Paycheck" Start=":Paycheck" End=":Employee2" StartNavigator="Employee2" EndNavigator="Paycheck" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="PersonId" PkField="PersonId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="UserRole.Role-Role.UserRole" Start=":UserRole" End=":Role" StartNavigator="Role" EndNavigator="UserRole" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="RoleId" PkField="RoleId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="UserRole.User-User.UserRole" Start=":UserRole" End=":User" StartNavigator="User" EndNavigator="UserRole" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="UserId" PkField="UserId" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <IndirectRelationship Start=":MtoMsuperB" End=":MtoMsuperA" StartNavigator="MtoMsuperAcollectionViaMtoMintermediateAb" EndNavigator="MtoMsuperBcollectionViaMtoMintermediateAb" Relationship1="MtoMintermediateAb.MtoMsuperB-MtoMsuperB.MtoMintermediateAb" Relationship2="MtoMintermediateAb.MtoMsuperA-MtoMsuperA.MtoMintermediateAb" />
+      <IndirectRelationship Start=":Role" End=":User" StartNavigator="UserCollectionViaUserRole" EndNavigator="RoleCollectionViaUserRole" Relationship1="UserRole.Role-Role.UserRole" Relationship2="UserRole.User-User.UserRole" />
+    </Relationships>
+    <InheritanceHierarchies>
+      <InheritanceHierarchy SuperType=":File" SubType=":Archive" />
+      <InheritanceHierarchy SuperType=":Department" SubType=":Board" />
+      <InheritanceHierarchy SuperType=":Manager" SubType=":BoardMember" />
+      <InheritanceHierarchy SuperType=":SportsCar" SubType=":BritishSportsCar" />
+      <InheritanceHierarchy SuperType=":Employee" SubType=":Clerk" />
+      <InheritanceHierarchy SuperType=":Person" SubType=":Employee2" />
+      <InheritanceHierarchy SuperType=":Role" SubType=":EmployeeRole" />
+      <InheritanceHierarchy SuperType=":CompanyCar" SubType=":FamilyCar" />
+      <InheritanceHierarchy SuperType=":FolderFile" SubType=":File" />
+      <InheritanceHierarchy SuperType=":FolderFile" SubType=":Folder" />
+      <InheritanceHierarchy SuperType=":FamilyCar" SubType=":GermanFamilyCar" />
+      <InheritanceHierarchy SuperType=":SportsCar" SubType=":ItalianSportsCar" />
+      <InheritanceHierarchy SuperType=":FamilyCar" SubType=":JapaneseFamilyCar" />
+      <InheritanceHierarchy SuperType=":Employee" SubType=":Manager" />
+      <InheritanceHierarchy SuperType=":Role" SubType=":ManagerRole" />
+      <InheritanceHierarchy SuperType=":Department" SubType=":Marketing" />
+      <InheritanceHierarchy SuperType=":MtoMsuperA" SubType=":MtoMsubA" />
+      <InheritanceHierarchy SuperType=":MtoMsuperB" SubType=":MtoMsubB" />
+      <InheritanceHierarchy SuperType=":CompanyCar" SubType=":SportsCar" />
+      <InheritanceHierarchy SuperType=":Super" SubType=":Sub" />
+    </InheritanceHierarchies>
+  </EntityModel>
+  <TypedListDefinitions>
+    <TypedListDefinition Name="BoardMemberCompanyCar">
+      <EntityAliases>
+        <EntityAlias Entity=":BoardMember" />
+        <EntityAlias Entity=":CompanyCar" />
+      </EntityAliases>
+      <Fields>
+        <Field FieldAlias="Id" TargetField="BoardMember.Id" />
+        <Field FieldAlias="Name" TargetField="BoardMember.Name" />
+        <Field FieldAlias="CarId" TargetField="CompanyCar.CarId" />
+        <Field FieldAlias="Brand" TargetField="CompanyCar.Brand" />
+        <Field FieldAlias="Price" TargetField="CompanyCar.Price" />
+      </Fields>
+      <Relationships>
+        <Relationship Name="BoardMember.CompanyCar-CompanyCar.BoardMember" StartAlias="BoardMember" EndAlias="CompanyCar" JoinHint="1" StartAliasIsStartVertex="true" />
+      </Relationships>
+    </TypedListDefinition>
+    <TypedListDefinition Name="ClerkManagers">
+      <EntityAliases>
+        <EntityAlias Entity=":Clerk" />
+        <EntityAlias Entity=":Department" />
+        <EntityAlias Entity=":Manager" />
+      </EntityAliases>
+      <Fields>
+        <Field FieldAlias="ClerkId" TargetField="Clerk.Id" />
+        <Field FieldAlias="ClerkName" TargetField="Clerk.Name" />
+        <Field FieldAlias="DepartmentName" TargetField="Department.Name" />
+        <Field FieldAlias="ManagerId" TargetField="Manager.Id" />
+        <Field FieldAlias="ManagerName" TargetField="Manager.Name" />
+      </Fields>
+      <Relationships>
+        <Relationship Name="Employee.WorksForDepartment-Department.Employees" StartAlias="Clerk" EndAlias="Department" JoinHint="1" StartAliasIsStartVertex="true" />
+        <Relationship Name="Manager.ManagesDepartment-Department.Managers" StartAlias="Department" EndAlias="Manager" JoinHint="1" />
+      </Relationships>
+    </TypedListDefinition>
+  </TypedListDefinitions>
+  <TypedViewDefinitions>
+    <TypedViewDefinition Name="TestMultiTargetFilter1">
+      <Fields>
+        <Field Name="BoardMemberId" Type="int" />
+        <Field Name="ClerkId" Type="int" />
+        <Field Name="CompanyCarId" Type="int" />
+        <Field Name="EmployeeId" Type="int" />
+        <Field Name="JobDescription" Type="string" MaxLength="50" />
+        <Field Name="ManagerId" Type="int" />
+        <Field Name="ManagesDepartmentId" Type="int" />
+        <Field Name="Name" Type="string" MaxLength="50" />
+        <Field Name="StartDate" Type="datetime" />
+        <Field Name="WorksForDepartmentId" Type="int" />
+      </Fields>
+    </TypedViewDefinition>
+  </TypedViewDefinitions>
+  <SPCallDefinitions>
+    <SPCallDefinition Name="ClearAll" />
+  </SPCallDefinitions>
+  <TargetDatabases>
+    <TargetDatabase Type="2D18D138-1DD2-467E-86CC-4838250611AE">
+      <ConnectionElements>
+        <ConnectionElement Name="ServerName" Value="nerd" />
+        <ConnectionElement Name="CatalogName" Value="InheritanceOne" />
+        <ConnectionElement Name="UseWindowsAuthentication" Value="True" />
+        <ConnectionElement Name="UserID" Value="" />
+        <ConnectionElement Name="Password" Value="" />
+      </ConnectionElements>
+      <SystemSequences>
+        <Sequence Name="SCOPE_IDENTITY()" />
+        <Sequence Name="@@IDENTITY" />
+      </SystemSequences>
+      <Catalogs>
+        <Catalog Name="InheritanceOne">
+          <Schemas>
+            <Schema Name="dbo">
+              <Tables>
+                <Table Name="BoardMember">
+                  <Fields>
+                    <Field Name="BoardMemberID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_168c8a64d60b1f49f9baa578fc2" DbType="8" Precision="10" />
+                    <Field Name="CompanyCarID" Ordinal="2" IsOptional="true" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="Clerk">
+                  <Fields>
+                    <Field Name="ClerkID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_a1c5b8743528ffe90d8a9f71989" DbType="8" Precision="10" />
+                    <Field Name="JobDescription" Ordinal="2" DbType="24" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="CompanyCar">
+                  <Fields>
+                    <Field Name="CarID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_e472b1e4b52add7e320426f28fb" DbType="8" Precision="10" />
+                    <Field Name="Brand" Ordinal="2" DbType="24" Length="50" />
+                    <Field Name="Price" Ordinal="3" DbType="9" Precision="19" Scale="4" />
+                    <Field Name="HasDrawHook" Ordinal="4" IsOptional="true" DbType="2" />
+                    <Field Name="IsCabrio" Ordinal="5" IsOptional="true" DbType="2" />
+                    <Field Name="CarType" Ordinal="6" DefaultValue="(0)" DbType="16" Precision="5" />
+                  </Fields>
+                </Table>
+                <Table Name="Department">
+                  <Fields>
+                    <Field Name="DepartmentID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_a394b7f4a5597e30af57523615b" DbType="8" Precision="10" />
+                    <Field Name="DepartmentType" Ordinal="2" DbType="24" Length="10" />
+                    <Field Name="Name" Ordinal="3" DbType="24" Length="50" />
+                    <Field Name="MeetingRoomCode" Ordinal="4" IsOptional="true" DbType="24" Length="10" />
+                  </Fields>
+                </Table>
+                <Table Name="Employee">
+                  <Fields>
+                    <Field Name="EmployeeID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_783c138461d8cb345e6f7800140" DbType="8" Precision="10" />
+                    <Field Name="Name" Ordinal="2" DbType="24" Length="50" />
+                    <Field Name="StartDate" Ordinal="3" DbType="4" />
+                    <Field Name="WorksForDepartmentID" Ordinal="4" IsOptional="true" DbType="8" Precision="10" />
+                  </Fields>
+                  <UniqueConstraints>
+                    <UniqueConstraint Name="IX_Employee">
+                      <Field Name="Name" />
+                    </UniqueConstraint>
+                  </UniqueConstraints>
+                </Table>
+                <Table Name="Employee2">
+                  <Fields>
+                    <Field Name="PersonID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_9c9135d4378baa3f7ceb4bd8aea" DbType="8" Precision="10" />
+                    <Field Name="EmployeeNumber" Ordinal="2" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="EmployeeRoleBenefits">
+                  <Fields>
+                    <Field Name="Id" Ordinal="0" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_d385af343ef8fcc3bf3f72cb6f7" DbType="8" Precision="10" />
+                    <Field Name="Name" Ordinal="1" IsOptional="true" DbType="12" Length="50" />
+                    <Field Name="RoleId" Ordinal="2" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="FolderFile">
+                  <Fields>
+                    <Field Name="ID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_97f47e04640895e0f9c44b6c97d" DbType="8" Precision="10" />
+                    <Field Name="Name" Ordinal="2" DbType="24" Length="50" />
+                    <Field Name="ParentID" Ordinal="3" IsOptional="true" DbType="8" Precision="10" />
+                    <Field Name="Filesize" Ordinal="4" IsOptional="true" DbType="8" Precision="10" />
+                    <Field Name="Discriminator" Ordinal="5" DbType="22" Precision="3" />
+                    <Field Name="PackType" Ordinal="6" IsOptional="true" DbType="24" Length="10" />
+                  </Fields>
+                </Table>
+                <Table Name="Manager">
+                  <Fields>
+                    <Field Name="ManagerID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_eea5ead462da60515ac116a0e7d" DbType="8" Precision="10" />
+                    <Field Name="ManagesDepartmentID" Ordinal="2" IsOptional="true" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="MtoMIntermediateAB">
+                  <Fields>
+                    <Field Name="IDA" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_77fd932418f9a5bd386dec22551" DbType="8" Precision="10" />
+                    <Field Name="IDB" Ordinal="2" IsPrimaryKey="true" PkConstraintName="PK_77fd932418f9a5bd386dec22551" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="MtoMSubA">
+                  <Fields>
+                    <Field Name="ID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_8a756fd4ba5b696d6b74c679ab6" DbType="8" Precision="10" />
+                    <Field Name="Age" Ordinal="2" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="MtoMSubB">
+                  <Fields>
+                    <Field Name="ID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_a6cdd0e4059bcfbfa679a9319f2" DbType="8" Precision="10" />
+                    <Field Name="Age" Ordinal="2" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="MtoMSuperA">
+                  <Fields>
+                    <Field Name="ID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_9df39084cc080acd95697dc2bf7" DbType="8" Precision="10" />
+                    <Field Name="Name" Ordinal="2" DbType="24" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="MtoMSuperB">
+                  <Fields>
+                    <Field Name="ID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_35499b7434c863fa111da965f47" DbType="8" Precision="10" />
+                    <Field Name="Name" Ordinal="2" DbType="24" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="Paycheck">
+                  <Fields>
+                    <Field Name="PaycheckID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_1628e1742319c954135607576aa" DbType="8" Precision="10" />
+                    <Field Name="PersonID" Ordinal="2" DbType="8" Precision="10" />
+                    <Field Name="Amount" Ordinal="3" DbType="9" Precision="19" Scale="4" />
+                  </Fields>
+                </Table>
+                <Table Name="Person">
+                  <Fields>
+                    <Field Name="PersonID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_9e834b44890adc64898bf482847" DbType="8" Precision="10" />
+                    <Field Name="FirstName" Ordinal="2" DbType="24" Length="50" />
+                    <Field Name="LastName" Ordinal="3" DbType="24" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="Role">
+                  <Fields>
+                    <Field Name="RoleID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_bacd6f340d398788b509c59cd5b" DbType="8" Precision="10" />
+                    <Field Name="RoleName" Ordinal="2" DbType="24" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="Sub">
+                  <Fields>
+                    <Field Name="ID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_89f87cd463eaedf1a15413274b1" DbType="25" />
+                    <Field Name="Age" Ordinal="2" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+                <Table Name="Super">
+                  <Fields>
+                    <Field Name="ID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_f3e8a13404883f56f4089ab7604" DbType="25" />
+                    <Field Name="Name" Ordinal="2" DbType="24" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="User">
+                  <Fields>
+                    <Field Name="UserID" Ordinal="1" IsIdentity="true" IsPrimaryKey="true" PkConstraintName="PK_9bc89854e28bb16bc150919962d" DbType="8" Precision="10" />
+                    <Field Name="FirstName" Ordinal="2" DbType="24" Length="50" />
+                    <Field Name="LastName" Ordinal="3" DbType="24" Length="50" />
+                  </Fields>
+                </Table>
+                <Table Name="UserRole">
+                  <Fields>
+                    <Field Name="UserID" Ordinal="1" IsPrimaryKey="true" PkConstraintName="PK_e8930774915a21334e1518e0f6b" DbType="8" Precision="10" />
+                    <Field Name="RoleID" Ordinal="2" IsPrimaryKey="true" PkConstraintName="PK_e8930774915a21334e1518e0f6b" DbType="8" Precision="10" />
+                  </Fields>
+                </Table>
+              </Tables>
+              <Views>
+                <View Name="sysconstraints">
+                  <Fields>
+                    <Field Name="constid" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="id" Ordinal="2" DbType="8" Precision="10" />
+                    <Field Name="colid" Ordinal="3" DbType="16" Precision="5" />
+                    <Field Name="spare1" Ordinal="4" DbType="22" Precision="3" />
+                    <Field Name="status" Ordinal="5" DbType="8" Precision="10" />
+                    <Field Name="actions" Ordinal="6" DbType="8" Precision="10" />
+                    <Field Name="error" Ordinal="7" DbType="8" Precision="10" />
+                  </Fields>
+                </View>
+                <View Name="syssegments">
+                  <Fields>
+                    <Field Name="segment" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="name" Ordinal="2" DbType="24" Length="10" />
+                    <Field Name="status" Ordinal="3" DbType="8" Precision="10" />
+                  </Fields>
+                </View>
+                <View Name="vw_TestMultiTargetFilter1">
+                  <Fields>
+                    <Field Name="EmployeeID" Ordinal="1" DbType="8" Precision="10" />
+                    <Field Name="Name" Ordinal="2" DbType="24" Length="50" />
+                    <Field Name="StartDate" Ordinal="3" DbType="4" />
+                    <Field Name="WorksForDepartmentID" Ordinal="4" DbType="8" Precision="10" />
+                    <Field Name="ManagerID" Ordinal="5" DbType="8" Precision="10" />
+                    <Field Name="ManagesDepartmentID" Ordinal="6" DbType="8" Precision="10" />
+                    <Field Name="BoardMemberID" Ordinal="7" DbType="8" Precision="10" />
+                    <Field Name="CompanyCarID" Ordinal="8" DbType="8" Precision="10" />
+                    <Field Name="ClerkID" Ordinal="9" DbType="8" Precision="10" />
+                    <Field Name="JobDescription" Ordinal="10" DbType="24" Length="50" />
+                  </Fields>
+                </View>
+              </Views>
+              <StoredProcedures>
+                <StoredProcedure Name="dt_addtosourcecontrol" NumberOfResultsets="2">
+                  <Parameters>
+                    <Parameter Name="@vchSourceSafeINI" Direction="1" Ordinal="1" DbType="24" Length="255" />
+                    <Parameter Name="@vchProjectName" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="24" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_addtosourcecontrol_u" NumberOfResultsets="2">
+                  <Parameters>
+                    <Parameter Name="@vchSourceSafeINI" Direction="1" Ordinal="1" DbType="12" Length="255" />
+                    <Parameter Name="@vchProjectName" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="12" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="12" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_adduserobject" />
+                <StoredProcedure Name="dt_adduserobject_vcs">
+                  <Parameters>
+                    <Parameter Name="@vchProperty" Direction="1" Ordinal="1" DbType="24" Length="64" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_checkinobject">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="24" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="24" Length="255" />
+                    <Parameter Name="@iVCSFlags" Direction="1" Ordinal="6" DbType="8" Precision="10" />
+                    <Parameter Name="@iActionFlag" Direction="1" Ordinal="7" DbType="8" Precision="10" />
+                    <Parameter Name="@txStream1" Direction="1" Ordinal="8" DbType="20" Length="2147483647" />
+                    <Parameter Name="@txStream2" Direction="1" Ordinal="9" DbType="20" Length="2147483647" />
+                    <Parameter Name="@txStream3" Direction="1" Ordinal="10" DbType="20" Length="2147483647" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_checkinobject_u">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="12" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="12" Length="255" />
+                    <Parameter Name="@iVCSFlags" Direction="1" Ordinal="6" DbType="8" Precision="10" />
+                    <Parameter Name="@iActionFlag" Direction="1" Ordinal="7" DbType="8" Precision="10" />
+                    <Parameter Name="@txStream1" Direction="1" Ordinal="8" DbType="20" Length="2147483647" />
+                    <Parameter Name="@txStream2" Direction="1" Ordinal="9" DbType="20" Length="2147483647" />
+                    <Parameter Name="@txStream3" Direction="1" Ordinal="10" DbType="20" Length="2147483647" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_checkoutobject">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="24" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="24" Length="255" />
+                    <Parameter Name="@iVCSFlags" Direction="1" Ordinal="6" DbType="8" Precision="10" />
+                    <Parameter Name="@iActionFlag" Direction="1" Ordinal="7" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_checkoutobject_u">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                    <Parameter Name="@vchComment" Direction="1" Ordinal="3" DbType="12" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="4" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="5" DbType="12" Length="255" />
+                    <Parameter Name="@iVCSFlags" Direction="1" Ordinal="6" DbType="8" Precision="10" />
+                    <Parameter Name="@iActionFlag" Direction="1" Ordinal="7" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_displayoaerror">
+                  <Parameters>
+                    <Parameter Name="@iObject" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@iresult" Direction="1" Ordinal="2" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_displayoaerror_u">
+                  <Parameters>
+                    <Parameter Name="@iObject" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@iresult" Direction="1" Ordinal="2" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_droppropertiesbyid">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_dropuserobjectbyid">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_generateansiname">
+                  <Parameters>
+                    <Parameter Name="@name" Direction="3" Ordinal="1" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getobjwithprop">
+                  <Parameters>
+                    <Parameter Name="@property" Direction="1" Ordinal="1" DbType="24" Length="30" />
+                    <Parameter Name="@value" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getobjwithprop_u">
+                  <Parameters>
+                    <Parameter Name="@property" Direction="1" Ordinal="1" DbType="24" Length="30" />
+                    <Parameter Name="@uvalue" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getpropertiesbyid" NumberOfResultsets="2">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getpropertiesbyid_u" NumberOfResultsets="2">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getpropertiesbyid_vcs">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                    <Parameter Name="@value" Direction="3" Ordinal="3" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_getpropertiesbyid_vcs_u">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                    <Parameter Name="@value" Direction="3" Ordinal="3" DbType="12" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_isundersourcecontrol">
+                  <Parameters>
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="1" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                    <Parameter Name="@iWhoToo" Direction="1" Ordinal="3" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_isundersourcecontrol_u">
+                  <Parameters>
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="1" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                    <Parameter Name="@iWhoToo" Direction="1" Ordinal="3" DbType="8" Precision="10" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_removefromsourcecontrol" />
+                <StoredProcedure Name="dt_setpropertybyid">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                    <Parameter Name="@value" Direction="1" Ordinal="3" DbType="24" Length="255" />
+                    <Parameter Name="@lvalue" Direction="1" Ordinal="4" DbType="7" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_setpropertybyid_u">
+                  <Parameters>
+                    <Parameter Name="@id" Direction="1" Ordinal="1" DbType="8" Precision="10" />
+                    <Parameter Name="@property" Direction="1" Ordinal="2" DbType="24" Length="64" />
+                    <Parameter Name="@uvalue" Direction="1" Ordinal="3" DbType="12" Length="255" />
+                    <Parameter Name="@lvalue" Direction="1" Ordinal="4" DbType="7" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_validateloginparams">
+                  <Parameters>
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="1" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_validateloginparams_u">
+                  <Parameters>
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="1" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_vcsenabled" />
+                <StoredProcedure Name="dt_verstamp006" NumberOfResultsets="1" />
+                <StoredProcedure Name="dt_verstamp007" NumberOfResultsets="1" />
+                <StoredProcedure Name="dt_whocheckedout" NumberOfResultsets="1">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="24" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="3" DbType="24" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="4" DbType="24" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="dt_whocheckedout_u" NumberOfResultsets="1">
+                  <Parameters>
+                    <Parameter Name="@chObjectType" Direction="1" Ordinal="1" DbType="3" Length="4" />
+                    <Parameter Name="@vchObjectName" Direction="1" Ordinal="2" DbType="12" Length="255" />
+                    <Parameter Name="@vchLoginName" Direction="1" Ordinal="3" DbType="12" Length="255" />
+                    <Parameter Name="@vchPassword" Direction="1" Ordinal="4" DbType="12" Length="255" />
+                  </Parameters>
+                </StoredProcedure>
+                <StoredProcedure Name="pr_ClearAll" />
+              </StoredProcedures>
+            </Schema>
+          </Schemas>
+          <ForeignKeyConstraints>
+            <ForeignKeyConstraint Name="dbo:BoardMember:FK_BoardMember_CompanyCar">
+              <FieldPairs>
+                <FieldPair PkField="dbo:CompanyCar:CarID" FkField="dbo:BoardMember:CompanyCarID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:BoardMember:FK_BoardMember_Manager">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Manager:ManagerID" FkField="dbo:BoardMember:BoardMemberID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Clerk:FK_Clerk_Employee">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Employee:EmployeeID" FkField="dbo:Clerk:ClerkID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Employee:FK_Employee_Department">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Department:DepartmentID" FkField="dbo:Employee:WorksForDepartmentID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Employee2:FK_Employee2_Person">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Person:PersonID" FkField="dbo:Employee2:PersonID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:EmployeeRoleBenefits:FK_56eac7545739cae3bc02139ecad">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Role:RoleID" FkField="dbo:EmployeeRoleBenefits:RoleId" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:FolderFile:FK_28643894ee9a055e1543384cc90">
+              <FieldPairs>
+                <FieldPair PkField="dbo:FolderFile:ID" FkField="dbo:FolderFile:ParentID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Manager:FK_Manager_Department">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Department:DepartmentID" FkField="dbo:Manager:ManagesDepartmentID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Manager:FK_Manager_Employee">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Employee:EmployeeID" FkField="dbo:Manager:ManagerID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:MtoMIntermediateAB:FK_MtoMIntermediateAB_MtoMSuperA">
+              <FieldPairs>
+                <FieldPair PkField="dbo:MtoMSuperA:ID" FkField="dbo:MtoMIntermediateAB:IDA" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:MtoMIntermediateAB:FK_MtoMIntermediateAB_MtoMSuperB">
+              <FieldPairs>
+                <FieldPair PkField="dbo:MtoMSuperB:ID" FkField="dbo:MtoMIntermediateAB:IDB" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:MtoMSubA:FK_MtoMSubA_MtoMSuperA">
+              <FieldPairs>
+                <FieldPair PkField="dbo:MtoMSuperA:ID" FkField="dbo:MtoMSubA:ID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:MtoMSubB:FK_MtoMSubB_MtoMSuperB">
+              <FieldPairs>
+                <FieldPair PkField="dbo:MtoMSuperB:ID" FkField="dbo:MtoMSubB:ID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Paycheck:FK_Paycheck_Employee2">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Employee2:PersonID" FkField="dbo:Paycheck:PersonID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:Sub:FK_Sub_Super">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Super:ID" FkField="dbo:Sub:ID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:UserRole:FK_UserRole_Role">
+              <FieldPairs>
+                <FieldPair PkField="dbo:Role:RoleID" FkField="dbo:UserRole:RoleID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="dbo:UserRole:FK_UserRole_User">
+              <FieldPairs>
+                <FieldPair PkField="dbo:User:UserID" FkField="dbo:UserRole:UserID" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+          </ForeignKeyConstraints>
+        </Catalog>
+      </Catalogs>
+    </TargetDatabase>
+  </TargetDatabases>
+  <MappingStores>
+    <MappingStore Type="2D18D138-1DD2-467E-86CC-4838250611AE">
+      <EntityMappings>
+        <EntityMapping EntityName=":Archive" TargetName="InheritanceOne:dbo:FolderFile">
+          <FieldMappings>
+            <FieldMapping FieldName="PackType" TargetFieldName="PackType" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Board" TargetName="InheritanceOne:dbo:Department">
+          <FieldMappings>
+            <FieldMapping FieldName="MeetingRoomCode" TargetFieldName="MeetingRoomCode" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":BoardMember" TargetName="InheritanceOne:dbo:BoardMember">
+          <FieldMappings>
+            <FieldMapping FieldName="CompanyCarId" TargetFieldName="CompanyCarID" />
+            <FieldMapping FieldName="Id" TargetFieldName="BoardMemberID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":BoardMemberCore" TargetName="InheritanceOne:dbo:BoardMember">
+          <FieldMappings>
+            <FieldMapping FieldName="BoardMemberId" TargetFieldName="BoardMemberID" />
+            <FieldMapping FieldName="CompanyCarId" TargetFieldName="CompanyCarID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":BritishSportsCar" TargetName="InheritanceOne:dbo:CompanyCar">
+          <FieldMappings />
+        </EntityMapping>
+        <EntityMapping EntityName=":Clerk" TargetName="InheritanceOne:dbo:Clerk">
+          <FieldMappings>
+            <FieldMapping FieldName="Id" TargetFieldName="ClerkID" />
+            <FieldMapping FieldName="JobDescription" TargetFieldName="JobDescription" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":CompanyCar" TargetName="InheritanceOne:dbo:CompanyCar">
+          <FieldMappings>
+            <FieldMapping FieldName="Brand" TargetFieldName="Brand" />
+            <FieldMapping FieldName="CarId" TargetFieldName="CarID" />
+            <FieldMapping FieldName="CarType" TargetFieldName="CarType" />
+            <FieldMapping FieldName="Price" TargetFieldName="Price" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Department" TargetName="InheritanceOne:dbo:Department">
+          <FieldMappings>
+            <FieldMapping FieldName="DepartmentId" TargetFieldName="DepartmentID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="DepartmentType" TargetFieldName="DepartmentType" />
+            <FieldMapping FieldName="Name" TargetFieldName="Name" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Employee" TargetName="InheritanceOne:dbo:Employee">
+          <FieldMappings>
+            <FieldMapping FieldName="Id" TargetFieldName="EmployeeID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="Name" TargetFieldName="Name" />
+            <FieldMapping FieldName="StartDate" TargetFieldName="StartDate" />
+            <FieldMapping FieldName="WorksForDepartmentId" TargetFieldName="WorksForDepartmentID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Employee2" TargetName="InheritanceOne:dbo:Employee2">
+          <FieldMappings>
+            <FieldMapping FieldName="EmployeeNumber" TargetFieldName="EmployeeNumber" />
+            <FieldMapping FieldName="PersonId" TargetFieldName="PersonID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":EmployeeRole" TargetName="InheritanceOne:dbo:Role">
+          <FieldMappings />
+        </EntityMapping>
+        <EntityMapping EntityName=":EmployeeRoleBenefits" TargetName="InheritanceOne:dbo:EmployeeRoleBenefits">
+          <FieldMappings>
+            <FieldMapping FieldName="Id" TargetFieldName="Id" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="Name" TargetFieldName="Name" />
+            <FieldMapping FieldName="RoleId" TargetFieldName="RoleId" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":FamilyCar" TargetName="InheritanceOne:dbo:CompanyCar">
+          <FieldMappings>
+            <FieldMapping FieldName="HasDrawHook" TargetFieldName="HasDrawHook" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":File" TargetName="InheritanceOne:dbo:FolderFile">
+          <FieldMappings>
+            <FieldMapping FieldName="Filesize" TargetFieldName="Filesize" />
+            <FieldMapping FieldName="ParentId" TargetFieldName="ParentID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Folder" TargetName="InheritanceOne:dbo:FolderFile">
+          <FieldMappings>
+            <FieldMapping FieldName="ParentId" TargetFieldName="ParentID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":FolderFile" TargetName="InheritanceOne:dbo:FolderFile">
+          <FieldMappings>
+            <FieldMapping FieldName="Discriminator" TargetFieldName="Discriminator" />
+            <FieldMapping FieldName="Id" TargetFieldName="ID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="Name" TargetFieldName="Name" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":GermanFamilyCar" TargetName="InheritanceOne:dbo:CompanyCar">
+          <FieldMappings />
+        </EntityMapping>
+        <EntityMapping EntityName=":ItalianSportsCar" TargetName="InheritanceOne:dbo:CompanyCar">
+          <FieldMappings />
+        </EntityMapping>
+        <EntityMapping EntityName=":JapaneseFamilyCar" TargetName="InheritanceOne:dbo:CompanyCar">
+          <FieldMappings />
+        </EntityMapping>
+        <EntityMapping EntityName=":Manager" TargetName="InheritanceOne:dbo:Manager">
+          <FieldMappings>
+            <FieldMapping FieldName="Id" TargetFieldName="ManagerID" />
+            <FieldMapping FieldName="ManagesDepartmentId" TargetFieldName="ManagesDepartmentID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":ManagerRole" TargetName="InheritanceOne:dbo:Role">
+          <FieldMappings />
+        </EntityMapping>
+        <EntityMapping EntityName=":Marketing" TargetName="InheritanceOne:dbo:Department">
+          <FieldMappings>
+            <FieldMapping FieldName="MeetingRoomCode" TargetFieldName="MeetingRoomCode" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":MtoMintermediateAb" TargetName="InheritanceOne:dbo:MtoMIntermediateAB">
+          <FieldMappings>
+            <FieldMapping FieldName="Ida" TargetFieldName="IDA" />
+            <FieldMapping FieldName="Idb" TargetFieldName="IDB" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":MtoMsubA" TargetName="InheritanceOne:dbo:MtoMSubA">
+          <FieldMappings>
+            <FieldMapping FieldName="Age" TargetFieldName="Age" />
+            <FieldMapping FieldName="Id" TargetFieldName="ID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":MtoMsubB" TargetName="InheritanceOne:dbo:MtoMSubB">
+          <FieldMappings>
+            <FieldMapping FieldName="Age" TargetFieldName="Age" />
+            <FieldMapping FieldName="Id" TargetFieldName="ID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":MtoMsuperA" TargetName="InheritanceOne:dbo:MtoMSuperA">
+          <FieldMappings>
+            <FieldMapping FieldName="Id" TargetFieldName="ID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="Name" TargetFieldName="Name" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":MtoMsuperB" TargetName="InheritanceOne:dbo:MtoMSuperB">
+          <FieldMappings>
+            <FieldMapping FieldName="Id" TargetFieldName="ID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="Name" TargetFieldName="Name" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Paycheck" TargetName="InheritanceOne:dbo:Paycheck">
+          <FieldMappings>
+            <FieldMapping FieldName="Amount" TargetFieldName="Amount" />
+            <FieldMapping FieldName="PaycheckId" TargetFieldName="PaycheckID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="PersonId" TargetFieldName="PersonID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Person" TargetName="InheritanceOne:dbo:Person">
+          <FieldMappings>
+            <FieldMapping FieldName="FirstName" TargetFieldName="FirstName" />
+            <FieldMapping FieldName="LastName" TargetFieldName="LastName" />
+            <FieldMapping FieldName="PersonId" TargetFieldName="PersonID" SequenceToUse="SCOPE_IDENTITY()" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Role" TargetName="InheritanceOne:dbo:Role">
+          <FieldMappings>
+            <FieldMapping FieldName="RoleId" TargetFieldName="RoleID" SequenceToUse="SCOPE_IDENTITY()" />
+            <FieldMapping FieldName="RoleName" TargetFieldName="RoleName" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":SportsCar" TargetName="InheritanceOne:dbo:CompanyCar">
+          <FieldMappings>
+            <FieldMapping FieldName="IsCabrio" TargetFieldName="IsCabrio" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Sub" TargetName="InheritanceOne:dbo:Sub">
+          <FieldMappings>
+            <FieldMapping FieldName="Age" TargetFieldName="Age" />
+            <FieldMapping FieldName="Id" TargetFieldName="ID" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Super" TargetName="InheritanceOne:dbo:Super">
+          <FieldMappings>
+            <FieldMapping FieldName="Id" TargetFieldName="ID" />
+            <FieldMapping FieldName="Name" TargetFieldName="Name" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":User" TargetName="InheritanceOne:dbo:User">
+          <FieldMappings>
+            <FieldMapping FieldName="FirstName" TargetFieldName="FirstName" />
+            <FieldMapping FieldName="LastName" TargetFieldName="LastName" />
+            <FieldMapping FieldName="UserId" TargetFieldName="UserID" SequenceToUse="SCOPE_IDENTITY()" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":UserRole" TargetName="InheritanceOne:dbo:UserRole">
+          <FieldMappings>
+            <FieldMapping FieldName="RoleId" TargetFieldName="RoleID" />
+            <FieldMapping FieldName="UserId" TargetFieldName="UserID" />
+          </FieldMappings>
+        </EntityMapping>
+      </EntityMappings>
+      <TypedViewMappings>
+        <TypedViewMapping TypedViewName=":TestMultiTargetFilter1" TargetName="InheritanceOne:dbo:vw_TestMultiTargetFilter1">
+          <FieldMappings>
+            <FieldMapping FieldName="BoardMemberId" TargetFieldName="BoardMemberID" />
+            <FieldMapping FieldName="ClerkId" TargetFieldName="ClerkID" />
+            <FieldMapping FieldName="CompanyCarId" TargetFieldName="CompanyCarID" />
+            <FieldMapping FieldName="EmployeeId" TargetFieldName="EmployeeID" />
+            <FieldMapping FieldName="JobDescription" TargetFieldName="JobDescription" />
+            <FieldMapping FieldName="ManagerId" TargetFieldName="ManagerID" />
+            <FieldMapping FieldName="ManagesDepartmentId" TargetFieldName="ManagesDepartmentID" />
+            <FieldMapping FieldName="Name" TargetFieldName="Name" />
+            <FieldMapping FieldName="StartDate" TargetFieldName="StartDate" />
+            <FieldMapping FieldName="WorksForDepartmentId" TargetFieldName="WorksForDepartmentID" />
+          </FieldMappings>
+        </TypedViewMapping>
+      </TypedViewMappings>
+      <SPCallMappings>
+        <SPCallMapping SPCallName=":ClearAll" TargetName="InheritanceOne:dbo:pr_ClearAll">
+          <FieldMappings />
+        </SPCallMapping>
+      </SPCallMappings>
+      <TypeConversionDefinitions>
+        <TypeConversionDefinition TypeConverter="SD.LLBLGen.Pro.TypeConverters.BooleanNumericConverter" DbDotNetType="System.Int32" />
+      </TypeConversionDefinitions>
+    </MappingStore>
+  </MappingStores>
+  <ModelViews>
+    <ModelView Name="Test">
+      <EntityDefinitions>
+        <Entity Name=":BoardMember" />
+        <Entity Name=":CompanyCar" />
+        <Entity Name=":Department" />
+        <Entity Name=":Employee" />
+        <Entity Name=":FamilyCar" />
+        <Entity Name=":GermanFamilyCar" />
+        <Entity Name=":ItalianSportsCar" />
+        <Entity Name=":Manager" />
+        <Entity Name=":SportsCar" />
+      </EntityDefinitions>
+      <Documentation><![CDATA[]]></Documentation>
+    </ModelView>
+    <ModelView Name="Test2">
+      <EntityDefinitions>
+        <Entity Name=":Clerk" />
+        <Entity Name=":Department" />
+        <Entity Name=":Employee" />
+        <Entity Name=":Manager" />
+      </EntityDefinitions>
+      <Documentation><![CDATA[]]></Documentation>
+    </ModelView>
+  </ModelViews>
+</Project>

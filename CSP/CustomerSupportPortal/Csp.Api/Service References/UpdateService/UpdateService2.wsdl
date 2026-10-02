@@ -1,0 +1,1418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.paloaltonetworks.com/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://www.paloaltonetworks.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.paloaltonetworks.com/">
+      <s:element name="CheckForSoftwareUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="platform" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForSoftwareUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckForSoftwareUpdateResult" type="tns:PANUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PANUpdateResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="AllSWVersionInfo" type="tns:ArrayOfSWVersionInfo" />
+          <s:element minOccurs="0" maxOccurs="1" name="AllSignatureVersionInfo" type="tns:ArrayOfSignatureVersionInfo" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReponseDataList" type="tns:ArrayOfAnyType" />
+          <s:element minOccurs="1" maxOccurs="1" name="UpdateType" type="tns:UpdateType" />
+          <s:element minOccurs="1" maxOccurs="1" name="CumulativeUpdateInfo" type="tns:CumulativeUpdate" />
+          <s:element minOccurs="0" maxOccurs="1" name="DownloadURL" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LatestSignatureVersionInfo" type="tns:SignatureVersionInfo" />
+          <s:element minOccurs="0" maxOccurs="1" name="LatestSoftwareVersionInfo" type="tns:SWVersionInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfSWVersionInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SWVersionInfo" nillable="true" type="tns:SWVersionInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SWVersionInfo">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:VersionInfo">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="ModelsSupported" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="MD5Checksum" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Platform" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Product" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FormatVersion" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Title" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="TitleId" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="GroupId" type="s:int" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="VersionInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="downloadURL" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="CdnEnabled" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="MinRequiredVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReleaseNotesURL" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VersionNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReleaseNotesFileName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FileName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FileDisplayName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="GroupDisplayName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="GroupDisplayOrder" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Size" type="s:long" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReleaseDate" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SignatureVersionInfo">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:VersionInfo">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="min_threat_ver" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="max_supported_ver" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="AppVersion" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Feature" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsIncremental" type="s:boolean" />
+              <s:element minOccurs="0" maxOccurs="1" name="MD5Checksum" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ArrayOfSignatureVersionInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SignatureVersionInfo" nillable="true" type="tns:SignatureVersionInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfAnyType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="anyType" nillable="true" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="UpdateType">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="Incremental" />
+          <s:enumeration value="Full" />
+          <s:enumeration value="Cumulative" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="CumulativeUpdate">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SignatureVersions" type="tns:ArrayOfSignatureVersionInfo" />
+          <s:element minOccurs="0" maxOccurs="1" name="FromVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ToVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Size" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="StandardData">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Value" type="s:string" />
+        </s:sequence>
+        <s:attribute name="key" type="s:string" />
+      </s:complexType>
+      <s:element name="CheckForSignatureUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="featureName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentSignatureVersion" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentOSVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForSignatureUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckForSignatureUpdateResult" type="tns:PANUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForVirusUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="featureName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentSignatureVersion" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentOSVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForVirusUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckForVirusUpdateResult" type="tns:PANUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForWildfireUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="featureName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentSignatureVersion" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentOSVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForWildfireUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckForWildfireUpdateResult" type="tns:PANUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForMDMUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="featureName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentSignatureVersion" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentOSVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForMDMUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckForMDMUpdateResult" type="tns:PANUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForMDMappUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="featureName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentSignatureVersion" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentOSVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForMDMappUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckForMDMappUpdateResult" type="tns:PANUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckForGPUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="featureName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentGPVersion" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentOSVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="GlobalProtect">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="result" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="file_version" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="lastModified" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="file_location" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="encryption_key" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CheckForGPUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckForGPUpdateResult" type="tns:GlobalProtect" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAvailableSWVersionInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="platform" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAvailableSWVersionInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAvailableSWVersionInfoResult" type="tns:ArrayOfSWVersionInfo" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSWLibrary">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentOSVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSWLibraryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSWLibraryResult" type="tns:PANUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSILibrary">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentOSVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSILibraryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSILibraryResult" type="tns:PANUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSVLibrary">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentOSVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSVLibraryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSVLibraryResult" type="tns:PANUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetWFLibrary">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serialNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cpuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentOSVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetWFLibraryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetWFLibraryResult" type="tns:PANUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSoftwareUpdates">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="accountid" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSoftwareUpdatesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSoftwareUpdatesResult" type="tns:ArrayOfSWVersionInfo" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDynamicUpdates">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="accountid" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDynamicUpdatesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDynamicUpdatesResult" type="tns:ArrayOfSWVersionInfo" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PANUpdateResponse" nillable="true" type="tns:PANUpdateResponse" />
+      <s:element name="GlobalProtect" nillable="true" type="tns:GlobalProtect" />
+      <s:element name="ArrayOfSWVersionInfo" nillable="true" type="tns:ArrayOfSWVersionInfo" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="CheckForSoftwareUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckForSoftwareUpdate" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSoftwareUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckForSoftwareUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSignatureUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckForSignatureUpdate" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSignatureUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckForSignatureUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForVirusUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckForVirusUpdate" />
+  </wsdl:message>
+  <wsdl:message name="CheckForVirusUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckForVirusUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForWildfireUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckForWildfireUpdate" />
+  </wsdl:message>
+  <wsdl:message name="CheckForWildfireUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckForWildfireUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckForMDMUpdate" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckForMDMUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMappUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckForMDMappUpdate" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMappUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckForMDMappUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForGPUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckForGPUpdate" />
+  </wsdl:message>
+  <wsdl:message name="CheckForGPUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckForGPUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAvailableSWVersionInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAvailableSWVersionInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetAvailableSWVersionInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAvailableSWVersionInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSWLibrarySoapIn">
+    <wsdl:part name="parameters" element="tns:GetSWLibrary" />
+  </wsdl:message>
+  <wsdl:message name="GetSWLibrarySoapOut">
+    <wsdl:part name="parameters" element="tns:GetSWLibraryResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSILibrarySoapIn">
+    <wsdl:part name="parameters" element="tns:GetSILibrary" />
+  </wsdl:message>
+  <wsdl:message name="GetSILibrarySoapOut">
+    <wsdl:part name="parameters" element="tns:GetSILibraryResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSVLibrarySoapIn">
+    <wsdl:part name="parameters" element="tns:GetSVLibrary" />
+  </wsdl:message>
+  <wsdl:message name="GetSVLibrarySoapOut">
+    <wsdl:part name="parameters" element="tns:GetSVLibraryResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetWFLibrarySoapIn">
+    <wsdl:part name="parameters" element="tns:GetWFLibrary" />
+  </wsdl:message>
+  <wsdl:message name="GetWFLibrarySoapOut">
+    <wsdl:part name="parameters" element="tns:GetWFLibraryResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSoftwareUpdatesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSoftwareUpdates" />
+  </wsdl:message>
+  <wsdl:message name="GetSoftwareUpdatesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSoftwareUpdatesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDynamicUpdatesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDynamicUpdates" />
+  </wsdl:message>
+  <wsdl:message name="GetDynamicUpdatesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDynamicUpdatesResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSoftwareUpdateHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="platform" type="s:string" />
+    <wsdl:part name="currentVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSoftwareUpdateHttpGetOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSignatureUpdateHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentSignatureVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSignatureUpdateHttpGetOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForVirusUpdateHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentSignatureVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForVirusUpdateHttpGetOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForWildfireUpdateHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentSignatureVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForWildfireUpdateHttpGetOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMUpdateHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentSignatureVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMUpdateHttpGetOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMappUpdateHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentSignatureVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMappUpdateHttpGetOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForGPUpdateHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentGPVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForGPUpdateHttpGetOut">
+    <wsdl:part name="Body" element="tns:GlobalProtect" />
+  </wsdl:message>
+  <wsdl:message name="GetAvailableSWVersionInfoHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="platform" type="s:string" />
+    <wsdl:part name="currentVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetAvailableSWVersionInfoHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfSWVersionInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetSWLibraryHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSWLibraryHttpGetOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSILibraryHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSILibraryHttpGetOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSVLibraryHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSVLibraryHttpGetOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetWFLibraryHttpGetIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetWFLibraryHttpGetOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSoftwareUpdatesHttpGetIn">
+    <wsdl:part name="accountid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSoftwareUpdatesHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfSWVersionInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetDynamicUpdatesHttpGetIn">
+    <wsdl:part name="accountid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetDynamicUpdatesHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfSWVersionInfo" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSoftwareUpdateHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="platform" type="s:string" />
+    <wsdl:part name="currentVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSoftwareUpdateHttpPostOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSignatureUpdateHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentSignatureVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForSignatureUpdateHttpPostOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForVirusUpdateHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentSignatureVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForVirusUpdateHttpPostOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForWildfireUpdateHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentSignatureVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForWildfireUpdateHttpPostOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMUpdateHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentSignatureVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMUpdateHttpPostOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMappUpdateHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentSignatureVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForMDMappUpdateHttpPostOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckForGPUpdateHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="featureName" type="s:string" />
+    <wsdl:part name="currentGPVersion" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckForGPUpdateHttpPostOut">
+    <wsdl:part name="Body" element="tns:GlobalProtect" />
+  </wsdl:message>
+  <wsdl:message name="GetAvailableSWVersionInfoHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="platform" type="s:string" />
+    <wsdl:part name="currentVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetAvailableSWVersionInfoHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfSWVersionInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetSWLibraryHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSWLibraryHttpPostOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSILibraryHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSILibraryHttpPostOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSVLibraryHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSVLibraryHttpPostOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetWFLibraryHttpPostIn">
+    <wsdl:part name="serialNumber" type="s:string" />
+    <wsdl:part name="cpuid" type="s:string" />
+    <wsdl:part name="uuid" type="s:string" />
+    <wsdl:part name="currentOSVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetWFLibraryHttpPostOut">
+    <wsdl:part name="Body" element="tns:PANUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSoftwareUpdatesHttpPostIn">
+    <wsdl:part name="accountid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSoftwareUpdatesHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfSWVersionInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetDynamicUpdatesHttpPostIn">
+    <wsdl:part name="accountid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetDynamicUpdatesHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfSWVersionInfo" />
+  </wsdl:message>
+  <wsdl:portType name="UpdateService2Soap">
+    <wsdl:operation name="CheckForSoftwareUpdate">
+      <wsdl:input message="tns:CheckForSoftwareUpdateSoapIn" />
+      <wsdl:output message="tns:CheckForSoftwareUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForSignatureUpdate">
+      <wsdl:input message="tns:CheckForSignatureUpdateSoapIn" />
+      <wsdl:output message="tns:CheckForSignatureUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForVirusUpdate">
+      <wsdl:input message="tns:CheckForVirusUpdateSoapIn" />
+      <wsdl:output message="tns:CheckForVirusUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForWildfireUpdate">
+      <wsdl:input message="tns:CheckForWildfireUpdateSoapIn" />
+      <wsdl:output message="tns:CheckForWildfireUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMUpdate">
+      <wsdl:input message="tns:CheckForMDMUpdateSoapIn" />
+      <wsdl:output message="tns:CheckForMDMUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMappUpdate">
+      <wsdl:input message="tns:CheckForMDMappUpdateSoapIn" />
+      <wsdl:output message="tns:CheckForMDMappUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForGPUpdate">
+      <wsdl:input message="tns:CheckForGPUpdateSoapIn" />
+      <wsdl:output message="tns:CheckForGPUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAvailableSWVersionInfo">
+      <wsdl:input message="tns:GetAvailableSWVersionInfoSoapIn" />
+      <wsdl:output message="tns:GetAvailableSWVersionInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSWLibrary">
+      <wsdl:input message="tns:GetSWLibrarySoapIn" />
+      <wsdl:output message="tns:GetSWLibrarySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSILibrary">
+      <wsdl:input message="tns:GetSILibrarySoapIn" />
+      <wsdl:output message="tns:GetSILibrarySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSVLibrary">
+      <wsdl:input message="tns:GetSVLibrarySoapIn" />
+      <wsdl:output message="tns:GetSVLibrarySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWFLibrary">
+      <wsdl:input message="tns:GetWFLibrarySoapIn" />
+      <wsdl:output message="tns:GetWFLibrarySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSoftwareUpdates">
+      <wsdl:input message="tns:GetSoftwareUpdatesSoapIn" />
+      <wsdl:output message="tns:GetSoftwareUpdatesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDynamicUpdates">
+      <wsdl:input message="tns:GetDynamicUpdatesSoapIn" />
+      <wsdl:output message="tns:GetDynamicUpdatesSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="UpdateService2HttpGet">
+    <wsdl:operation name="CheckForSoftwareUpdate">
+      <wsdl:input message="tns:CheckForSoftwareUpdateHttpGetIn" />
+      <wsdl:output message="tns:CheckForSoftwareUpdateHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForSignatureUpdate">
+      <wsdl:input message="tns:CheckForSignatureUpdateHttpGetIn" />
+      <wsdl:output message="tns:CheckForSignatureUpdateHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForVirusUpdate">
+      <wsdl:input message="tns:CheckForVirusUpdateHttpGetIn" />
+      <wsdl:output message="tns:CheckForVirusUpdateHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForWildfireUpdate">
+      <wsdl:input message="tns:CheckForWildfireUpdateHttpGetIn" />
+      <wsdl:output message="tns:CheckForWildfireUpdateHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMUpdate">
+      <wsdl:input message="tns:CheckForMDMUpdateHttpGetIn" />
+      <wsdl:output message="tns:CheckForMDMUpdateHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMappUpdate">
+      <wsdl:input message="tns:CheckForMDMappUpdateHttpGetIn" />
+      <wsdl:output message="tns:CheckForMDMappUpdateHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForGPUpdate">
+      <wsdl:input message="tns:CheckForGPUpdateHttpGetIn" />
+      <wsdl:output message="tns:CheckForGPUpdateHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAvailableSWVersionInfo">
+      <wsdl:input message="tns:GetAvailableSWVersionInfoHttpGetIn" />
+      <wsdl:output message="tns:GetAvailableSWVersionInfoHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSWLibrary">
+      <wsdl:input message="tns:GetSWLibraryHttpGetIn" />
+      <wsdl:output message="tns:GetSWLibraryHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSILibrary">
+      <wsdl:input message="tns:GetSILibraryHttpGetIn" />
+      <wsdl:output message="tns:GetSILibraryHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSVLibrary">
+      <wsdl:input message="tns:GetSVLibraryHttpGetIn" />
+      <wsdl:output message="tns:GetSVLibraryHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWFLibrary">
+      <wsdl:input message="tns:GetWFLibraryHttpGetIn" />
+      <wsdl:output message="tns:GetWFLibraryHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSoftwareUpdates">
+      <wsdl:input message="tns:GetSoftwareUpdatesHttpGetIn" />
+      <wsdl:output message="tns:GetSoftwareUpdatesHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDynamicUpdates">
+      <wsdl:input message="tns:GetDynamicUpdatesHttpGetIn" />
+      <wsdl:output message="tns:GetDynamicUpdatesHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="UpdateService2HttpPost">
+    <wsdl:operation name="CheckForSoftwareUpdate">
+      <wsdl:input message="tns:CheckForSoftwareUpdateHttpPostIn" />
+      <wsdl:output message="tns:CheckForSoftwareUpdateHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForSignatureUpdate">
+      <wsdl:input message="tns:CheckForSignatureUpdateHttpPostIn" />
+      <wsdl:output message="tns:CheckForSignatureUpdateHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForVirusUpdate">
+      <wsdl:input message="tns:CheckForVirusUpdateHttpPostIn" />
+      <wsdl:output message="tns:CheckForVirusUpdateHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForWildfireUpdate">
+      <wsdl:input message="tns:CheckForWildfireUpdateHttpPostIn" />
+      <wsdl:output message="tns:CheckForWildfireUpdateHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMUpdate">
+      <wsdl:input message="tns:CheckForMDMUpdateHttpPostIn" />
+      <wsdl:output message="tns:CheckForMDMUpdateHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMappUpdate">
+      <wsdl:input message="tns:CheckForMDMappUpdateHttpPostIn" />
+      <wsdl:output message="tns:CheckForMDMappUpdateHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckForGPUpdate">
+      <wsdl:input message="tns:CheckForGPUpdateHttpPostIn" />
+      <wsdl:output message="tns:CheckForGPUpdateHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAvailableSWVersionInfo">
+      <wsdl:input message="tns:GetAvailableSWVersionInfoHttpPostIn" />
+      <wsdl:output message="tns:GetAvailableSWVersionInfoHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSWLibrary">
+      <wsdl:input message="tns:GetSWLibraryHttpPostIn" />
+      <wsdl:output message="tns:GetSWLibraryHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSILibrary">
+      <wsdl:input message="tns:GetSILibraryHttpPostIn" />
+      <wsdl:output message="tns:GetSILibraryHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSVLibrary">
+      <wsdl:input message="tns:GetSVLibraryHttpPostIn" />
+      <wsdl:output message="tns:GetSVLibraryHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWFLibrary">
+      <wsdl:input message="tns:GetWFLibraryHttpPostIn" />
+      <wsdl:output message="tns:GetWFLibraryHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSoftwareUpdates">
+      <wsdl:input message="tns:GetSoftwareUpdatesHttpPostIn" />
+      <wsdl:output message="tns:GetSoftwareUpdatesHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDynamicUpdates">
+      <wsdl:input message="tns:GetDynamicUpdatesHttpPostIn" />
+      <wsdl:output message="tns:GetDynamicUpdatesHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="UpdateService2Soap" type="tns:UpdateService2Soap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CheckForSoftwareUpdate">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/CheckForSoftwareUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForSignatureUpdate">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/CheckForSignatureUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForVirusUpdate">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/CheckForVirusUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForWildfireUpdate">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/CheckForWildfireUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMUpdate">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/CheckForMDMUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMappUpdate">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/CheckForMDMappUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForGPUpdate">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/CheckForGPUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAvailableSWVersionInfo">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/GetAvailableSWVersionInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSWLibrary">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/GetSWLibrary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSILibrary">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/GetSILibrary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSVLibrary">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/GetSVLibrary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWFLibrary">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/GetWFLibrary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSoftwareUpdates">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/GetSoftwareUpdates" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDynamicUpdates">
+      <soap:operation soapAction="http://www.paloaltonetworks.com/GetDynamicUpdates" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="UpdateService2Soap12" type="tns:UpdateService2Soap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CheckForSoftwareUpdate">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/CheckForSoftwareUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForSignatureUpdate">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/CheckForSignatureUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForVirusUpdate">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/CheckForVirusUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForWildfireUpdate">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/CheckForWildfireUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMUpdate">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/CheckForMDMUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMappUpdate">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/CheckForMDMappUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForGPUpdate">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/CheckForGPUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAvailableSWVersionInfo">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/GetAvailableSWVersionInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSWLibrary">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/GetSWLibrary" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSILibrary">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/GetSILibrary" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSVLibrary">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/GetSVLibrary" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWFLibrary">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/GetWFLibrary" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSoftwareUpdates">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/GetSoftwareUpdates" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDynamicUpdates">
+      <soap12:operation soapAction="http://www.paloaltonetworks.com/GetDynamicUpdates" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="UpdateService2HttpGet" type="tns:UpdateService2HttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="CheckForSoftwareUpdate">
+      <http:operation location="/CheckForSoftwareUpdate" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForSignatureUpdate">
+      <http:operation location="/CheckForSignatureUpdate" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForVirusUpdate">
+      <http:operation location="/CheckForVirusUpdate" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForWildfireUpdate">
+      <http:operation location="/CheckForWildfireUpdate" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMUpdate">
+      <http:operation location="/CheckForMDMUpdate" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMappUpdate">
+      <http:operation location="/CheckForMDMappUpdate" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForGPUpdate">
+      <http:operation location="/CheckForGPUpdate" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAvailableSWVersionInfo">
+      <http:operation location="/GetAvailableSWVersionInfo" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSWLibrary">
+      <http:operation location="/GetSWLibrary" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSILibrary">
+      <http:operation location="/GetSILibrary" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSVLibrary">
+      <http:operation location="/GetSVLibrary" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWFLibrary">
+      <http:operation location="/GetWFLibrary" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSoftwareUpdates">
+      <http:operation location="/GetSoftwareUpdates" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDynamicUpdates">
+      <http:operation location="/GetDynamicUpdates" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="UpdateService2HttpPost" type="tns:UpdateService2HttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="CheckForSoftwareUpdate">
+      <http:operation location="/CheckForSoftwareUpdate" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForSignatureUpdate">
+      <http:operation location="/CheckForSignatureUpdate" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForVirusUpdate">
+      <http:operation location="/CheckForVirusUpdate" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForWildfireUpdate">
+      <http:operation location="/CheckForWildfireUpdate" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMUpdate">
+      <http:operation location="/CheckForMDMUpdate" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForMDMappUpdate">
+      <http:operation location="/CheckForMDMappUpdate" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckForGPUpdate">
+      <http:operation location="/CheckForGPUpdate" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAvailableSWVersionInfo">
+      <http:operation location="/GetAvailableSWVersionInfo" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSWLibrary">
+      <http:operation location="/GetSWLibrary" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSILibrary">
+      <http:operation location="/GetSILibrary" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSVLibrary">
+      <http:operation location="/GetSVLibrary" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWFLibrary">
+      <http:operation location="/GetWFLibrary" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSoftwareUpdates">
+      <http:operation location="/GetSoftwareUpdates" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDynamicUpdates">
+      <http:operation location="/GetDynamicUpdates" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="UpdateService2">
+    <wsdl:port name="UpdateService2Soap" binding="tns:UpdateService2Soap">
+      <soap:address location="http://sjccupdvw01t/Updates/UpdateService2.asmx" />
+    </wsdl:port>
+    <wsdl:port name="UpdateService2Soap12" binding="tns:UpdateService2Soap12">
+      <soap12:address location="http://sjccupdvw01t/Updates/UpdateService2.asmx" />
+    </wsdl:port>
+    <wsdl:port name="UpdateService2HttpGet" binding="tns:UpdateService2HttpGet">
+      <http:address location="http://sjccupdvw01t/Updates/UpdateService2.asmx" />
+    </wsdl:port>
+    <wsdl:port name="UpdateService2HttpPost" binding="tns:UpdateService2HttpPost">
+      <http:address location="http://sjccupdvw01t/Updates/UpdateService2.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

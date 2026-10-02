@@ -1,0 +1,1101 @@
+﻿@using Kendo.Mvc.UI
+@using Csp.Web.DataTransferObjects
+@model DeviceLicensesDto
+
+@{
+    var mode = Model.DeviceLicenseMode == DeviceLicenseMode.Trial ? "Trial" : "Eval";
+    var isK2Device = Model.IsK2Device ? "true" : "false";
+    bool showMaxIotTrialsMessage = false; // Maximum 5 trials per CSP account popup message needed.
+    bool showIotCdlRequiredMessage = false; // Trial would be LIMITED to customers that have an active CDL license. Active CDL license required popup message needed.
+    if (Model.AvailableLicenses != null // CSP-6211 CSP Initiated 30 day IOT trial 3 radial buttons
+        && Model.AvailableLicenses.Any(i => ((Dictionary<string, string>)i)["LicenseType"].Contains("IOT")))
+    {
+        var iotLicenseDictionary = ((Dictionary<string, string>)Model.AvailableLicenses.FirstOrDefault(i => ((Dictionary<string, string>)i)["LicenseType"] == "IOTSecurityDataLake"));
+        if (iotLicenseDictionary != null && iotLicenseDictionary.Keys.Contains("IotTrialActiveCount"))
+        {
+            showMaxIotTrialsMessage = Convert.ToInt32(iotLicenseDictionary["IotTrialActiveCount"]) >= 5;
+        }
+        if (iotLicenseDictionary != null && iotLicenseDictionary.Keys.Contains("CdlLicensesCount"))
+        {
+            showIotCdlRequiredMessage = Convert.ToInt32(iotLicenseDictionary["CdlLicensesCount"]) == 0;
+        }
+    }
+
+    bool showMaxSaasInlineTrialsMessage = false;
+    bool showSaasInlineCdlRequiredMessage = false;
+    if (Model.AvailableLicenses != null
+        && Model.AvailableLicenses.Any(i => ((Dictionary<string, string>)i)["LicenseType"].ToLower() == "SaaSInline".ToLower()))
+    {
+        var saasInlineLicenseDictionary = ((Dictionary<string, string>)Model.AvailableLicenses.FirstOrDefault(i => ((Dictionary<string, string>)i)["LicenseType"].ToLower() == "SaasInline".ToLower()));
+        if (saasInlineLicenseDictionary != null && saasInlineLicenseDictionary.Keys.Contains("SaaSInlineTrialActiveCount"))
+        {
+            showMaxSaasInlineTrialsMessage = Convert.ToInt32(saasInlineLicenseDictionary["SaaSInlineTrialActiveCount"]) >= 5;
+        }
+        if (saasInlineLicenseDictionary != null && saasInlineLicenseDictionary.Keys.Contains("CdlLicensesCount"))
+        {
+            showSaasInlineCdlRequiredMessage = Convert.ToInt32(saasInlineLicenseDictionary["CdlLicensesCount"]) == 0;
+        }
+    }
+}
+
+<style>
+    input[type="radio"],
+    input[type="checkbox"] {
+        margin: 0px 0 0;
+        *margin-top: 0;
+        line-height: normal;
+    }
+
+    [id^=authcodeactivation_] {
+        display: none;
+    }
+
+    [id^=nfrtriallicense_] {
+        display: none;
+    }
+
+    [id^=iseligibleforfeaturelicense_] {
+        display: none;
+    }
+
+    [id^=panoramadiv_] {
+        display: none;        
+    }
+
+    [id^=panoramauuiddiv_] {
+        display: none;        
+    }
+
+    [id^=transferclouddiv] {
+        display: none;        
+    }
+    [id=containerVMUpgradeRollBackDiv] {
+        display: none;
+    }
+
+    [id=divVmUpgradeStatus] {
+        display: none;
+    }
+
+    .temp-disabled { color: red;position: relative;left: 50px;}
+    .temp-disabled span { position:absolute;width: 370px;line-height: 1.35em;top: -5px; }
+    .temp-note { background-color:yellow; font-style: italic; position: relative;left: 50px;}
+    .max-note { background-color:yellow; font-style: italic; position: relative;left: 50px;}
+
+
+</style>
+
+<script>
+    function uploadSuccess(e) {
+        var data = e.response;
+        if (data.Message && data.Message.length > 0) {
+            alert(data.Message);
+        } else {
+            $('#@UniqueId.UuId').val(data.UuId);
+            $('#@UniqueId.CpuId').val(data.CpuId);
+        }
+    }
+
+    function OnPanOsSelectedItem(e) {
+        if (e.item == null) {
+            return;
+        }
+        var dataItem = this.dataItem(e.item);
+        var versions = dataItem.PanOsVersion.split(".");
+        //8.1 or above: display UUID block
+        if (versions.length > 1 && (parseInt(versions[0]) > 8 || (versions[0] === '8' && versions[1] >= '1'))) {
+            $('div[id^=panoramauuiddiv_]').css("display", "block");
+            kendo.fx($('div[id^=panoramauuiddiv_]')).expand("vertical").play();
+        } else {
+            $('div[id^=panoramauuiddiv_]').css('display', 'none');
+            $('#@UniqueId.UuId').val('');
+            $('#@UniqueId.CpuId').val('');
+        }
+    }
+    function GetEvalCloudServiceForTransef() {
+        var params = SetAntiForgery();
+        params.SupportAccountID = $("#SupportAccountID").val();
+        params.SerialNumber = $('#@UniqueId.SerialNumber').val();
+        return params;
+    }
+    function hideFeatureLicenses() {
+        $('div[id^=iseligibleforfeaturelicense_]').css('display', 'none');
+    }
+
+    var @(UniqueId.DeviceLicenses)License = (function () {
+
+        function validateLicenseTypeAndActivate(authCode) {
+            $.ajax({
+                url: "/License/GetAuthCodeType?authCode=" + authCode,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                success: function(data) {
+                    if (data.startsWith('NGFWDLP')) {
+                        $('#ngfw-dlp-license-activation').removeClass('hide');
+                    }
+                    else{
+                        $('#ngfw-dlp-license-activation').addClass('hide');
+                    }
+                    if (data === 'SDWAN') {
+                        SDWANSubscriptionConfirmation();
+                    } else {
+                        activateLicenses();
+                    }
+                },
+                error: function() {
+                    activateLicenses();
+                }
+            });
+        };
+
+        function getPanOsVersion(authCode) {
+            return $.ajax({
+                url: "/License/GetPanOsVersion?authCode=" + authCode,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                success: function(data) {
+                    return data;
+                }
+            });
+        };
+
+        function agreeAndSubmit() {
+            if ($('.field-validation-error:visible').length > 0) { // cancel submission if any FE validation error
+                return;
+            }
+
+            if ('@isK2Device' === 'true') {
+                K2DeviceConfirmation();
+            }
+            else {
+                var authCode;
+                var licenseType;
+                if ($('input:radio[name=LicenseActivation]:checked').val() == "AuthCode") {
+                    authCode = $("#ActivateLicense_AuthorizationCode").val();
+                } else if ($('input:radio[name=LicenseActivation]:checked').val() == "Upgrade") {
+                    authCode = $("#ActivateLicense_UpgradeAuthorizationCode").val();
+                } else {
+                    //Trial license
+                    $('input:checkbox.TrialLinkCheckBox:checked').each(function () {
+                        if ($(this).attr('name') === 'SDWAN') {
+                            licenseType = 'SDWAN';
+                        }
+                    });
+                }
+
+                if (licenseType === 'SDWAN') {
+                    SDWANSubscriptionConfirmation();
+                }
+                else if (authCode) {
+                    validateLicenseTypeAndActivate(authCode);
+                }
+                else {
+                    activateLicenses();
+                }
+            }
+        }
+
+        function activateLicenses() {
+
+            if ($("#hdnIsUpdateInProgress").val() == "1") {
+                SupportPortal.ClearNotification();
+                SupportPortal.Notification("Applying Subscription and support would be not available until upgrade is complete.", 4);
+                return;
+            }
+
+            if($('input:radio[name=LicenseActivation]:checked').val() == "transferCloudLicense"){
+                transferCloudLicenses();
+            }
+            else if ($('input:radio[name=LicenseActivation]:checked').val() == "AuthCode") {
+                activateAuthCode($("#ActivateLicense_AuthorizationCode").val(),0);
+            } else if ($('input:radio[name=LicenseActivation]:checked').val() == "Upgrade") {
+                activateAuthCode($("#ActivateLicense_UpgradeAuthorizationCode").val(),1);
+            }else {
+                activateTrials();
+            }
+        }
+
+        function activateAuthCode(authCode, isupgrade) {
+
+            var serialNumber = $('#@UniqueId.SerialNumber').val();
+            var eulaId = $("#SelectedEulaId").val();
+            var urldata = "/License/ActivateAuthCode?serialNumber=" + serialNumber + "&authorizationCode=" + authCode + "&eulaId=" + eulaId + "&isUpgrade=" + isupgrade;
+
+            SupportPortal.ClearNotification();
+            if (authCode == "") {
+                SupportPortal.Notification("Authorization code is required.", 4);
+                return;
+            } 
+            getPanOsVersion(authCode).success(function (data) {
+                if(data == "10.0.4_or-above"){
+                    SupportPortal.Notification("Only Authcodes with Fixed VCPUs are allowed.", 4);
+                } else {
+                    SupportPortal.BlockUI();
+
+                    $.getJSON(urldata, activateAuthCodeResponse).fail(function (xhr) {
+                        if (xhr.status == "401") {
+                            SupportPortal.ClearNotification();
+                            SupportPortal.Notification("User not authorized to activate license for customer");
+                            SupportPortal.UnBlockUI();
+                        }
+                    });
+                }
+            });
+        }
+
+        function transferCloudLicenses(){
+            var fromSerialNumber = $('#@UniqueId.SerialNumber').val();
+            var toSerialNumber = $("#CloudConvertPanorama").val();
+            var eulaId = $("#SelectedEulaId").val();
+            var urldata = "/License/TransferCloudLicenses?fromSerialNumber="+fromSerialNumber+"&toSerialNumber="+toSerialNumber+"&eulaId="+eulaId;
+            SupportPortal.ClearNotification();
+            if (toSerialNumber == "" || toSerialNumber == "- Panorama Select -") {
+                SupportPortal.Notification("Please select Panorama to transfer Cloud services.", 4);
+                return;
+            }
+            SupportPortal.BlockUI();
+            $.getJSON(urldata, transferLicenseResponse).fail(function (xhr) {
+                SupportPortal.ClearNotification();
+                SupportPortal.Notification("Error while transferring Cloud Service",4);
+                SupportPortal.UnBlockUI();
+
+            });
+        }
+
+        function transferLicenseResponse(data){
+            SupportPortal.ClearNotification();
+            if(data.includes("Error"))
+                SupportPortal.Notification(data,4);
+            else
+                SupportPortal.Notification("Successfully Transfered Cloud Services",1);
+            SupportPortal.OnWindowClose(licenseGridId);
+            SupportPortal.UnBlockUI();
+
+        }
+        function activateAuthCodeResponse(data) {
+
+            // check if authcode is a IsSiteLicense, Is4HourRma, IsReplacementBundle
+            // if yes, do something like showDisclaimer
+           if (data != null) {
+                var lic = data.ActivateLicense;
+                var device = data.Device;
+                if (lic != null) {
+                    if (lic.IsSiteLicense == true) {
+                        showSiteLicenseConfirmation();
+                    }
+                    else if (lic.Is4HourRma == true && lic.Show4HrLocation == false) {
+                        showFourHourRmaConfirmation();
+                    }
+                    else if (lic.Is4HourRma == true && lic.Show4HrLocation == true) {
+                        show4HourRmaLocationDifference(lic.City,lic.PostalCode,lic.Country,device.City,device.PostalCode,device.CountryName);
+                    }
+                    else if (lic.IsReplacementBundle == true) {
+                        showReplacementBundleConfirmation();
+                    } else {
+                        if (data.Notifications != null && data.Notifications.length > 0) {
+                            SupportPortal.OnWindowClose(licenseGridId);
+                            SupportPortal.UnBlockUI();
+                            var notification = data.Notifications[0];
+                            SupportPortal.Notification(notification.Message, notification.State, $('.display-notifications'));
+                            if (notification.State == SupportPortal.NotificationType.Information && data.ActivateLicense.IsUpgradeLicense == true) {
+                                $("#divActivateLicenses").css("display", "none");
+                                $('div[id^=authcodeactivation_]').css("display", "none");
+                                $('div[id^=nfrtriallicense_]').css("display", "none");
+                                hideFeatureLicenses();
+                                $('div[id^=authcodeupgrade_]').css("display", "none");
+                                showVmUpgradeInProgressStatus();
+                            }
+                        }
+                    }
+                }
+            }
+            SupportPortal.UnBlockUI();
+        }
+
+        function showSiteLicenseConfirmation() {
+            var message = "<div style=\"color: red\"><h4>Site License - Confirmation</h4><p>You are activating a site license. Once activated the site license will provide the license for all devices that do not already have the license or has the same type of license that expires before the end of this site license. Please press continue if you would like to activate this license.</p></div>";
+            SupportPortal.Confirmation(message, function () { confirmAction(1); }, function () { cancelAction(); }, { width: 550, height: 200, title: 'Notice', yesTitle: 'Continue', noTitle: 'Cancel', actions: {} });
+        }
+
+        function showFourHourRmaConfirmation() {
+            var message = "<div style=\"color: red\"><h4>Activate 4Hour RMA License - Confirmation</h4><p><span style=\"font-weight: bold\">Note: </span>This serial number has 4-hour RMA support. Please verify that it is located in the city/country/postal code identified in your Order Summary. If not, the replacement order will default to Next Business Day delivery.</span></span></p><p>Please confirm this is correct. This registration will <span style=\"text-decoration: underline\">NOT</span> apply to any other device(s) or locations.</p><p>Palo Alto Networks will not be liable if devices were physically re-located without our knowledge.</p></div>";
+            SupportPortal.Confirmation(message, function () { confirmAction(2); }, function () { cancelAction(); }, { width: 550, height: 240, title: 'Notice', yesTitle: 'Continue', noTitle: 'Cancel', actions: {} });
+        }
+
+        function show4HourRmaLocationDifference(licCity,licPostCode,licCountry,devCity,devPostalCode,devCountry) {
+            var message = "<div>"
+            message +="<p>This is your device\'s original location:<br />";
+            message +="       <span style=\"color:green\">";
+            message +="    City: "+devCity+"<br />";
+            message +="    Postal Code: "+devPostalCode+"<br />";
+            message +="Country: "+devCountry+"<br />";
+            message +=" </span>This is the location eligible for 4 Hour Premium Support:<br /><span style=\"color:red\">";
+            message +="    City: "+licCity+"<br />";
+            message +="        Postal Code: "+licPostCode+"<br />";
+            message +="            Country: "+licCountry+"<br />";
+            message +="            </span>";
+            message +="Would you like to update your Device\'s Registered Location to the eligible 4 Hour Premium Support?";
+            SupportPortal.Confirmation(message, function () { confirmAction(4); }, function () { cancel4HRLocationChange(); }, { width: 550, height: 350, title: 'Notice', yesTitle: 'Yes', noTitle: 'No', actions: {} });
+        }
+
+
+        function showReplacementBundleConfirmation() {
+            var message = "<div style=\"color: red\"><h4>Warning</h4><p>Please confirm the information that you entered below.</p><br /><p>You have elected to replace the existing bundle subscription for device <span style=\"font-weight: bold\">@Model.Device.SerialNumber</span> .Should you proceed, all existing licenses provided by <span style=\"font-weight: bold\">@Model.ActivateLicense.DeviceBundleModel</span> will be terminated and replaced with the new licenses in the <span style=\"font-weight: bold\">@Model.ActivateLicense.LicenseBundleModel </span>bundle. No credit will be given for any remaining time on your original bundle, and the new license period will take effect immediately. </p><br /><p>If this is not your intent, please click the <span style=\"font-weight: bold\">CANCEL</span> button and contact your reseller regarding your licensing options. Otherwise, please click the <span style=\"font-weight: bold\">CONTINUE</span> button to proceed.</p></div>";
+            SupportPortal.Confirmation(message, function () { confirmAction(3); }, function () { cancelAction(); }, { width: 550, height: 300, title: 'Notice', yesTitle: 'Continue', noTitle: 'Cancel', actions: {} });
+        }
+
+        function K2DeviceConfirmation() {
+            var message = "<div style=\"color: red\"><p>Subscription auth codes should only be applied for K2 device running in secure mode. If this is a K2 secure mode device, please proceed.</p></div>";
+            SupportPortal.Confirmation(message,function() { activateLicenses(); }, null,{height: 200 , width: 380});
+        }
+
+        function SDWANSubscriptionConfirmation() {
+            var message = "<div style=\"color: red\"><p>Palo Alto Networks highly recommends the use of Panorama management system as the best practice for SD-WAN activation and configuration. Press Yes to proceed.</p></div>";
+            SupportPortal.Confirmation(message,function() { activateLicenses(); }, null,{height: 200 , width: 380});
+        }
+
+        function confirmAction(id) {
+
+            var licType = "";
+            var update4HRLocation = false;
+
+            if (id == 1) {
+                licType = "SiteLicense";
+            }
+            else if (id == 2) {
+                licType = "4Hour RMA License";
+            }
+            else if (id == 3) {
+                licType = "Replacement Bundle";
+            }
+            else if (id == 4){
+                licType = "4Hour RMA License";
+                update4HRLocation = true;
+            }
+
+            var authCode = $("#ActivateLicense_AuthorizationCode").val();
+
+            if (id == 3)
+                authCode = $("#ActivateLicense_UpgradeAuthorizationCode").val();
+
+            var serialNumber = $('#@UniqueId.SerialNumber').val();
+            var eulaId = $("#SelectedEulaId").val();
+            var urldata = "/License/ContinueLicenseActivation?licType=" + licType + "&serialNumber=" + serialNumber + "&authorizationCode=" + authCode + "&eulaId=" + eulaId + "&update4HRLocation="+update4HRLocation;
+
+            SupportPortal.ClearNotification();
+
+            SupportPortal.BlockUI();
+
+            $.getJSON(urldata, continueActivationResponse);
+        }
+
+        function continueActivationResponse(data) {
+            if (data != null && data.Notifications != null && data.Notifications.length > 0) {
+                var notification = data.Notifications[0];
+                SupportPortal.Notification(notification.Message, notification.State);
+                if( notification.State==1)
+                {
+                    $("#ActivateLicense_AuthorizationCode").val('');
+                }
+            }
+            SupportPortal.OnWindowClose(licenseGridId);
+            SupportPortal.UnBlockUI();
+        }
+
+        function cancelAction() {
+
+        }
+        function cancel4HRLocationChange(){
+            SupportPortal.ClearNotification();
+            SupportPortal.Notification("The device location was not updated and the auth code was not activated.", 4);
+                return;
+        }
+        function activateTrials() {
+            var isEligibleForDpmLicense = '@Model.IsEligibleForDpmLicense';
+            var isEligibleForDpbLicense = '@Model.IsEligibleForDpbLicense';
+            var isEligibleForPanoramaLicense = '@Model.IsEligibleForPanoramaLicense';
+            var panoramaVmRegInfo = '';
+            var selectedLicenses = '';
+
+            $('input:checkbox.TrialLinkCheckBox:checked').each(function () {
+
+                if (selectedLicenses === '') {
+                    selectedLicenses = $(this).attr('name');
+                } else {
+                    selectedLicenses += ',' + $(this).attr('name');
+                }
+            });
+
+            //Decryption port mirror
+            if (isEligibleForDpmLicense.toUpperCase() === 'TRUE' && $('#@UniqueId.DPM').prop('checked')) {
+                if (selectedLicenses === '') {
+                    selectedLicenses = $('#@UniqueId.DPM').prop("name");
+                } else {
+                    selectedLicenses += ',' + $('#@UniqueId.DPM').prop('name');
+                }
+            }
+
+            //Network Packet Broker
+            if (isEligibleForDpbLicense.toUpperCase() === 'TRUE' && $('#@UniqueId.DPB').prop('checked')) {
+                if (selectedLicenses === '') {
+                    selectedLicenses = $('#@UniqueId.DPB').prop("name");
+                } else {
+                    selectedLicenses += ',' + $('#@UniqueId.DPB').prop('name');
+                }
+            }
+            
+            //Panorama license
+            if (isEligibleForPanoramaLicense.toUpperCase() === 'TRUE' && $('#@UniqueId.PanoramLicenseActivation').prop('checked')) {
+                if (selectedLicenses === '') {
+                    selectedLicenses = $('#@UniqueId.PanoramLicenseActivation').prop("name");
+                } else {
+                    selectedLicenses += ',' + $('#@UniqueId.PanoramLicenseActivation').prop('name');
+                }
+                var vmRegistrationInfo = {};
+                vmRegistrationInfo.PanOsVersion = $('#@UniqueId.OsDropDown').data("kendoDropDownList").value();
+                vmRegistrationInfo.HyperVisorVersion = $('#@UniqueId.HyperVisorDropDown').data("kendoDropDownList").value();
+                vmRegistrationInfo.UuId = $('#@UniqueId.UuId').val();
+                vmRegistrationInfo.CpuId = $('#@UniqueId.CpuId').val();
+                panoramaVmRegInfo = JSON.stringify(vmRegistrationInfo);
+                if (vmRegistrationInfo.PanOsVersion.length === 0) {
+                    SupportPortal.ClearNotification();
+                    SupportPortal.Notification("OS Release item is required");
+                    return;
+                }
+                
+                var versions = vmRegistrationInfo.PanOsVersion.split(".");
+                if (vmRegistrationInfo.PanOsVersion.length > 1 && (parseInt(versions[0]) > 8 ||
+                    (versions[0] === '8' && versions[1] >= '1'))) {
+                    if (vmRegistrationInfo.HyperVisorVersion.length === 0) {
+                        SupportPortal.ClearNotification();
+                        SupportPortal.Notification("Virtual Platform is required");
+                        return;
+                    }
+                    if (vmRegistrationInfo.UuId.length === 0) {
+                        SupportPortal.ClearNotification();
+                        SupportPortal.Notification("UUID is required");
+                        return;
+                    }
+                    if (vmRegistrationInfo.CpuId.length === 0) {
+                        SupportPortal.ClearNotification();
+                        SupportPortal.Notification("CPUID is required");
+                        return;
+                    }
+                }
+            }
+
+            if (selectedLicenses === "") {
+                SupportPortal.ClearNotification();
+                SupportPortal.Notification("Please select atleast one license to activate");
+                return;
+            }
+            SupportPortal.BlockUI();
+            var serialNumber = $('#@UniqueId.SerialNumber').val();
+            var eulaId = $("#SelectedEulaId").val();
+            $.getJSON('/license/ActivateTrialLicenseJson', {
+                selectedLicenses: selectedLicenses,
+                mode: '@mode',
+                serialNumber: serialNumber,
+                eulaid: eulaId,
+                panoramaVmRegInfo: panoramaVmRegInfo
+            }, activateTrialsResponse).fail(function(xhr) {
+                if (xhr.status === "401") {
+                    SupportPortal.ClearNotification();
+                    SupportPortal.Notification("User not authorized to activate license for customer");
+                    SupportPortal.UnBlockUI();
+                }
+            });
+        }
+
+        function activateTrialsResponse(data) {
+
+            SupportPortal.ClearNotification();
+
+            for (var i = 0; i < data.Notifications.length; i++) {
+
+                var notification = data.Notifications[i];
+                SupportPortal.Notification(notification.Message, notification.State);
+            }
+
+            if (data.IsSuccess) {
+
+                if (!data.IsEligibleForDpmLicense || !data.IsEligibleForDpbLicense) {
+
+                    if (!data.IsEligibleForDpmLicense) {
+                        $('input:checkbox[id^=dpm_]').prop('checked', false);
+                        $('li[id^=dpm_li_]').css("display", "none");
+                    }
+
+                    if (!data.IsEligibleForDpbLicense) {
+                        $('input:checkbox[id^=dpb_]').prop('checked', false);
+                        $('li[id^=dpb_li_]').css("display", "none");
+                    }
+
+                    if (!data.IsEligibleForDpmLicense && !data.IsEligibleForDpbLicense) {
+                        $('input:radio[id^=featurecheckbox_]').prop('checked', false);
+                        $('li[id^=featurelicense_li_]').css("display", "none");
+                    }
+
+                    var availableLicensesDiv = $('#@UniqueId.AvailableLicenses');
+
+                    if (data.AvailableLicenses.length === 0) {
+
+                        availableLicensesDiv.empty();
+                        availableLicensesDiv.append('<span style="color: green;">All available licenses have already been activated on this device</span>');
+
+                    } else {
+                        var ul = availableLicensesDiv.find('ul');
+                        ul.empty();
+
+                        for (var j = 0; j < data.AvailableLicenses.length; j++) {
+
+                            var lic = data.AvailableLicenses[j];
+                            var displayName = ' 30 @(Model.DeviceLicenseMode == DeviceLicenseMode.Eval ? "day* evaluation" : "day trial") for ' + lic.Name;
+                            ul.append('<li><label><input type="checkbox" class="TrialLinkCheckBox" name="' + lic.LicenseType + '" value="' + displayName + '" >' + displayName + '</label></li>');
+                        }
+                    }
+                }
+
+                if (!data.IsEligibleForPanoramaLicense) {
+                    $('input:radio[id^=panoramlicenseactivation_]').prop('checked', false);
+                    $('li[id^=panoramalicense_li_]').css("display", "none");
+                }
+
+                SupportPortal.OnWindowClose(licenseGridId);
+            }
+
+            SupportPortal.UnBlockUI();
+        }
+
+        function showDisclaimer(selector) {
+            var message = "<p>You are enabling the ability to view and store SSL decrypted sessions (e.g., Hypertext Transfer Protocol Secure or HTTPS).  A country or jurisdiction that governs the SSL sessions may have regulations or laws prohibiting this conduct.</p>" +
+                "<p>It is your responsibility to ensure that your decryption of the SSL sessions and subsequent use of the decrypted SSL sessions are permissible under all applicable regulations or laws.  Palo Alto Networks is not responsible for any failure by you to comply with the applicable regulation or law.</p>";
+
+            var confirmAction = function () {
+                selector.checked = true;
+            };
+
+            var cancelAction = function () {
+                selector.checked = false;
+            };
+
+            if (selector.checked) {
+                SupportPortal.Confirmation(message, function () { confirmAction(); }, function () { cancelAction(); }, { width: 550, height: 220, title: 'Notice', yesTitle: 'I understand and wish to proceed', noTitle: 'Cancel', actions: {} });
+            }
+        }
+
+        function rollBackUpgrade(transId, upgradeAuthCode) {
+            SupportPortal.ClearNotification();
+            SupportPortal.BlockUI();
+            var urldata = "/License/RollbackUpgrade?transactionId=" + transId + "&authorizationCode=" + upgradeAuthCode;
+            $.getJSON(urldata, rollbackUpgradeResponse).fail(function (xhr) {
+                if (xhr.status == "401") {
+                    SupportPortal.ClearNotification();
+                    SupportPortal.Notification("User not authorized to rollback upgrade!");
+                    SupportPortal.UnBlockUI();
+                }
+            });
+        }
+
+        function rollbackUpgradeResponse(data) {
+            if (data.Notifications != null && data.Notifications.length > 0) {
+                var notification = data.Notifications[0];
+                SupportPortal.Notification(notification.Message, notification.State, $('.display-notifications'));
+                SupportPortal.OnWindowClose(licenseGridId);
+                if (notification.State == SupportPortal.NotificationType.Success) {
+                    console.log()
+                    hideVmUpgradeRollback(data);
+                }
+            }
+            SupportPortal.UnBlockUI();
+        }
+
+        function showVmUpgradeInProgressStatus() {
+            $("#hdnIsUpdateInProgress").val(1);
+            $("#divVmUpgradeStatus").css("display", "block");
+            $("#divVmUpgradeInProgress").css("display", "block");
+            $("#divVmUpgradeComplete").css("display", "none");
+            $("#containerVMUpgradeRollBackDiv").css("display", "block");
+        }
+
+        function showVmUpgradeCompleteStatus() {
+            $("#divVmUpgradeStatus").css("display", "block");
+            $("#divVmUpgradeInProgress").css("display", "none");
+            $("#divVmUpgradeComplete").css("display", "block");
+        }
+
+        function hideVmUpgradeRollback(data) {
+            console.log(data);
+            $("#divVmUpgradeStatus").css("display", "none");
+            $("#divVmUpgradeInProgress").css("display", "none");
+            $("#divVmUpgradeComplete").css("display", "none");
+            $("#hdnIsUpdateInProgress").val("");
+            $("#DeviceModelName").text(data.OriginalVm);
+            $("#containerVMUpgradeRollBackDiv").css("display", "none");
+            showLicenseActivation();
+        }
+
+        function showLicenseActivation() {
+            $("#divActivateLicenses").css("display", "block");
+        }
+
+        function hideLicenseActivation() {
+            $("#divActivateLicenses").css("display", "none");
+        }
+
+        return {
+            agreeAndSubmit: agreeAndSubmit,
+            activateLicenses: activateLicenses,
+            activateTrials: activateTrials,
+            showDisclaimer: showDisclaimer,
+            rollBackUpgrade: rollBackUpgrade,
+            showVmUpgradeInProgressStatus: showVmUpgradeInProgressStatus,
+            showVmUpgradeCompleteStatus: showVmUpgradeCompleteStatus,
+            showLicenseActivation: showLicenseActivation,
+            hideLicenseActivation: hideLicenseActivation,
+            hideVmUpgradeRollback: hideVmUpgradeRollback
+        };
+    })();
+
+    $(function () {
+        function DisableTrialIot() {
+            $(this).prop('checked', false).prop('disabled', true);
+            $('.temp-disabled').show();
+        }
+
+        $('input[type=radio][name=LicenseActivation]').change(function () {
+            $('.TrialLinkCheckBox[name="IoT"]').attr('disabled', false);
+            $('#iot-cdl-required-message').addClass('hide');
+            $('#iot-max-reached-message').addClass('hide');
+            $('#saas-inline-cdl-required-message').addClass('hide');
+            $('#saas-inline-max-reached-message').addClass('hide');
+            if (this.value !== 'Panorama') {
+                $('div[id^=panoramadiv_]').css("display", "none");
+            }
+            if (this.value !== 'Feature') {
+                hideFeatureLicenses();
+            }
+            if (this.value !== 'transferCloudLicense' ){
+                $('div[id^=transferclouddiv_]').css("display", "none");
+            }
+            switch (this.value) {
+            case "AuthCode":
+                $('div[id^=authcodeactivation_]').css("display", "block");
+                kendo.fx($('div[id^=authcodeactivation_]')).expand("vertical").play();
+                $('div[id^=nfrtriallicense_]').css("display", "none");
+                $('div[id^=authcodeupgrade_]').css("display", "none");
+                $('div[id^=transferclouddiv_]').css("display", "none");
+                break;
+                case "TrialNfr":
+                if (@showMaxIotTrialsMessage.ToString().ToLower()) {
+                        $('#iot-max-reached-message').removeClass('hide');
+                        $('.TrialLinkCheckBox[name="IOTSecurity"]').attr('disabled', true);
+                        $('.TrialLinkCheckBox[name="IOTSecurityDataLake"]').attr('disabled', true);
+                }
+                if (@showIotCdlRequiredMessage.ToString().ToLower()) {
+                        $('#iot-cdl-required-message').removeClass('hide');
+                        $('.TrialLinkCheckBox[name="IOTSecurityDataLake"]').attr('disabled', true);
+                }
+                if (@showMaxSaasInlineTrialsMessage.ToString().ToLower()) {
+                    $('#saas-inline-max-reached-message').removeClass('hide');
+                    $('.TrialLinkCheckBox[name="SaaSInline"]').attr('disabled', true);
+                }
+                if (@showSaasInlineCdlRequiredMessage.ToString().ToLower()) {
+                    $('#saas-inline-cdl-required-message').removeClass('hide');
+                    $('.TrialLinkCheckBox[name="SaaSInline"]').attr('disabled', true);
+                }
+                $('div[id^=authcodeactivation_]').css("display", "none");
+                $('div[id^=nfrtriallicense_]').css("display", "block");
+                kendo.fx($('div[id^=nfrtriallicense_]')).expand("vertical").play();
+                $('div[id^=authcodeupgrade_]').css("display", "none");
+                $('div[id^=transferclouddiv_]').css("display", "none");
+           
+                 //Toggle checkbox either select package1 or package2
+                $('[name="IOTSecurity"]').change(function() {
+                    if($(this).is(":checked")){
+                        $('[name="IOTSecurityDataLake"]').attr('checked', false);
+                    }    
+                });
+    
+                $('[name="IOTSecurityDataLake"]').change(function() {
+                    if($(this).is(":checked")){
+                        $('[name="IOTSecurity"]').attr('checked', false);
+                    }    
+                });      
+                
+                break;
+            case "Feature":
+                $('div[id^=authcodeactivation_]').css("display", "none");
+                $('div[id^=nfrtriallicense_]').css("display", "none");
+                $('div[id^=authcodeupgrade_]').css("display", "none");
+                $('div[id^=iseligibleforfeaturelicense_]').css('display', 'block');
+                $('div[id^=transferclouddiv_]').css("display", "none");
+                kendo.fx($('div[id^=iseligibleforfeaturelicense_]')).expand("vertical").play();
+
+                break;
+            case "Upgrade":
+                $('div[id^=authcodeactivation_]').css("display", "none");
+                $('div[id^=nfrtriallicense_]').css("display", "none");
+                $('div[id^=authcodeupgrade_]').css("display", "block");
+                $('div[id^=transferclouddiv_]').css("display", "none");
+                kendo.fx($('div[id^=authcodeupgrade_]')).expand("vertical").play();
+                break;
+            case "Panorama":
+                $('div[id^=authcodeactivation_]').css("display", "none");
+                $('div[id^=nfrtriallicense_]').css("display", "none");
+                $('div[id^=authcodeupgrade_]').css("display", "none");
+                $('div[id^=panoramadiv_]').css("display", "block");
+                $('div[id^=transferclouddiv_]').css("display", "none");
+                kendo.fx($('div[id^=panoramadiv_]')).expand("vertical").play();
+                break;
+                case "transferCloudLicense":
+                    $('div[id^=authcodeactivation_]').css("display", "none");
+                    $('div[id^=nfrtriallicense_]').css("display", "none");
+                    $('div[id^=authcodeupgrade_]').css("display", "none");
+                    $('div[id^=panoramadiv_]').css("display", "none");
+                    $('div[id^=transferclouddiv_]').css("display", "block");
+                    kendo.fx($('div[id^=transferclouddiv_]')).expand("vertical").play();
+                    break;
+            }
+        });
+    });
+</script>
+
+@{Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);}
+@Html.HiddenFor(model => model.SupportAccountId,new {id="SupportAccountID",name = "SupportAccountID"})
+       
+<fieldset>
+    <legend>Device Licenses</legend>
+
+    <div class="popup-details">
+        <div>
+            <div class="csp-label">
+                @Html.Label("Serial Number:")
+            </div>
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.Device.SerialNumber)
+                @Html.HiddenFor(model => model.Device.SerialNumber, new { @id = UniqueId.SerialNumber })
+            </div>
+        </div>
+        @if (Model.Device.IsCgx)
+        {
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Tenant Id: ")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.TenantId)
+                </div>
+            </div>
+        }
+        <div>
+            <div class="csp-label">
+                @Html.Label("Model:")
+            </div>
+            <div class="csp-field">
+                <span id="DeviceModelName">@Model.Device.ModelName</span>
+            </div>
+        </div>
+        <div>
+            <div class="csp-label">
+                @Html.Label("Device Name:")
+            </div>
+
+            <div class="csp-field">
+                @Html.DisplayFor(model => model.Device.DeviceName)
+            </div>
+        </div>
+
+        <div id="divVmUpgradeStatus">
+            <div id="divVmUpgradeInProgress">
+                <div class="csp-label">
+                    @Html.Label("VM Upgrade Status:")
+                </div>
+                <div class="csp-field">
+                    <i class="icon-warning-sign"></i>&nbsp; Upgrade In-Progress
+                </div>
+            </div>
+             <div id="divVmUpgradeComplete">
+                <div class="csp-label">
+                @Html.Label("VM Upgrade Status:")
+            </div>
+                <div class="csp-field">
+                    <i class="icon-ok-sign"></i>&nbsp; Upgrade Complete
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.EditorFor(x => x.Licenses)
+
+</fieldset>
+
+@if (Model.WF500Keys.Any())
+{
+
+    var maxPageSizeForms = Convert.ToInt32(Model.WF500Keys.Count);
+    var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+
+    if (maxPageSizeForms > pageSizeOptionsForms.Max())
+    {
+        pageSizeOptionsForms.Add(maxPageSizeForms);
+    }
+                   
+                    
+    <fieldset>
+        <legend>Microsoft License Keys</legend>
+
+        <div style="overflow-y: auto; overflow-x: hidden">
+            @(Html.Kendo().Grid(Model.WF500Keys)
+                            .Name((string)UniqueId.wfGrid)
+                            .Columns(columns =>
+                            {
+                                columns.Bound(model => model.LicenseType).Sortable(true).Visible(false);
+                                columns.Bound(model => model.LicenseKey).Sortable(true).Visible(false);
+                            })
+                            .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                            .Sortable()
+                            .Resizable(resize => resize.Columns(true))
+                            .HtmlAttributes(new { style = "max-height:400px; max-width:535px;" })
+                            .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .Total(Model.WF500Keys.Count)
+                            .Model(model => model.Id(p => p.LicenseKey))
+                            .PageSize(50)
+                            .ServerOperation(false)
+                            ))
+
+        </div>
+    </fieldset>
+}
+
+<div class="fieldset" id="divActivateLicenses">
+    <div class="dns-alert innernotification">To activate the license feature for DNS Security, the OS version for the firewall must be 9.0 or above and have a valid Threat Prevention license.</div>
+    <div id="ngfw-dlp-license-activation" class="dns-alert innernotification hide">Activation of DLP Subscription will require a support ticket to do NGFW device transfer.</div>
+    <div id="iot-max-reached-message" class="dns-alert innernotification hide">You have activated/requested the five allowed trial licenses for the IOT Security Subscription.</div>
+    <div id="iot-cdl-required-message" class="dns-alert innernotification hide">IOT Subscription requires Cortex Data Lake. Please contact your Palo Alto Networks representative for details and options.</div>
+    <div id="saas-inline-max-reached-message" class="dns-alert innernotification hide">You have activated/requested the five allowed trial licenses for the SaaS Security Inline Subscription.</div>
+    <div id="saas-inline-cdl-required-message" class="dns-alert innernotification hide">SaaS Security Inline Subscription requires Data Lake. Please contact your Palo Alto Networks representative for details and options.</div>
+    <fieldset>
+        <legend>Activate Licenses</legend>
+        <ul class="list-style-none">
+            <li>
+                <label style="cursor: pointer;">
+                    <input type="radio" name="LicenseActivation" value="AuthCode"/>
+                    <span>Activate Auth-Code</span>
+                </label>
+            </li>
+            @if (Model.DeviceLicenseMode != DeviceLicenseMode.None)
+            {
+
+                var trialNfr = Model.DeviceLicenseMode == DeviceLicenseMode.Trial ? "Trial" : "Evaluation";
+                <li>
+                    <label style="cursor: pointer;">
+                        <input type="radio" name="LicenseActivation" value="TrialNfr"/>
+                        <span>Activate @trialNfr License</span>
+                    </label>
+                </li>
+            }
+            @if (Model.IsEligibleForFeatureLicense)
+            {
+                <li id="@UniqueId.FeatureLicense_li">
+                    <label style="cursor: pointer;">
+                        <input type="radio" name="LicenseActivation" value="Feature" id="@UniqueId.FeatureCheckbox"/>
+                        <span>
+                            Activate Feature License
+                        </span>
+                    </label>
+                </li>
+            }
+
+            @if (Model.Device.IsEligibleForUpgrade)
+            {
+                <li>
+                    <label style="cursor: pointer;">
+                        <input type="radio" name="LicenseActivation" value="Upgrade"/>
+                        <span>Activate Upgrade License</span>
+                    </label>
+                </li>
+            }
+
+            @if (Model.IsEligibleForPanoramaLicense)
+            {
+                <li id="@UniqueId.PanoramaLicense_li">
+                    <label style="cursor: pointer;">
+                        <input type="radio" name="LicenseActivation" value="Panorama" id="@UniqueId.PanoramLicenseActivation"/>
+                        <span>Is the Panorama Offline?</span>
+                    </label>
+                    <div id="@UniqueId.PanoramaDiv">
+                        <div>
+                            <div class="csp-label" style="width: 200px;">
+                                @Html.LabelFor(model => model.VMRegistrationDto.PanOsVersion, "OS Release:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.VMRegistrationDto.PanOsVersion)
+                                @(Html.Kendo().DropDownListFor(model => model.VMRegistrationDto.PanOsVersion)
+                                      .HtmlAttributes(new {@class = "k-dropdown", id = UniqueId.OsDropDown})
+                                      .OptionLabel(Constants.DropDownOsReleaseSelect)
+                                      .DataValueField("PanOsVersion")
+                                      .DataTextField("PanOsVersion")
+                                      .Events(e => e.Select("OnPanOsSelectedItem"))
+                                      .DataSource(source => source.Read(read => { read.Action("GetPanOsVersions", "Device"); })))
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                        <div id="@UniqueId.PanoramaUuidDiv">
+                            <div>
+                                <div class="csp-label" style="width: 200px;">
+                                    @Html.LabelFor(model => model.VMRegistrationDto.HyperVisorVersion, "Virtual Platform:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.VMRegistrationDto.HyperVisorVersion)
+                                    @(Html.Kendo().DropDownListFor(model => model.VMRegistrationDto.HyperVisorVersion)
+                                          .OptionLabel(Constants.DropDownVirtualPlatformSelect)
+                                          .HtmlAttributes(new {@class = "k-dropdown", id = UniqueId.HyperVisorDropDown})
+                                          .DataValueField("HyperVisorVersion")
+                                          .DataTextField("DisplayValue")
+                                          .DataSource(source => source.Read(read => read.Action("GetHyperVisorVersions", "Device", new {filter = "VM"})))
+                                          )
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-label" style="width: 200px;">
+                                    @Html.Label("UploadUUIDCPUID", "Upload File for UUID & CPUID:")
+                                </div>
+                                <div class="csp-field">
+                                    @(Html.Kendo().Upload()
+                                          .Name("uploadUuIdCpuId")
+                                          .Multiple(false)
+                                          .Async(async => async.Save("RegisterVmFile", "VM"))
+                                          .Events(e => e.Success("uploadSuccess")))
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-label" style="width: 200px;">
+                                    @Html.Label((string) UniqueId.UuId, "UUID:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.VMRegistrationDto.UuId)
+                                    @Html.TextBoxFor(model => model.VMRegistrationDto.UuId, new {id = UniqueId.UuId})
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-label" style="width: 200px;">
+                                    @Html.Label((string) UniqueId.CpuId, "CPUID:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.VMRegistrationDto.CpuId)
+                                    @Html.TextBoxFor(model => model.VMRegistrationDto.CpuId, new {id = UniqueId.CpuId})
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </fieldset>
+</div>
+
+@if(Model.IsEligibleForPanoramaCloudLicenseTransfer)
+{
+<div class="fieldset" id="divTransferLicenses">
+    <fieldset>
+        <legend>Transfer Licenses</legend>
+        <ul class="list-style-none">
+            <li>
+             <label style="cursor: pointer;">
+                 <input type="radio" name="LicenseActivation" value="transferCloudLicense" />
+                 <span>Transfer Cloud License</span>
+             </label>
+             </li>           
+           
+                    <div id="@UniqueId.TransferCloudDiv">
+                        <div>
+                        @if(Model.IsHAPanorama){
+                                        <div >
+                                        <span style="color:red;">This Panorama belongs to HA Pair. Please Transfer Cloud Licenses of other Panorama as well. </span>
+                                        </div>
+                        }
+                            <div class="csp-label" style="width: 200px;">
+                                @Html.LabelFor(model => model.CloudConvertPanorama, "Panorama:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.CloudConvertPanorama)
+                                
+                                                    @(Html.Kendo().DropDownListFor(model => model.CloudConvertPanorama)
+                                                    .OptionLabel(Constants.DropDownPanoramaSelect)
+                                                    .HtmlAttributes(new { @class = "k-dropdown" })
+                                                    .DataValueField("SerialNumber")
+                                                    .DataTextField("SerialNumber")
+                                                    .DataSource(source => source.Read(read => read.Action("GetPanoramaWithCloudServiceForTransfer", "Saas").Data("GetEvalCloudServiceForTransef()")))
+                                                    )
+                <span class="required">*</span>
+                            </div>                            
+                        </div>
+                        
+                    </div>
+
+        </ul>
+    </fieldset>
+</div>
+}
+<div class="display-notifications"></div>
+<input type="hidden" id="devlicuid" value="@(UniqueId.DeviceLicenses)License"/>
+<input type="hidden" id="hdnIsUpdateInProgress"/>
+
+@Html.Partial("../Partial/_FeatureLicenses", Model)
+
+@Html.Partial("../Partial/_TrialNfrLicenses", Model)
+
+@Html.Partial("../Partial/_ActivateLicense", Model)
+
+@Html.Partial("../Partial/_ActivateUpgradeLicense", Model)
+
+@Html.HiddenFor(model => model.Eula.SelectedEulaId, new { id = "SelectedEulaId", name = "SelectedEulaId" })
+
+
+    <div id="containerVMUpgradeRollBackDiv">
+    <fieldset>
+        <legend>VM Upgrade</legend>
+        <button id="btnRollback" style="margin-left: 10px;" value="Rollback Upgrade" name="btnRollback" class="k-button k-primary csp-submit" onclick="@(UniqueId.DeviceLicenses)License.rollBackUpgrade('@Model.Device.TransactionId', '@Model.Device.VmUpgradeAuthCode')">Rollback Upgrade</button>
+    </fieldset>
+        </div>
+
+
+@Html.Partial("../Partial/_Eula", Model.Eula)
+
+<div class="csp-submit-container">
+    <button id="@UniqueId.btnActivateLicense" class="k-button csp-submit" type="button" onClick="@(UniqueId.DeviceLicenses)License.agreeAndSubmit()">Agree and Submit</button>&nbsp;&nbsp;&nbsp;
+        <input type="button" value="Refuse" name="btnRefuse" id="btnRefuse" class="k-button" />&nbsp;&nbsp;
+</div>
+
+<script>
+    $(function () {
+        $("#btnRefuse").click(function (e) {
+            $("#btnRefuse").closest(".k-window-content").data("kendoWindow").close();
+        });
+        @if (Model.Device.IsAwsDevice == true || Model.Device.IsCirroSecureDevice == true || Model.Device.IsUpgradeInProgress == true || Model.Device.IsSaasStubDevice == true)
+        {
+            <text>@(UniqueId.DeviceLicenses)License.hideLicenseActivation(); </text>
+            if (Model.Device.IsUpgradeInProgress)
+            {
+                <text>@(UniqueId.DeviceLicenses)License.showVmUpgradeInProgressStatus(); </text>
+            }
+            if (Model.Device.IsUpgradeComplete)
+            {
+                <text>@(UniqueId.DeviceLicenses)License.showVmUpgradeCompleteStatus(); </text>
+            }
+        }
+
+        @if (Model.Device.IsUpgradeComplete)
+        {
+            <text>@(UniqueId.DeviceLicenses)License.showVmUpgradeCompleteStatus(); </text>
+        }
+
+    })
+</script>

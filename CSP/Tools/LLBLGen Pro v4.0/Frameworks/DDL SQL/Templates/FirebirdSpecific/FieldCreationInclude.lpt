@@ -1,0 +1,62 @@
+﻿<~
+	// The enum definition for the Dbtypes as it is used by the Firebird driver. Used here to determine in readable code
+	// if a field requires a length specification emitted in the DLL and/or collation specifications. 
+	public enum FirebirdDbTypes:int
+	{
+        Array,
+		Blob,
+		Char,
+		Date,
+        Decimal,
+		Double,
+		Float,
+        Int16,
+        Int32,
+		Int64,
+        Numeric,
+		Text,
+        Time,
+		Timestamp,
+		VarChar,
+		Guid
+	}
+	
+	// Creates the string which defines the field, complete with name, type, identity (if applicable) and nullable/not nullable
+	private string CreateFieldDefinitionString(DBTableField field)
+	{
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.AppendFormat("\"{0}\"", field.FieldName);
+		switch((FirebirdDbTypes)field.TypeDefinition.DBType)
+		{
+			case FirebirdDbTypes.Decimal:
+				toReturn.AppendFormat(" DECIMAL({0}, {1})", field.TypeDefinition.Precision, field.TypeDefinition.Scale);
+				break;
+			case FirebirdDbTypes.Numeric:
+				toReturn.AppendFormat(" NUMERIC({0}, {1})", field.TypeDefinition.Precision, field.TypeDefinition.Scale);
+				break;
+			case FirebirdDbTypes.Char:
+				toReturn.AppendFormat(" CHAR({0})", field.TypeDefinition.Length);
+				break;
+			case FirebirdDbTypes.VarChar:
+				toReturn.AppendFormat(" VARCHAR({0})", field.TypeDefinition.Length);
+				break;
+			case FirebirdDbTypes.Blob:
+				toReturn.Append(" BLOB SUB_TYPE 0");
+				break;
+			case FirebirdDbTypes.Text:
+				toReturn.Append(" BLOB SUB_TYPE 1");
+				break;
+			case FirebirdDbTypes.Guid:
+				toReturn.Append(" CHAR(16) CHARACTER SET OCTETS");
+				break;
+			default:
+				toReturn.AppendFormat(" {0}", field.TypeDefinition.DBTypeAsString.ToUpperInvariant());
+				break;
+		}
+		if(!field.IsNullable)
+		{
+			toReturn.Append(" NOT NULL");
+		}
+		return toReturn.ToString();
+	}
+~>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>CSR AI Admin Assistant — MVP Flow</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #fff;
+    padding: 24px 28px 32px;
+  }
+  .header { margin-bottom: 14px; }
+  .eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #64748b; margin-bottom: 4px;
+  }
+  .title { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 3px; }
+  .subtitle { font-size: 12px; color: #475569; }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 14px;
+    margin: 12px 0 16px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #475569; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .diagram-wrap { overflow-x: auto; }
+  .callouts {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px;
+  }
+  .callout {
+    flex: 1 1 200px; padding: 10px 12px;
+    border-radius: 6px; border-left: 3px solid;
+    background: #f8fafc;
+  }
+  .callout-title { font-size: 10px; font-weight: 700; margin-bottom: 3px; }
+  .callout-body  { font-size: 10px; color: #475569; line-height: 1.5; }
+  @media print {
+    body { padding: 8mm 10mm; }
+    @page { size: A4 landscape; margin: 8mm; }
+    .diagram-wrap { overflow: visible; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="eyebrow">CSR AI Admin Assistant · Phase 2 · MVP</div>
+  <div class="title">Generate &amp; Send Temporary Password — MVP Flow</div>
+  <div class="subtitle">1 scenario · RAG-gated eligibility · LLM for summary only · all routing and execution deterministic</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div>Trigger</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div>Deterministic</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>AI / LLM</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0f766e"></div>AI + Vector</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#b45309"></div>Human in Loop</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c2410c; transform:rotate(45deg)"></div>Decision gate</div>
+</div>
+
+<div class="diagram-wrap">
+<!--
+  Layout:
+  Row 1 (y=50):  trigger | catcheck | extract | rag | simgate(diamond) | ingest | chips
+  Connector:     chips bottom → down → left → summary top
+  Row 2 (y=240): summary | simcase | action | expiry | csr | exec | feedback
+
+  NODE_W=160  NODE_H=56  STEP=192  ROW1_Y=50  ROW2_Y=240
+  cx = x+80   cy = y+28
+  diamond simgate: center=(868,78), pts top=(868,50),right=(948,78),bot=(868,106),left=(788,78)
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1360" height="360"
+     viewBox="0 0 1360 360"
+     style="display:block;max-width:100%">
+
+  <defs>
+    <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L7,3.5 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L7,3.5 z" fill="#1d4ed8"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    </style>
+  </defs>
+
+  <!-- ══════════════════════════════════════════
+       ROW 1 ARROWS (horizontal)
+  ══════════════════════════════════════════ -->
+  <!-- trigger → catcheck -->
+  <line x1="180" y1="78" x2="209" y2="78" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- catcheck → extract (label: Admin) -->
+  <line x1="372" y1="78" x2="401" y2="78" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="386" y="72" font-size="8" fill="#94a3b8" text-anchor="middle">Admin</text>
+  <!-- extract → rag -->
+  <line x1="564" y1="78" x2="593" y2="78" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- rag → simgate (right→diamond left) -->
+  <line x1="756" y1="78" x2="785" y2="78" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- simgate → ingest (diamond right→ingest left) label: ≥0.70 -->
+  <line x1="948" y1="78" x2="977" y2="78" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="962" y="72" font-size="8" fill="#94a3b8" text-anchor="middle">≥ 0.70</text>
+  <!-- ingest → chips -->
+  <line x1="1140" y1="78" x2="1169" y2="78" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Exit arrows (down) from catcheck and simgate to "Hermes" -->
+  <!-- catcheck bottom → down -->
+  <line x1="292" y1="106" x2="292" y2="135" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="296" y="148" font-size="8" fill="#94a3b8">Not Admin → Hermes</text>
+  <!-- simgate bottom → down -->
+  <line x1="868" y1="106" x2="868" y2="135" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="872" y="148" font-size="8" fill="#94a3b8">&lt; 0.70 → Hermes</text>
+
+  <!-- ══════════════════════════════════════════
+       CONNECTOR: chips bottom → summary top
+       chips bottom-center: (1252, 106)
+       path: down to y=185, left to x=100, up to (100,240)
+  ══════════════════════════════════════════ -->
+  <path d="M 1252 106 L 1252 185 L 100 185 L 100 240"
+        fill="none" stroke="#1d4ed8" stroke-width="2" stroke-dasharray="5,3"
+        marker-end="url(#arr-blue)"/>
+  <text x="680" y="181" font-size="9" fill="#1d4ed8" text-anchor="middle" font-weight="600">→ Activate Admin Assistant</text>
+
+  <!-- ══════════════════════════════════════════
+       ROW 2 ARROWS (horizontal)
+  ══════════════════════════════════════════ -->
+  <!-- summary → simcase -->
+  <line x1="180" y1="268" x2="209" y2="268" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- simcase → action -->
+  <line x1="372" y1="268" x2="401" y2="268" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- action → expiry -->
+  <line x1="564" y1="268" x2="593" y2="268" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- expiry → csr -->
+  <line x1="756" y1="268" x2="785" y2="268" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- csr → exec (label: Confirms) -->
+  <line x1="948" y1="268" x2="977" y2="268" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="962" y="262" font-size="8" fill="#94a3b8" text-anchor="middle">Confirms</text>
+  <!-- exec → feedback -->
+  <line x1="1140" y1="268" x2="1169" y2="268" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ══════════════════════════════════════════
+       ROW 1 NODES
+  ══════════════════════════════════════════ -->
+
+  <!-- trigger (col 0) x=20 y=50 -->
+  <rect x="20" y="50" width="160" height="56" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <rect x="21" y="51" width="158" height="4" rx="2" fill="#2563eb"/>
+  <text x="100" y="73" font-size="10" font-weight="700" fill="#2563eb" text-anchor="middle">Case Assigned</text>
+  <text x="100" y="88" font-size="8" fill="#475569" text-anchor="middle">Salesforce · CSR opens case</text>
+
+  <!-- catcheck (col 1) x=212 y=50 -->
+  <rect x="212" y="50" width="160" height="56" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="213" y="51" width="158" height="4" rx="2" fill="#1d4ed8"/>
+  <text x="292" y="73" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Category = Admin?</text>
+  <text x="292" y="88" font-size="8" fill="#475569" text-anchor="middle">Hard rule — false → Hermes</text>
+
+  <!-- extract (col 2) x=404 y=50 -->
+  <rect x="404" y="50" width="160" height="56" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="405" y="51" width="158" height="4" rx="2" fill="#1d4ed8"/>
+  <text x="484" y="73" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Extract Fields</text>
+  <text x="484" y="88" font-size="8" fill="#475569" text-anchor="middle">Subject · Desc · Type · Category</text>
+
+  <!-- rag (col 3) x=596 y=50 -->
+  <rect x="596" y="50" width="160" height="56" rx="7" fill="#f0fdfa" stroke="#0f766e" stroke-width="1.5"/>
+  <rect x="597" y="51" width="158" height="4" rx="2" fill="#0f766e"/>
+  <text x="676" y="73" font-size="10" font-weight="700" fill="#0f766e" text-anchor="middle">RAG Vector Embed</text>
+  <text x="676" y="88" font-size="8" fill="#475569" text-anchor="middle">4 fields → similarity search</text>
+
+  <!-- simgate (col 4) DIAMOND center=(868,78) -->
+  <polygon points="868,50 948,78 868,106 788,78" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5"/>
+  <text x="868" y="74" font-size="9" font-weight="700" fill="#c2410c" text-anchor="middle">Similarity ≥ 0.70?</text>
+  <text x="868" y="88" font-size="7.5" fill="#475569" text-anchor="middle">Yes → Activate</text>
+
+  <!-- ingest (col 5) x=980 y=50 -->
+  <rect x="980" y="50" width="160" height="56" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="981" y="51" width="158" height="4" rx="2" fill="#1d4ed8"/>
+  <text x="1060" y="73" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Signal Fetch</text>
+  <text x="1060" y="88" font-size="8" fill="#475569" text-anchor="middle">SF + Okta + CSP · 12 signals</text>
+
+  <!-- chips (col 6) x=1172 y=50 -->
+  <rect x="1172" y="50" width="160" height="56" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="1173" y="51" width="158" height="4" rx="2" fill="#1d4ed8"/>
+  <text x="1252" y="73" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">12 Signals Render</text>
+  <text x="1252" y="88" font-size="8" fill="#475569" text-anchor="middle">CSP(6)·Okta(5)·SF(1) · resolved</text>
+
+  <!-- ══════════════════════════════════════════
+       ROW 2 NODES
+  ══════════════════════════════════════════ -->
+
+  <!-- summary (col 0) x=20 y=240 -->
+  <rect x="20" y="240" width="160" height="56" rx="7" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+  <rect x="21" y="241" width="158" height="4" rx="2" fill="#7c3aed"/>
+  <text x="100" y="263" font-size="10" font-weight="700" fill="#7c3aed" text-anchor="middle">Case Summary</text>
+  <text x="100" y="278" font-size="8" fill="#475569" text-anchor="middle">LLM · grounded in 12 chips</text>
+
+  <!-- simcase (col 1) x=212 y=240 -->
+  <rect x="212" y="240" width="160" height="56" rx="7" fill="#f0fdfa" stroke="#0f766e" stroke-width="1.5"/>
+  <rect x="213" y="241" width="158" height="4" rx="2" fill="#0f766e"/>
+  <text x="292" y="263" font-size="10" font-weight="700" fill="#0f766e" text-anchor="middle">Similar Cases</text>
+  <text x="292" y="278" font-size="8" fill="#475569" text-anchor="middle">Semantic search · P0</text>
+
+  <!-- action (col 2) x=404 y=240 -->
+  <rect x="404" y="240" width="160" height="56" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="405" y="241" width="158" height="4" rx="2" fill="#1d4ed8"/>
+  <text x="484" y="263" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Recommended Action</text>
+  <text x="484" y="278" font-size="8" fill="#475569" text-anchor="middle">Deterministic · scenario config</text>
+
+  <!-- expiry (col 3) x=596 y=240 -->
+  <rect x="596" y="240" width="160" height="56" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="597" y="241" width="158" height="4" rx="2" fill="#1d4ed8"/>
+  <text x="676" y="263" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Expiry Policy</text>
+  <text x="676" y="278" font-size="8" fill="#475569" text-anchor="middle">Federal→1h / Standard→8h</text>
+
+  <!-- csr (col 4) x=788 y=240 -->
+  <rect x="788" y="240" width="160" height="56" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <rect x="789" y="241" width="158" height="4" rx="2" fill="#b45309"/>
+  <text x="868" y="263" font-size="10" font-weight="700" fill="#b45309" text-anchor="middle">CSR Confirms</text>
+  <text x="868" y="278" font-size="8" fill="#475569" text-anchor="middle">One click · override logged</text>
+
+  <!-- exec (col 5) x=980 y=240 -->
+  <rect x="980" y="240" width="160" height="56" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="981" y="241" width="158" height="4" rx="2" fill="#1d4ed8"/>
+  <text x="1060" y="263" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Okta API Write</text>
+  <text x="1060" y="278" font-size="8" fill="#475569" text-anchor="middle">Idempotent · auth · audit log</text>
+
+  <!-- feedback (col 6) x=1172 y=240 -->
+  <rect x="1172" y="240" width="160" height="56" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="1173" y="241" width="158" height="4" rx="2" fill="#1d4ed8"/>
+  <text x="1252" y="263" font-size="10" font-weight="700" fill="#1d4ed8" text-anchor="middle">Feedback Widget</text>
+  <text x="1252" y="278" font-size="8" fill="#475569" text-anchor="middle">Thumbs up/down → calibration</text>
+
+  <!-- Row labels -->
+  <text x="1350" y="78" font-size="9" fill="#cbd5e1" text-anchor="end" font-style="italic">Eligibility</text>
+  <text x="1350" y="268" font-size="9" fill="#cbd5e1" text-anchor="end" font-style="italic">Resolution</text>
+
+</svg>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px">
+  <div class="callout" style="border-color:#c2410c">
+    <div class="callout-title" style="color:#c2410c">Two decision gates</div>
+    <div class="callout-body">Category = Admin (hard rule) then RAG similarity ≥ 0.70. Both must pass to activate the assistant. Either failure → Hermes renders as normal.</div>
+  </div>
+  <div class="callout" style="border-color:#7c3aed">
+    <div class="callout-title" style="color:#7c3aed">AI used for summary only (MVP)</div>
+    <div class="callout-body">LLM generates the Case Summary grounded in the 12 signal chips. No model involvement in routing, decision logic, or execution.</div>
+  </div>
+  <div class="callout" style="border-color:#0f766e">
+    <div class="callout-title" style="color:#0f766e">RAG embed = eligibility</div>
+    <div class="callout-body">Subject + Description + Request Type + Request Category embedded → vector similarity against the supported scenario library. Threshold: ≥ 0.70.</div>
+  </div>
+  <div class="callout" style="border-color:#b45309">
+    <div class="callout-title" style="color:#b45309">Human stays in loop</div>
+    <div class="callout-body">Every write action (temp PW, unlock, resend) requires CSR click-confirm. Override is always visible and logged. Model never executes a write directly.</div>
+  </div>
+</div>
+
+<p style="margin-top:20px;font-size:9px;color:#94a3b8">
+  CSR AI Admin Assistant · Phase 2 · MVP Scope · Palo Alto Networks · 2026
+</p>
+
+</body>
+</html>

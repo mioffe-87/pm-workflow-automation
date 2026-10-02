@@ -1,0 +1,197 @@
+﻿@model Csp.Web.DataTransferObjects.CustomizeBulkRegistrationDto
+@{ 
+    ActionHelper actionHelper = Model.ActionHelper;
+    var divUniqueId = "CustomizeBulkRegistration";
+}
+<div id="@divUniqueId">
+     @{ Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications); }
+    @Html.AntiForgeryToken()
+    <div class="content">
+        <form id="bulkRegistrationDeviceForm">
+            <div class="grid-header">
+                <div class="grid-left">
+                    <input type="button" class="k-button" value="Expand All" onclick="ExpandAll(this);"/>&nbsp;
+                    <input type="button" class="k-button" value="Collapse All" onclick="CollapseAll(this);"/>
+                </div>
+                <div class="grid-right">
+                </div>
+            </div>
+
+            <div class="grid-content">
+                @{Html.RenderPartial("../Partial/_BulkRegistrationCustomize", Model);}
+            </div>
+        </form>
+        <div>&nbsp;</div>
+
+        <div>
+            <input type="button" class="k-button bulk-registration-customize-save" value="Proceed to Final Review"/>
+            <input type="button" class="k-button bulk-registration-customize-save-draft" value="Save As Draft"/>
+            @if (Model.BulkRegistrationId.HasValue)
+            {
+                <input type="button" class="k-button bulk-registration-customize-cancel" onclick="BulkRegistrationManageUtil.DiscardDraft(this);" value="Cancel and Discard Progress"/>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    var supportAccountId = function() {
+        return @Model.SupportAccountId;
+    }();
+    var bulkRegistrationId = function() {
+        return @Model.BulkRegistrationId;
+    }();
+
+    function ExpandAll() {
+        var allDevices = $('.device-info-header');
+
+        if (allDevices.length > 0) {
+            allDevices.find('.toggle').removeClass('plus').addClass('minus');
+            allDevices.siblings('.device-info').slideDown("slow");
+        }
+    }
+
+    function CollapseAll() {
+        var allDevices = $('.device-info-header');
+
+        if (allDevices.length > 0) {
+            allDevices.find('.toggle').removeClass('minus').addClass('plus');
+            allDevices.siblings('.device-info').slideUp("slow");
+        }
+    }
+
+    function SaveCustomizations(e) {
+        var self = this;
+
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var message = "Are you sure, you want to proceed to final review?";
+        var data = $('div.list-customize-bulk-activation').data('kendoListView').dataSource.data();
+
+        if (data.length === 0) {
+            SupportPortal.Message("There are no devices to save");
+            return;
+        }
+
+        var validator = $("#bulkRegistrationDeviceForm").data("kendoValidator");
+
+        if (!self.isDraft && !validator.validate()) {
+            try {
+                var errorKeys = Object.keys(validator._errors);
+
+                if (errorKeys && errorKeys.length > 0) {
+                    for (var i = 0; i < errorKeys.length; i++) {
+                        var elem = $('#' + errorKeys[i]);
+                        var deviceInfo = elem.closest('.device-info');
+                        var deviceInfoHeader = deviceInfo.siblings('.device-info-header');
+
+                        if (deviceInfoHeader.find('.toggle').hasClass('plus')) {
+                            deviceInfoHeader.find('.toggle').removeClass('plus').addClass('minus');
+                            deviceInfo.slideDown("fast");
+                        }
+                    }
+                }
+            } catch (e) {
+                
+            }
+
+            return;
+        }
+
+        var saveAction = function() {
+            SupportPortal.ClearNotification();
+            SupportPortal.BlockUI();
+
+            $.ajax({
+                url: '@Url.Action("SaveCutomizations", "BulkRegistration")',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({ SupportAccountId: supportAccountId, BulkRegistrationId: bulkRegistrationId, BulkRegistrationDevices: data }),
+                contentType: 'application/json; charset=utf-8',
+                headers: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                cache: false,
+                success: function(result) {
+                    SupportPortal.UnBlockUI();
+
+                    if (result.Success) {
+                        SupportPortal.Notification(result.Message, SupportPortal.NotificationType.Success);
+
+                        if (self.isDraft) {
+                            $('div.list-customize-bulk-activation').data('kendoListView').dataSource.read();
+                        } else {
+                            //$('div.k-widget[id^="bulkregistrationtabid_"]').data("kendoTabStrip").select(3);
+                            location.href = '@(Url.Action("Devices", "SupportAccount", new {id = Model.ActionHelper.Id, assetType = "BulkRegistrationReview"}))&bulkRegistrationId=@Model.BulkRegistrationId';
+                        }
+                    }
+
+                    SupportPortal.Notification(result.Message, SupportPortal.NotificationType.Error);
+                },
+                error: function () {
+                    SupportPortal.UnBlockUI();
+                    SupportPortal.Notification("Failed to save your customizations.", SupportPortal.NotificationType.Error);
+                }
+            });
+        };
+
+        if (self.isDraft) {
+            saveAction();
+        } else {
+            SupportPortal.Confirmation(message, function () { saveAction(); }, null);
+        }
+    }
+
+    $(document).ready(function () {
+        CustomizeBulkRegistrationManageUtil.Init({
+            uniqueId: '@divUniqueId',
+            countries: function () {
+                return @Html.Raw(JsonConvert.SerializeObject(Model.Countries));
+            }(),
+            regions: function () {
+                return @Html.Raw(JsonConvert.SerializeObject(Model.Regions));
+            }(),
+            deviceCategories: function () {
+                return @Html.Raw(JsonConvert.SerializeObject(Model.DeviceCategories));
+            }(),
+            urlGetBulkRegistrationDevicesWithLicenses: '@Html.Raw(Url.Action("GetBulkRegistrationDevicesWithLicenses", "BulkRegistration", new { bulkRegistrationId = Model.BulkRegistrationId, supportAccountId = Model.SupportAccountId }))'
+        });
+
+        $("#bulkRegistrationDeviceForm").kendoValidator({
+            rules: {
+                validCountry: function (input) {
+                    if (input.is("[data-validcountry-msg]") && (input.val() === "" || input.val() === "0")) {
+                        return false;
+                    }
+
+                    return true;
+                },
+                validRegion: function (input) {
+                    if (input.is("[data-validregion-msg]")) {
+                        var rowId = input.attr('Id').replace('ddlCustomValueRegion', '');
+
+                        if ($('#tbCustomValueRegion' + rowId).is(":hidden") && (input.val() === "" || input.val() === "0")) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
+                validOtherRegion: function (input) {
+                    if (input.is("[data-validotherregion-msg]")) {
+
+                        if (!input.is(":hidden") && (input.val() === "")) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            }
+        });
+
+        $('.bulk-registration-customize-save').on("click",
+            $.proxy(SaveCustomizations, { isDraft: false })
+        );
+
+        $('.bulk-registration-customize-save-draft').on("click",
+            $.proxy(SaveCustomizations, { isDraft: true })
+        );
+    });
+</script>

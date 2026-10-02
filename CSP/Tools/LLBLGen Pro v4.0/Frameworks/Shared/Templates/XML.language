@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<language xmlns="http://sd/llblgen/pro/languageDefinition.xsd" 
+		  name="XML" fileExtension ="xml" arrayIndexOperatorOpenChar ="" hasArrayIndexOperatorOnIdentifier ="false"
+		  arrayIndexOperatorCloseChar="" lineConcatenator="" supportsNamespaces="true">
+	<keywords/>
+</language>

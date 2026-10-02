@@ -1,0 +1,160 @@
+﻿@model Csp.Web.DataTransferObjects.UploadAscDataDto
+
+<style>
+    div.validation-errors {
+        display: none;
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+
+    div.upload-notes {
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+
+    div.last-upload-details {
+        padding-bottom: 3px;
+    }
+
+    #tbValidationErrors {
+        width: 97%;
+        font-size: 9pt;
+    }
+</style>
+<script>
+    var submitButton = $("#btnSubmit");
+    var kendoUploadButton;
+
+    function CloseAscDataUploadWindow() {
+        $("#AscDataUploadWindow").data("kendoWindow").close();
+    }
+
+    function OnAscDataUploadSelect(e) {
+        setTimeout(function () {
+            kendoUploadButton = $(".k-upload-selected");
+            kendoUploadButton.hide();
+        }, 1);
+    }
+
+    function OnAscDataUploadError(e) {
+        SupportPortal.ClearNotification();
+        SupportPortal.Notification(e.response.Message, SupportPortal.NotificationType.Error);
+    }
+
+    function OnAscDataUploadSuccess(e) {
+        SupportPortal.ClearNotification();
+        $('.validation-errors').hide();
+
+        if (e.response.Success) {
+            SupportPortal.Notification(e.response.Message, SupportPortal.NotificationType.Success);
+            return;
+        }
+
+        SupportPortal.Notification(e.response.Message, SupportPortal.NotificationType.Error);
+
+        if (e.response.Errors && e.response.Errors.length > 0) {
+            $('.validation-errors').show();
+            $('#tbValidationErrors').val(e.response.Errors.join('\r\n'));
+            $('#tbValidationErrors').prop('readonly', true);
+        }
+    }
+
+    function OnAscDataUploadComplete(e) {
+        $(".k-upload-files.k-reset").find("li").remove();
+        $('div.notification').addClass('ascupload-notification-height');
+        $('div.notification-text').addClass('wrapText ascupload-notification-text');
+    }
+
+    submitButton.click(function () {
+        SupportPortal.ClearNotification();
+
+        if ($("#Attachment").closest(".k-upload").find(".k-file").length === 0) {
+            SupportPortal.Notification("Please select the file you want to upload", SupportPortal.NotificationType.Error);
+            return;
+        }
+
+        if (kendoUploadButton)
+            kendoUploadButton.click();
+    });
+</script>
+
+<div id="@UniqueId.formContainer">
+    <div>
+        @using (Html.BeginForm("UploadAscData", "AscScorecard", FormMethod.Post, new { name = "uploadAscDataForm", id = "uploadAscDataForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="fieldset">
+                <fieldset>
+                    <legend class="marketing-legend">Upload ASC Data<span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 22, { title: 'Upload Instructions' , width:442,height:300});"></i></span></legend>
+                    <div class="row" style="padding-left:20px;">
+                        <div class="filterDiv" style="padding: 5px; ">
+                              <div class="greenTitle">@CurrentState.GetSupportAccountName()</div>
+                             &nbsp;&nbsp;<div class="blueTitle">ASCID : @CurrentState.GetSupportAccountId()</div>
+                        </div>
+                        <br />
+                    </div>
+                    @{
+                        if (Model.LastUploadedOn.HasValue)
+                        {
+                                    <div class="last-upload-details">
+                                        <div class="warning-notification notification">
+                                            <div class="notification-text">Last Uploaded On: @Model.LastUploadedOn.Value.ToString(SiteHelper.DateFormat)</div>
+                                            <input type="button" value="x" class="notification-button" onclick="closeNotification(this)" />
+                                        </div>
+                                    </div>        
+                        }
+                    }
+
+                    <div class="upload-notes">
+                        <ul>
+                            <li>File type must be CSV (Comma Seperated Values)</li>
+                            <li>Filename MUST be in the format '{AscId}_ASCData_{yyyy}_{MM}.csv' and include your 'AscId'. Palo Alto Networks will provide each ASC user with an 'AscId'. Or, you can find your 'AscId' as the last digits of your URL of your ASC Support Account. This identifies each ASC upon each file upload.
+                                <br />
+                                Example: https://support.paloaltonetworks.com/supportaccount/myaccounts/123
+                            </li>
+                            <li>
+                                File must contain all fields, and in the same order as shown below and in sample file
+                                <ul>
+                                    <li>CreationDate (Date when case was opened. Required format: yyyy-MM-dd or yyyy-M-d. Example: 2015-11-20 for 20th November, 2015. *Exclude timestamps*)</li>
+                                    <li>CaseNumber</li>
+                                    <li>EndCustomerName (Optional)</li>
+                                    <li>EndCustomerEmail (Optional)</li>
+                                    <li>ClosedDate (Optional. Date when case was closed)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    @{ Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications); }
+                    <div class="validation-errors">
+                        <textarea id="tbValidationErrors"></textarea>
+                    </div>
+
+                    <div class="k-content">
+                        @(Html.Kendo().Upload()
+                      .Name("Attachment")
+                      .Multiple(false)
+                      .Async(a => a
+                          .Save("UploadAscData", "AscScoreCard")
+                          .AutoUpload(false)
+                      )
+                      .Messages(m => m.Select("Browse"))
+                      .Events(events => events
+                          .Error("OnAscDataUploadError")
+                          .Select("OnAscDataUploadSelect")
+                          .Success("OnAscDataUploadSuccess")
+                          .Complete("OnAscDataUploadComplete")
+                      )
+                      )
+                        @Html.ValidationMessageFor(m => m.Attachment)
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="csp-submit-container">
+                <input type="button" class="k-button" value="Cancel" onclick="CloseAscDataUploadWindow();" />
+                <input id="btnSubmit" type="button" class="k-button csp-submit" value="Submit" />
+            </div>
+        }
+    </div>
+</div>

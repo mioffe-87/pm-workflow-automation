@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preset name="SD.NHibernate (Fluent NHibernate code only)" lastModifiedOn="2008-04-22T16:06:27.4657865+01:00" createdBy="FB" isSealed="false" xmlns="http://sd/llblgen/pro/presetElementDefinitions.xsd">
+	<supportedPlatforms>
+		<platform name=".NET 3.5"/>
+		<platform name=".NET 4.0"/>
+		<platform name=".NET 4.5"/>
+	</supportedPlatforms>
+	<supportedTemplateGroups>
+		<templateGroup name="General"/>
+	</supportedTemplateGroups>
+	<supportedFrameworks>
+		<framework name="NHibernate"/>
+	</supportedFrameworks>
+	<taskPresets>
+		<taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="Generate NHibernate domain model" requiresCleanCache="false">
+			<performRule isEnabled="false" settingName="" operator="0" operand="" />
+			<taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate Type info list html page">
+				<performRule isEnabled="false" settingName="" operator="0" operand=""/>
+				<parameters>
+					<parameter name="destinationFolder" value="Model"/>
+					<parameter name="filenameFormat" value="ClassesToImplementManually.html"/>
+					<parameter name="templateID" value="SD_typeInfoListPage"/>
+				</parameters>
+			</taskPreset>
+		</taskGroupPreset>
+		<taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="Generate NHibernate Fluent NHibernate code only" forSpecificDatabase="All" requiresCleanCache="false">
+			<performRule isEnabled="false" settingName="" operator="0" operand=""/>
+			<taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate AssemblyInfo class">
+				<performRule isEnabled="false" settingName="" operator="0" operand=""/>
+				<parameters>
+					<parameter name="destinationFolder" value="[driverShortName]\Persistence\Properties"/>
+					<parameter name="filenameFormat" value="AssemblyInfo.[extension]"/>
+					<parameter name="templateID" value="SD_NHibernateAssemblyInfo"/>
+					<parameter name="failWhenExistent" value="true"/>
+				</parameters>
+			</taskPreset>
+			<taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate Entity Mapping Files">
+				<performRule isEnabled="false" settingName="" operator="0" operand=""/>
+				<parameters>
+					<parameter name="destinationFolder" value="[driverShortName]\Persistence\EntityMappings"/>
+					<parameter name="filenameFormat" value="[elementName]Map.[extension]"/>
+					<parameter name="templateID" value="SD_NHibernateEntityFluentMapping"/>
+					<parameter name="emitType" value="allEntities"/>
+					<parameter name="templateAssemblySourceFileFormat" value=""/>
+					<parameter name="elementFilter" value="!IsSubType &amp;&amp; !IsPureManyToManyIntermediate"/>
+				</parameters>
+			</taskPreset>
+			<taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate TypedView Mapping Files">
+				<performRule isEnabled="false" settingName="" operator="0" operand=""/>
+				<parameters>
+					<parameter name="destinationFolder" value="[driverShortName]\Persistence\TypedViewMappings"/>
+					<parameter name="filenameFormat" value="[elementName]TypedViewRowMap.[extension]"/>
+					<parameter name="templateID" value="SD_NHibernateTypedViewFluentMapping"/>
+					<parameter name="emitType" value="allTypedViews"/>
+					<parameter name="templateAssemblySourceFileFormat" value=""/>
+				</parameters>
+			</taskPreset>
+			<taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate TypedListQueryFactory Class">
+				<performRule isEnabled="false" settingName="" operator="0" operand=""/>
+				<parameters>
+					<parameter name="destinationFolder" value="[driverShortName]\Persistence"/>
+					<parameter name="filenameFormat" value="TypedListQueryFactory.[extension]"/>
+					<parameter name="templateID" value="SD_NHibernateTypedListQueryFactory"/>
+					<parameter name="templateAssemblySourceFileFormat" value=""/>
+					<parameter name="elementFilter" value="TypedLists.Count &gt; 0"/>
+				</parameters>
+			</taskPreset>
+			<taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate SessionManager Class">
+				<performRule isEnabled="false" settingName="" operator="0" operand=""/>
+				<parameters>
+					<parameter name="destinationFolder" value="[driverShortName]\Persistence"/>
+					<parameter name="filenameFormat" value="SessionManager.[extension]"/>
+					<parameter name="templateID" value="SD_NHibernateSessionManagerFluent"/>
+					<parameter name="templateAssemblySourceFileFormat" value=""/>
+				</parameters>
+			</taskPreset>
+			<taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate app.config file">
+				<performRule isEnabled="false" settingName="" operator="0" operand=""/>
+				<parameters>
+					<parameter name="destinationFolder" value="[driverShortName]\Persistence"/>
+					<parameter name="filenameFormat" value="app.config"/>
+					<parameter name="templateID" value="SD_NHibernateAppConfig"/>
+				</parameters>
+			</taskPreset>
+			<taskPreset name="SD.Tasks.Base.GenerateVSNetProject" displayName="Generate VS.NET project file">
+				<performRule isEnabled="false" settingName="" operator="0" operand=""/>
+				<parameters>
+					<parameter name="destinationFolder" value="[driverShortName]\Persistence"/>
+					<parameter name="filenameFormat" value="[projectName].Persistence.[extension]proj"/>
+					<parameter name="templateID" value="SD_NHibernatePersistenceVsNet"/>
+					<parameter name="buildActionPerExtension" value=".config;None|.cfg.xml;None|.hbm.xml;EmbeddedResource|.html;Node|;Compile"/>
+				</parameters>
+			</taskPreset>
+		</taskGroupPreset>
+	</taskPresets>
+</preset>

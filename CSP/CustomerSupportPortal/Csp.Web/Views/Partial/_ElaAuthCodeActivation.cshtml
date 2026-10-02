@@ -1,0 +1,51 @@
+﻿@model Csp.Web.DataTransferObjects.ActivateVmAuthCodeDto
+
+@{ 
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+}
+<div id="containerActivateVMLicenseDiv">
+    @using (Ajax.BeginForm("ActivateElaAuthCode", "SiteLicense", new { }, new AjaxOptions
+    {
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();",
+        UpdateTargetId = "containerActivateVMLicenseDiv"
+    }, new { id = (string)UniqueId.ActivateVmForm }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.Eula.SelectedEulaId,new { id = "SelectedEulaId", name="SelectedEulaId" })
+        <fieldset>
+            <legend>Activate ELA Auth-Code</legend>
+            <div class="fieldset fieldset-padded">
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Authorization Code:")
+                    </div>
+
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.AuthorizationCode)
+                        @Html.TextBoxFor(model => model.AuthorizationCode, new {maxlength = "46"})
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        @Html.Partial("../Partial/_Eula", Model.Eula)
+        <fieldset>
+            <div class="fieldset">
+                <div class="csp-submit-container">
+                    <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+                    <input type="submit" id="@UniqueId.okButtonId" value="Agree and Submit" class="k-button csp-submit"  />&nbsp;&nbsp;&nbsp;
+                    <input type="button" value="Refuse" name="btnRefuse" id="btnRefuse" class="k-button" onclick="CloseMe(this)" />&nbsp;&nbsp;
+                </div>
+            </div>
+        </fieldset>
+    }
+</div>
+
+<script>
+    $.validator.unobtrusive.parse("#@UniqueId.ActivateVmForm");
+
+    function CloseMe(obj) {
+        $(obj).closest(".k-window-content").data("kendoWindow").close();
+    }
+</script>

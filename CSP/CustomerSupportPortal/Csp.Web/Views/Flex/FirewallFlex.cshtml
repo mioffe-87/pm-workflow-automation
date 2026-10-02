@@ -1,0 +1,26 @@
+﻿@{
+    Layout = null;
+    var resourceRevisionNumber = SiteHelper.GetResourceRevisionNumber();
+    var portalAssetsCdnUrl = SiteHelper.GetPortalAssetsCdnUrl();
+}
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Firewall Flex</title>
+    <!-- Lato Font from Adobe -->
+    <link rel="stylesheet" href="https://use.typekit.net/exn3eyx.css">
+    <!-- Font Awesome -->
+    @*<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/v4-shims.css" />*@
+
+    <link rel="stylesheet" href="~/Content/fontawesome/css/all.min.css"/>
+    <link rel="stylesheet" href="~/Content/fontawesome/css/v4-shims.min.css" />
+
+    <link href="@(portalAssetsCdnUrl)/static/css/main.css?@(resourceRevisionNumber)" rel="stylesheet" />
+</head>
+<body>
+    @PortalContext.AddContext()
+    <div id="flex-container-onboarding"></div>
+<script type="text/javascript" src="@(portalAssetsCdnUrl)/static/js/main.js?@(resourceRevisionNumber)"></script>
+</body>
+</html>

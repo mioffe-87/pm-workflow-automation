@@ -1,0 +1,33 @@
+﻿<%
+	Project currentProject = _executingGenerator.ProjectDefinition;
+	TypedViewDefinition typedView = (TypedViewDefinition)_activeObject;
+	TypedViewMapping mapping = (TypedViewMapping)currentProject.GetGroupableModelElementMapping(typedView, _executingGenerator.DriverID);
+	IProjectElementMapTargetElement mappedTarget = mapping.MappedTarget;
+	bool tableViewTargetingTypedView = ((mappedTarget.ElementType==ProjectElementMapTargetElementType.Table) || (mappedTarget.ElementType==ProjectElementMapTargetElementType.View));
+	var allTargetedCatalogs = GeneratorUtils.GetAllMappedTargetsInScope(_executingGenerator).Select(t=>t.ContainingSchema.ParentCatalog).Distinct();
+	bool hasMultipleCatalogs = allTargetedCatalogs.Count() > 1;
+%><?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="<%=_executingGenerator.RootNamespaceToUse%>.Model"
+                   namespace="<%=_executingGenerator.GetValueFromRunQueueCache<string>("TypedViewClassesNamespace") ?? _executingGenerator.RootNamespaceToUse + ".TypedViewClasses"%>">
+
+	<class name="<%=typedView.Name%>TypedViewRow" table="<%=SD_NHibernateGeneralUtils.ProduceTargetFullName(mappedTarget, _executingGenerator, hasMultipleCatalogs, "&quot;")%>" mutable="false" >
+<%	// pick the first field, as it doesn't matter. 	There's always a field, LLBLGen Pro doesn't allow empty typed views.
+	var fakeIdField = typedView.Fields[0];
+	var fieldMapping = mapping.GetFieldMappingOfField(fakeIdField);
+	string typeConverterDeclaration = SD_NHibernateGeneralUtils.ProduceTypeConverterTypeString(fieldMapping);
+	var targetField = fieldMapping.MappedTarget;
+%>		<id name="<%=fakeIdField.Name%>" column="<%=SD_NHibernateGeneralUtils.ProduceFieldFullName(targetField.FieldName, _executingGenerator, "&quot;")%>" access="field.camelcase-underscore"<%=typeConverterDeclaration%> >
+			<generator class="native"/>
+		</id>
+<%	foreach(IFieldElementCore field in typedView.Fields.OrderBy(f=>f.Name))
+	{
+		fieldMapping = mapping.GetFieldMappingOfField(field);
+		targetField = fieldMapping.MappedTarget;
+		typeConverterDeclaration = SD_NHibernateGeneralUtils.ProduceTypeConverterTypeString(fieldMapping);
+%>		<property name="<%=field.Name%>" column="<%=SD_NHibernateGeneralUtils.ProduceFieldFullName(targetField.FieldName, _executingGenerator, "&quot;")%>" access="field.camelcase-underscore"<%=typeConverterDeclaration%> />	
+<%	}
+%><%=DotNetTemplateEngine.GetUserCodeRegion("TypedViewMappingCustomCode", "<!--", "-->", string.Empty, false)%><# SD_NHibernate_CustomTypedViewHbmMappingInclude #>
+	</class>
+</hibernate-mapping>
+

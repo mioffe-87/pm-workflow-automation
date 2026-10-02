@@ -1,0 +1,19 @@
+﻿@model  List<Csp.Api.Model.Breadcrumb>
+@using System.Web.Mvc.Html
+
+<ul id="breadcrumbs" class="horizontal" style="margin: 0px; padding: 0px;">
+    @{
+        if (Model != null) {
+            foreach (Csp.Api.Model.Breadcrumb node in Model) {
+                if (node.IsRoot) {
+        <li><a href="@node.Url" data-link-type="csp-navigation" data-link-location="breadcrumbs">@node.Title</a></li>
+                } else if (node.Url != null) {
+        <li>&nbsp;>&nbsp;<a href="@node.Url" data-link-type="csp-navigation" data-link-location="breadcrumbs">@node.Title</a></li>
+                } else {
+        <li>&nbsp;>&nbsp;@node.Title</li>
+                }
+            }
+        }
+    }
+</ul>
+

@@ -1,0 +1,58 @@
+﻿' ////////////////////////////////////////////////////////////////////////////////////////////////////////
+' // This is generated code. 
+' ////////////////////////////////////////////////////////////////////////////////////////////////////////
+' // Code is generated using LLBLGen Pro version: <[LLBLGenVersion]>
+' // Code is generated on: <[Time]>
+' // Code is generated using templates: <[TemplateName]>
+' // Templates vendor: Solutions Design.
+' // Templates version: <[TemplateVersion]>
+' ////////////////////////////////////////////////////////////////////////////////////////////////////////
+Imports System
+Imports System.Data
+Imports System.Data.Common
+Imports SD.LLBLGen.Pro.ORMSupportClasses
+Imports <[RootNamespace]>.DaoClasses
+Imports SD.LLBLGen.Pro.ORMSupportClasses.SelfServicingSpecific
+
+Namespace <[RootNamespace]>.StoredProcedureCallerClasses
+	''' <summary>Class which contains the static logic to execute action stored procedures in the database.</summary>
+	Public Class ActionProcedures
+		''' <summary>Private CTor so no instance can be created.</summary>
+		Private Sub New()
+		End Sub
+
+<[Foreach ActionStoredProcedureCall]>
+		''' <summary>Delegate definition for stored procedure '<[ActualStoredProcedureName]>' to be used in combination of a UnitOfWork object.</summary>
+		Delegate Function <[CurrentSPCallName]>CallBack(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasInputAndOutputParameters]>, <[EndIf]><[Foreach OutputParameter Comma]>ByRef <[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasParameter]>, <[EndIf]>transactionToUse As ITransaction) As Integer<[NextForeach]>
+
+<[Foreach ActionStoredProcedureCall CrLf]>
+		''' <summary>Calls stored procedure '<[ActualStoredProcedureName]>'.<br/><br/>
+		''' <[Foreach CustomProperty ActionStoredProcedureCall]>
+		''' <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary>
+<[If HasParameter]><[Foreach Parameter CrLf]>		''' <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter of stored procedure. <[Description]></param><[NextForeach]>
+<[EndIf]>		''' <returns>Amount of rows affected, if the database / routine doesn't surpress rowcounting.</returns>
+		Public Shared Function <[CurrentSPCallName]>(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasInputAndOutputParameters]>, <[EndIf]><[Foreach OutputParameter Comma]>ByRef <[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]>) As Integer
+			Return <[CurrentSPCallName]>(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasParameter NoCursors]>, <[EndIf]>Nothing)
+		End Function
+
+		''' <summary>Calls stored procedure '<[ActualStoredProcedureName]>'.<br/><br/>
+		''' <[Foreach CustomProperty ActionStoredProcedureCall]>
+		''' <[CustomPropertyName]>: <[CustomPropertyValue]><br/><[NextForeach]></summary>
+<[If HasParameter]><[Foreach Parameter CrLf]>		''' <param name="<[CaseCamel CurrentParameterName]>"><[CurrentParameterDirection]> parameter of stored procedure. <[Description]></param><[NextForeach]>
+<[EndIf]>		''' <param name="transactionToUse">the transaction to use, or null if no transaction is available.</param>
+		''' <returns>Amount of rows affected, if the database / routine doesn't surpress rowcounting.</returns>
+		Public Shared Function <[CurrentSPCallName]>(<[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasInputAndOutputParameters]>, <[EndIf]><[Foreach OutputParameter Comma]>ByRef <[CaseCamel CurrentParameterName]> As <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]><[NextForeach]><[If HasParameter]>, <[EndIf]>transactionToUse As ITransaction) As Integer
+			Using spCall As StoredProcedureCall = Create<[CurrentSPCallName]>Call(New DataAccessCoreImpl(New CommonDaoBase(), transactionToUse)<[If HasParameter NoCursors]>, <[EndIf]><[Foreach InputParameter Comma]><[CaseCamel CurrentParameterName]><[NextForeach]><[If HasInputAndOutputParameters NoCursors]>, <[EndIf]><[Foreach OutputParameter NoCursors Comma]><[CaseCamel CurrentParameterName]><[NextForeach]>)
+				Dim toReturn As Integer = spCall.Call()<[Foreach OutputParameter NoCursors]>
+<[If HasTypeConverterDefined]>				<[CaseCamel CurrentParameterName]> = CType(New <[TypeConverterFullName]>().ConvertFrom(spCall.GetParameterValue(Of <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfMappedTargetField]>)<[Else]><[TypeOfMappedTargetField]><[EndIf]><[Else]><[TypeOfMappedTargetField]><[EndIf]>)(<[ParameterIndex]>), <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]>)<[Else]>				<[CaseCamel CurrentParameterName]> = spCall.GetParameterValue(Of <[If IsNullable]><[If IsValueType]>Nullable(Of <[TypeOfParameter]>)<[Else]><[TypeOfParameter]><[EndIf]><[Else]><[TypeOfParameter]><[EndIf]>)(<[ParameterIndex]>)<[EndIf]><[NextForeach]>
+				Return toReturn
+			End Using
+		End Function<[NextForeach]>
+
+<[Foreach ActionStoredProcedureCall]><# SD_ProceduresIncludeTemplate #>
+<[NextForeach]>
+#Region "Included Code"
+<# Custom_ActionProceduresTemplate #>
+#End Region
+	End Class
+End Namespace

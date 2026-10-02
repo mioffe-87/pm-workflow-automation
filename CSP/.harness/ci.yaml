@@ -1,0 +1,56 @@
+pipeline:
+  name: CSP
+  identifier: csp
+  projectIdentifier: csp
+  orgIdentifier: iad
+  properties:
+    ci:
+      codebase:
+        build: <+input>
+        connectorRef: account.panwgithub
+        repoName: IAD/CSP
+        sslVerify: false
+  stages:
+    - stage:
+        variables:
+          - name: SECURE_CICD_TEAM_GCP_KEY
+            type: Secret
+            description: ""
+            required: false
+            value: account.CSP_SECURE_CICD_GCP_KEY
+          - name: TEAM_NAME
+            type: String
+            description: ""
+            required: false
+            value: csp
+        identifier: infosecscans
+        name: Infosec Scans
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  name: Blackduck
+                  identifier: Blackduck
+                  template:
+                    templateRef: account.Blackduck
+                    versionLabel: v4
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: account.harnessci
+              namespace: default
+              automountServiceAccountToken: true
+              nodeSelector:
+                app: harness-build
+              os: Linux
+        type: CI
+        when:
+          condition: <+trigger.branch> == "master" && <+trigger.payload.ref> !~ "refs/tags/.*"
+          pipelineStatus: Success
+  variables:
+    - name: REPO_NAME
+      type: String
+      description: ""
+      required: false
+      value: <+<+codebase.repoUrl>.substring(<+codebase.repoUrl>.lastIndexOf('/') + 1)>

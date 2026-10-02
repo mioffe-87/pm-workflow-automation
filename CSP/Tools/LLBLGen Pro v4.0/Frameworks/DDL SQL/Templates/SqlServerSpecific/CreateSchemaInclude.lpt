@@ -1,0 +1,7 @@
+﻿<% // the name of the catalog is in the variable 'catalogName', the name of the schema is in the variable 'schemaName'.
+	if(schemaName.ToLowerInvariant()!="dbo")
+	{
+%>
+CREATE SCHEMA [<%=schemaName%>] /* AUTHORIZATION owner_name */
+GO
+<%	}%>

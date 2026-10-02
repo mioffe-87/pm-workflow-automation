@@ -1,0 +1,690 @@
+﻿@using Csp.Api.HelperClasses
+@using Csp.Api.Model
+@using Kendo.Mvc.UI
+@using NHibernate.Type
+@model Csp.Web.DataTransferObjects.VmViewModelDto<AvailableVirtualSeries<AvailableCn>>
+
+<style type="text/css">
+    .bold { font-weight: bold; }
+    body .k-master-row.k-alt, body .k-master-row.k-alt:hover, body .k-detail-row.k-alt, body .k-detail-row.k-alt:hover, body .k-detail-row.k-alt th.k-header, body .k-detail-row.k-alt td[role="gridcell"] { background-color: rgba(52, 52, 52, 0.15); }
+    .k-button.selected { border: solid 1px rgba(195, 195, 195, 1);background-color: rgba(215, 215, 215, 1); }
+
+    /*.k-grid .k-master-row.bold td { border-top: solid 0.125px rgba(150, 150, 150, 0.75) !important;border-collapse: separate;border-left: none; }
+    .k-master-row.bold td { border-bottom:inherit; }
+    .k-grid .k-detail-row th { border-top: solid 0.125px rgba(150, 150, 150, 0.75) !important;border-collapse: separate;border-left: none; }*/
+
+    .info-icon-color { color: #168ab1 }
+</style>
+<script>
+    function ShowNsxDevices(e) {
+        var direction = '/CnSeries/ViewProvisionedPanoramaDevices';
+        var dataItem = this.dataItem($(e.target).closest("tr"));
+        var window = $('#@UniqueId.PraProvisionWindow').data("kendoWindow");
+        window.refresh(direction + '?authCode=' + dataItem.AuthorizationCode + "&partNumber=" + dataItem.ProductSku);
+        window.setOptions({ minHeight: 200 });
+        window.open();
+        window.center();
+    }
+/*
+    function AllocateTokensToPanorama(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var direction = '/CnSeries/AllocateTokensToPanorama';
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var newCnSeriesDeviceId = $('#@UniqueId.NewCnSeriesDeviceId');
+        newCnSeriesDeviceId.val('');
+        globalNewCnSeriesDeviceId = '@UniqueId.NewCnSeriesDeviceId';
+        var window = $('#@UniqueId.AllocateTokensToPanoramaWindow').data("kendoWindow");
+        window.refresh(direction + '?authCode=' + dataItem.AuthorizationCode);
+        window.setOptions({ minHeight: 200 });
+        window.open();
+        window.center();
+    }
+*/
+    function Download(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var downloadsWindow = $('#@UniqueId.DownloadsWindow').data('kendoWindow');
+        downloadsWindow.refresh('/updates/softwareupdates?id=@(Model.ActionHelper.Id)&vmDevices=true');
+        downloadsWindow.setOptions({ minHeight: 200 });
+        downloadsWindow.open();
+        downloadsWindow.center();
+    }
+
+    function DownloadLicense(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var item = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.href = "/License/DownloadLicenseKey?licenseId=" + item.PanoramaLicenseId;
+    }
+
+    //show renewal items dialog
+    function ShowRenewalItems(e) {
+        var direction = '/CnSeries/Renewal';
+        var dataItem = this.dataItem($(e.target).closest("tr"));
+        var window = $('#@UniqueId.RenewalWindow').data("kendoWindow");
+        window.refresh(direction + '?authCode=' + dataItem.AuthorizationCode + '&description=' + dataItem.Description + '&partNumber=' + dataItem.ProductSku) ;
+        window.setOptions({ minHeight: 665, minWidth: 500 });
+        window.title("CN-Series RENEWAL: " + dataItem.AuthorizationCode);
+        window.open();
+        window.center();        
+    }
+
+    //deactivate CnSeries-ELA Authcode only
+    function DeactivateCnSeries(e) {
+        var direction = '/CnSeries/DeactivateCnSeries';
+        var dataItem = this.dataItem($(e.target).closest("tr"));
+        var window = $('#@UniqueId.DeactivateCnSeriesWindow').data("kendoWindow");
+        window.refresh(direction + '?authCode=' + dataItem.AuthorizationCode) ;
+        window.setOptions({ minHeight: 500, minWidth: 400 });
+        window.title("Deactivate CN-Series");
+        window.open();
+        window.center();                
+    }
+
+    function onDownloadsWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.DownloadsWindow');
+    }
+
+    function onAllocateTokensToPanoramaWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.AllocateTokensToPanoramaWindow');
+    }
+
+    function onAllocateTokensToPanoramaWindowClose() {
+        SupportPortal.OnWindowClose('@UniqueId.CnSeriesAuthCodesGrid');
+    }
+
+    function onActivateCnSeriesAuthCodeWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.ActivateCnSeriesAuthCodeWindow');
+    }
+
+    function onActivateCnSeriesAuthCodeWindowClose() {
+        SupportPortal.OnWindowClose("@UniqueId.CnSeriesAuthCodesGrid");
+    }
+
+    function onDeviceViewWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.DeviceViewWindow');
+    }
+    
+    function onPraProvisionWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.PraProvisionWindow');
+    }
+    
+    function onRenewalWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.RenewalWindow');        
+    }
+
+    function onDeactivateCnSeriesWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.DeactivateCnSeriesWindow');        
+    }
+
+    //Must be set for pop-up to function
+    //var deviceWindowId = '#@UniqueId.DeviceViewWindow';
+
+    function onAllocateTokensToPanoramaWindowClose() {
+        var newCnSeriesDeviceId = $('#@UniqueId.NewCnSeriesDeviceId');
+        if (newCnSeriesDeviceId.val().length > 0) {
+            var proddevicegrid = $('.proddevicegrid');
+            if (proddevicegrid.length > 0) {
+                proddevicegrid.data("kendoGrid").dataSource.read();
+            }
+            
+            var direction = '/Device/Details?deviceId=' + newCnSeriesDeviceId.val();
+            var window = $('#@UniqueId.DeviceViewWindow').data('kendoWindow');
+            window.content(' ');
+            window.refresh();
+            window.refresh(direction);
+            window.setOptions({ minHeight: 520 });
+            window.open();
+            window.center();
+        }
+
+        SupportPortal.OnWindowClose("@UniqueId.CnSeriesAuthCodesGrid");
+    }
+
+    function onWindowClose() {
+        SupportPortal.OnWindowClose("@UniqueId.CnSeriesAuthCodesGrid");
+    }
+    
+    function onPraProvisionWindowClose() {
+    }
+
+    //close the Renewal dialog.
+    function onRenewalWindowClose() {
+        var isDataDirty = $('#renewalDataDirty').val();
+        if (isDataDirty !== '0') {
+            SupportPortal.Confirmation("You haven't saved your changes yet, do you want to exit?", function() {
+                $('#renewalDataDirty').val(0);
+                $('#@UniqueId.RenewalWindow').data('kendoWindow').close();
+            }, null, null);
+            this.preventDefault();
+        } 
+    }
+    
+    //close the deactivate CnSeries dialog
+    function onDeactivateCnSeriesWindowClose() {
+        SupportPortal.OnWindowClose("@UniqueId.CnSeriesAuthCodesGrid");
+    }
+
+    function onAcceptElaTokensGrantWindowOpen() {
+        SupportPortal.OnWindowOpen('@UniqueId.AcceptElaTokensGrantWindow');
+    }
+
+    function onAcceptElaTokensGrantWindowClose() {
+        // on grant Token window close the page needs to be refreshed to load page based on Access from database
+        window.location.href = '/SupportAccount/CnSeries/' + '@Model.SupportAccountId';
+    }
+
+    function getSearchParams() {
+        var params = SetAntiForgery();
+        if ($('#SearchTypeId').val() === 'AuthorizationCodes') {
+            params.authCode = $('#FindSearchValue').val();
+        } else {
+            params.serialNumber = $('#FindSearchValue').val();
+        }
+        return params;
+    }
+
+    function @(UniqueId.CnSeriesAuthCodesGrid)updateRow(e) {
+        var grid = $('#@UniqueId.CnSeriesAuthCodesGrid').data('kendoGrid');
+        grid.saveRow();
+        //TODO Revert Action column - if the update succeeds - HINT look for a input:text...
+    }
+
+        function @(UniqueId.CnSeriesAuthCodesGrid)cancelRow(e) {
+            var grid = $('#@UniqueId.CnSeriesAuthCodesGrid').data('kendoGrid');
+            grid.cancelRow();
+        }
+
+            var isPostBack = $('#@UniqueId.isPostBackId');
+
+            function @(UniqueId.CnSeriesGrid)onDataBound(e) {
+                var grid = $('#@UniqueId.CnSeriesAuthCodesGrid').data('kendoGrid');
+                var gridData = grid.dataSource.view();
+                for (var i = 0; i < gridData.length; i++) {
+                    var currentUid = gridData[i].uid;
+                    var currenRow = grid.table.find("tr[data-uid='" + currentUid + "']");
+            
+                    if (gridData[i].IsNsx === 0 || (gridData[i].IsNsx === 1 && gridData[i].AllowGeneratingPanorama === 0)) {
+                        var provisionPan = $(currenRow).find(".k-grid-ProvisionPanorama");
+                        provisionPan.hide();
+                    }
+            
+                    var showRenewButton = false;
+                    if (gridData[i].IsVmRenewalEligible && gridData[i].ProductSku != null) {
+                        var re = new RegExp('^PAN-CN-X-(((50|100|300|500|700)-PERP-(BASC|BND1|BND2)-(.+)YR)|((100|200|300)-(BND|USG-BND)-(LAB|NFR))|(300-PREM-(BND|BND1|BND2))|(300-PERP-(USG)*-BND)|(1000-HV-(BND|PERP|PERP-BND|PERP-USG-BND|USG-BND|SUB-BND)-(LAB|NFR|NSX)))');
+                        if(re.test(gridData[i].ProductSku)) {
+                            showRenewButton = true;                    
+                        }
+                    }
+
+                    //hide Renew button
+                    if (!showRenewButton) {
+                        $(currenRow).find(".k-grid-Renew").hide();
+                    }
+
+                    //hide Deactivate CnSeries button
+                    if (gridData[i].ProductSku != null) {
+                        var re1 = new RegExp('^PAN-CN-X-(50|100|300|500|700)-ELA-BND2');
+                        if(!re1.test(gridData[i].ProductSku)) {
+                            $(currenRow).find(".k-grid-DeactivateCnSeries").hide();
+                        }
+                    }
+                }
+                setTimeout(function () { 
+                    setRowsState();
+                    var snType = $('#SearchTypeId').val();
+                    if (snType === 'SerialNumber') {
+                        var sn = $('#FindSearchValue').val().trim();
+                        if (sn) {
+                            $('.k-detail-cell tr:has(> td:contains(' + sn + '))').addClass('bold');
+                        }
+                    }
+                }, 25);
+            }
+                
+                function @(UniqueId.CnSeriesView)onCnSeriesViewGridError(args) {
+                    if (args.errors) {
+                        var grid = $("#@UniqueId.CnSeriesAuthCodesGrid").data("kendoGrid");
+                        var gridElement = grid.editable.element;
+
+                        grid.one("dataBinding",
+                            function(e) {
+                                e.preventDefault ? e.preventDefault() : e.returnValue = false; // cancel grid rebind if error occurs
+
+                                $.each(args.errors,
+                                    function(key, value) {
+                                        if (value.errors) {
+                                            gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]")
+                                                .replaceWith(SupportPortal.ValidationMessageTemplate({
+                                                    field: key,
+                                                    message: value.errors[0]
+                                                }));
+                                            gridElement.find("input[name=" + key + "]").focus();
+                                        }
+                                    });
+                            });
+                    }
+                }
+
+                    $(function() {
+                        deviceWindowId = '#@UniqueId.DeviceViewWindow';
+                        var hasPendingTokensRequest = '@Model.HasTokenGrantRequest';
+                        if (hasPendingTokensRequest === 'False') {
+                            $('#@UniqueId.ReviewTokensGrantBtn').hide();
+                        }
+
+                        $('#@UniqueId.AddCnSeriesSeriesAuthCode').click(function() {
+                            //Open pop-up window
+                            var direction = '/CnSeries/AddCnSeriesAuthCode';
+                            var window = $('#@UniqueId.ActivateCnSeriesAuthCodeWindow').data("kendoWindow");
+                            window.refresh(direction);
+                            window.setOptions({ minHeight: 400 });
+                            window.open();
+                            window.center();
+                        });
+                        $('#@UniqueId.AllocateTokensToPanorama').click(function() {
+                            //Open pop-up window
+                            var direction = '/CnSeries/AllocateTokensToPanorama';
+                            var window = $('#@UniqueId.AllocateTokensToPanoramaWindow').data("kendoWindow");
+                            window.refresh(direction);
+                            window.setOptions({ minHeight: 400 });
+                            window.open();
+                            window.center();
+                        });
+                        //review tokens grant button action
+                        $('#@UniqueId.ReviewTokensGrantBtn').click(function() {
+                            var direction = "/SiteLicense/GetPendingElaTokensGrantItems";
+                            var window = $('#@UniqueId.AcceptElaTokensGrantWindow').data("kendoWindow");
+                            window.refresh(direction);
+                            window.open();
+                            window.center();
+                        });
+
+                        $('#@UniqueId.ReleasedCnSeriesAuthCodes').click(function() {
+                            var direction = "/CnSeries/ViewReleasedLicenses";
+                            var window = $("#@UniqueId.releasedCnSeriesLicensesWindowId").data("kendoWindow");
+                            window.content(" ");
+                            window.setOptions({ minHeight: 400, minWidth: 350 });
+                            window.bind('open', onOpenReleasedCnSeriesAuthCodesWindow);
+                            window.bind('close', onCloseReleasedCnSeriesAuthCodesWindow);
+                            window.title("Available CN-Series Licenses");
+                            window.refresh();
+                            window.refresh(direction);
+                            window.open();
+                            window.center();
+                        });
+
+                        function onOpenReleasedCnSeriesAuthCodesWindow() {
+                            SupportPortal.OnWindowOpen("@UniqueId.releasedCnSeriesLicensesWindowId");
+                        }
+
+                        function onCloseReleasedCnSeriesAuthCodesWindow() {
+                            var window = $("#@UniqueId.releasedCnSeriesLicensesWindowId").data("kendoWindow");
+                            window.content(" ");
+                            window.refresh();
+
+                            SupportPortal.OnWindowClose("@UniqueId.CnSeriesAuthCodesGrid");
+                        }
+
+
+                        $('#@UniqueId.DeactivateLicenses').click(function() {
+                            var direction = "/CnSeries/DeactivateLicenses";
+                            var window = $("#@UniqueId.deactivateLicensesWindowId").data("kendoWindow");
+                            window.content(" ");
+                            window.setOptions({ minHeight: 400 });
+                            window.bind('open', onOpenDeactivateLicensesWindow);
+                            window.bind('close', onCloseDeactivateLicensesWindow);
+                            window.title("Deactivate Licenses");
+                            window.refresh();
+                            window.refresh(direction);
+                            window.open();
+                            window.center();
+                        });
+
+                        function onOpenDeactivateLicensesWindow() {
+                            SupportPortal.OnWindowOpen("@UniqueId.deactivateLicensesWindowId");
+                        }
+
+                        function onCloseDeactivateLicensesWindow() {
+                            var window = $("#@UniqueId.deactivateLicensesWindowId").data("kendoWindow");
+                            window.content("");
+                            window.refresh();
+
+                            SupportPortal.OnWindowClose("@UniqueId.CnSeriesAuthCodesGrid");
+                        }
+                    });
+
+                    function onSearchEnterPress(e) {
+                        if (e.keyCode == 13) {
+                            findCN();
+                            return false;
+                        }
+
+                        return true;
+                    }
+
+                    function findCN() {
+                        $('#@UniqueId.CnSeriesAuthCodesGrid').data('kendoGrid').dataSource.read();
+                        return false;
+                    }
+
+                    function exportCnSeriesToCsv() {
+
+                        var val = $('#FindSearchValue').val();
+
+                        if (val === 'AuthorizationCodes') {
+                            location.href = '@Url.Action("SearchAvailableReport", "CnSeries")?authCode=' + val;
+                        } else {
+                            location.href = '@Url.Action("SearchAvailableReport", "CnSeries")?serialNumber=' + val;
+                        }
+                    }
+</script>
+
+@Html.AntiForgeryToken()
+
+@Html.Hidden((string)UniqueId.isPostBackId, "")
+<input type="hidden" value="0" id="renewalDataDirty"/>
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)@UniqueId.ActivateCnSeriesAuthCodeWindow)
+        .Visible(false)
+        .Width(500)
+        .Modal(true)
+        .Draggable()
+        .Events(events => events.Open("onActivateCnSeriesAuthCodeWindowOpen").Close("onActivateCnSeriesAuthCodeWindowClose"))
+        .Title("CN-Series Auth-Code")
+    )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)@UniqueId.AllocateTokensToPanoramaWindow)
+        .Visible(true)
+        .Width(550)
+        .Height(450)
+        .Modal(true)
+        .Draggable()
+        .Events(events => events.Open("onAllocateTokensToPanoramaWindowOpen").Close("onAllocateTokensToPanoramaWindowClose"))
+        .Title("CN-Series Licensing: Allocate Tokens to Panorama")
+    )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)@UniqueId.DeviceViewWindow)
+        .Visible(false)
+        .Events(events => events.Open("onDeviceViewWindowOpen").Close("onWindowClose"))
+        .Modal(true)
+        .Width(600)
+        .Visible(false)
+        .Draggable()
+        .Title("Device:")
+    )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)@UniqueId.DownloadsWindow)
+        .Visible(false)
+        .Events(events => events.Open("onDownloadsWindowOpen").Close("onWindowClose"))
+        .Modal(true)
+        .Width(1080)
+        .Visible(false)
+        .Draggable()
+        .Title("Downloads")
+    )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string) @UniqueId.PraProvisionWindow)
+        .Visible(false)
+        .Width(550)
+        .Height(350)
+        .Modal(true)
+        .Draggable()
+        .Events(events => events.Open("onPraProvisionWindowOpen").Close("onPraProvisionWindowClose"))
+        .Title("Provision Panorama")
+    )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)UniqueId.deactivateLicensesWindowId)
+        .Visible(false)
+        .Width(500)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title("Deactivate Licenses")
+)
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)UniqueId.releasedCnSeriesLicensesWindowId)
+        .Visible(false)
+        .Width(750)
+        .Modal(true)
+        .Scrollable(false)
+        .Draggable()
+        .Title("Available CN-Series Licenses")
+)
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string) @UniqueId.RenewalWindow)
+        .Visible(false)
+        .Width(780)
+        .Height(400)
+        .Modal(true)
+        .Draggable()
+        .Events(events => events.Open("onRenewalWindowOpen").Close("onRenewalWindowClose"))
+        .Title("CN-Series Renewal")
+    )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string) @UniqueId.DeactivateCnSeriesWindow)
+        .Visible(false)
+        .Width(500)
+        .Height(300)
+        .Modal(true)
+        .Draggable()
+        .Events(events => events.Open("onDeactivateCnSeriesWindowOpen").Close("onDeactivateCnSeriesWindowClose"))
+        .Title("Deactivate CN-Series")
+    )    
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+        .Name((string) @UniqueId.Confirmation)
+        .Visible(false)
+        .Modal(true)
+        .Draggable()
+        .Title("Confirmation")
+    )
+</div>
+<div>
+    @(Html.Kendo().Window()
+        .Name((string)@UniqueId.AcceptElaTokensGrantWindow)
+        .Visible(false)
+        .Width(900)
+        .Height(320)
+        .Modal(true)
+        .Draggable()
+        .Events(events => events.Open("onAcceptElaTokensGrantWindowOpen").Close("onAcceptElaTokensGrantWindowClose"))
+        .Title("Review Tokens Grant")
+    )
+</div>
+@Html.Hidden((string)UniqueId.NewCnSeriesDeviceId)
+<div class="contextTitle">CN-Series Licensing</div>
+<div class="grid-header">
+    <div class="grid-left">
+        <button type="button" class="k-button k-primary" data-link-type="cnSeries-series-add-auth-code" id="@UniqueId.AddCnSeriesSeriesAuthCode">Add CN-Series Auth-Code</button>
+        <button type="button" class="k-button k-primary" data-link-type="cnSeries-series-add-auth-code" id="@UniqueId.AllocateTokensToPanorama">Allocate Tokens to Panorama</button>
+        @*<button type="button" class="k-button" style="margin-left: 5px; color: red" id="@UniqueId.ReviewTokensGrantBtn" >Review Tokens Grant</button>*@
+    </div>
+    <div class="grid-right">
+        <div class="grid-filter">
+            @{
+                @(Html.Kendo().DropDownList()
+                    .Name((string)UniqueId.searchFieldId)
+                    .OptionLabel("Filter By")
+                    .OptionLabelTemplate("<span class='grid-filter__dropdown-placeholder'>Filter By</span>")
+                    .DataTextField("Text")
+                    .DataValueField("Value")
+                    .BindTo(new List<SelectListItem>
+                    {
+                        new SelectListItem { Text = "Authorization Code", Value = "AuthorizationCodes" },
+                        new SelectListItem { Text = "Serial Number", Value = "SerialNumber" }
+                    })
+                )
+            }
+        </div>
+        <div class="grid-filter">
+            @Html.TextBox("FindSearchValue", Model.DefaultDeviceCode, new {
+                onkeypress = "return onSearchEnterPress(event)",
+                @class = "grid-filter__search-input",
+                placeholder = "Search",
+                aria_label = "Search"
+            })
+            <button aria-label="search" type="button" id="@UniqueId.FindCnSeries" class="grid-filter__search-button" onclick="findCN()">
+                <span aria-hidden="true" class="fa fa-search" />
+            </button>
+
+            <!-- @Html.TextBox("FindSearchValue", Model.DefaultDeviceCode)
+            <input type="button" value="Search" id="@UniqueId.FindCnSeries" class="k-button" /> -->
+        </div>
+    </div>
+</div>
+<div class="grid-right" style="z-index: 1;position: relative;">
+    <div class="grid-actions">
+        <input type="button" value="Expand All" id="expand-all" class="k-button" />
+        <input type="button" value="Collapse All" id="collapse-all" class="k-button" />
+    </div>
+</div>
+<div>
+    @{
+        var maxPageSizeForms = Convert.ToInt32(Model.DataParameters.TotalRecordCount);
+        var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+        if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+            pageSizeOptionsForms.Add(maxPageSizeForms);
+        }
+    }
+
+    @(Html.Kendo().Grid(Model.AvailableVms)
+        .Name((string)UniqueId.CnSeriesAuthCodesGrid)
+        .Columns(cols => {
+            cols.Bound(x => x.AuthorizationCode).Title("Auth Code").Sortable(false).Width(100);
+            cols.Bound(x => x.ProductSku).Title("Part Number").Sortable(false);
+            cols.Bound(x => x.Description).Title("Description").Sortable(false);
+            cols.Bound(x => x.VmTotalCount).Title("Tokens Purchased").Sortable(false).Width(160);
+            cols.Bound(x => x.VmAllocated).Title("Total Tokens Allocated").Sortable(false).Width(160);
+            cols.Bound(x => x.VmUseCount).Title("Tokens Available For Allocation").Sortable(false).Width(160);
+            cols.Bound(x => x.MonthlyPeakUsageTotal).Title("Total Monthly Usage").Sortable(false).Width(160);
+            cols.Bound(x => x.AscName).Title("ASC").Sortable(false).Width(160);
+            cols.Bound(x => x.DisplayExpirationDate).Title("Expiration Date").Sortable(false).Width(160);
+            cols.Bound(x => x.IsVmRenewalEligible).Sortable(false).Hidden(true);
+            /*
+            cols.Command(command => {
+                command.Custom("csp-download").Text(" ").Click("Download").HtmlAttributes(new { title = "Download", href = "javascript:void(0);", style="font-size: 12px;" });
+                command.Custom("DeactivateCnSeries").Click("DeactivateCnSeries").Text("Deactivate").HtmlAttributes(new {style="font-size: 12px;" });
+                command.Custom("ProvisionPanorama").Click("ShowNsxDevices").Text("Panorama").HtmlAttributes(new {style="font-size: 12px;" });
+                command.Custom("Renew").Click("ShowRenewalItems").Text("Renew").HtmlAttributes(new {style="font-size: 12px;" });
+            }).Width(320).Title("Actions");
+            */
+        })
+        .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+        .Sortable()
+        .Editable(x => x.Mode(GridEditMode.InLine))
+        .ClientDetailTemplateId("template")
+        .Events(e => { e.DataBound((string)UniqueId.CnSeriesGrid + "onDataBound"); e.DetailInit("initDetail"); })
+        .ToolBar(toolBar => { toolBar
+            .Custom()
+            .Text("Export To CSV")
+            .HtmlAttributes(new { id = "export", data_link_type = "export-csv-assets" })
+            .Url("javascript: exportCnSeriesToCsv();");
+        })
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Model(model => {
+                model.Id(p => p.AuthorizationCode);
+            })
+            .Events(e => e.Error((string)UniqueId.CnSeriesView + "onCnSeriesViewGridError"))
+            .PageSize(Model.DataParameters.PaginationCount)
+            .Read(read => read.Action("SearchAvailable", "CnSeries").Data("getSearchParams"))
+            .Create(x => x.Action("AddCnSeriesAuthCode", "CnSeries").Data("SetAntiForgery"))
+            .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+        ))
+    <script id="template" type="text/kendo-tmpl">
+        @((Html.Kendo().Grid<AvailableCn>()
+            .Name("AvailableCnsGrid_#=AuthorizationCode#") // template expression, to be evaluated in the master context
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.SerialNumber).Title("Serial Number");
+                columns.Bound(o => o.ProductSku).Title("Panorama Model Name");
+                columns.Bound(o => o.VmUseCount).Title("Num. Licenses");
+                columns.Bound(o => o.VmTotalCount).Title("Tokens Allocated");
+                columns.Bound(o => o.MonthlyAverageUsage).Title("Total Monthly Average Usage <i class='fa fa-info-circle info-icon-color' title='Only available for online Panoramas'></i>");
+                //columns.Bound(o => o.TotalAvailable).Title("Total Avail. \\#");
+                columns.Bound(o => o.MonthlyPeakUsage).Title("Monthly Peak Usage <i class='fa fa-info-circle info-icon-color' title='Monthly Peak Usage is from prior month'></i>");
+                columns.Command(command =>
+                {
+                    command.Custom("csp-download").Text(" ").Click("DownloadLicense").HtmlAttributes(new { title = "Download", href = "javascript:void(0);", style = "font-size: 12px;" });
+                }).Width(160).Title("License Key Download");
+            })
+            .ToClientTemplate()))
+    </script>
+    <script>
+        function initDetail(e) {
+            $("#AvailableCnsGrid_" + e.data.AuthorizationCode).data("kendoGrid").dataSource.data(e.data.Vms);
+        }
+
+        function setButtonsState() {
+            var total = $('.k-master-row').length;
+            var selected = $('.k-master-row.bold').length;
+
+            if (total === selected) { // all collapsed
+                $('#expand-all').addClass('selected');
+                $('#collapse-all').removeClass('selected');
+            } else if (selected === 0) { // all expanded
+                $('#expand-all').removeClass('selected');
+                $('#collapse-all').addClass('selected');
+            } else {
+                $('#expand-all').removeClass('selected');
+                $('#collapse-all').removeClass('selected');
+            }
+        }
+        
+        function setRowsState() {
+            $('.k-master-row > td.k-hierarchy-cell a').click(function flipMasterRow(e) {
+                var el = $(this).parent().parent()
+                if (el.hasClass('bold')) {
+                    el.removeClass('bold');
+                } else {
+                    el.addClass('bold');
+                }
+                setButtonsState();
+            });
+            $('.k-master-row > td.k-hierarchy-cell a').click();
+            $('#expand-all').click(function() {
+                $('.k-master-row:not(.bold) > td.k-hierarchy-cell a').click();
+            });
+            $('#collapse-all').click(function() {
+                $('.k-master-row.bold > td.k-hierarchy-cell a').click();
+            });
+            setButtonsState();
+        }
+
+        $('#FindSearchValue').keyup(function(e) {
+            if (e.keyCode == 13) {
+                $('#@UniqueId.FindCnSeries').click();
+            }
+        });
+
+        //$(document).ready(function () {
+        //    $('#@UniqueId.CnSeriesAuthCodesGrid').data('kendoGrid').dataSource.read();
+        //});
+    </script>
+</div>

@@ -1,0 +1,584 @@
+﻿@model Csp.Web.DataTransferObjects.CsspInfoDto
+@{Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);}
+
+<style>
+    .k-grid td{
+    white-space: normal !important;
+}
+
+
+</style>
+
+<script>
+    
+    var productSelector = {
+        selectedProducts:
+        {
+            items: Array()
+        },
+
+        cartProducts:
+        {
+            items: Array()
+        },
+
+        // This is needed so that we filter the items already added to cart from the `product selector` search results.
+        populateProductsInCart: (function() {
+            productSelector.cartProducts.items.length = 0;
+            $.each($("#divShoppingCart").data("kendoGrid").dataSource._view, function(i, csspproduct) {
+                productSelector.cartProducts.items.push(csspproduct.id);
+            });
+        }),
+
+        resetSelectedProducts: (function() {
+            productSelector.selectedProducts.items.length = 0;
+        }),
+
+        // used for continue shopping feature..
+        resetFilter: (function() {
+            $("#ddCsspModel").data("kendoDropDownList").value("0");
+            $("#ddCsspTerm").data("kendoDropDownList").value("0");
+            $("#ddCsspSupportType").data("kendoDropDownList").value("0");
+            $("#ddCsspBundle").data("kendoDropDownList").value("0");
+        }),
+
+        // used for continue shopping (or when Add New Skus button on the grid is clicked again)
+        initialize: (function() {
+            $("#chkSelectAllSkus").prop('checked', false);
+            productSelector.resetFilter();
+            productSelector.resetSelectedProducts();
+            productSelector.toggleProductsSelection();
+            productSelector.populateProductsInCart();
+        }),
+
+        getSearchParams: (function() {
+            console.log("fetch results");
+            var params = SetAntiForgery();
+            var selectedModel = $("#ddCsspModel").data("kendoDropDownList").value() == "0" ? "" : $("#ddCsspModel").data("kendoDropDownList").value();
+            var selectedTerm = $("#ddCsspTerm").data("kendoDropDownList").value() == "0" ? "" : $("#ddCsspTerm").data("kendoDropDownList").value();
+            var selectedSupportType = $("#ddCsspSupportType").data("kendoDropDownList").value() == "0" ? "" : $("#ddCsspSupportType").data("kendoDropDownList").value();
+            var selectedBundleOption = $("#ddCsspBundle").data("kendoDropDownList").value() == "0" ? "" : $("#ddCsspBundle").data("kendoDropDownList").value();
+            params.csspModel = selectedModel;
+            params.csspTerm = selectedTerm;
+            params.csspSupportType = selectedSupportType;
+            params.bundle = selectedBundleOption;
+            params.filterProducts = productSelector.cartProducts.items.join(", ");
+            return params;
+        }),
+
+        onGridDataBound: (function(e) {
+            //retainPreviousSelection when you move from one page to next
+            var gridResultsView = this.dataSource.view();
+            for (var i = 0; i < gridResultsView.length; i++) {
+                if (jQuery.inArray("" + gridResultsView[i].CsspSkuId, productSelector.selectedProducts.items) !== -1) {
+                    $("#chkSku" + gridResultsView[i].CsspSkuId).prop('checked', "checked");
+                }
+            }
+        }),
+
+
+        reloadGrid: (function() {
+            $("#CsspProductSearchResultsGrid").data("kendoGrid").dataSource.read();
+        }),
+
+
+        // When SelectAll checkbox is CLICKED
+        toggleProductsSelection: (function(items) {
+            if (typeof items !== "undefined" && items.checked) {
+                productSelector.SelectAllProducts();
+            } else {
+                productSelector.DeSelectAllProducts();
+            }
+            productSelector.showHideAddToCartSection(items); 
+        }),
+
+        // When SelectAll checkbox id CHECKED
+        SelectAllProducts: (function() {
+            $("[id^=chkSku]").each(function() {
+                $(this).prop('checked', "checked");
+            });
+        }),
+
+        // When SelectAll checkbox id UN-CHECKED
+        DeSelectAllProducts: (function() {
+            $("[id^=chkSku]").each(function() {
+                $(this).prop('checked', false);
+            });
+        }),
+
+        // WHEN A CHEKBOX IN Results Grid is CLICKED
+        toggleProductSelection: (function(item) {
+            productSelector.showHideAddToCartSection(item);
+        }),
+
+        // Stores list of products selected between pages
+        storeProductsSelected: (function (item) {
+
+            if (typeof item !== "undefined")
+            {
+                if (!item.checked) {
+                    productSelector.selectedProducts.items.splice($.inArray(item.skuid, productSelector.selectedProducts.items), 1);
+                }
+
+                if (item.id == "chkSelectAllSkus") {
+                    if (!item.checked) {
+                        $("[id^=chkSku]").each(function () {
+                            productSelector.selectedProducts.items.splice($.inArray($(this).attr('SkuId'), productSelector.selectedProducts.items), 1);
+                        });
+                        
+                    }
+                }
+
+            }
+            $("[id^=chkSku]:checked").each(function () {
+                if (jQuery.inArray($(this).attr('SkuId'), productSelector.selectedProducts.items) == -1) {
+                    productSelector.selectedProducts.items.push("" + $(this).attr('SkuId'));
+                }
+            });
+        }),
+
+
+
+        showHideAddToCartSection: (function (item) {
+
+            productSelector.storeProductsSelected(item);
+
+            if (productSelector.selectedProducts.items.length == 0) {
+                $('#divAddToCartSection').slideUp();
+            } else {
+                $("#countOfSkusSelected").text(productSelector.selectedProducts.items.length);
+                $('#divAddToCartSection').slideDown();
+            }
+
+        }),
+
+        CloseMe: (function() {
+            $("#CreateSku").closest(".k-window-content").data("kendoWindow").close();
+        })
+
+    }
+
+    var shoppingCart = {
+
+        itemsToCheckOut:
+        {
+            items: Array()
+        },
+
+        continueShopping: (function () {
+            $($("#CsspTabStrip").data("kendoTabStrip").contentElement(1)).html("");
+            $("#CsspTabStrip").data("kendoTabStrip").select(CsspTabs.CsspHome);
+            $("#CsspTabStrip").data("kendoTabStrip").select(CsspTabs.ShoppingCart);
+        }),
+
+        SelectAll: (function(cbox) {
+            if (cbox.checked) {
+                $("[id^=chkShopSku]").each(function() {
+                    $(this).prop('checked', "checked");
+                });
+                if ($('input[id^=chkShopSku]:checked').length > 0)
+                {
+                    SupportPortal.Confirmation("Are you sure you want to remove all item(s) from cart?", function () { shoppingCart.RemoveItem(); }, null);
+                }
+            } else {
+                $("[id^=chkShopSku]").each(function() {
+                    $(this).prop('checked', false);
+                });
+            }
+        }),
+
+        ConfirmRemoveCartItem: (function(cbox) {
+            if (cbox.checked) {
+                {
+                    SupportPortal.Confirmation("Are you sure you want to remove item from cart?", function () { shoppingCart.RemoveItem(); }, null);
+                }
+            }}),
+
+        RemoveCartItem: (function (cbox) {
+            console.log(cbox);
+            var dataItem = $("#divShoppingCart").data("kendoGrid").dataSource.get(cbox.attributes["skuid"].value);
+            $("#divShoppingCart").data("kendoGrid").dataSource.remove(dataItem);
+        }),
+
+
+
+        IsProductAlreadyAddedToCart: (function(csspproductid) {
+            var isExists = 0;
+            $.each($("#divShoppingCart").data("kendoGrid").dataSource._view, function(i, csspproduct) {
+                if (csspproduct.id == csspproductid) {
+                    isExists = 1;
+                    return isExists;
+                }
+            });
+            return isExists;
+        }),
+
+        updateToolBarButtons: (function() {
+            if ($("#divShoppingCart").data("kendoGrid").dataSource.total()) {
+                $(".removeItemFromCart").show();
+                $("#divShoppingCart").find(".k-button-icontext").first().html('<span class="k-icon k-add "></span>Continue Shopping');
+            } else {
+                $(".removeItemFromCart").hide();
+                $("#divShoppingCart").find(".k-button-icontext").first().html('<span class="k-icon k-add "></span>Add Product To Cart');
+            }
+            shoppingCart.showHideContinueCheckout();
+        }),
+
+        showHideContinueCheckout: (function() {
+            if ($("#divShoppingCart").data("kendoGrid").dataSource.total()) {
+                $(".csp-submit-container").show();
+            } else {
+                $(".csp-submit-container").hide();
+            }
+        }),
+
+        AddItems: (function() {
+            var csvProductsSelected = productSelector.selectedProducts.items.join(", ");
+            var direction = "/Cssp/GetProductsDetails?csvProductIds=" + csvProductsSelected;
+
+            $.ajax({
+                url: direction,
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                async: false,
+                success: function(data) {
+                    $.each(data, function(i, csspproductresult) {
+                        if (shoppingCart.IsProductAlreadyAddedToCart(csspproductresult.CsspSkuId) == 0) {
+                            $("#divShoppingCart").data("kendoGrid").dataSource.add(
+                            {
+                                id: csspproductresult.CsspSkuId,
+                                model: csspproductresult.Model,
+                                sku: csspproductresult.PartNumber,
+                                description: csspproductresult.Description,
+                                support: csspproductresult.SupportType,
+                                term: csspproductresult.Term
+                            });
+                        }
+                    });
+                }
+            });
+
+            $("#divShoppingCart").data("kendoGrid").dataSource.sync();
+            shoppingCart.updateToolBarButtons();
+            // Reset 
+            productSelector.initialize();
+            $("#CsspProductSearchResultsGrid").data("kendoGrid").dataSource.page(1);
+        }),
+
+        onOpenProductSelector: (function() {
+            productSelector.initialize();
+            $("#CsspProductSearchResultsGrid").data("kendoGrid").dataSource.page(1);
+        }),
+
+        OpenProductSelectorWindow: (function () {
+            $("#CreateSku").data("kendoWindow").open().center(true);
+            $("#CreateSku").closest(".k-window").css({
+                top: 50
+            });
+        }),
+
+        RemoveItem: (function() {
+            $("[id^=chkShopSku]:checked").each(function() {
+                var dataItem = $("#divShoppingCart").data("kendoGrid").dataSource.get($(this).attr('SkuId'));
+                $("#divShoppingCart").data("kendoGrid").dataSource.remove(dataItem);
+            });
+            shoppingCart.updateToolBarButtons();
+        }),
+
+        initialize: (function() {
+
+            var orderLineItemGrid = $("#divShoppingCart").kendoGrid({
+                dataSource:
+                {
+                    data: [],
+                    schema: {
+                        model: {
+                            id: 'id',
+                            fields: {
+                                id: { type: "number", editable: false },
+                                model: { type: "string", editable: false },
+                                sku: { type: "string", editable: false, nullable: false },
+                                description: { type: "string", editable: false },
+                                support: { type: "string", editable: false },
+                                term: { type: "string", editable: false },
+                                quantity: { type: "number", editable: false },
+                                capacity: { type: "number", editable: false },
+                                snum: { type: "number", editable: false }
+                            }
+                        }
+                    },
+                    pageSize: 1000
+                },
+                resizable: true,
+                pageable: {
+                    numeric: false,
+                    previousNext: false,
+                    messages: {
+                        display: "You have {2} item(s) in Shopping Cart"
+                    }
+                },
+
+                toolbar: [{ text: "Add Item(s) To Cart", name: "popup", iconClass: "k-icon k-add ", className: "addItemToCart" }],
+                columns: [
+                    {
+                        width: "10%",
+                        title: "<input id='checkAll', type='checkbox', class='check-box' style='margin-top: 0px !important;' onclick='shoppingCart.SelectAll(this)' />&nbsp;<span>Remove All</span>&nbsp;",
+                        template: "<input type=\"checkbox\" id=\"chkShopSku#=id#\" onclick='shoppingCart.ConfirmRemoveCartItem(this)' SkuId=\"#=id#\" />"
+                    },
+                    {
+                        field: "id",
+                        hidden: true
+                    },
+                    {
+                        field: "sku",
+                        title: "Product SKU",
+                        width: "20%"
+                    },
+                    {
+                        field: "description",
+                        title: "Description",
+                        width: "30%"
+                    },
+                    {
+                        field: "model",
+                        title: "Model",
+                        width: "10%"
+                    },
+                    {
+                        field: "support",
+                        title: "Support",
+                        width: "10%"
+                    },
+                    {
+                        field: "term",
+                        title: "Term",
+                        width: "10%"
+                    }
+                ]
+            }).data("kendoGrid");
+
+            $(".addItemToCart").click(function (evt) {
+                @{
+                    if (@Model.HasCsspAccess)
+                    {
+                        <text>shoppingCart.OpenProductSelectorWindow();</text>
+                    }
+                }
+                evt.preventDefault();
+            });
+
+            $(".removeItemFromCart").click(function(evt) {
+                shoppingCart.RemoveItem();
+                evt.preventDefault();
+            });
+
+            $(".removeItemFromCart").hide(); //  hides remove from cart toolbar button
+
+            $("#btnContinueCheckout").click(function(evt) {
+                $("#divShopCart").slideUp();
+                $("#divReviewOrder").slideDown("slow");
+                reviewOrder.initialize();
+                shoppingCart.itemsToCheckOut.items.length = 0;
+                $.each($("#divShoppingCart").data("kendoGrid").dataSource._view, function (i, csspproduct) {
+                    shoppingCart.itemsToCheckOut.items.push(csspproduct.id);
+                    $("#divReviewCart").data("kendoGrid").dataSource.add(
+                    {
+                        snum: ++i,
+                        id: csspproduct.id,
+                        model: csspproduct.model,
+                        sku: csspproduct.sku,
+                        description: csspproduct.description,
+                        support: csspproduct.support,
+                        term: csspproduct.term,
+                        quantity: 1,
+                        capacity: 10000
+                    });
+                });
+                evt.preventDefault();
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+            });
+
+            $("#btnCancel").click(function(evt) {
+                $("#divReviewOrder").hide();
+                $("#divShopCart").show();
+                evt.preventDefault();
+            });
+
+        }),
+
+        makereadonly: (function() {
+            $(".addItemToCart").css(
+            {
+                'opacity': '.5', 
+                'pointer-events': 'none',
+                'cursor': 'default'
+        });
+        })
+
+    };
+
+    var reviewOrder = {
+
+        populateCartIds: (function () {
+            $("#CartSkuIds").val(shoppingCart.itemsToCheckOut.items.join(","));
+        }),
+
+        initialize: (function() {
+
+            var orderLineItemGrid = $("#divReviewCart").kendoGrid({
+                dataSource:
+                {
+                    data: [],
+                    schema: {
+                        model: {
+                            id: 'id',
+                            fields: {
+                                id: { type: "number", editable: false },
+                                model: { type: "string", editable: false },
+                                sku: { type: "string", editable: false, nullable: false },
+                                description: { type: "string", editable: false },
+                                support: { type: "string", editable: false },
+                                term: { type: "string", editable: false },
+                                quantity: { type: "number", editable: false },
+                                capacity: { type: "number", editable: false },
+                                snum: { type: "number", editable: false }
+                            }
+                        }
+                    },
+                    pageSize: 1000
+                },
+                resizable: true,
+                pageable: {
+                    numeric: false,
+                    previousNext: false,
+                    messages: {
+                        display: "You have {2} item(s) to Checkout"
+                    }
+                },
+                columns: [
+                    {
+                        field: "id",
+                        hidden: true
+                    },
+                    {
+                        field: "snum",
+                        title: "Item #<br>",
+                        width: "9%"
+                    },
+                    {
+                        field: "sku",
+                        title: "Product SKU",
+                        width: "15%"
+                    },
+                    {
+                        field: "description",
+                        title: "Description",
+                        width: "22%"
+                    },
+                    {
+                        field: "term",
+                        title: "Term",
+                        width: "9%"
+                    },
+                    {
+                        field: "model",
+                        title: "Model",
+                        width: "9%"
+                    },
+                    {
+                        field: "support",
+                        title: "Support",
+                        width: "9%"
+                    },
+                    {
+                        field: "quantity",
+                        title: "Quantity",
+                        width: "9%"
+                    },
+                    {
+                        field: "capacity",
+                        title: "Capacity",
+                        width: "9%"
+                    }
+                ]
+            }).data("kendoGrid");
+        })
+    }
+
+    function confirmExit() {
+        if ($("#divShoppingCart").data("kendoGrid").dataSource.total() > 0)
+            return "You have items in Shopping Cart that will be cleared! ";
+    }
+
+    $(function() {
+        shoppingCart.initialize();
+        @{
+            if (!Model.HasCsspAccess)
+            {
+                <text>shoppingCart.makereadonly();</text>
+            }
+        }
+        
+        window.onbeforeunload = confirmExit;       
+    });
+
+</script>
+<div id="containerCsspCart">
+    @using (Ajax.BeginForm("SubmitOrder", "Cssp", new { }, new AjaxOptions()
+    {
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();",
+        HttpMethod = "POST",
+        UpdateTargetId = "containerCsspCart"
+    }, new { id = "csspShopCartForm" }))
+    {
+        <div id="DivCsspInfo" style="min-height: 500px;">
+            <div class="csp-content-sections-parent">
+                <div id="divShopCart">
+                    @if (Model.IsOrderSubmitted)
+                    {
+                    <div>&nbsp;</div>
+                        @Html.Partial("../Partial/_CsspOrderConfirmation", Model)
+                         <div>&nbsp;</div>
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(x => x.SupportAccountId, new { id = "SupportAccountId" })
+                        @Html.HiddenFor(x => x.CartItemIds, new { id = "CartSkuIds" })
+                        @Html.Partial("../Partial/_CsspShoppingCart", Model.OrderItems)
+                    }
+                </div>
+                <div id="divReviewOrder" style="display: none">
+                    <fieldset>
+                        <legend>Review Your Order</legend>
+                                            @Html.Partial("../Partial/_CsspReviewOrder")
+                        <div>&nbsp;</div>
+                        <div class="csp-submit-container">
+                        <button id="btnCancel" class="k-button csp-submit" type="button"><span class="k-icon k-i-arrowhead-w" style="margin-bottom: 2px;"> </span> Back</button>
+                            <button id="btnPlaceOrder" class="k-button csp-submit" type="submit" onclick="reviewOrder.populateCartIds()">Place Order <span class="k-icon k-i-arrowhead-e"></span></button>
+                    </div>
+                    </fieldset>
+
+                    
+                </div>
+            </div>
+        </div>
+    }
+    @(Html.Kendo().Window().Name("CreateSku").Title("Product Selector").Visible(false).Width(1100).Height(650).Draggable(true).LoadContentFrom("ShowProductFilter", "Cssp").Events(events => events
+          .Open("shoppingCart.onOpenProductSelector")))
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
+</div>
+<div>
+        @(Html.Kendo().Window()
+              .Name("PlaceOrder")
+              .HtmlAttributes(new { @class = "no-buttons" })
+              .Actions(a => a.Clear())
+              .Scrollable(false)
+              .Visible(false)
+              .Modal(true)
+              .Title(false)
+              )
+    </div>

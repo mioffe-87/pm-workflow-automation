@@ -1,0 +1,30 @@
+﻿<%	// the name of the catalog is in the variable 'catalogName', the name of the schema is in the variable 'schemaName'. The table name
+   	// is in the variable 'tableName', the DBTableField object is in the variable 'field'.
+	
+	// DB2 can't set multiple changes to the same column in the same ALTER COLUMN command, so this is done with 1 ALTER TABLE/ALTER COLUMN combo per
+	// change for the field. Also a REORG TABLE is issued after each ALTER TABLE statement to make sure the script executes without problems. 
+	// Generate for each pack of flags a separate alter table statement. 
+	if(field.HasChangeFlagsSet((int)(DBTableFieldChangeType.DBType | DBTableFieldChangeType.Length | DBTableFieldChangeType.Precision | DBTableFieldChangeType.Scale)))
+	{
+%>-- See DB2 documentation on ALTER TABLE about the restrictions on ALTER TABLE / ALTER COLUMN statements if the following statement gives an error.
+ALTER TABLE "<%=schemaName%>"."<%=tableName%>" 
+	ALTER COLUMN "<%=field.FieldName%>" SET DATA TYPE<%=CreateFieldTypeDefinitionString(field)%>;
+-- Reorg the table affected, so scripts continue processing.
+REORG TABLE "<%=schemaName%>"."<%=tableName%>";
+<%	}
+
+	if(field.HasChangeFlagsSet((int)DBTableFieldChangeType.IsNullable))
+	{
+%>-- See DB2 documentation on ALTER TABLE about the restrictions on ALTER TABLE / ALTER COLUMN statements if the following statement gives an error.
+ALTER TABLE "<%=schemaName%>"."<%=tableName%>" 
+	ALTER COLUMN "<%=field.FieldName%>" <% if(field.IsNullable) { %>SET<% } else { %>DROP<% } %> NOT NULL;
+-- Reorg the table affected, so scripts continue processing.
+REORG TABLE "<%=schemaName%>"."<%=tableName%>";
+<%	}
+	
+	if(field.HasChangeFlagsSet((int)DBTableFieldChangeType.IsIdentity))
+	{
+%>-- See DB2 documentation on ALTER TABLE about the restrictions on ALTER TABLE / ALTER COLUMN statements if the following statement gives an error.
+ALTER TABLE "<%=schemaName%>"."<%=tableName%>" 
+	ALTER COLUMN "<%=field.FieldName%>" <% if(field.IsIdentity) { %>GENERATED ALWAYS AS IDENTITY<% } else { %>DROP IDENTITY<% } %>;
+<%	}%>

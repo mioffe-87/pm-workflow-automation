@@ -1,0 +1,116 @@
+﻿'///////////////////////////////////////////////////////////////
+'' This Is generated code. 
+'//////////////////////////////////////////////////////////////
+'' Code Is generated Using LLBLGen Pro version: <[LLBLGenVersion]>
+'' Code Is generated On: <[Time]>
+'' Code Is generated Using templates: <[TemplateName]>
+'' Templates vendor: Solutions Design.
+'' Templates version: <[TemplateVersion]>
+'//////////////////////////////////////////////////////////////
+Imports System
+Imports System.Collections
+Imports System.Data
+Imports System.Data.Common
+Imports System.Configuration
+Imports SD.LLBLGen.Pro.ORMSupportClasses
+<# SD_DQENamespaceIncludeTemplate #>
+<[ UserCodeRegion "AdditionalNamespaces" ]>
+' __LLBLGENPRO_USER_CODE_REGION_START AdditionalNamespaces
+' __LLBLGENPRO_USER_CODE_REGION_END
+<[ EndUserCodeRegion ]>
+
+Namespace <[RootNamespace]><[DbSpecificNamespaceSuffix]>
+	''' <summary>Data access adapter Class, which controls the complete database interaction With the database For all objects.</summary>
+	''' <remarks>Use a DataAccessAdapter Object solely per thread, And per connection. A DataAccessAdapter Object contains 1 active connection 
+	''' And no thread-access scheduling code. This means that you need To create a New DataAccessAdapter Object If you want To utilize
+	''' In another thread a New connection And a New transaction Or want To open a New connection.</remarks>
+	Public Class DataAccessAdapter
+		Inherits DataAccessAdapterBase
+
+#Region "Public static members"
+		''' <summary>The name Of the key In the *.config file Of the executing application which contains the connection String.</summary>
+		''' <remarks>Default: the value Set In the LLBLGen Pro project properties</remarks>
+		Public Shared ConnectionStringKeyName As String ="<[ConnectionStringKeyName]>"
+#End Region
+
+		''' <summary>CTor</summary>
+		Public Sub New()
+			 Me.New(ReadConnectionStringFromConfig(), False, CType(Nothing, CatalogNameOverwriteHashtable), Nothing)
+		End Sub
+
+		''' <summary>CTor</summary>
+		''' <param name="keepConnectionOpen">when True, the DataAccessAdapter will Not close an opened connection. Use this For multi action usage.</param>
+		Public Sub New(keepConnectionOpen As Boolean)
+			Me.New(ReadConnectionStringFromConfig(), keepConnectionOpen, CType(Nothing, CatalogNameOverwriteHashtable), Nothing)
+		End Sub
+
+		''' <summary>CTor</summary>
+		''' <param name="connectionString">The connection String To use when connecting To the database.</param>
+		Public Sub New(connectionString As String)
+			Me.New(connectionString, False, CType(Nothing, CatalogNameOverwriteHashtable), Nothing)
+		End Sub
+
+		''' <summary>CTor</summary>
+		''' <param name="connectionString">The connection String To use when connecting To the database.</param>
+		''' <param name="keepConnectionOpen">when True, the DataAccessAdapter will Not close an opened connection. Use this For multi action usage.</param>
+		Public Sub New(connectionString As String, keepConnectionOpen As Boolean)
+			Me.New(connectionString, keepConnectionOpen, CType(Nothing, CatalogNameOverwriteHashtable), Nothing)
+		End Sub
+		
+		''' <summary>CTor.</summary>
+		''' <param name="connectionString">The connection String To use when connecting To the database.</param>
+		''' <param name="keepConnectionOpen">when True, the DataAccessAdapter will Not close an opened connection. Use this For multi action usage.</param>
+		''' <param name="catalogNameUsageSetting"> Configures this data access adapter Object how To threat catalog names In persistence information.</param>
+		''' <param name="catalogNameToUse"> The name To use If catalogNameUsageSetting Is Set To ForceName. Ignored otherwise.</param>
+		''' <remarks>For backwards compatibility.</remarks>
+		Public Sub New(connectionString As String, keepConnectionOpen As Boolean, catalogNameUsageSetting As CatalogNameUsage, catalogNameToUse As String) 
+			MyBase.New(PersistenceInfoProviderSingleton.GetInstance())
+			InitClassPhase2(connectionString, keepConnectionOpen, catalogNameUsageSetting, SchemaNameUsage.Default, catalogNameToUse, String.Empty, Nothing, Nothing)
+		End Sub
+
+		''' <summary>CTor</summary>
+		''' <param name="connectionString">The connection String To use when connecting To the database.</param>
+		''' <param name="keepConnectionOpen">when True, the DataAccessAdapter will Not close an opened connection. Use this For multi action usage.</param>
+		''' <param name="schemaNameUsageSetting">Configures this data access adapter Object how To threat schema names In persistence information.</param>
+		''' <param name="schemaNameToUse">Oracle specific. The name To use If schemaNameUsageSetting Is Set To ForceName. Ignored otherwise.</param>
+		Public Sub New(connectionString As String, keepConnectionOpen As Boolean, schemaNameUsageSetting As SchemaNameUsage, schemaNameToUse As String) 
+			MyBase.New(PersistenceInfoProviderSingleton.GetInstance())
+			InitClassPhase2(connectionString, keepConnectionOpen, CatalogNameUsage.Default, schemaNameUsageSetting, String.Empty, schemaNameToUse, Nothing, Nothing)
+		End Sub
+
+		''' <summary>CTor.</summary>
+		''' <param name="connectionString">The connection String To use when connecting To the database.</param>
+		''' <param name="keepConnectionOpen">when True, the DataAccessAdapter will Not close an opened connection. Use this For multi action usage.</param>
+		''' <param name="catalogNameOverwrites"> The From-To name value pairs And setting For the overwriting Of catalog names. Can be Nothing.</param>
+		''' <param name="schemaNameOverwrites"> The From-To name value pairs And setting For the overwriting Of schema names. Can be Nothing.</param>
+		Public Sub New(connectionString As String, keepConnectionOpen As Boolean, catalogNameOverwrites As CatalogNameOverwriteHashtable, schemaNameOverwrites As SchemaNameOverwriteHashtable) 
+			MyBase.New(PersistenceInfoProviderSingleton.GetInstance())
+			InitClassPhase2(connectionString, keepConnectionOpen, CatalogNameUsage.Default, SchemaNameUsage.Default, String.Empty, String.Empty, catalogNameOverwrites, schemaNameOverwrites)
+		End Sub
+
+<# SD_DbSpecificDataAccessIncludeTemplate #>
+		''' <summary>Creates a New Dynamic Query engine Object And passes In the defined catalog/schema overwrite hashtables.</summary>
+		Protected Overrides Function CreateDynamicQueryEngine() As DynamicQueryEngineBase 
+			Return Me.PostProcessNewDynamicQueryEngine(New DynamicQueryEngine())
+		End Function
+
+		''' <summary>Reads the value Of the setting With the key ConnectionStringKeyName From the *.config file And stores that value As the active connection String To use For this Object.</summary>
+		''' <returns>connection String read</returns>
+		Private Shared Function ReadConnectionStringFromConfig() As String
+			Return ConfigFileHelper.ReadConnectionStringFromConfig(ConnectionStringKeyName)
+		End Function
+
+<# SD_DbSpecificDataAccessAdapterIncludeTemplate #>
+
+#Region "Custom DataAccessAdapter code."
+		<[ UserCodeRegion "CustomDataAccessAdapterCode" ]>
+		' __LLBLGENPRO_USER_CODE_REGION_START CustomDataAccessAdapterCode
+		' __LLBLGENPRO_USER_CODE_REGION_END
+		<[ EndUserCodeRegion ]>
+#End Region
+		
+#Region "Included Code"
+<# Custom_DataAccessAdapterTemplate #>
+#End Region
+	End Class
+End Namespace

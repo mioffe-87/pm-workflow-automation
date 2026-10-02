@@ -1,0 +1,15 @@
+inputSet:
+  identifier: pull_request
+  name: Pull Request
+  orgIdentifier: iad
+  projectIdentifier: csp
+  pipeline:
+    identifier: csp
+    properties:
+      ci:
+        codebase:
+          build:
+            type: PR
+            spec:
+              number: <+trigger.prNumber>
+  object Object: pipeline.properties.ci.codebase

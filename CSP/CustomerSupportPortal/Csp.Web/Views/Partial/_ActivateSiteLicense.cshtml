@@ -1,0 +1,60 @@
+﻿@model Csp.Web.DataTransferObjects.ActivateSiteLicenseViewModel
+
+<div id="containerActivateSiteLicenseDiv">
+    @using (Ajax.BeginForm("ActivateSiteLicense", "License", null, new AjaxOptions
+    {
+
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "SupportPortal.UnBlockUI();",
+        UpdateTargetId = "containerActivateSiteLicenseDiv"
+    },
+        new { id = (string)UniqueId.activateLicenseForm }))
+    {
+        
+        
+        @Html.Partial("../Partial/_ResponseNotification", Model.Notifications)
+
+        @Html.HiddenFor(model => model.ApiKey, new {id = "apiKeyId"})
+        @Html.HiddenFor(model => model.Eula.SelectedEulaId)
+        @Html.AntiForgeryToken()
+
+        <div class="fieldset" id="@UniqueId.AuthCodeActivation">
+            <fieldset>
+                <legend>Site License Auth-Code Activation
+                </legend>
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Authorization Code:")
+                    </div>
+
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.AuthCode)
+                        @Html.TextBoxFor(model => model.AuthCode, new { maxlength = "46", @class = "defaultFocus" })
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+                <div style="color: red;">
+                    <p>*You are activating a site license.  It will provide licensing for all devices that do not already have the site license.  It will overwrite any existing license of this type. For support portal accounts with many devices, this process make take some time, please check later.</p>
+                </div>
+            </fieldset>
+        </div>
+        
+        @Html.Partial("../Partial/_Eula", Model.Eula)
+
+        <div class="csp-submit-container">
+            <button id="@UniqueId.btnActivateLicense" class="k-button csp-submit" type="submit">Agree and Submit</button>&nbsp;&nbsp;&nbsp;
+            <input type="button" value="Refuse" name="btnRefuse" id="btnRefuse" class="k-button" />&nbsp;&nbsp;
+        </div>
+        
+        
+        <script>
+            $(function () {
+                $("#btnRefuse").click(function (e) {
+                    $("#btnRefuse").closest(".k-window-content").data("kendoWindow").close();
+                });
+                $('.defaultFocus').focus();
+            })
+        </script>
+    }
+
+</div>

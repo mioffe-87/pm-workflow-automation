@@ -1,0 +1,35 @@
+﻿<%
+	Project currentProject = _executingGenerator.ProjectDefinition;
+%><?xml version="1.0" encoding="utf-8" ?>
+<hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
+  <session-factory>
+    <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
+    <property name="dialect"><%=SD_NHibernateGeneralUtils.DriverIdToDialectName(_executingGenerator.DriverID)%></property>
+    <property name="connection.driver_class"><%=SD_NHibernateGeneralUtils.DriverIdToDriverName(_executingGenerator.DriverID)%></property>
+    <property name="connection.connection_string_name"><%=currentProject.CreateConnectionStringKeyNameForDatabase(_executingGenerator.DriverID)%></property>
+<%
+	string factoryToUse=string.Empty;
+	bool emitFactory = true;
+	switch(currentProject.GetRealStringSettingValue("BytecodeProxyFactory"))
+	{
+		case "LinFu":
+			factoryToUse = "NHibernate.ByteCode.LinFu.ProxyFactoryFactory, NHibernate.ByteCode.LinFu";
+			break;
+		case "Castle":
+			factoryToUse = "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle";
+			break;
+		case "Spring":
+			factoryToUse = "NHibernate.ByteCode.Spring.ProxyFactoryFactory, NHibernate.ByteCode.Spring";
+			break;
+		case "BuiltIn":
+			emitFactory = false;
+			break;
+	}
+	if(emitFactory)
+	{
+%>    <property name="proxyfactory.factory_class"><%=factoryToUse%></property>
+<%	}
+%>    <property name="show_sql">false</property>
+<# SD_NHibernate_CustomCfgInclude #>	
+  </session-factory>
+</hibernate-configuration>

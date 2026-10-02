@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="SyncMembershipsWithSfdc">
+        <s:complexType />
+      </s:element>
+      <s:element name="SyncMembershipsWithSfdcResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SyncMembershipsWithSfdcResult" type="tns:SyncMembershipsResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="SyncMembershipsResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsSuccess" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorMessage" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AuthHeader" type="tns:AuthHeader" />
+      <s:complexType name="AuthHeader">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Username" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+        </s:sequence>
+        <s:anyAttribute />
+      </s:complexType>
+      <s:element name="SyncMembershipsResult" nillable="true" type="tns:SyncMembershipsResult" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="SyncMembershipsWithSfdcSoapIn">
+    <wsdl:part name="parameters" element="tns:SyncMembershipsWithSfdc" />
+  </wsdl:message>
+  <wsdl:message name="SyncMembershipsWithSfdcSoapOut">
+    <wsdl:part name="parameters" element="tns:SyncMembershipsWithSfdcResponse" />
+  </wsdl:message>
+  <wsdl:message name="SyncMembershipsWithSfdcAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="SyncMembershipsWithSfdcHttpGetIn" />
+  <wsdl:message name="SyncMembershipsWithSfdcHttpGetOut">
+    <wsdl:part name="Body" element="tns:SyncMembershipsResult" />
+  </wsdl:message>
+  <wsdl:message name="SyncMembershipsWithSfdcHttpPostIn" />
+  <wsdl:message name="SyncMembershipsWithSfdcHttpPostOut">
+    <wsdl:part name="Body" element="tns:SyncMembershipsResult" />
+  </wsdl:message>
+  <wsdl:portType name="SfdcServiceSoap">
+    <wsdl:operation name="SyncMembershipsWithSfdc">
+      <wsdl:input message="tns:SyncMembershipsWithSfdcSoapIn" />
+      <wsdl:output message="tns:SyncMembershipsWithSfdcSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="SfdcServiceHttpGet">
+    <wsdl:operation name="SyncMembershipsWithSfdc">
+      <wsdl:input message="tns:SyncMembershipsWithSfdcHttpGetIn" />
+      <wsdl:output message="tns:SyncMembershipsWithSfdcHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="SfdcServiceHttpPost">
+    <wsdl:operation name="SyncMembershipsWithSfdc">
+      <wsdl:input message="tns:SyncMembershipsWithSfdcHttpPostIn" />
+      <wsdl:output message="tns:SyncMembershipsWithSfdcHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SfdcServiceSoap" type="tns:SfdcServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SyncMembershipsWithSfdc">
+      <soap:operation soapAction="http://tempuri.org/SyncMembershipsWithSfdc" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:SyncMembershipsWithSfdcAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SfdcServiceSoap12" type="tns:SfdcServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SyncMembershipsWithSfdc">
+      <soap12:operation soapAction="http://tempuri.org/SyncMembershipsWithSfdc" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:SyncMembershipsWithSfdcAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SfdcServiceHttpGet" type="tns:SfdcServiceHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="SyncMembershipsWithSfdc">
+      <http:operation location="/SyncMembershipsWithSfdc" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SfdcServiceHttpPost" type="tns:SfdcServiceHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="SyncMembershipsWithSfdc">
+      <http:operation location="/SyncMembershipsWithSfdc" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SfdcService">
+    <wsdl:port name="SfdcServiceSoap" binding="tns:SfdcServiceSoap">
+      <soap:address location="http://localhost.paloaltonetworks.com:56604/SfdcService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="SfdcServiceSoap12" binding="tns:SfdcServiceSoap12">
+      <soap12:address location="http://localhost.paloaltonetworks.com:56604/SfdcService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="SfdcServiceHttpGet" binding="tns:SfdcServiceHttpGet">
+      <http:address location="http://localhost.paloaltonetworks.com:56604/SfdcService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="SfdcServiceHttpPost" binding="tns:SfdcServiceHttpPost">
+      <http:address location="http://localhost.paloaltonetworks.com:56604/SfdcService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

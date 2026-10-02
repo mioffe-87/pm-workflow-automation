@@ -1,0 +1,37 @@
+﻿@model Csp.Web.DataTransferObjects.UserAccountDto
+
+
+<script>
+
+    var userAccountEmailId = "@UniqueId.UserAccountEmailId";
+
+    setMembershipId(@Model.UserAccount.Id);
+
+</script>
+
+<div>
+    <div class="csp-label">
+        @Html.Label("Email:")
+    </div>
+
+    <div class="csp-field">
+        <span id="@UniqueId.UserAccountEmailId">@Html.DisplayFor(model => model.UserAccount.Email)</span>
+    </div>
+</div>
+<div>
+    <div class="csp-label">
+        @Html.Label("Display Name:")
+    </div>
+
+    <div class="csp-field">
+        @Html.DisplayFor(model => model.UserAccount.DisplayName)
+    </div>
+</div>
+<div>
+    <div class="csp-label">
+        @Html.Label("Name (First Last):")
+    </div>
+    <div class="csp-field">
+        @Html.DisplayFor(model => model.UserAccount.FirstName)  @Html.DisplayFor(model => model.UserAccount.LastName)
+    </div>
+</div>

@@ -1,0 +1,44 @@
+﻿@{
+    var resourceRevisionNumber = SiteHelper.GetResourceRevisionNumber();
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico?@(resourceRevisionNumber)">
+    @RenderSection("BotDetectStyles", required: false)
+    @Styles.RenderFormat("<link href=\"{0}?" + resourceRevisionNumber + "\" type=\"text/css\" rel=\"stylesheet\"/>", "~/Content/allstyles")
+    <!--[if lte IE 8]>
+            @Styles.RenderFormat("<link href=\"{0}?" + resourceRevisionNumber + "\" type=\"text/css\" rel=\"stylesheet\"/>", "~/Content/SiteIE8")
+        <![endif]-->
+    @Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/alljquery")
+    
+    @Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/kendo/2016.1.412/kendojs")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/custom")
+    <script type="text/javascript" src="//use.typekit.net/dzq7sdh.js"></script>
+    <script type="text/javascript">try { Typekit.load(); } catch (e) { }</script>
+</head>
+<body style="height: auto">
+    <div>
+        @RenderBody()
+    </div>
+
+    <script type="text/javascript">
+        var spinnerImageUrl = '@Url.Content("~/Images/spinner.gif")';
+        var logOnUrl = '@Url.Action("Index", "Home")';
+
+        $(document).ready(function () {
+            SupportPortal.Init({
+                SpinnerImageUrl: spinnerImageUrl,
+                LogOnUrl: logOnUrl,
+                DateFormat: '@SiteHelper.DateFormat'
+            });
+        });
+    </script>
+</body>
+</html>
+

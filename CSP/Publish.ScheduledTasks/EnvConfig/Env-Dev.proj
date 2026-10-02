@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	
+  <PropertyGroup>
+    <MachineName>SJCCJOBVW01T</MachineName>
+    <ServiceName>CSPScheduledTasks</ServiceName>
+    <OutputType>exe</OutputType>
+		<PublishedWebsitesDir></PublishedWebsitesDir>
+		<PublishDestinationPath>\\SJCCJOBVW01T\ScheduledProgs_AutomatedBuilds\CSPScheduledTasks</PublishDestinationPath>
+    <BackupDestinationPath>\\SJCCJOBVW01T\Backups</BackupDestinationPath>
+    <PublishUserName>jobbuilduser</PublishUserName>
+    <PublishPassword>8t2cZPK0</PublishPassword>
+
+    <WebTransform>Debug</WebTransform>
+  </PropertyGroup>
+</Project>

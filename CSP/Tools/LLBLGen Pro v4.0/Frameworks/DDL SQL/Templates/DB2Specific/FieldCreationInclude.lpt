@@ -1,0 +1,94 @@
+﻿<~
+	// The enum definition for the Dbtypes as it is used by the DB2 driver. Used here to determine in readable code
+	// if a field requires a length specification emitted in the DLL and/or collation specifications. 
+	public enum DB2Types:int
+	{
+		BigInt,
+		Blob,
+		Char,
+		CharForBitData,
+		Clob,
+		Date,
+		DbClob,
+		Decimal,
+		DoublePrecision,
+		Float,
+		Graphic,
+		Int,
+		LongVarChar,
+		LongVarCharForBitData,
+		LongVarGraphic,
+		Real,
+		SmallInt,
+		Time,
+		TimeStamp,
+		VarChar,
+		VarCharForBitData,
+		VarGraphic,
+		Xml
+	}
+	
+	
+	// Creates the string which defines the field, complete with name, type, identity (if applicable) and nullable/not nullable
+	private string CreateFieldDefinitionString(DBTableField field)
+	{
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.AppendFormat("\"{0}\" {1}", field.FieldName, CreateFieldTypeDefinitionString(field));
+		if(field.IsIdentity)
+		{
+			// system identity. 
+			toReturn.Append(" GENERATED ALWAYS AS IDENTITY");
+		}
+		if(!field.IsNullable)
+		{
+			toReturn.Append(" NOT NULL");
+		}
+		return toReturn.ToString();
+	}
+	
+
+	// Creates the field type definition string for the field specified. 
+	private string CreateFieldTypeDefinitionString(DBTableField field)
+	{
+		StringBuilder toReturn = new StringBuilder();
+		switch((DB2Types)field.TypeDefinition.DBType)
+		{
+			case DB2Types.Decimal:
+				toReturn.AppendFormat(" NUMERIC({0}, {1})", field.TypeDefinition.Precision, field.TypeDefinition.Scale);
+				break;
+			case DB2Types.Char:
+			case DB2Types.VarChar:
+			case DB2Types.VarGraphic:
+			case DB2Types.Clob:
+			case DB2Types.DbClob:
+			case DB2Types.Blob:
+				toReturn.AppendFormat(" {0}({1})", field.TypeDefinition.DBTypeAsString, field.TypeDefinition.Length);
+				break;
+			case DB2Types.CharForBitData:
+				toReturn.AppendFormat(" CHAR({0}) FOR BIT DATA", field.TypeDefinition.Length);
+				break;
+			case DB2Types.VarCharForBitData:
+				toReturn.AppendFormat(" VARCHAR({0}) FOR BIT DATA", field.TypeDefinition.Length);
+				break;
+			default:
+				toReturn.AppendFormat(" {0}", field.TypeDefinition.DBTypeAsString);
+				break;
+		}
+		return toReturn.ToString();
+	}
+	
+	
+	// DB2 doesn't like FK etc. constraint names with length > 18. So if the string is longer than 18, chop it off at 10 and append the 4 bytes of the hashvalue in hex
+	// to the end.
+	private string CreateStringOfProperLength(string toLengthen)
+	{
+		if(toLengthen.Length<=18)
+		{
+			// short enough
+			return toLengthen;
+		}
+		
+		// shorten. 
+		return toLengthen.Substring(0, 10) + toLengthen.GetHashCode().ToString("X");
+	}
+~>

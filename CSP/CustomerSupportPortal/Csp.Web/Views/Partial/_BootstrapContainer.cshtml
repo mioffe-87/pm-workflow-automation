@@ -1,0 +1,38 @@
+﻿@model Csp.Web.Controllers.BootstrapContainerDto
+
+<script>
+    function @(UniqueId.Bootstrap)onBootstrapContainerUploadComplete() {
+        $('#@(UniqueId.Bootstrap)ValidateBoostrapContainerFilesForm').submit();
+    }
+
+    function @(Model.ClearUploadFilesJsMethod)clearUploadFiles() {
+        $('#@(Model.FileUploadAreaDiv) ul.k-upload-files').remove();
+    }
+</script>
+
+<div id="@Model.FileUploadAreaDiv">
+    <div>To generate a Bootstrap Container file you must upload 1-2 files:</div>
+    <ul>
+        <li>Init Configuration File (required)</li>
+        <li>Bootstrap Configuration File (optional)</li>
+    </ul>
+    @(Html.Kendo().Upload()
+                      .Name("configFiles")
+                      .HtmlAttributes(new { id = UniqueId.configFiles })
+                      .Async(a => a
+                          .Save("SaveFile", "BootstrapContainer")
+                          .Remove("RemoveFile", "BootstrapContainer")
+                          .AutoUpload(false)
+                      ).Events(e => e.Complete(UniqueId.Bootstrap + "onBootstrapContainerUploadComplete"))
+                 )
+</div>
+
+@using (Ajax.BeginForm("ValidateBoostrapContainerFiles", "BootstrapContainer", 
+    new { deviceId = Model.DeviceId, guid = Model.ClearUploadFilesJsMethod },
+    new AjaxOptions { UpdateTargetId = UniqueId.BootstrapContainerForm }, 
+    new { enctype = "multipart/form-data", id = UniqueId.Bootstrap + "ValidateBoostrapContainerFilesForm" }))
+{
+    <div id="@UniqueId.BootstrapContainerForm">
+        @{ Html.RenderPartial("../Partial/_BootstrapContainerDownload", Model, ViewData); }
+    </div>
+}

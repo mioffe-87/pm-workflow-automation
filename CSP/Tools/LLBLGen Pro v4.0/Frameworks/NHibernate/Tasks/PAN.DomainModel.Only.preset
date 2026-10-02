@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preset name="PAN - Domain Only" lastModifiedOn="2008-04-22T16:06:27.4657865+01:00" createdBy="" isSealed="false" xmlns="http://sd/llblgen/pro/presetElementDefinitions.xsd">
+  <supportedPlatforms>
+	<platform name=".NET 3.5"/>
+	<platform name=".NET 4.0"/>
+	<platform name=".NET 4.5"/>
+  </supportedPlatforms>
+  <supportedTemplateGroups>
+    <templateGroup name="General" />
+  </supportedTemplateGroups>
+  <supportedFrameworks>
+    <framework name="NHibernate" />
+  </supportedFrameworks>
+  <taskPresets>
+    <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="SD.NHibernate (Fluent NHibernate and classes)" requiresCleanCache="false">
+      <performRule isEnabled="false" settingName="" operator="0" operand="" />
+      <taskGroupPreset name="SD.Tasks.Base.GenericTaskGroup" displayName="Generate NHibernate Domain model" requiresCleanCache="false">
+        <performRule isEnabled="false" settingName="" operator="0" operand="" />
+        <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="Create Properties Folder">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="folderToCreate" value="Properties" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="Create Entities folder">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="folderToCreate" value="EntityClasses\GeneratedCode" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="Create ValueTypes folder">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="folderToCreate" value="ValueTypes" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="Create TypedViews folder">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="folderToCreate" value="TypedViewClasses" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.CreateAFolder" displayName="Create TypedLists folder">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="folderToCreate" value="TypedListClasses" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate Entity Classes">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="EntityClasses\GeneratedCode" />
+            <parameter name="templateID" value="SD_NHibernateEntity" />
+            <parameter name="emitType" value="allEntities" />
+            <parameter name="templateAssemblySourceFileFormat" value="" />
+            <parameter name="elementFilter" value="!IsPureManyToManyIntermediate" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate ValueType Classes">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="ValueTypes" />
+            <parameter name="templateID" value="SD_NHibernateValueType" />
+            <parameter name="emitType" value="valuetypes" />
+            <parameter name="templateAssemblySourceFileFormat" value="" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate TypedView Classes">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="TypedViewClasses" />
+            <parameter name="filenameFormat" value="[elementName]TypedViewRow.[extension]" />
+            <parameter name="templateID" value="SD_NHibernateTypedViewRow" />
+            <parameter name="emitType" value="allTypedViews" />
+            <parameter name="templateAssemblySourceFileFormat" value="" />
+          </parameters>
+        </taskPreset>
+        <taskPreset name="SD.Tasks.Base.ConsumeLptTemplate" displayName="Generate TypedList Classes">
+          <performRule isEnabled="false" settingName="" operator="0" operand="" />
+          <parameters>
+            <parameter name="destinationFolder" value="TypedListClasses" />
+            <parameter name="filenameFormat" value="[elementName]TypedListRow.[extension]" />
+            <parameter name="templateID" value="SD_NHibernateTypedListRow" />
+            <parameter name="emitType" value="allTypedLists" />
+            <parameter name="templateAssemblySourceFileFormat" value="" />
+          </parameters>
+        </taskPreset>
+      </taskGroupPreset>
+    </taskGroupPreset>
+  </taskPresets>
+</preset>

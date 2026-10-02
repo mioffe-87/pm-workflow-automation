@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- framework settings Schema definitions for the framework settings type
+     Used for verification of frameworksettings nodes in .frameworksettings files. -->
+<xs:schema id="frameworkDefinition" targetNamespace="http://sd/llblgen/pro/frameworkSettingsDefinition.xsd" 
+		elementFormDefault="qualified" xmlns="http://sd/llblgen/pro/frameworkSettingsDefinition.xsd" 
+		xmlns:mstns="http://sd/llblgen/pro/frameworkSettingsDefinition.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="frameworkSettings">
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs ="1">
+				<xs:sequence minOccurs="0" maxOccurs ="1">
+					<xs:sequence minOccurs="1" maxOccurs="1">
+						<xs:element name="supportedFrameworks">
+							<xs:complexType>
+								<xs:sequence minOccurs="0" maxOccurs="unbounded">
+									<xs:element name="framework">
+										<xs:complexType>
+											<xs:attribute name="name" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs ="1">
+					<xs:sequence minOccurs="1" maxOccurs="1">
+						<xs:element name="settingDefinitions">
+							<xs:complexType>
+								<xs:sequence minOccurs="0" maxOccurs="unbounded">
+									<xs:element name="settingDefinition">
+										<xs:complexType>
+											<xs:attribute name="name" use="required"/>
+											<xs:attribute name="description" use="required"/>
+											<xs:attribute name="type" use="required" type="mstns:typeValues"/>
+											<xs:attribute name="category" use="required"/>
+											<xs:attribute name="targetElement" use="required" type="xs:int"/>
+											<xs:attribute name="default" use="optional"/>
+											<xs:attribute name="source" use="optional"/>
+											<xs:attribute name="defaultSource" use="optional"/>
+											<xs:attribute name="canBeEmpty" use="optional" type="xs:boolean"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs ="1">
+					<xs:sequence minOccurs="1" maxOccurs="1">
+						<xs:element name="valueLists">
+							<xs:complexType>
+								<xs:sequence minOccurs="0" maxOccurs="unbounded">
+									<xs:element name="valueList">
+										<xs:complexType>
+											<xs:sequence minOccurs="1" maxOccurs="unbounded">
+												<xs:element name="value">
+													<xs:complexType>
+														<xs:attribute name="displayText" use="required"/>
+														<xs:attribute name="valueText" use="required"/>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="name" use="required" type="xs:string"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="typeValues">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="bool"/>
+			<xs:enumeration value="string"/>
+			<xs:enumeration value="int"/>
+			<xs:enumeration value="enum"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

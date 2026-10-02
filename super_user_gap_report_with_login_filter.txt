@@ -1,0 +1,42 @@
+================================================================================
+CSP SUPER USER GAP ANALYSIS REPORT
+(Filtered for accounts with login activity since January 1, 2026)
+================================================================================
+Generated: 2026-09-22 16:35:55
+
+SUMMARY STATISTICS
+--------------------------------------------------------------------------------
+Total Active Support Accounts:        248626
+Accounts with Login Activity (2026+): 4674
+  - WITH Super User:                 4674
+  - WITHOUT Super User:              0
+Percentage at Risk (of active logins):0.0%
+
+✅ EXCELLENT: All accounts with recent login activity have Super Users!
+
+RECOMMENDATIONS
+--------------------------------------------------------------------------------
+1. IMMEDIATE ACTION REQUIRED:
+   - These accounts are ACTIVELY USING CSP but lack Super User oversight
+   - Prioritize these accounts for Super User assignment
+   - Contact account owners immediately
+
+2. REMEDIATION STEPS:
+   - Identify active users in each account
+   - Assign Super User role to at least one active user
+   - Verify Super User can perform administrative functions
+   - Document the assignment for audit trail
+
+3. PREVENTIVE MEASURES:
+   - Implement automated alerts when last Super User is removed
+   - Require Super User approval for critical operations
+   - Conduct monthly audits of active accounts
+
+4. GOVERNANCE:
+   - Establish minimum Super User count per account (recommend: 2-3)
+   - Document Super User responsibilities and rotation policies
+   - Create escalation procedures for accounts without Super Users
+
+================================================================================
+For detailed data, see: super_user_gap_report_with_login_filter.csv
+================================================================================

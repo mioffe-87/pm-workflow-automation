@@ -1,0 +1,31 @@
+﻿@using Csp.Api.HelperClasses
+@using Csp.Api.Model
+@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.ReleasedLicenseDto
+@Html.AntiForgeryToken()
+
+<div>
+    @{
+        var maxPageSizeForms = Convert.ToInt32(Model.DataParameters.TotalRecordCount);
+        var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+        if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+            pageSizeOptionsForms.Add(maxPageSizeForms);
+        }
+    }
+
+    @(Html.Kendo().Grid(Model.AvailableLicenses)
+        .Name((string)UniqueId.ReleasedCnSeriesAuthCodesGrid)
+        .Columns(cols => {
+            cols.Bound(x => x.AuthorizationCode).Title("Auth Code").Sortable(false);
+            cols.Bound(x => x.PartNumber).Title("Part Number").Sortable(false);
+            cols.Bound(x => x.Description).Title("Part Description").Sortable(false);
+            cols.Bound(x => x.ExpirationDate).Title("Expiration Date").Sortable(false).ClientTemplate("#= kendo.toString(ExpirationDate, 'MM/dd/yyyy') #");
+        })
+        .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+        .Sortable()
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(Model.DataParameters.PaginationCount)
+            .Read(read => read.Action("SearchReleasedLicenses", "CnSeries"))
+        ))
+</div>

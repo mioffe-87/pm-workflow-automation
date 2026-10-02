@@ -1,0 +1,92 @@
+﻿<~
+	// The enum definition for the Dbtypes as it is used by the Oracle driver. Used here to determine in readable code
+	// if a field requires a length specification emitted in the DLL and/or collation specifications. 
+	public enum OracleDbTypes:int
+	{
+		BFile,				// 0
+		BinaryInteger,
+		Blob,
+		Boolean,
+		Char,
+		Character,
+		Clob,
+		Date,
+		Dec,
+		Decimal,
+		DoublePrecision,	// 10
+		Float,
+		Int,
+		Integer,
+		IntervalDayToSecond,
+		IntervalYearToMonth,
+		Long,
+		LongRaw,
+		Natural,
+		NaturalN,
+		NChar,				// 20
+		NClob,
+		Number,
+		Numeric,
+		NVarChar2,
+		PlsInteger,
+		Positive,
+		PositiveN,
+		Raw,
+		Real,
+		RefCursor,			// 30
+		RowId,
+		SignType,
+		SmallInt,
+		String,
+		TimeStamp,
+		TimeStampWithLocalTimeZone,
+		TimeStampWithTimeZone,
+		URowId,
+		VarChar,
+		VarChar2,			// 40
+		XmlType,
+		Float4,				// smaller float, with a precision < 50, which resolves to system.double instead of system.decimal.
+		BinaryDouble,
+		BinaryFloat,
+	}
+
+	// Creates the string which defines the field, complete with name, type, identity (if applicable) and nullable/not nullable
+	private string CreateFieldDefinitionString(DBTableField field)
+	{
+		return CreateFieldDefinitionString(field, false);
+	}
+	
+	// Creates the string which defines the field, complete with name, type, identity (if applicable) and nullable/not nullable
+	private string CreateFieldDefinitionString(DBTableField field, bool changesOnly)
+	{
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.AppendFormat("\"{0}\" {1}", field.FieldName, field.TypeDefinition.DBTypeAsString);
+		// append sizes, precision etc.  if applicable.
+		switch((OracleDbTypes)field.TypeDefinition.DBType)
+		{
+			case OracleDbTypes.Char:
+			case OracleDbTypes.NChar:
+			case OracleDbTypes.Raw:
+			case OracleDbTypes.VarChar:
+			case OracleDbTypes.VarChar2:
+			case OracleDbTypes.NVarChar2:
+				toReturn.AppendFormat("({0})", field.TypeDefinition.Length);
+				break;
+			case OracleDbTypes.Number:
+				if((field.TypeDefinition.Precision > 0) && !((field.TypeDefinition.Precision == 38) && (field.TypeDefinition.Scale == 127)))
+				{
+					toReturn.AppendFormat("({0}, {1})", field.TypeDefinition.Precision, field.TypeDefinition.Scale);
+				}
+				break;
+		}
+		if(!changesOnly || (changesOnly && field.HasChangeFlagsSet((int)DBTableFieldChangeType.IsNullable)))
+		{
+			if(!field.IsNullable)
+			{
+				toReturn.Append(" NOT");
+			}
+			toReturn.Append(" NULL");
+		}
+		return toReturn.ToString();
+	}
+~>

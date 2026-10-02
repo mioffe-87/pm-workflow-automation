@@ -1,0 +1,5 @@
+# Cursor IDE workspace config (managed by harnesseng)
+.cursor/
+
+# AI-generated plans and active context (session-specific)
+.active_context/

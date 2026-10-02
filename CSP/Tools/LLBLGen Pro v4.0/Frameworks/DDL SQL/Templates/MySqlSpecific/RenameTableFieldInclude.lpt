@@ -1,0 +1,4 @@
+﻿<% // The field to rename is stored in the variable 'field'. The current schema is in the variable 'schema' %>
+-- MySql doesn't let you rename a column without the requirement that you have to specify every single bit of specification of that same column
+-- As that info isn't available at this level, renames are not emitted into this script. Please rename the column manually:
+-- In table `<%=field.ParentTable.Name%>`, rename column `<%=GetOriginalName(field)%>` to `<%=GetNewName(field)%>`

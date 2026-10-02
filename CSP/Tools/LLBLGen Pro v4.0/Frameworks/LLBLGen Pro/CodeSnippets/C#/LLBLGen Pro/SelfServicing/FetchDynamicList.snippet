@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+      <Title>Fetch a dynamic list into a new datatable</Title>
+      <Shortcut>llblS_FetchDynamicListSingleEntity</Shortcut>
+      <Description>Code snippet to fetch a dynamic list based on fields from a single entity into a new datatable instance, selfservicing specific. </Description>
+      <Author>Solutions Design</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+       <Literal Editable="true">
+          <ID>FieldsVariable</ID>
+          <ToolTip>The variable which holds the ResultsetFields instance reference</ToolTip>
+          <Default>fields</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>EntityFieldIndex</ID>
+          <ToolTip>The field index enum name of the entity from which to select the fields</ToolTip>
+          <Default>MyEntityFieldIndex</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>FieldName1</ID>
+          <ToolTip>The name of the first field in the dynamic list.</ToolTip>
+          <Default>FieldName1</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>FieldName2</ID>
+          <ToolTip>The name of the second field in the dynamic list.</ToolTip>
+          <Default>FieldName2</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>FieldName3</ID>
+          <ToolTip>The name of the third field in the dynamic list.</ToolTip>
+          <Default>FieldName3</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>FetchResultsVariable</ID>
+          <ToolTip>The name of the variable which holds the datatable instance reference</ToolTip>
+          <Default>results</Default>
+        </Literal>
+        <Literal Editable="true">
+          <ID>DaoVariable</ID>
+          <ToolTip>The name of the variable which holds the Dao instance reference</ToolTip>
+          <Default>dao</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp"><![CDATA[ResultsetFields $FieldsVariable$ = new ResultsetFields( 3 );
+$FieldsVariable$.DefineField( $EntityFieldIndex$.$FieldName1$, 0, "$FieldName1$" );
+$FieldsVariable$.DefineField( $EntityFieldIndex$.$FieldName2$, 1, "$FieldName2$" );
+$FieldsVariable$.DefineField( $EntityFieldIndex$.$FieldName3$, 2, "$FieldName3$" );
+
+DataTable $FetchResultsVariable$ = new DataTable();
+TypedListDAO $DaoVariable$ = new TypedListDAO();
+$DaoVariable$.GetMultiAsDataTable( $FieldsVariable$, $FetchResultsVariable$, 0, null, null, null, true, null, null, 0, 0 );
+$end$]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

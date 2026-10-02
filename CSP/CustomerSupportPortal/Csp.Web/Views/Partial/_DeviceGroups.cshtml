@@ -1,0 +1,103 @@
+﻿@using Kendo.Mvc.UI;
+
+
+@model List<Csp.Api.Model.GroupListItem>
+@{
+    ActionHelper actionHelper = ViewBag.ActionHelper;
+}
+
+<script>
+
+    function onCheckedBoxClick(e) {
+
+        var checkbool = e.checked;
+        if (checkbool == true) {
+            document.getElementById("hdnselectedgrouplist").value += e.value + ",";
+        }
+        if (checkbool == false) {
+            document.getElementById("hdnselectedgrouplist").value = (document.getElementById("hdnselectedgrouplist").value).replace(e.value + ",", "")
+        }
+
+        if (document.getElementById("hdnselectedgrouplist").value != "") {
+            document.getElementById("btnAddGroupsToDevice").disabled = false;
+        } else {
+            document.getElementById("btnAddGroupsToDevice").disabled = true;
+        }
+    }
+
+
+    $(function () {
+        $('#btnAddGroupsToDevice').click(function () {
+
+            var urldata = $(this).data('url') + "?deviceId=" + "@actionHelper.Id" + "&groupId=" + $("#hdnselectedgrouplist").val();
+            $.ajax({
+                url: urldata,
+                type: 'Post',
+                data: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                cache: false,
+                success: function (result) {
+
+                    if (result != "") {
+
+
+                        var grid = $("#groupGrid").data("kendoGrid").dataSource;
+                        grid.read();
+                        $("#AddGroupstoDeviceWindow").data("kendoWindow").close();
+                        $("#divgrouplistnorecordfoundMesage").hide("fast");
+                        $("#divgroupslistgrid").show("fast");
+
+
+                        $("#groupGrid").show("fast");
+                    } else {
+                        $('#Errorpartial').html("No Group found.");
+                    }
+                },
+                error: function (error) {
+                    $('#Errorpartial').html("No Group found.");
+
+                }
+            });
+            return false;
+        });
+    });
+
+
+</script>
+<input type="hidden" id="hdnselectedgrouplist" />
+<div class="create-form">
+    <div class="popup-add">
+
+        @{
+            if (Model != null) {
+
+                var maxPageSizeForms = Convert.ToInt32(Model.Count);
+                var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+                if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                    pageSizeOptionsForms.Add(maxPageSizeForms);
+                }
+
+            @(Html.Kendo().Grid(Model)
+                .Name("AvailableDeviceGroupsListGrid")
+                .Columns(columns => {
+                    columns.Bound(p => p.GroupId).Template(@<text></text>).ClientTemplate("<input type='checkbox' id='SelectedCB' value='#=GroupId#' onclick='onCheckedBoxClick(this)'   class='checkbox' />")
+                        .Width("2").Column.Title = "Select Group";
+                    columns.Bound(p => p.SupportAccountGroupName).Width(450).Title("Group Name");
+                })
+                .Selectable()
+                .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                .Sortable()
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Model(model => model.Id(p => p.GroupId))
+                    .PageSize(12)
+                    .ServerOperation(false)
+                ))
+            }
+        }
+    </div>
+    <div id="Errorpartial" class="error">
+    </div>
+    <div class="add-popup-button">
+        <input type="button" value="Submit" class="k-button" id="btnAddGroupsToDevice"  disabled="disabled" data-url="@Url.Action("AddGrouptoDevice", ControllerFields.GroupController)"/>
+    </div>
+</div>

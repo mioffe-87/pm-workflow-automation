@@ -1,0 +1,974 @@
+﻿
+@using Csp.Api.HelperClasses
+@using Csp.Api.Model
+@using Csp.Api.Model.Enums
+@using Kendo.Mvc.UI;
+@using Csp.Api.Security;
+@using Newtonsoft.Json;
+@model Csp.Web.DataTransferObjects.MembershipListDto
+
+
+@if (Model.MembershipTypeId == (int)MembershipType.SupportAccount)
+{
+    <div id="manage-user-container"></div>
+}
+else
+{
+    <div>
+        @{
+            var actionHelper = Model.ActionHelper;
+
+            Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+
+            var isMfaRequired = Model.IsMfaRequired;
+
+            var defaultRoles = new HtmlString(JsonConvert.SerializeObject(Model.DefaultRoles, new JsonSerializerSettings
+            {
+                StringEscapeHandling = StringEscapeHandling.EscapeHtml
+            }));
+            var availableRoles = new HtmlString(JsonConvert.SerializeObject(Model.AvailableRoles, new JsonSerializerSettings
+            {
+                StringEscapeHandling = StringEscapeHandling.EscapeHtml
+            }));
+        }
+
+
+        <script>
+    var isNewUser = false;
+    var isThirdPartyConfigured = false;
+    var newUserEmail = "";
+
+    // Add new row if navigated from Third party configuration
+    $(document).ready(function () {
+        membershipWindow = "#@UniqueId.membershipWindowId";
+        userAccountWindow = "#@UniqueId.userAccountWindowId";
+        },
+        setTimeout(function() {
+            var qs = new URLSearchParams(window.location.search);
+            var configValue = qs.get("config");
+            if (configValue === "1") {
+                var grid = $("#@UniqueId.gridId").data("kendoGrid");
+                grid.addRow();
+                }
+
+    },4000));
+
+
+    function @(UniqueId.memberships)onMembershipEnterPress(e) {
+
+        if (e.keyCode == 13) {
+            @(UniqueId.memberships)SearchMemberShipData();
+            return false;
+        }
+    }
+
+    function @(UniqueId.memberships)onMemberGridDataBound() {
+        if ($("#@UniqueId.isPostBackId").val() == "") {
+            $("#@UniqueId.gridId").data("kendoGrid").dataSource._total = "@Convert.ToInt32(Model.DataParameters.TotalRecordCount)";
+            $("#@UniqueId.isPostBackId").val(1);
+        }
+
+        //Selects all rows
+        var gridRows = this.tbody.find("tr");
+        gridRows.each(function(e){
+            var currentDataItem = $("#@UniqueId.gridId").data("kendoGrid").dataItem($(this).closest("tr"));
+            console.log("currentDataItem" + currentDataItem);
+
+            //Check in the current dataItem if the row is editable
+            if (currentDataItem.Editable === false) {
+                $(this).find('td .k-grid-csp-edit').css("display", "none");
+                $(this).find('td .k-grid-csp-delete').css("display", "none");
+            }
+        });
+    }
+
+    function @(UniqueId.memberships)editMembershipOLD(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var membershipid = dataItem.MembershipId;
+        var direction = "/@ControllerFields.MembershipController/@actionHelper.Edit/?id=" + membershipid;
+        var window = $("#@UniqueId.membershipWindowId").data("kendoWindow");
+        window.refresh(direction);
+        window.setOptions({
+            minWidth: 985,
+            minHeight: 400
+        });
+        window.open();
+        window.center();
+    }
+
+
+    function @(UniqueId.memberships)showUserAccountDetails(userId) {
+        var direction = "/@ControllerFields.UserAccountController/@actionHelper.Details/" + userId;
+        var window = $("#@UniqueId.userAccountWindowId").data("kendoWindow");
+        window.refresh();
+        window.refresh(direction);
+        window.setOptions({
+            minHeight: 450
+        });
+        window.open();
+        window.center();
+    };
+
+
+    $(document).ready(function () {
+        $("#@UniqueId.createMembershipButtonId").click(function () {
+
+            @{
+                var createAction = "";
+
+                if (actionHelper.Controller == ControllerFields.SupportAccountController) {
+
+                    createAction = @actionHelper.CreateAccountMembership;
+
+                } else if (actionHelper.Controller == ControllerFields.GroupController) {
+
+                    createAction = @actionHelper.CreateGroupMembership;
+
+                } else if (actionHelper.Controller == ControllerFields.DeviceController) {
+
+                    createAction = @actionHelper.CreateDeviceMembership;
+                }
+            };
+            var window = $("#@UniqueId.membershipWindowId").data("kendoWindow");
+            var direction = "/@ControllerFields.MembershipController/@createAction/@actionHelper.Id";
+            window.refresh(direction);
+            window.setOptions({
+                minWidth: 985,
+                minHeight: 400
+            });
+            window.open();
+            window.center();
+
+        });
+
+
+    });
+
+
+    function @(UniqueId.memberships)DeleteMembershipDetails(e) {
+
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var row = $(e.currentTarget).closest("tr");
+        var id = dataItem.MembershipId;
+        var direction = "/@ControllerFields.MembershipController/@actionHelper.Delete/" + id;
+
+        SupportPortal.Confirmation("@Constants.DeletePreMessage Membership?", function () { @(UniqueId.memberships)removeMembership(); });
+
+        function @(UniqueId.memberships)removeMembership(e) {
+            $.ajax({
+                url: direction,
+                type: 'POST',
+                cache: false,
+                data: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                success: function (result) {
+
+                    if (result.Data && result.Data.Success) {
+                        row.hide();
+                        var grid = $("#@UniqueId.gridId").data("kendoGrid").dataSource;
+                        grid.read();
+                    } else {
+                        row.show();
+
+                        if (result.Data.Message) {
+                            SupportPortal.Message(result.Data.Message);
+                        }
+                    }
+                },
+                error: function () {
+                    row.show();
+                }
+            });
+
+        }
+
+    }
+
+    function @(UniqueId.memberships)SearchMemberShipData() {
+        var selectedValue = $("#@UniqueId.searchFieldId").val();
+        if ($("#@UniqueId.searchDateTimePickerId").val() != '') {
+            var dt = new Date($("#@UniqueId.searchDateTimePickerId").val());
+            var dtString = dt.getFullYear() + "-" + ((dt.getMonth() + 1) > 9 ? (dt.getMonth() + 1) : "0" + (dt.getMonth() + 1)) + "-" + (dt.getDate() > 9 ? dt.getDate() : "0" + dt.getDate());
+
+
+            if (selectedValue == "ExpirationDate") {
+                $("#@UniqueId.searchValueId").val(dtString);
+            }
+            if (selectedValue == "ActivationDate") {
+                $("#@UniqueId.searchValueId").val(dtString);
+            }
+        }
+        var grid = $("#@UniqueId.gridId").data("kendoGrid").dataSource;
+        grid.filter(
+            {
+                field: $("#@UniqueId.searchFieldId").val(),
+                operator: "eq",
+                value: $("#@UniqueId.searchValueId").val()
+            }
+        );
+            grid.sync();
+        }
+
+        function @(UniqueId.memberships)OnCmbChange() {
+        $("#@UniqueId.searchValueId").select();
+            var dropDownControl = $("#@UniqueId.searchFieldId").data("kendoDropDownList");
+            //dropDownControl.focus();
+            var selectedValue = dropDownControl.value();
+            if (selectedValue == "ExpirationDate") {
+                $("#@UniqueId.dateDivId").show();
+            $("#@UniqueId.searchDivId").hide();
+        }
+        else if (selectedValue == "ActivationDate") {
+            $("#@UniqueId.dateDivId").show();
+            $("#@UniqueId.searchDivId").hide();
+
+        }
+        else {
+            $("#@UniqueId.dateDivId").hide();
+            $("#@UniqueId.searchDivId").show();
+        }
+};
+
+
+function @(UniqueId.memberships)onCloseMembershipWindow() {
+    var window = $("#@UniqueId.membershipWindowId").data("kendoWindow");
+    window.content("");
+    window.refresh();
+
+    SupportPortal.OnWindowClose("@UniqueId.gridId");
+    }
+
+
+    function @(UniqueId.memberships)onCloseUserWindow() {
+        var window = $("#@UniqueId.userAccountWindowId").data("kendoWindow");
+        window.content("");
+        window.refresh();
+
+        SupportPortal.OnWindowClose("@UniqueId.gridId");
+    }
+
+    function @(UniqueId.memberships)onOpenUserWindow() {
+        SupportPortal.OnWindowOpen("@UniqueId.userAccountWindowId");
+    }
+
+    function @(UniqueId.memberships)onOpenMembershipWindow() {
+        SupportPortal.OnWindowOpen("@UniqueId.membershipWindowId");
+    }
+
+    function @(UniqueId.memberships)onMemberGridError(args) {
+        if (args.errors) {
+            var grid = $("#@UniqueId.gridId").data("kendoGrid");
+            var gridElement = grid.editable.element;
+
+            grid.one("dataBinding", function (e) {
+                e.preventDefault ? e.preventDefault() : e.returnValue = false; // cancel grid rebind if error occurs
+
+                $.each(args.errors, function (key, value) {
+                    if (value.errors) {
+                        if (key.length > 6 && key.substring(0, 6) == 'Roles[') {
+                            key = 'Roles';
+                        }
+                        gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]")
+                            .replaceWith(SupportPortal.ValidationMessageTemplate({ field: key, message: value.errors[0] }));
+
+                        // Comments By LK On 11/06/2013
+                        // Do not set the focus since we are clearing the error messages when a user clicks on the controls
+                        //gridElement.find("input[name=" + key + "]").focus();
+                    }
+                });
+            });
+        }
+    }
+
+        function @(UniqueId.memberships)onMemberGridRequestEnd(e) {
+        //check for errors in the response
+        if (e.response == null || e.response.Errors == null) {
+            var message = "";
+
+            switch (e.type) {
+                case "create":
+                    message = "Membership has been created successfully";
+                    break;
+                case "update":
+                    message = "Membership has been updated successfully";
+                    break;
+                case "delete":
+                    message = "Membership has been deleted successfully";
+                    break;
+                default:
+            }
+
+            if (message != "") {
+                SupportPortal.ClearNotification();
+                SupportPortal.Notification(message, SupportPortal.NotificationType.Success);
+            }
+        } else {
+            if (e.response.Errors["Error"] != undefined) {
+                SupportPortal.ClearNotification();
+                SupportPortal.Notification(e.response.Errors["Error"].errors[0], SupportPortal.NotificationType.Error);
+            }
+        }
+    }
+
+    function @(UniqueId.memberships)CreateMembership() {
+        var grid = $("#@UniqueId.gridId").data("kendoGrid");
+        grid.addRow();
+    }
+
+    function @(UniqueId.memberships)EditMembership(e) {
+        var grid = $("#@UniqueId.gridId").data("kendoGrid");
+        grid.editRow($(e.target).closest("tr"));
+    }
+
+    function @(UniqueId.memberships)CancelMembership() {
+        var grid = $("#@UniqueId.gridId").data("kendoGrid");
+        grid.cancelRow();
+    }
+
+    function @(UniqueId.memberships)UpdateMembership() {
+        var grid = $("#@UniqueId.gridId").data("kendoGrid");
+        var gridElement = grid.editable.element;
+        var mfaType = gridElement.find('[id="MultiFactorAuthType"]').val();
+        var enableEmailMfa = gridElement.find('[id="EnableEmailMfa"]').prop('checked');
+        if (enableEmailMfa && mfaType == 2) {
+            SupportPortal.Confirmation(
+                "Are you sure you want to switch user's MFA from Google Authenticator to email based OTP?",
+                function() {
+                    grid.saveRow();
+                    gridElement.find('[id="mfaStatus"]').text("Email");
+                },
+                function(){
+                    grid.cancelRow();
+                });
+        } else {
+            grid.saveRow();
+        }
+    }
+
+    function @(UniqueId.memberships)DeleteMembership(e) {
+        //var message = "@Constants.DeletePreMessage @ApiConstants.MEMBERSHIP?";
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var userAccountId = dataItem.UserAccountId;
+        var memberShipTypeId = "@Model.MembershipTypeId";
+
+        var deleteAction = function() {
+            var grid = $("#@UniqueId.gridId").data("kendoGrid");
+            grid.removeRow($(e.target).closest("tr"));
+        };
+
+        //check for super users count
+        var canDeleteUser = '@Url.Action("CanDeleteUser", "Membership")';
+        var action= '@ApiConstants.DELETE';
+        $.ajax({
+            url: canDeleteUser,
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({ userAccountId: userAccountId, memberShipTypeId: memberShipTypeId, action: action, newRoles:null }),
+            contentType: 'application/json; charset=utf-8',
+            global: true,
+            success: function (result) {
+                if (result) {
+                    if (result.Success) {
+                        SupportPortal.Confirmation(result.message, function() { deleteAction(); }, null);
+                    } else {
+                        SupportPortal.Message(result.message,{height: 145 , width: 380},function() { return false; });
+                    }
+                }
+
+            }
+        });
+
+
+        //SupportPortal.Confirmation(message, function() { deleteAction(); }, null);
+        ////var getDeletePreMessage = '@Url.Action("GetDeleteMessage", "Membership")';
+
+        ////$.ajax({
+        ////    url: getDeletePreMessage,
+        ////    type: 'POST',
+        ////    dataType: 'json',
+        ////    data: JSON.stringify({ userAccountId: userAccountId }),
+        ////    contentType: 'application/json; charset=utf-8',
+        ////    global: true,
+        ////    success: function (result) {
+        ////        if (result) {
+        ////            console.log(result);
+        ////            var message = result;
+        ////            SupportPortal.Confirmation(message, function() { deleteAction(); }, null);
+        ////        }
+        ////    }
+        ////});
+    }
+
+    function @(UniqueId.memberships)onMemberGridEdit(e) {
+            $(e.container).find('select[name="Roles"]').change('change', function() { onRolesSelect(this) });
+            //Check if thridparty config is enabled
+            var validateIdpUrl = '@Url.Action("IsThirdPartyIdpConfigured", "Membership")';
+            var email = $(e.container).find('input[name="Email"]').val();
+            if("@Model.AllowMfaEdit".toLowerCase() == "true")
+            {
+                var ddlMfaStatus = $(e.container).find('input[name="MfaStatus"]').data("kendoDropDownList");
+                if(ddlMfaStatus)
+                {
+                    var mfaStatusData = ddlMfaStatus.dataSource.data();
+                    if( e.model.MultiFactorAuthType != 2)
+                    {
+                        ddlMfaStatus.dataSource.remove(mfaStatusData[mfaStatusData.length - 1]);
+                    }
+                    if(e.model.isNew())
+                    {
+                        ddlMfaStatus.enable(false);
+                    }
+                }
+            }
+
+            $.ajax({
+                url: validateIdpUrl,
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({
+                    email: email
+                }),
+                contentType: 'application/json; charset=utf-8',
+                global: true,
+                success: function(result) {
+                    isThirdPartyConfigured = result.isThirdPartyIdpConfigured;
+                    isNewUser = false;
+                },
+                error: function (request, error) {
+                }
+            });
+
+        $(e.container.find("input")).each(function(i, el) {
+            $(el).on("focus",
+                function() {
+                    $(this).closest(".k-widget").siblings(".k-tooltip-validation").hide();
+                });
+        });
+
+        var membershipsId = "@((string) UniqueId.memberships)";
+
+        if (!e.model.IsMfaEnabled || e.model.MultiFactorAuthType == 1) {
+            $(e.container).find('input[name="EnableEmailMfa"]').attr("disabled", true);
+        }
+
+        if ("@isMfaRequired" == "True" || e.model.IsMfaRequired) {
+            $(e.container).find('input[name="IsMfaEnabled"]').attr("disabled", true);
+
+            if (e.model.IsMfaRequired) {
+                $(e.container)
+                    .find('input[name="IsMfaEnabled"]')
+                    .attr("title", "2 FA is still required in other account");
+            }
+
+        }
+
+        //Disable Roles if any
+        var disabledItem = $('span[data-disabled="true"]').closest('li');
+        disabledItem.addClass('disabled-Role');
+        disabledItem.children('span.k-select').hide();
+
+        $(e.container)
+            .find("td:last")
+            .html(
+                "<a class='k-button k-button-icontext k-grid-csp-update' data-link-field='update' href='javascript:void(0);' onclick='" +
+                membershipsId +
+                "UpdateMembership();' title='Update'><span class=''></span></a>" +
+                "<a class='k-button k-button-icontext k-grid-csp-cancel' data-link-field='cancel' href='javascript:void(0);' onclick='" +
+                membershipsId +
+                "CancelMembership();' title='Cancel'><span class=''></span></a>");
+
+        if (e.model.isNew() == false) {
+            $(e.container).find('input[name="Email"]').unbind("onblur");
+            $(e.container).find('input[name="Email"]').attr("readonly", true);
+            $(e.container).find('input[name="Email"]').replaceWith($(e.container).find('input[name="Email"]').val());
+
+            var isActive = e.model.AutoFocusTrialUser;
+            if (!isActive) {
+                $(e.container)
+                    .find('#Roles_taglist li')
+                    .each(function() {
+                        var roleSpan = $(this).find('span').first();
+                        if (roleSpan.text().match("Autofocus Trial")) {
+                            roleSpan.css('text-decoration', 'line-through');
+                        }
+                    });
+            }
+        } else {
+            var rolesList = $(e.container).find('select[name="Roles"]').data("kendoMultiSelect");
+            rolesList.value(_.pluck('@defaultRoles', 'Value'));
+            rolesList.trigger("change");
+
+            if ("@isMfaRequired" == "True") {
+                $(e.container).find('input[name="IsMfaEnabled"]').attr("checked", true);
+            }
+
+            $(e.container).find('input[name="Email"]').bind('blur',
+                function() {
+                    @(UniqueId.memberships)ValidateEmail(this);
+                });
+
+           // $(e.container).find('select[name="Roles"]').change('change', function() { onRolesSelect(this) });
+        }
+    }
+
+    function @(UniqueId.memberships)GetCreateMembershipData(data) {
+        data.MembershipTypeId = "@Model.MembershipTypeId";
+        data.MembershipParentId = "@Model.MembershipParentId";
+        data.RoleNames = "";
+        var grid = $("#@UniqueId.gridId").data("kendoGrid");
+        var gridElement = grid.editable.element;
+        SupportPortal.stripProps(data, ['CreatedOn', 'LastUpdate']);
+
+        @(UniqueId.memberships)MultiSelectRolesFix(data.Roles);
+        SupportPortal.Serialize(data);
+
+       // SupportPortal.BlockUI();
+
+        return data;
+    }
+
+    function @(UniqueId.memberships)GetUpdateMembershipData(data) {
+        data.RoleNames = "";
+        data.MembershipTypeId = "@Model.MembershipTypeId";
+        SupportPortal.stripProps(data, ['CreatedOn', 'LastUpdate']);
+
+        @(UniqueId.memberships)MultiSelectRolesFix(data.Roles);
+        var grid = $("#@UniqueId.gridId").data("kendoGrid");
+        var gridElement = grid.editable.element;
+        if("@Model.AllowMfaEdit".toLowerCase() == "true")
+        {
+            var ddlMfaStatus= gridElement.find('input[name="MfaStatus"]').data("kendoDropDownList");
+
+            if (ddlMfaStatus) {
+                data.MultiFactorAuthType = (ddlMfaStatus.value() === "Not Enabled") ? 0 : (ddlMfaStatus.value() === "Email") ? 1 : data.MultiFactorAuthType;
+                data.IsMfaEnabled = (ddlMfaStatus.value() === "Not Enabled") ? false : (ddlMfaStatus.value() === "Email") ? true : data.IsMfaEnabled;
+                data.EnableEmailMfa = (ddlMfaStatus.value() === "Email") ? true : false;
+            }
+        }
+
+        SupportPortal.Serialize(data);
+
+       // SupportPortal.BlockUI();
+
+        return data;
+    }
+
+    function @(UniqueId.memberships)MultiSelectRolesFix(roles) {
+        var allAvailableRoles = JSON.parse('@availableRoles');
+
+        var i;
+        for (i = 0; i < roles.length;i++) {
+            var role = roles[i];
+
+            var roleId = parseInt(role);
+            if (!isNaN(roleId)) {
+                var name = _.find(allAvailableRoles, function(r) { return r.Value == roleId; }).Name;
+                roles[i] = {
+                    Name: name,
+                    Value: roleId
+                };
+            }
+        }
+    }
+
+    function @(UniqueId.memberships)GetDeleteMembershipData(data) {
+
+        data.MembershipTypeId = "@Model.MembershipTypeId";
+        SupportPortal.stripProps(data, ['CreatedOn', 'LastUpdate']);
+
+       // SupportPortal.BlockUI();
+
+        return SupportPortal.Serialize(data);
+    }
+
+    function @(UniqueId.memberships)ValidateEmail(selector) {
+
+        var email = $(selector).val().trim();
+        var membershipTypeId = "@Model.MembershipTypeId";
+        var membershipParentId = "@Model.MembershipParentId";
+
+        if (email == "") {
+            return;
+        }
+        newUserEmail = email;
+        var validateEmailUrl = '@Url.Action("IsValidEmail", "Membership")';
+
+        $.ajax({
+            url: validateEmailUrl,
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({
+                email: email,
+                membershipTypeId: membershipTypeId,
+                membershipParentId: membershipParentId
+            }),
+            contentType: 'application/json; charset=utf-8',
+            global: true,
+            success: function(result) {
+                if (!result.Success) {
+                    var grid = $("#@UniqueId.gridId").data("kendoGrid");
+                    var gridElement = grid.editable.element;
+
+                    var key = "Email";
+                    var message = result.Message;
+
+                    gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]")
+                        .replaceWith(SupportPortal.ValidationMessageTemplate({ field: key, message: message }));
+                }
+                isNewUser = result.isNewUser;
+                isThirdPartyConfigured = result.isThirdPartyIdpConfigured;
+
+                if (isThirdPartyConfigured) {
+                    var grid = $("#@UniqueId.gridId").data("kendoGrid");
+                    var gridElement = grid.editable.element;
+
+                    gridElement.find("[id='EnableEmailMfa']").hide();
+                    gridElement.find("[id='IsMfaEnabled']").hide();
+
+                }
+            },
+            error: function (request, error) {
+            }
+        });
+
+
+    }
+
+    function exportMembersToCsv() {
+
+        var supportAccountId = @actionHelper.Id;
+
+        var searchField = $("#@UniqueId.searchFieldId").val();
+        var searchValue = $("#@UniqueId.searchValueId").val();
+
+        location.href = '@Url.Action("UsersCsv", actionHelper.Controller)?id=' + supportAccountId + '&searchField=' + searchField + '&searchValue=' + searchValue;
+    }
+
+    function @(UniqueId.memberships)membershipRequestStart() {
+        //  SupportPortal.BlockUI();
+    }
+
+    function @(UniqueId.memberships)membershipRequestEnd(e) {
+        //  SupportPortal.UnBlockUI();
+        SupportPortal.kendoGridTimezoneToPst(e);
+        //Show warning when Autofocus Trial role is removed
+        if (e.type == "create" || e.type == "update") {
+            //check for errors in the response
+            if (e.response == null || e.response.Errors == null) {
+                var rows = e.response.Data;
+                var notification = rows[0].Notification;
+                //Show notification if exist
+                if (notification != undefined && notification.length > 0) {
+                    SupportPortal.ClearNotification();
+                    SupportPortal.Notification(notification, SupportPortal.NotificationType.Success);
+                }
+            }
+        }
+    }
+
+        function onRolesSelect(selector) {
+
+        var e = $(selector).data("kendoMultiSelect");
+
+        var domainAdmin = '@((int)Csp.Api.Model.Enums.RoleType.DomainAdministrator)';
+        var message = "";
+
+        var grid = $("#@UniqueId.gridId").data("kendoGrid");
+        var gridElement = grid.editable.element;
+        var key = "Email";
+
+        if(isNewUser){
+            if (isThirdPartyConfigured) {
+                if (e.value().indexOf(domainAdmin) > -1) {
+
+                    message = "To add a domain administrator who has never registered, use the 'Create New User' under Members on the side navigation bar";
+
+                    gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]").show();
+                    gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]").replaceWith(SupportPortal.ValidationMessageTemplate({ field: key, message: message }));
+
+                    gridElement.find("[id='IsMfaEnabled']").show();
+                    gridElement.find("[id='EnableEmailMfa']").show();
+
+                } else {
+                    gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]").hide();
+                    gridElement.find("[id='IsMfaEnabled']").hide();
+                    gridElement.find("[id='EnableEmailMfa']").hide();
+                }
+            }
+        }
+    }
+        </script>
+        <script type="text/x-kendo-template" id="@UniqueId.rolesTemplate">
+            #for(var i = 0; i< data.length; i++){#
+            #if(data[i].IsActive){#
+            #:data[i].Name#
+            <br />
+            #}else{#
+            <del>#:data[i].Name#</del>
+            <br />
+            #}#
+            #}#
+        </script>
+        <script type="text/javascript">
+    var @UniqueId.rolesTemplate;
+    $(document).ready(function () {
+        @UniqueId.rolesTemplate = kendo.template($("#@UniqueId.rolesTemplate").html(), { useWithBlock: false });
+
+        $("#@UniqueId.gridDivId").kendoTooltip({
+            filter: "td del",
+            position: "right",
+            width: 100,
+            autoHide: true,
+            content: function(e) {
+                var roleType = e.target.closest("del").text();
+                var tooltipText = "Threat Researcher role is not active due to expired Autofocus license. If the license is renewed, Threat Researcher role will be back to active status";
+                if (roleType.match("Autofocus Trial")){
+                    tooltipText = "Autofocus Trial role is not active. Either Autofocus license has expired or Trial role has expired for the user";
+                }
+                return tooltipText ;
+            }
+        }).data("kendoTooltip");
+
+    });
+        </script>
+
+        @Html.Hidden((string)UniqueId.isPostBackId, "")
+        <div>
+
+            @(Html.Kendo().Window()
+          .Name((string)UniqueId.membershipWindowId)
+          .Modal(true)
+          .Draggable()
+          .Scrollable(false)
+          .Events(events => events
+                                    .Close((string)UniqueId.memberships + "onCloseMembershipWindow")
+                                    .Open((string)UniqueId.memberships + "onOpenMembershipWindow"))
+          .Title("Membership")
+          .Visible(false)
+            )
+        </div>
+
+        <div>
+            @(Html.Kendo().Window()
+          .Name((string)UniqueId.userAccountWindowId)
+          .Width(1030)
+          .Modal(true)
+          .Draggable()
+          .Title("User:")
+          .Events(events => events
+                                    .Close((string)UniqueId.memberships + "onCloseUserWindow")
+                                    .Open((string)UniqueId.memberships + "onOpenUserWindow"))
+          .Visible(false)
+            )
+        </div>
+
+        <div class="contextTitle">Manage Users </div>
+        @if (Model.IsUserImpersonated || Model.IsUserInternal)
+        {
+            <h3>
+                Adding users to this account requires super user approval. Confirm that urgent access requests have super user approval and <span style="color: red;">immediately</span> alert all super users on the account via e-mail if new user is being added.
+            </h3>
+            <br />
+        }
+        <div class="grid-header">
+            <div class="grid-left">
+                @if (User.HasPermission(Permission.CreateMembership) || (Model.MembershipTypeId == (int)MembershipType.Group && User.HasPermission(Permission.CreateGroupMembership)))
+                {
+                    <input type="button" value="Add Member" class="k-button k-primary" data-link-type="add-member" onclick="@(UniqueId.memberships)CreateMembership();" /> <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 5);"></i></span>
+                }
+                @if (Model.NumberOfPendingMemberships > 0)
+                {
+                    <input type="button" value="Review @Model.NumberOfPendingMemberships Pending Membership(s)" class="k-button" style="margin-left: 10px;" onclick="javascript: location.href = '@Url.Action("AllPendingMemberships", "Membership", new { id = @Model.ActionHelper.Id})';" />
+                }
+            </div>
+
+            <div class="grid-right">
+
+                <div class="grid-filter">
+                    @(Html.Kendo().DropDownList()
+                  .Name((string)UniqueId.searchFieldId)
+                  .Events(events => events.Change((string)UniqueId.memberships + "OnCmbChange"))
+                  .OptionLabel("Filter By")
+                  .OptionLabelTemplate("<span class='grid-filter__dropdown-placeholder'>Filter By</span>")
+                  .DataTextField("Text")
+                  .DataValueField("Value")
+                  .BindTo(new List<SelectListItem>
+                      {
+                          new SelectListItem {
+                              Text = "First Name",
+                              Value = "FirstName"
+                          },
+                          new SelectListItem {
+                              Text = "Last Name",
+                              Value = "LastName"
+                          },
+                          new SelectListItem {
+                              Text="Email",
+                              Value="Email"
+                          },
+                          new SelectListItem {
+                              Text = "Activation Date",
+                              Value = "ActivationDate"
+                          },
+                          new SelectListItem {
+                              Text = "Expiration Date",
+                              Value = "ExpirationDate"
+                          },
+                          new SelectListItem {
+                              Text = "Roles",
+                              Value = "RoleNames"
+                          },
+                          new SelectListItem {
+                              Text = "Description",
+                              Value = "Description"
+                          }
+                      })
+                    )
+                </div>
+
+
+                <div class="grid-filter">
+                    <div class="grid-filter" id="@UniqueId.searchDivId">
+                        @Html.TextBox((string)UniqueId.searchValueId, "", new {
+                            onkeypress = "return " + (string)UniqueId.memberships + "onMembershipEnterPress(event)",
+                            @class = "grid-filter__search-input",
+                            placeholder = "Search",
+                            aria_label = "Search"
+                        })
+                        <button aria-label="search" type="button" class="grid-filter__search-button" onclick="@(UniqueId.memberships)SearchMemberShipData()">
+                            <span aria-hidden="true" class="fa fa-search" />
+                        </button>
+                    </div>
+
+                    <div class="filter-datepicker" id="@UniqueId.dateDivId">
+                        @(Html.Kendo().DatePicker()
+                      .Name(UniqueId.searchDateTimePickerId)
+                      .HtmlAttributes(new
+                      {
+                          onkeypress = "return " + (string)UniqueId.memberships + "onMembershipEnterPress(event)",
+                          @class = "grid-filter__date-input",
+                      }))
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-content">
+
+            <div id="@UniqueId.gridDivId">
+                @{
+                    if (Model != null && Model.Memberships != null)
+                    {
+
+                        var maxPageSizeForms = Convert.ToInt32(Model.Memberships.Count);
+                        var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+                        if (maxPageSizeForms > pageSizeOptionsForms.Max())
+                        {
+                            pageSizeOptionsForms.Add(maxPageSizeForms);
+                        }
+
+                        @(Html.Kendo().Grid(Model.Memberships)
+                    .Name((string)UniqueId.gridId)
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.FirstName).Width(150).Filterable(false).Sortable(true).ClientTemplate("#= FirstName # #= LastName #").Title("Name");
+                        columns.Bound(p => p.Email).Width(125).Title("Email");
+                        columns.Bound(p => p.ActivationDate).Width(120).Format("{0:d}").EditorTemplateName("Date").Title("Activation Date");
+                        columns.Bound(p => p.ExpirationDate).Width(120).Format("{0:MM/dd/yyyy}").EditorTemplateName("Date").Title("Expiration Date");
+                        columns.Bound(p => p.MultiFactorAuthType).Hidden();
+                        //if (!Model.AllowMfaEdit)
+                        //{
+                        //    columns.Bound(p => p.MfaStatus).Width(35).Filterable(false).Sortable(true)
+                        //        .ClientTemplate("<span id='mfaStatus'>#= MfaStatus #  #= IsThridPartyIdpConfigured ? visibility='hidden': ''  #   </span> ")
+                        //        .Title("2 Factor Authentication");
+                        //}
+                        //else
+                        //{
+                        //    columns.Bound(p => p.MfaStatus).Width(35).Filterable(false).Sortable(true)
+                        //        .ClientTemplate("<span id='mfaStatus'>#= MfaStatus #  #= IsThridPartyIdpConfigured ? visibility='hidden': ''  #   </span> ")
+                        //        .Title("2 Factor Authentication").EditorTemplateName("MfaStatus");
+                        //}
+                        //columns.Bound(p => p.EnableEmailMfa).Width(35).Filterable(false).Sortable(false)
+                        //    .ClientTemplate("<input type='checkbox' disabled='disabled' #= EnableEmailMfa ? checked='checked' :''#  #=IsThridPartyIdpConfigured ? visibility='hidden': '' #   />")
+                        //    .Title("Default 2FA (Email)");
+                        columns.Bound(p => p.Roles).Width(250).HeaderTemplate("<span>Roles</span><span class='csp-tooltip'><i class='icon-question-sign icon-large' onmouseover='SupportPortal.Help(this, 68);'></i></span>").
+                            EditorTemplateName("Roles").EditorViewData(new { Model.AvailableRoles }).ClientTemplate("#=" + UniqueId.rolesTemplate + "(Roles)#");
+                        columns.Bound(p => p.Description).Width(200).EditorTemplateName("TextArea").HtmlAttributes(new { @class = "wrapText" });
+
+                        if (User.HasPermission(Permission.EditMembership) || User.HasPermission(Permission.DeleteMembership) ||
+                            (Model.MembershipTypeId == (int)MembershipType.Group && (User.HasPermission(Permission.EditGroupMembership) || User.HasPermission(Permission.DeleteGroupMembership))))
+                        {
+                            columns.Command(command =>
+                            {
+                                if (User.HasPermission(Permission.EditMembership) ||
+                                    (Model.MembershipTypeId == (int)MembershipType.Group && User.HasPermission(Permission.EditGroupMembership)))
+                                {
+                                    command.Custom("csp-edit").Text(" ").Click((string)UniqueId.memberships + "EditMembership").HtmlAttributes(new { title = "Edit", href = "javascript:void(0);", data_link_type = "edit-member" });
+                                }
+                                if (User.HasPermission(Permission.DeleteMembership) ||
+                                    (Model.MembershipTypeId == (int)MembershipType.Group && User.HasPermission(Permission.DeleteGroupMembership)))
+                                {
+                                    command.Custom("csp-delete").Text(" ").Click((string)UniqueId.memberships + "DeleteMembership").HtmlAttributes(new { title = "Delete", href = "javascript:void(0);", data_link_type = "remove-member" });
+                                }
+                            }).Width(80).Title("Actions").HtmlAttributes(new { style = "white-space: nowrap;" });
+                        }
+                    })
+                    .Editable(editable => editable.Mode(GridEditMode.InLine).DisplayDeleteConfirmation(false))
+                    .Events(e =>
+                    {
+                        e.DataBound((string)UniqueId.memberships + "onMemberGridDataBound");
+                        e.Edit((string)UniqueId.memberships + "onMemberGridEdit");
+                    })
+                    .ToolBar(toolBar =>
+                    {
+                        toolBar.Custom()
+                        .Text("Export To CSV")
+                        .HtmlAttributes(new { id = "export", data_link_type = "export-csv-members" })
+                        .Url("javascript: exportMembersToCsv();");
+                    })
+                    .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                    .Sortable()
+                    .Resizable(resize => resize.Columns(true))
+                    .DataSource(dataSource => dataSource
+                                                  .Ajax()
+                                                  .Model(model =>
+                                                  {
+                                                      model.Id(p => p.MembershipId);
+                                                      model.Field(p => p.FirstName).Editable(false);
+                                                      if (!Model.AllowMfaEdit)
+                                                      {
+                                                          model.Field(p => p.MfaStatus).Editable(false);
+                                                      }
+                                                      else
+                                                      {
+                                                          model.Field(p => p.MfaStatus).Editable(true);
+                                                      }
+                                                      model.Field(p => p.Roles).DefaultValue(new List<NameValue>());
+                                                  }
+                                                  )
+                                                  .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                                  .PageSize(Model.DataParameters.PaginationCount)
+                                                  .Events(e =>
+                                                  {
+                                                      e.Error((string)UniqueId.memberships + "onMemberGridError");
+                                                      e.RequestEnd((string)UniqueId.memberships + "onMemberGridRequestEnd");
+                                                  })
+                                                  .Read(read => read.Action(actionHelper.Users, actionHelper.Controller, new
+                                                  {
+                                                      actionHelper.Id
+                                                  }).Data("SetAntiForgery"))
+                                                  .Create(create => create.Action("CreateMembership", "Membership").Data((string)UniqueId.memberships + "GetCreateMembershipData"))
+                                                  .Update(update => update.Action("UpdateMembership", "Membership").Data((string)UniqueId.memberships + "GetUpdateMembershipData"))
+                                                  .Destroy(destroy => destroy.Action("DeleteMembership", "Membership").Data((string)UniqueId.memberships + "GetDeleteMembershipData"))
+                                                  .Events(e => e.RequestEnd((string)UniqueId.memberships + "membershipRequestEnd").RequestStart((string)UniqueId.memberships + "membershipRequestStart"))
+                    )
+                        )
+                    }
+                }
+
+            </div>
+
+        </div>
+    </div>
+}

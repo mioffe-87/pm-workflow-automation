@@ -1,0 +1,137 @@
+﻿@using Kendo.Mvc.UI;
+@using Csp.Web.HelperClasses;
+@model List<Csp.Api.Model.SupportAccountListItem>
+@{
+    ActionHelper actionHelper = ViewBag.ActionHelper;
+}
+
+
+
+<div class="width-height">
+    <div class="grid-header">
+        <div class="grid-right">
+
+            <div class="grid-filter">
+                <span class="filter_by">Filter By:</span>
+
+                @(Html.Kendo().DropDownList()
+          .Name("cmbSupportAccountListItemSearchEntity")
+          .DataTextField("Text")
+          .DataValueField("Value")
+          .BindTo(new List<SelectListItem>() {
+              new SelectListItem() {
+                  Text = "Company Name",
+                  Value = "CompanyName"
+              },
+              new SelectListItem() {
+                  Text = "Customer Number",
+                  Value = "CustomerNumber"
+              },
+              new SelectListItem() {
+                  Text = "Address",
+                  Value = "Address1"
+              },
+              new SelectListItem(){
+              Text="City",
+              Value="City"
+              },
+                 new SelectListItem() {
+                  Text = "Country",
+                  Value = "Country"
+              },
+                 new SelectListItem() {
+                  Text = "Region",
+                  Value = "Region"
+              } ,
+                 new SelectListItem() {
+                  Text = "Phone Number",
+                  Value = "PhoneNumber"
+              } 
+          })
+          .Value("FirstName")
+    )
+            </div>
+
+
+            <div class="grid-filter">
+                <div class="grid-filter k-textbox" id="Textbox">
+                    <input type="text" id="txtSupportAccountListItemSearchValue" class="k-textbox" />
+                </div>
+
+            </div>
+
+            <div class="grid-filter">
+                <input type="button" value="Search" onclick="SearchSupportAccountListItemData()" class="k-button" />
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="grid-content">
+    @{        
+        
+        if (Model != null) {
+            var maxPageSizeForms = Convert.ToInt32(Model.Count);
+            var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+            if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                pageSizeOptionsForms.Add(maxPageSizeForms);
+            }
+
+        @(Html.Kendo().Grid(Model)
+            .Name("SupportAccountListItemGrid")
+            .Columns(columns => {
+
+                columns.Bound(p => p.CompanyName).Width(150).Template(cp => Html.ActionLink(cp.CompanyName, "MyAccounts", ControllerFields.SupportAccountController, new {
+                    id = cp.Id
+                }, null)).Width(150).Filterable(false).Sortable(true).ClientTemplate(Html.ActionLink("#=CompanyName#", "MyAccounts", ControllerFields.SupportAccountController, new {
+                    Id = "Sid"
+                }, null).ToHtmlString().Replace("Sid", "#=Id#")).Column.Title = "Company Name";
+
+                columns.Bound(p => p.CustomerNumber).Width(150).Column.Title = "Customer Number";
+                columns.Bound(p => p.Address1).Width(150).Column.Title = "Address";
+                columns.Bound(p => p.City).Width(150).Column.Title = "City";
+                columns.Bound(p => p.Country).Width(150).Column.Title = "Country";
+                columns.Bound(p => p.Region).Width(150).Column.Title = "Region";
+                columns.Bound(p => p.PhoneNumber).Width(150).Column.Title = "Phone Number";
+
+
+            })
+            .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+            .Sortable()
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .Model(model => model.Id(p => p.Id))
+                .PageSize(10)
+                .Total(Convert.ToInt32(ViewData["total"]))
+                .Read(read => {
+                    read.Action(actionHelper.Accounts, actionHelper.Controller, new {
+                        Id = actionHelper.Id
+                    });
+                    //.Data("onSearchData");
+                })
+
+            ))
+        }
+    }
+
+
+</div>
+
+
+<script>
+    function SearchSupportAccountListItemData() {
+
+        var grid = $("#SupportAccountListItemGrid").data("kendoGrid").dataSource;
+        grid.filter(
+        {
+            field: document.getElementById("cmbSupportAccountListItemSearchEntity").value,
+            operator: "eq",
+            value: document.getElementById('txtSupportAccountListItemSearchValue').value
+        }
+        )
+        grid.read();
+    }
+
+
+</script>

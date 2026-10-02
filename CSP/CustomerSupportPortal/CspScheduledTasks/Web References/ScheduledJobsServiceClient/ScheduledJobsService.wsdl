@@ -1,0 +1,1139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="ProcessBulkRegistrations">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessBulkRegistrationsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessBulkRegistrationsResult" type="tns:BulkRegistrationProcessResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="BulkRegistrationProcessResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsSuccess" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorMessage" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AuthHeader" type="tns:AuthHeader" />
+      <s:complexType name="AuthHeader">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Username" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+        </s:sequence>
+        <s:anyAttribute />
+      </s:complexType>
+      <s:element name="ProcessAscScorecardReminder">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessAscScorecardReminderResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessAscScorecardReminderResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="BaseJobResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsSuccess" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorMessage" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ProcessAutofocusTrialExpiration">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessAutofocusTrialExpirationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessAutofocusTrialExpirationResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessEvalAccounts">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessEvalAccountsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessEvalAccountsResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessVmRegistrations">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessVmRegistrationsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessVmRegistrationsResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessMfaRegistrations">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessMfaRegistrationsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessMfaRegistrationsResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessEmailNotificationStatusUpdate">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessEmailNotificationStatusUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessEmailNotificationStatusUpdateResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NotifyLicensingApiExpiration">
+        <s:complexType />
+      </s:element>
+      <s:element name="NotifyLicensingApiExpirationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="NotifyLicensingApiExpirationResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessBulkDeviceTransfer">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessBulkDeviceTransferResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessBulkDeviceTransferResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessVmElaTokenNotification">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessVmElaTokenNotificationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessVmElaTokenNotificationResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessCloudServicesUsersTransfer">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessCloudServicesUsersTransferResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessCloudServicesUsersTransferResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessBulkOtpRequest">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessBulkOtpRequestResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessBulkOtpRequestResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessOtpExpirationRequest">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessOtpExpirationRequestResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessOtpExpirationRequestResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessPinExpirationRequest">
+        <s:complexType />
+      </s:element>
+      <s:element name="ProcessPinExpirationRequestResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessPinExpirationRequestResult" type="tns:BaseJobResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BulkRegistrationProcessResult" nillable="true" type="tns:BulkRegistrationProcessResult" />
+      <s:element name="BaseJobResult" nillable="true" type="tns:BaseJobResult" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="ProcessBulkRegistrationsSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessBulkRegistrations" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkRegistrationsSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessBulkRegistrationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkRegistrationsAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessAscScorecardReminderSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessAscScorecardReminder" />
+  </wsdl:message>
+  <wsdl:message name="ProcessAscScorecardReminderSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessAscScorecardReminderResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessAscScorecardReminderAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessAutofocusTrialExpirationSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessAutofocusTrialExpiration" />
+  </wsdl:message>
+  <wsdl:message name="ProcessAutofocusTrialExpirationSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessAutofocusTrialExpirationResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessAutofocusTrialExpirationAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEvalAccountsSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessEvalAccounts" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEvalAccountsSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessEvalAccountsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEvalAccountsAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessVmRegistrationsSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessVmRegistrations" />
+  </wsdl:message>
+  <wsdl:message name="ProcessVmRegistrationsSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessVmRegistrationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessVmRegistrationsAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessMfaRegistrationsSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessMfaRegistrations" />
+  </wsdl:message>
+  <wsdl:message name="ProcessMfaRegistrationsSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessMfaRegistrationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessMfaRegistrationsAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEmailNotificationStatusUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessEmailNotificationStatusUpdate" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEmailNotificationStatusUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessEmailNotificationStatusUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEmailNotificationStatusUpdateAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="NotifyLicensingApiExpirationSoapIn">
+    <wsdl:part name="parameters" element="tns:NotifyLicensingApiExpiration" />
+  </wsdl:message>
+  <wsdl:message name="NotifyLicensingApiExpirationSoapOut">
+    <wsdl:part name="parameters" element="tns:NotifyLicensingApiExpirationResponse" />
+  </wsdl:message>
+  <wsdl:message name="NotifyLicensingApiExpirationAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkDeviceTransferSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessBulkDeviceTransfer" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkDeviceTransferSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessBulkDeviceTransferResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkDeviceTransferAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessVmElaTokenNotificationSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessVmElaTokenNotification" />
+  </wsdl:message>
+  <wsdl:message name="ProcessVmElaTokenNotificationSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessVmElaTokenNotificationResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessVmElaTokenNotificationAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessCloudServicesUsersTransferSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessCloudServicesUsersTransfer" />
+  </wsdl:message>
+  <wsdl:message name="ProcessCloudServicesUsersTransferSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessCloudServicesUsersTransferResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessCloudServicesUsersTransferAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkOtpRequestSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessBulkOtpRequest" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkOtpRequestSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessBulkOtpRequestResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkOtpRequestAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessOtpExpirationRequestSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessOtpExpirationRequest" />
+  </wsdl:message>
+  <wsdl:message name="ProcessOtpExpirationRequestSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessOtpExpirationRequestResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessOtpExpirationRequestAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessPinExpirationRequestSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessPinExpirationRequest" />
+  </wsdl:message>
+  <wsdl:message name="ProcessPinExpirationRequestSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessPinExpirationRequestResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessPinExpirationRequestAuthHeader">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeader" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkRegistrationsHttpGetIn" />
+  <wsdl:message name="ProcessBulkRegistrationsHttpGetOut">
+    <wsdl:part name="Body" element="tns:BulkRegistrationProcessResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessAscScorecardReminderHttpGetIn" />
+  <wsdl:message name="ProcessAscScorecardReminderHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessAutofocusTrialExpirationHttpGetIn" />
+  <wsdl:message name="ProcessAutofocusTrialExpirationHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEvalAccountsHttpGetIn" />
+  <wsdl:message name="ProcessEvalAccountsHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessVmRegistrationsHttpGetIn" />
+  <wsdl:message name="ProcessVmRegistrationsHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessMfaRegistrationsHttpGetIn" />
+  <wsdl:message name="ProcessMfaRegistrationsHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEmailNotificationStatusUpdateHttpGetIn" />
+  <wsdl:message name="ProcessEmailNotificationStatusUpdateHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="NotifyLicensingApiExpirationHttpGetIn" />
+  <wsdl:message name="NotifyLicensingApiExpirationHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkDeviceTransferHttpGetIn" />
+  <wsdl:message name="ProcessBulkDeviceTransferHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessVmElaTokenNotificationHttpGetIn" />
+  <wsdl:message name="ProcessVmElaTokenNotificationHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessCloudServicesUsersTransferHttpGetIn" />
+  <wsdl:message name="ProcessCloudServicesUsersTransferHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkOtpRequestHttpGetIn" />
+  <wsdl:message name="ProcessBulkOtpRequestHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessOtpExpirationRequestHttpGetIn" />
+  <wsdl:message name="ProcessOtpExpirationRequestHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessPinExpirationRequestHttpGetIn" />
+  <wsdl:message name="ProcessPinExpirationRequestHttpGetOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkRegistrationsHttpPostIn" />
+  <wsdl:message name="ProcessBulkRegistrationsHttpPostOut">
+    <wsdl:part name="Body" element="tns:BulkRegistrationProcessResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessAscScorecardReminderHttpPostIn" />
+  <wsdl:message name="ProcessAscScorecardReminderHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessAutofocusTrialExpirationHttpPostIn" />
+  <wsdl:message name="ProcessAutofocusTrialExpirationHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEvalAccountsHttpPostIn" />
+  <wsdl:message name="ProcessEvalAccountsHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessVmRegistrationsHttpPostIn" />
+  <wsdl:message name="ProcessVmRegistrationsHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessMfaRegistrationsHttpPostIn" />
+  <wsdl:message name="ProcessMfaRegistrationsHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEmailNotificationStatusUpdateHttpPostIn" />
+  <wsdl:message name="ProcessEmailNotificationStatusUpdateHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="NotifyLicensingApiExpirationHttpPostIn" />
+  <wsdl:message name="NotifyLicensingApiExpirationHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkDeviceTransferHttpPostIn" />
+  <wsdl:message name="ProcessBulkDeviceTransferHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessVmElaTokenNotificationHttpPostIn" />
+  <wsdl:message name="ProcessVmElaTokenNotificationHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessCloudServicesUsersTransferHttpPostIn" />
+  <wsdl:message name="ProcessCloudServicesUsersTransferHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessBulkOtpRequestHttpPostIn" />
+  <wsdl:message name="ProcessBulkOtpRequestHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessOtpExpirationRequestHttpPostIn" />
+  <wsdl:message name="ProcessOtpExpirationRequestHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:message name="ProcessPinExpirationRequestHttpPostIn" />
+  <wsdl:message name="ProcessPinExpirationRequestHttpPostOut">
+    <wsdl:part name="Body" element="tns:BaseJobResult" />
+  </wsdl:message>
+  <wsdl:portType name="ScheduledJobsServiceSoap">
+    <wsdl:operation name="ProcessBulkRegistrations">
+      <wsdl:input message="tns:ProcessBulkRegistrationsSoapIn" />
+      <wsdl:output message="tns:ProcessBulkRegistrationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAscScorecardReminder">
+      <wsdl:input message="tns:ProcessAscScorecardReminderSoapIn" />
+      <wsdl:output message="tns:ProcessAscScorecardReminderSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAutofocusTrialExpiration">
+      <wsdl:input message="tns:ProcessAutofocusTrialExpirationSoapIn" />
+      <wsdl:output message="tns:ProcessAutofocusTrialExpirationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEvalAccounts">
+      <wsdl:input message="tns:ProcessEvalAccountsSoapIn" />
+      <wsdl:output message="tns:ProcessEvalAccountsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmRegistrations">
+      <wsdl:input message="tns:ProcessVmRegistrationsSoapIn" />
+      <wsdl:output message="tns:ProcessVmRegistrationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessMfaRegistrations">
+      <wsdl:input message="tns:ProcessMfaRegistrationsSoapIn" />
+      <wsdl:output message="tns:ProcessMfaRegistrationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEmailNotificationStatusUpdate">
+      <wsdl:input message="tns:ProcessEmailNotificationStatusUpdateSoapIn" />
+      <wsdl:output message="tns:ProcessEmailNotificationStatusUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NotifyLicensingApiExpiration">
+      <wsdl:input message="tns:NotifyLicensingApiExpirationSoapIn" />
+      <wsdl:output message="tns:NotifyLicensingApiExpirationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkDeviceTransfer">
+      <wsdl:input message="tns:ProcessBulkDeviceTransferSoapIn" />
+      <wsdl:output message="tns:ProcessBulkDeviceTransferSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmElaTokenNotification">
+      <wsdl:input message="tns:ProcessVmElaTokenNotificationSoapIn" />
+      <wsdl:output message="tns:ProcessVmElaTokenNotificationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessCloudServicesUsersTransfer">
+      <wsdl:input message="tns:ProcessCloudServicesUsersTransferSoapIn" />
+      <wsdl:output message="tns:ProcessCloudServicesUsersTransferSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkOtpRequest">
+      <wsdl:input message="tns:ProcessBulkOtpRequestSoapIn" />
+      <wsdl:output message="tns:ProcessBulkOtpRequestSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessOtpExpirationRequest">
+      <wsdl:input message="tns:ProcessOtpExpirationRequestSoapIn" />
+      <wsdl:output message="tns:ProcessOtpExpirationRequestSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessPinExpirationRequest">
+      <wsdl:input message="tns:ProcessPinExpirationRequestSoapIn" />
+      <wsdl:output message="tns:ProcessPinExpirationRequestSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ScheduledJobsServiceHttpGet">
+    <wsdl:operation name="ProcessBulkRegistrations">
+      <wsdl:input message="tns:ProcessBulkRegistrationsHttpGetIn" />
+      <wsdl:output message="tns:ProcessBulkRegistrationsHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAscScorecardReminder">
+      <wsdl:input message="tns:ProcessAscScorecardReminderHttpGetIn" />
+      <wsdl:output message="tns:ProcessAscScorecardReminderHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAutofocusTrialExpiration">
+      <wsdl:input message="tns:ProcessAutofocusTrialExpirationHttpGetIn" />
+      <wsdl:output message="tns:ProcessAutofocusTrialExpirationHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEvalAccounts">
+      <wsdl:input message="tns:ProcessEvalAccountsHttpGetIn" />
+      <wsdl:output message="tns:ProcessEvalAccountsHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmRegistrations">
+      <wsdl:input message="tns:ProcessVmRegistrationsHttpGetIn" />
+      <wsdl:output message="tns:ProcessVmRegistrationsHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessMfaRegistrations">
+      <wsdl:input message="tns:ProcessMfaRegistrationsHttpGetIn" />
+      <wsdl:output message="tns:ProcessMfaRegistrationsHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEmailNotificationStatusUpdate">
+      <wsdl:input message="tns:ProcessEmailNotificationStatusUpdateHttpGetIn" />
+      <wsdl:output message="tns:ProcessEmailNotificationStatusUpdateHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NotifyLicensingApiExpiration">
+      <wsdl:input message="tns:NotifyLicensingApiExpirationHttpGetIn" />
+      <wsdl:output message="tns:NotifyLicensingApiExpirationHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkDeviceTransfer">
+      <wsdl:input message="tns:ProcessBulkDeviceTransferHttpGetIn" />
+      <wsdl:output message="tns:ProcessBulkDeviceTransferHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmElaTokenNotification">
+      <wsdl:input message="tns:ProcessVmElaTokenNotificationHttpGetIn" />
+      <wsdl:output message="tns:ProcessVmElaTokenNotificationHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessCloudServicesUsersTransfer">
+      <wsdl:input message="tns:ProcessCloudServicesUsersTransferHttpGetIn" />
+      <wsdl:output message="tns:ProcessCloudServicesUsersTransferHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkOtpRequest">
+      <wsdl:input message="tns:ProcessBulkOtpRequestHttpGetIn" />
+      <wsdl:output message="tns:ProcessBulkOtpRequestHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessOtpExpirationRequest">
+      <wsdl:input message="tns:ProcessOtpExpirationRequestHttpGetIn" />
+      <wsdl:output message="tns:ProcessOtpExpirationRequestHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessPinExpirationRequest">
+      <wsdl:input message="tns:ProcessPinExpirationRequestHttpGetIn" />
+      <wsdl:output message="tns:ProcessPinExpirationRequestHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ScheduledJobsServiceHttpPost">
+    <wsdl:operation name="ProcessBulkRegistrations">
+      <wsdl:input message="tns:ProcessBulkRegistrationsHttpPostIn" />
+      <wsdl:output message="tns:ProcessBulkRegistrationsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAscScorecardReminder">
+      <wsdl:input message="tns:ProcessAscScorecardReminderHttpPostIn" />
+      <wsdl:output message="tns:ProcessAscScorecardReminderHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAutofocusTrialExpiration">
+      <wsdl:input message="tns:ProcessAutofocusTrialExpirationHttpPostIn" />
+      <wsdl:output message="tns:ProcessAutofocusTrialExpirationHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEvalAccounts">
+      <wsdl:input message="tns:ProcessEvalAccountsHttpPostIn" />
+      <wsdl:output message="tns:ProcessEvalAccountsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmRegistrations">
+      <wsdl:input message="tns:ProcessVmRegistrationsHttpPostIn" />
+      <wsdl:output message="tns:ProcessVmRegistrationsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessMfaRegistrations">
+      <wsdl:input message="tns:ProcessMfaRegistrationsHttpPostIn" />
+      <wsdl:output message="tns:ProcessMfaRegistrationsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEmailNotificationStatusUpdate">
+      <wsdl:input message="tns:ProcessEmailNotificationStatusUpdateHttpPostIn" />
+      <wsdl:output message="tns:ProcessEmailNotificationStatusUpdateHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NotifyLicensingApiExpiration">
+      <wsdl:input message="tns:NotifyLicensingApiExpirationHttpPostIn" />
+      <wsdl:output message="tns:NotifyLicensingApiExpirationHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkDeviceTransfer">
+      <wsdl:input message="tns:ProcessBulkDeviceTransferHttpPostIn" />
+      <wsdl:output message="tns:ProcessBulkDeviceTransferHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmElaTokenNotification">
+      <wsdl:input message="tns:ProcessVmElaTokenNotificationHttpPostIn" />
+      <wsdl:output message="tns:ProcessVmElaTokenNotificationHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessCloudServicesUsersTransfer">
+      <wsdl:input message="tns:ProcessCloudServicesUsersTransferHttpPostIn" />
+      <wsdl:output message="tns:ProcessCloudServicesUsersTransferHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkOtpRequest">
+      <wsdl:input message="tns:ProcessBulkOtpRequestHttpPostIn" />
+      <wsdl:output message="tns:ProcessBulkOtpRequestHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessOtpExpirationRequest">
+      <wsdl:input message="tns:ProcessOtpExpirationRequestHttpPostIn" />
+      <wsdl:output message="tns:ProcessOtpExpirationRequestHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessPinExpirationRequest">
+      <wsdl:input message="tns:ProcessPinExpirationRequestHttpPostIn" />
+      <wsdl:output message="tns:ProcessPinExpirationRequestHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ScheduledJobsServiceSoap" type="tns:ScheduledJobsServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ProcessBulkRegistrations">
+      <soap:operation soapAction="http://tempuri.org/ProcessBulkRegistrations" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessBulkRegistrationsAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAscScorecardReminder">
+      <soap:operation soapAction="http://tempuri.org/ProcessAscScorecardReminder" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessAscScorecardReminderAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAutofocusTrialExpiration">
+      <soap:operation soapAction="http://tempuri.org/ProcessAutofocusTrialExpiration" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessAutofocusTrialExpirationAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEvalAccounts">
+      <soap:operation soapAction="http://tempuri.org/ProcessEvalAccounts" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessEvalAccountsAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmRegistrations">
+      <soap:operation soapAction="http://tempuri.org/ProcessVmRegistrations" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessVmRegistrationsAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessMfaRegistrations">
+      <soap:operation soapAction="http://tempuri.org/ProcessMfaRegistrations" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessMfaRegistrationsAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEmailNotificationStatusUpdate">
+      <soap:operation soapAction="http://tempuri.org/ProcessEmailNotificationStatusUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessEmailNotificationStatusUpdateAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyLicensingApiExpiration">
+      <soap:operation soapAction="http://tempuri.org/NotifyLicensingApiExpiration" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:NotifyLicensingApiExpirationAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkDeviceTransfer">
+      <soap:operation soapAction="http://tempuri.org/ProcessBulkDeviceTransfer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessBulkDeviceTransferAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmElaTokenNotification">
+      <soap:operation soapAction="http://tempuri.org/ProcessVmElaTokenNotification" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessVmElaTokenNotificationAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessCloudServicesUsersTransfer">
+      <soap:operation soapAction="http://tempuri.org/ProcessCloudServicesUsersTransfer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessCloudServicesUsersTransferAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkOtpRequest">
+      <soap:operation soapAction="http://tempuri.org/ProcessBulkOtpRequest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessBulkOtpRequestAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessOtpExpirationRequest">
+      <soap:operation soapAction="http://tempuri.org/ProcessOtpExpirationRequest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessOtpExpirationRequestAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessPinExpirationRequest">
+      <soap:operation soapAction="http://tempuri.org/ProcessPinExpirationRequest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:ProcessPinExpirationRequestAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ScheduledJobsServiceSoap12" type="tns:ScheduledJobsServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ProcessBulkRegistrations">
+      <soap12:operation soapAction="http://tempuri.org/ProcessBulkRegistrations" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessBulkRegistrationsAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAscScorecardReminder">
+      <soap12:operation soapAction="http://tempuri.org/ProcessAscScorecardReminder" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessAscScorecardReminderAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAutofocusTrialExpiration">
+      <soap12:operation soapAction="http://tempuri.org/ProcessAutofocusTrialExpiration" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessAutofocusTrialExpirationAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEvalAccounts">
+      <soap12:operation soapAction="http://tempuri.org/ProcessEvalAccounts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessEvalAccountsAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmRegistrations">
+      <soap12:operation soapAction="http://tempuri.org/ProcessVmRegistrations" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessVmRegistrationsAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessMfaRegistrations">
+      <soap12:operation soapAction="http://tempuri.org/ProcessMfaRegistrations" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessMfaRegistrationsAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEmailNotificationStatusUpdate">
+      <soap12:operation soapAction="http://tempuri.org/ProcessEmailNotificationStatusUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessEmailNotificationStatusUpdateAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyLicensingApiExpiration">
+      <soap12:operation soapAction="http://tempuri.org/NotifyLicensingApiExpiration" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:NotifyLicensingApiExpirationAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkDeviceTransfer">
+      <soap12:operation soapAction="http://tempuri.org/ProcessBulkDeviceTransfer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessBulkDeviceTransferAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmElaTokenNotification">
+      <soap12:operation soapAction="http://tempuri.org/ProcessVmElaTokenNotification" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessVmElaTokenNotificationAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessCloudServicesUsersTransfer">
+      <soap12:operation soapAction="http://tempuri.org/ProcessCloudServicesUsersTransfer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessCloudServicesUsersTransferAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkOtpRequest">
+      <soap12:operation soapAction="http://tempuri.org/ProcessBulkOtpRequest" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessBulkOtpRequestAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessOtpExpirationRequest">
+      <soap12:operation soapAction="http://tempuri.org/ProcessOtpExpirationRequest" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessOtpExpirationRequestAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessPinExpirationRequest">
+      <soap12:operation soapAction="http://tempuri.org/ProcessPinExpirationRequest" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:ProcessPinExpirationRequestAuthHeader" part="AuthHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ScheduledJobsServiceHttpGet" type="tns:ScheduledJobsServiceHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="ProcessBulkRegistrations">
+      <http:operation location="/ProcessBulkRegistrations" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAscScorecardReminder">
+      <http:operation location="/ProcessAscScorecardReminder" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAutofocusTrialExpiration">
+      <http:operation location="/ProcessAutofocusTrialExpiration" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEvalAccounts">
+      <http:operation location="/ProcessEvalAccounts" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmRegistrations">
+      <http:operation location="/ProcessVmRegistrations" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessMfaRegistrations">
+      <http:operation location="/ProcessMfaRegistrations" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEmailNotificationStatusUpdate">
+      <http:operation location="/ProcessEmailNotificationStatusUpdate" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyLicensingApiExpiration">
+      <http:operation location="/NotifyLicensingApiExpiration" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkDeviceTransfer">
+      <http:operation location="/ProcessBulkDeviceTransfer" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmElaTokenNotification">
+      <http:operation location="/ProcessVmElaTokenNotification" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessCloudServicesUsersTransfer">
+      <http:operation location="/ProcessCloudServicesUsersTransfer" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkOtpRequest">
+      <http:operation location="/ProcessBulkOtpRequest" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessOtpExpirationRequest">
+      <http:operation location="/ProcessOtpExpirationRequest" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessPinExpirationRequest">
+      <http:operation location="/ProcessPinExpirationRequest" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ScheduledJobsServiceHttpPost" type="tns:ScheduledJobsServiceHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="ProcessBulkRegistrations">
+      <http:operation location="/ProcessBulkRegistrations" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAscScorecardReminder">
+      <http:operation location="/ProcessAscScorecardReminder" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessAutofocusTrialExpiration">
+      <http:operation location="/ProcessAutofocusTrialExpiration" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEvalAccounts">
+      <http:operation location="/ProcessEvalAccounts" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmRegistrations">
+      <http:operation location="/ProcessVmRegistrations" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessMfaRegistrations">
+      <http:operation location="/ProcessMfaRegistrations" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEmailNotificationStatusUpdate">
+      <http:operation location="/ProcessEmailNotificationStatusUpdate" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NotifyLicensingApiExpiration">
+      <http:operation location="/NotifyLicensingApiExpiration" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkDeviceTransfer">
+      <http:operation location="/ProcessBulkDeviceTransfer" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessVmElaTokenNotification">
+      <http:operation location="/ProcessVmElaTokenNotification" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessCloudServicesUsersTransfer">
+      <http:operation location="/ProcessCloudServicesUsersTransfer" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessBulkOtpRequest">
+      <http:operation location="/ProcessBulkOtpRequest" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessOtpExpirationRequest">
+      <http:operation location="/ProcessOtpExpirationRequest" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessPinExpirationRequest">
+      <http:operation location="/ProcessPinExpirationRequest" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ScheduledJobsService">
+    <wsdl:port name="ScheduledJobsServiceSoap" binding="tns:ScheduledJobsServiceSoap">
+      <soap:address location="http://localhost.paloaltonetworks.com:56604/ScheduledJobsService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ScheduledJobsServiceSoap12" binding="tns:ScheduledJobsServiceSoap12">
+      <soap12:address location="http://localhost.paloaltonetworks.com:56604/ScheduledJobsService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ScheduledJobsServiceHttpGet" binding="tns:ScheduledJobsServiceHttpGet">
+      <http:address location="http://localhost.paloaltonetworks.com:56604/ScheduledJobsService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ScheduledJobsServiceHttpPost" binding="tns:ScheduledJobsServiceHttpPost">
+      <http:address location="http://localhost.paloaltonetworks.com:56604/ScheduledJobsService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

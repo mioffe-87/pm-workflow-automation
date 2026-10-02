@@ -1,0 +1,328 @@
+﻿@model  Csp.Web.DataTransferObjects.DeviceDto
+@using Csp.Api.HelperClasses
+@using Kendo.Mvc.UI;
+@using Csp.Api.Security;
+@{
+    var actionHelper = Model.ActionHelper;
+}
+<script>
+    function @(UniqueId.lineCard)onCloseLineCardWindow() {
+        var window = $("#@UniqueId.LineCardWindowId").data("kendoWindow");
+        window.refresh();
+        SupportPortal.OnWindowClose("@UniqueId.gridId");
+    }
+
+
+        function @(UniqueId.lineCard)onOpenLineCardWindow() {
+
+            SupportPortal.OnWindowOpen("@UniqueId.LineCardWindowId");
+
+        }
+            function OnCmbChange() {
+                var cmbId = "#@(UniqueId.searchFieldId)";
+                $('#@UniqueId.textDivId input:text').val('');
+                var selectedValue = $(cmbId).data("kendoDropDownList").value();
+                if (selectedValue == "CountryId") {
+                    $('#@UniqueId.textDivId').css('display', 'none');
+                    $('#@UniqueId.lineCardCountryDropDownDivId').css('display', 'block');
+                } else {
+                    $('#@UniqueId.textDivId').css('display', 'block');
+                    $('#@UniqueId.lineCardCountryDropDownDivId').css('display', 'none');
+                }
+            }
+            function @(UniqueId.lineCard)onDevicesEnterPress(e) {
+
+                if (e.keyCode == 13) {
+                    @(UniqueId.lineCard)SearchDeviceData();
+                    return false;
+                }
+
+                return true;
+            }
+
+            function CountryChangeHandler(e) {
+                @(UniqueId.lineCard)SearchDeviceData();
+            }
+
+                function @(UniqueId.lineCard)SearchDeviceData() {
+                    var params = @(UniqueId.lineCard)getSearchParams();
+
+                    var grid = $("#@UniqueId.gridId").data("kendoGrid");
+                    var gridData = grid.dataSource;
+                    gridData.filter(
+                        {
+                            field: params.field,
+                            operator: "eq",
+                            value: params.value
+                        }
+                    );
+
+                    grid.collapseRow(grid.tbody.find("tr.k-master-row"));
+                }
+                    function @(UniqueId.lineCard)getSearchParams() {
+                        var selectedValue = $("#@UniqueId.searchFieldId").val();
+                        if (selectedValue == "CountryId") {
+                            var deviceCountryDropDown = $("#@UniqueId.lineCardCountryFieldId");
+                            if (deviceCountryDropDown.val() > 0)
+                                $("#@UniqueId.searchValueId").val(deviceCountryDropDown.val());
+                            else {
+                                $("#@UniqueId.searchValueId").val("");
+                            }
+                        }
+
+                        return {
+                            field: $("#@UniqueId.searchFieldId").val(),
+                            value: $("#@UniqueId.searchValueId").val()
+                        };
+                    }
+                        function @(UniqueId.lineCard)getGridParams() {
+
+                            var params = @(UniqueId.lineCard)getSearchParams();
+                            var p = SetAntiForgery();
+                            p.searchField = params.field;
+                            p.searchValue = params.value;
+                            return p;
+                        }
+
+                            $("#@UniqueId.searchFieldId").change(function () {
+
+                                $("#@UniqueId.searchValueId").select();
+                                $("#@UniqueId.searchFieldId").data("kendoDropDownList").focus();
+                            });
+
+                            $(document).on("click", ".grid-component", function() {
+                                var tr = $(this).closest("tr");
+                                var dataItem = $("#@UniqueId.gridId").data("kendoGrid").dataItem(tr);
+                                var direction;
+                                direction = "/@ControllerFields.DeviceController/UpdateComponent?partNumber="+dataItem.PartNumber+"&chassisSerialNumber="+dataItem.ChassisSerialNumber+"&quantity="+dataItem.Quantity+"&address1="+dataItem.Address1+"&address2="+dataItem.Address2+"&city="+dataItem.City+"&region="+dataItem.Region+"&countryId="+dataItem.CountryId+"&postalCode="+dataItem.PostalCode+"&supportAccountId="+dataItem.SupportAccountId+"&registeredQuantity="+dataItem.RegisteredQuantity;                               
+                                var window = $("#@UniqueId.LineCardWindowId").data("kendoWindow");
+                                window.content(" ");
+                                window.refresh();
+                                window.refresh(direction);
+                                window.setOptions({
+                                    minHeight: 250,
+                                    position: {
+                                        top: 100, // or "100px"
+                                        left: "27%"
+                                    }
+                                });
+                                window.open();
+                               
+                            });                            
+
+                                function @(UniqueId.RegisterComponent)showRegisterComponentWindow() {
+                                    var direction = "/@ControllerFields.DeviceController/RegisterSalesOrderComponents/";
+                                    var window = $("#@UniqueId.RegisterComponentWindowId").data("kendoWindow");
+                                    window.content(" ");
+                                    window.refresh();
+                                    window.refresh(direction);
+                                    window.setOptions({
+                                        minHeight: 250,
+                                        position: {
+                                            top: 100, // or "100px"
+                                            left: "27%"
+                                        }
+                                    });
+                                    window.open();
+                                }
+
+                                    function @(UniqueId.RegisterComponent)onCloseRegisterComponentWindow() {
+                                        var window = $("#@UniqueId.RegisterComponentWindowId").data("kendoWindow");
+                                        window.refresh();
+                                        SupportPortal.OnWindowClose("@UniqueId.gridId");
+                                    }
+
+
+                                        function @(UniqueId.RegisterComponent)onOpenRegisterComponentWindow() {
+
+                                            SupportPortal.OnWindowOpen("@UniqueId.RegisterComponentWindowId");
+
+                                        }
+</script>
+
+<div class="contextTitle">Line Cards/Optics/FRUs</div>
+
+<div class="grid-header" style="height: inherit;">
+    <div class="grid-left">
+        @if (actionHelper.Controller == ControllerFields.SupportAccountController || actionHelper.Controller == ControllerFields.GroupController)
+        {
+            if (User.HasPermission(Permission.RegisterDevice))
+            {
+            <input type="button" id="registerDeviceButtonId" value="Register Components" class="k-button k-primary" onclick="@(UniqueId.RegisterComponent)showRegisterComponentWindow();" />
+        <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 6);"></i></span>
+        }
+        }
+    </div>
+    <div class="grid-right">
+
+        <div class="grid-filter">
+            @{    
+                @(Html.Kendo().DropDownList()
+                        .Name((string)UniqueId.searchFieldId)
+                        .Events(events => events.Change("OnCmbChange"))
+                        .OptionLabel("Filter By")
+                        .OptionLabelTemplate("<span class='grid-filter__dropdown-placeholder'>Filter By</span>")
+                        .DataTextField("Text")
+                        .DataValueField("Value")
+
+                        .BindTo(new List<SelectListItem>
+            {                                
+                               new SelectListItem
+                                    {
+                                        Text = "Chassis Serial Number",
+                                        Value = "SerialNumber"
+                                    },
+                                    new SelectListItem
+                                    {
+                                        Text = "Component",
+                                        Value = "PartNumber"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "City",
+                                        Value = "City"
+                                    },
+                                    new SelectListItem
+                                    {
+                                        Text = "Region",
+                                        Value = "Region"
+                                    },
+                                new SelectListItem
+                                    {
+                                        Text = "Postal Code",
+                                        Value = "PostalCode"
+                                    },
+                                    new SelectListItem
+                                    {
+                                        Text = "Country",
+                                        Value = "CountryId"
+                                    }
+                            })
+                        )
+            }
+        </div>
+
+        <div class="grid-filter">
+            <div class="grid-filter" id="@UniqueId.textDivId">
+                @Html.TextBox((string)UniqueId.searchValueId, "", new {
+                    onkeypress = "return " + (string)UniqueId.lineCard + "onDevicesEnterPress(event)",
+                    @class = "grid-filter__search-input",
+                    placeholder = "Search",
+                    aria_label = "Search"
+                })
+                <button aria-label="search" type="button" class="grid-filter__search-button" onclick="@(UniqueId.lineCard)SearchDeviceData()">
+                    <span aria-hidden="true" class="fa fa-search" />
+                </button>
+            </div>
+            <div class="grid-filter" id="@UniqueId.lineCardCountryDropDownDivId" style="display: none">
+                @(Html.Kendo().DropDownList()
+                            .Name((string)UniqueId.lineCardCountryFieldId)
+                            .Events(events => events.Change("CountryChangeHandler"))
+                            .HtmlAttributes(new { @class = "grid-filter__date-input" })
+                            .OptionLabel(Constants.DropDownPleaseSelect)
+                            .DataValueField("Id")
+                            .DataTextField("Name")
+                            .DataSource(source => source.Read(read =>
+                                          {
+                                              if (read != null)
+                                              {
+                                                  read.Action("GetCountries", "Base");
+                                              }
+                                          })))
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-content">
+    @{
+        if (Model.Device.LineCards != null)
+        {
+            var maxPageSizeForms = Convert.ToInt32(Convert.ToInt32(Model.DataParameters.TotalRecordCount));
+            var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+            if (maxPageSizeForms > pageSizeOptionsForms.Max())
+            {
+                pageSizeOptionsForms.Add(maxPageSizeForms);
+            }
+
+        @(Html.Kendo().Grid(Model.Device.LineCards)
+                  .Name((string)UniqueId.gridId)
+                  .HtmlAttributes(new { @class = "proddevicegrid" })
+                  .Columns(columns =>
+                  {
+                      //columns.Bound(p => p.ChasisPartNumber).Filterable(false).Sortable(true);
+
+                      columns.Bound(p => p.PartNumber).Filterable(false).Sortable(true).Title("Components").Width("5%")
+                            .Template(t => "<a href='javascript:void(0)' class='grid-component'>" + t.PartNumber + "</a>").ClientTemplate
+                          ("<a href='javascript:void(0)' class='grid-component'>#: PartNumber #</a>"); ;
+                        columns.Bound(x => x.ChassisSerialNumber).Filterable(false).Sortable(true).Title("Chassis Serial Number").Width("20%");
+                      columns.Bound(x => x.Quantity).Filterable(false).Sortable(true).Width("5%");
+                      columns.Bound(x => x.Address1).Hidden();
+                      columns.Bound(x => x.Address2).Hidden();
+                      columns.Bound(x => x.City).Filterable(false).Sortable(true).Width("20%");
+                      columns.Bound(x => x.Region).Filterable(false).Sortable(true).Title("Region/State").Width("20%");
+                      columns.Bound(x => x.PostalCode).Filterable(false).Sortable(true).Width("10%");
+                      columns.Bound(x => x.CountryName).Filterable(false).Sortable(true).Title("Country").Width("15%");
+                  })
+
+                                  .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                                  .Sortable()
+                                  .Filterable()
+                                  .DataSource(dataSource => dataSource
+                                                                    .Ajax()
+                                                                    .Model(model =>
+                                                                    {
+                                                                        model.Field(l => l.PartNumber).Editable(false);
+                                                                        model.Field(l => l.Quantity);
+                                                                        model.Field(l => l.ChassisSerialNumber).Editable(false);
+                                                                        model.Field(l => l.City);
+                                                                        model.Field(l => l.Region);
+                                                                        model.Field(l => l.PostalCode);
+                                                                        model.Field(l => l.CountryId);
+                                                                        model.Field(l => l.CountryName);
+                                                                        model.Field(l => l.SupportAccountId);
+                                                                        model.Field(l => l.RegisteredQuantity);  
+                                                                    })
+                                                                    .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                                                    .PageSize(Model.DataParameters.PaginationCount)
+                                                                    .Read(read => read.Action("GetDeviceLineCards", actionHelper.Controller, new
+                                                                    {
+                                                                        actionHelper.Id
+                                                                    }).Data(UniqueId.lineCard + "getGridParams"))
+                                                                    ))
+        }
+    }
+
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.LineCardWindowId)
+        .Events(events => events
+                              .Close((string)UniqueId.lineCard + "onCloseLineCardWindow")
+                              .Open((string)UniqueId.lineCard + "onOpenLineCardWindow")
+        )
+        .Modal(true)
+        .Width(500)
+        .Visible(false)
+        .Draggable()
+        .Title("LINE CARD DETAILS:")
+          )
+</div>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)UniqueId.RegisterComponentWindowId)
+        .Events(events => events
+                              .Close((string)UniqueId.RegisterComponent + "onCloseRegisterComponentWindow")
+                              .Open((string)UniqueId.RegisterComponent + "onOpenRegisterComponentWindow")
+        )
+        .Modal(true)
+        .Width(500)
+        .Visible(false)
+        .Draggable()
+        .Title("Register Components:")
+          )
+</div>

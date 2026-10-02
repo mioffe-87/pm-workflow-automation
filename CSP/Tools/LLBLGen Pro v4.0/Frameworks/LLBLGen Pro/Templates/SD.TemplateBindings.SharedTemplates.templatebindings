@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="SD.TemplateBindings.SharedTemplates" description="Template bindings for the templates which are shared among all database types." precedenceLevel="10" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+	<supportedPlatforms>
+		<platform name=".NET 3.5" />
+		<platform name=".NET 4.0" />
+		<platform name=".NET 4.5" />
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="LLBLGen Pro Runtime Framework" />
+	</supportedFrameworks>
+	<supportedDrivers />
+	<language name="C#">
+		<templateBinding templateID="SD_ActionProceduresTemplate" filename="SharedTemplates\Net3.5\C#\actionProcedures.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ActionProceduresAdapterTemplate" filename="SharedTemplates\Net3.5\C#\actionProceduresAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_AssemblyInfoTemplate" filename="SharedTemplates\Net3.5\C#\assemblyInfo.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_CommonDaoBaseTemplate" filename="SharedTemplates\Net3.5\C#\commonDaoBase.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_CommonEntityBase" filename="SharedTemplates\Net3.5\C#\commonEntityBase.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_CommonEntityBaseAdapter" filename="SharedTemplates\Net3.5\C#\commonEntityBaseAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ConstantsEnumsTemplate" filename="SharedTemplates\Net3.5\C#\constantsEnums.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DataAccessAdapterTemplate" filename="SharedTemplates\Net3.5\C#\daaAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DAOFactoryTemplate" filename="SharedTemplates\Net3.5\C#\daoFactory.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DynamicRelationTemplate" filename="SharedTemplates\Net3.5\C#\dynamicRelation.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityBaseTemplate" filename="SharedTemplates\Net3.5\C#\entityBase.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityCollectionAdapterTemplate" filename="SharedTemplates\Net3.5\C#\entityCollectionAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityCollectionTemplate" filename="SharedTemplates\Net3.5\C#\entityCollection.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityDAOTemplate" filename="SharedTemplates\Net3.5\C#\dao.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFactoriesTemplate" filename="SharedTemplates\Net3.5\C#\entityFactories.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFactoriesAdapterTemplate" filename="SharedTemplates\Net3.5\C#\entityFactoriesAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFieldFactoryAdapterTemplate" filename="SharedTemplates\Net3.5\C#\entityFieldFactoryAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFieldFactoryTemplate" filename="SharedTemplates\Net3.5\C#\entityFieldFactory.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFieldsFactoryAdapterTemplate" filename="SharedTemplates\Net3.5\C#\entityFieldsFactoryAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFieldsFactoryTemplate" filename="SharedTemplates\Net3.5\C#\entityFieldsFactory.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityRelationsTemplate" filename="SharedTemplates\Net3.5\C#\entityRelations.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityTemplate" filename="SharedTemplates\Net3.5\C#\entity.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityAdapterTemplate" filename="SharedTemplates\Net3.5\C#\entityAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityUsingEntityBaseTemplate" filename="SharedTemplates\Net3.5\C#\entityUsingEntityBase.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityValidatorTemplate" filename="SharedTemplates\Net3.5\C#\entityValidator.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_FieldCreationClassesTemplate" filename="SharedTemplates\Net3.5\C#\fieldCreationClasses.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_FieldCreationClassesAdapterTemplate" filename="SharedTemplates\Net3.5\C#\fieldCreationClassesAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_FieldInfoProviderTemplate" filename="SharedTemplates\Net3.5\C#\fieldInfoProvider.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_InheritanceInfoProviderTemplate" filename="SharedTemplates\Net3.5\C#\inheritanceInfoProvider.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_PersistenceInfoProviderTemplate" filename="SharedTemplates\Net3.5\C#\persistenceInfoProvider.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_ResultsetFieldsAdapterTemplate" filename="SharedTemplates\Net3.5\C#\resultsetFieldsAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ResultsetFieldsTemplate" filename="SharedTemplates\Net3.5\C#\resultsetFields.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_RetrievalProceduresTemplate" filename="SharedTemplates\Net3.5\C#\retrievalProcedures.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_RetrievalProceduresAdapterTemplate" filename="SharedTemplates\Net3.5\C#\retrievalProceduresAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_SchemaImporterTemplate" filename="SharedTemplates\Net3.5\C#\schemaImporter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TransactionTemplate" filename="SharedTemplates\Net3.5\C#\transaction.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TvfCallFactoryTemplate" filename="SharedTemplates\Net3.5\C#\tvfCallFactory.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_TypeDefaultValueTemplate" filename="SharedTemplates\Net3.5\C#\typeDefaultValue.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypedListDAOTemplate" filename="SharedTemplates\Net3.5\C#\typedListDao.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypedListAdapterTemplate" filename="SharedTemplates\Net3.5\C#\typedListAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypedListTemplate" filename="SharedTemplates\Net3.5\C#\typedList.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypedViewAdapterTemplate" filename="SharedTemplates\Net3.5\C#\typedViewAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypedViewTemplate" filename="SharedTemplates\Net3.5\C#\typedView.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_WebServiceHelperTemplate" filename="SharedTemplates\Net3.5\C#\webServiceHelper.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFactoryIncludeTemplate" filename="SharedTemplates\Net3.5\C#\entityFactoryInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityIncludeTemplate" filename="SharedTemplates\Net3.5\C#\entityInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityIncludeAdapterTemplate" filename="SharedTemplates\Net3.5\C#\entityIncludeAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ProceduresIncludeTemplate" filename="SharedTemplates\Net3.5\C#\proceduresInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TransactionIncludeTemplate" filename="SharedTemplates\Net3.5\C#\transactionInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypeDefaultValueIncludeTemplate" filename="SharedTemplates\Net3.5\C#\typeDefaultValueInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DerivedEntityAdapterTemplate" filename="SharedTemplates\Net3.5\C#\derivedEntityAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DerivedEntityFactoriesAdapterTemplate" filename="SharedTemplates\Net3.5\C#\derivedEntityFactoriesAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityAdapterDerivedTemplate" filename="SharedTemplates\Net3.5\C#\entityUsingDerivedAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_InheritanceInfoProviderDerivedTemplate" filename="SharedTemplates\Net3.5\C#\inheritanceInfoProviderDerived.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DerivedEntityLinqMetaDataAdapter" filename="SharedTemplates\Net3.5\C#\derivedEntityLinqMetaDataAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DerivedEntityQueryFactoryAdapter" filename="SharedTemplates\Net3.5\C#\derivedEntityQueryFactoryAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_LinqMetaData" filename="SharedTemplates\Net3.5\C#\linqMetaData.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_LinqMetaDataAdapter" filename="SharedTemplates\Net3.5\C#\linqMetaDataAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_LinqMetaDataInclude" filename="SharedTemplates\Net3.5\C#\linqMetaDataInclude.lpt" templateLanguage="C#" includeOnly="true"/>
+		<templateBinding templateID="SD_QueryFactory" filename="SharedTemplates\Net3.5\C#\queryFactory.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_QueryFactoryAdapter" filename="SharedTemplates\Net3.5\C#\queryFactoryAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_QueryFactoryInclude" filename="SharedTemplates\Net3.5\C#\queryFactoryInclude.lpt" templateLanguage="C#" includeOnly="true"/>
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_ActionProceduresTemplate" filename="SharedTemplates\Net3.5\VB.NET\actionProcedures.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ActionProceduresAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\actionProceduresAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_AssemblyInfoTemplate" filename="SharedTemplates\Net3.5\VB.NET\assemblyInfo.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_CommonDaoBaseTemplate" filename="SharedTemplates\Net3.5\VB.NET\commonDaoBase.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_CommonEntityBase" filename="SharedTemplates\Net3.5\VB.NET\commonEntityBase.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_CommonEntityBaseAdapter" filename="SharedTemplates\Net3.5\VB.NET\commonEntityBaseAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ConstantsEnumsTemplate" filename="SharedTemplates\Net3.5\VB.NET\constantsEnums.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DataAccessAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\daaAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DAOFactoryTemplate" filename="SharedTemplates\Net3.5\VB.NET\daoFactory.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DynamicRelationTemplate" filename="SharedTemplates\Net3.5\VB.NET\dynamicRelation.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityBaseTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityBase.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityCollectionAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityCollectionAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityCollectionTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityCollection.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityDAOTemplate" filename="SharedTemplates\Net3.5\VB.NET\dao.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFactoriesTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityFactories.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFactoriesAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityFactoriesAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFieldFactoryAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityFieldFactoryAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFieldFactoryTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityFieldFactory.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFieldsFactoryAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityFieldsFactoryAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFieldsFactoryTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityFieldsFactory.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityRelationsTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityRelations.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityTemplate" filename="SharedTemplates\Net3.5\VB.NET\entity.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityUsingEntityBaseTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityUsingEntityBase.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityValidatorTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityValidator.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_FieldCreationClassesTemplate" filename="SharedTemplates\Net3.5\VB.NET\fieldCreationClasses.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_FieldCreationClassesAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\fieldCreationClassesAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_FieldInfoProviderTemplate" filename="SharedTemplates\Net3.5\VB.NET\fieldInfoProvider.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_InheritanceInfoProviderTemplate" filename="SharedTemplates\Net3.5\VB.NET\inheritanceInfoProvider.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_PersistenceInfoProviderTemplate" filename="SharedTemplates\Net3.5\VB.NET\persistenceInfoProvider.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_ResultsetFieldsAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\resultsetFieldsAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ResultsetFieldsTemplate" filename="SharedTemplates\Net3.5\VB.NET\resultsetFields.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_RetrievalProceduresTemplate" filename="SharedTemplates\Net3.5\VB.NET\retrievalProcedures.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_RetrievalProceduresAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\retrievalProceduresAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_SchemaImporterTemplate" filename="SharedTemplates\Net3.5\VB.NET\schemaImporter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TransactionTemplate" filename="SharedTemplates\Net3.5\VB.NET\transaction.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TvfCallFactoryTemplate" filename="SharedTemplates\Net3.5\VB.NET\tvfCallFactory.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_TypeDefaultValueTemplate" filename="SharedTemplates\Net3.5\VB.NET\typeDefaultValue.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypedListDAOTemplate" filename="SharedTemplates\Net3.5\VB.NET\typedListDao.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypedListAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\typedListAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypedListTemplate" filename="SharedTemplates\Net3.5\VB.NET\typedList.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypedViewAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\typedViewAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypedViewTemplate" filename="SharedTemplates\Net3.5\VB.NET\typedView.lpt" templateLanguage="C#" />
+		<templateBinding templateID="SD_WebServiceHelperTemplate" filename="SharedTemplates\Net3.5\VB.NET\webServiceHelper.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityFactoryIncludeTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityFactoryInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityIncludeTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityIncludeAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityIncludeAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ProceduresIncludeTemplate" filename="SharedTemplates\Net3.5\VB.NET\proceduresInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TransactionIncludeTemplate" filename="SharedTemplates\Net3.5\VB.NET\transactionInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_TypeDefaultValueIncludeTemplate" filename="SharedTemplates\Net3.5\VB.NET\typeDefaultValueInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DerivedEntityAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\derivedEntityAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DerivedEntityFactoriesAdapterTemplate" filename="SharedTemplates\Net3.5\VB.NET\derivedEntityFactoriesAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EntityAdapterDerivedTemplate" filename="SharedTemplates\Net3.5\VB.NET\entityUsingDerivedAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_InheritanceInfoProviderDerivedTemplate" filename="SharedTemplates\Net3.5\VB.NET\inheritanceInfoProviderDerived.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DerivedEntityLinqMetaDataAdapter" filename="SharedTemplates\Net3.5\VB.NET\derivedEntityLinqMetaDataAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_DerivedEntityQueryFactoryAdapter" filename="SharedTemplates\Net3.5\VB.NET\derivedEntityQueryFactoryAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_LinqMetaData" filename="SharedTemplates\Net3.5\VB.NET\linqMetaData.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_LinqMetaDataAdapter" filename="SharedTemplates\Net3.5\VB.NET\linqMetaDataAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_LinqMetaDataInclude" filename="SharedTemplates\Net3.5\VB.NET\linqMetaDataInclude.lpt" templateLanguage="C#" includeOnly="true"/>
+		<templateBinding templateID="SD_QueryFactory" filename="SharedTemplates\Net3.5\VB.NET\queryFactory.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_QueryFactoryAdapter" filename="SharedTemplates\Net3.5\VB.NET\queryFactoryAdapter.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_QueryFactoryInclude" filename="SharedTemplates\Net3.5\VB.NET\queryFactoryInclude.lpt" templateLanguage="C#" includeOnly="true"/>
+	</language>
+</templateBindings>

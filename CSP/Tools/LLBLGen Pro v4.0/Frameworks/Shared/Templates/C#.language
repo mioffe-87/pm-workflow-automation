@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<language xmlns="http://sd/llblgen/pro/languageDefinition.xsd" 
+		  name="C#" fileExtension ="cs" arrayIndexOperatorOpenChar ="[" hasArrayIndexOperatorOnIdentifier ="false"
+		  arrayIndexOperatorCloseChar="]" lineConcatenator="" supportsNamespaces="true" attributeAssignmentOperator="=" attributePattern="[{0}]">
+	<keywords>
+		<keyword name="trueKeyword" value ="true"/>
+		<keyword name="falseKeyword" value ="false"/>
+		<keyword name="thisKeyword" value ="this"/>
+		<keyword name="nullKeyword" value="null"/>
+		<keyword name="partialKeyword" value ="partial"/>
+		<keyword name="typeofKeyword" value="typeof"/>
+		<keyword name="byteKeyword" value="(byte)"/>
+		<keyword name="int16Keyword" value="(short)"/>
+		<keyword name="int32Keyword" value="(int)"/> 
+		<keyword name="int64Keyword" value="(long)"/>
+		<keyword name="singleKeyword" value="(float)"/>
+		<keyword name="doubleKeyword" value="(double)"/>
+		<keyword name="decimalKeyword" value="(decimal)"/>
+	</keywords>
+</language>

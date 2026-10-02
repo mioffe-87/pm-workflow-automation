@@ -1,0 +1,10 @@
+﻿@(Html.Kendo().DropDownList().Name("MfaStatus")
+            .DataTextField("Text")
+            .DataValueField("Value")
+            .BindTo(new List<SelectListItem>
+                      {
+                         new SelectListItem {Text = "Not Enabled", Value = "Not Enabled"},
+                          new SelectListItem {Text = "Email", Value = "Email"},
+                          new SelectListItem {Text = "Google Authenticator", Value = "Google Authenticator"},
+                      })
+)

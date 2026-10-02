@@ -1,0 +1,516 @@
+﻿@using Kendo.Mvc.UI
+@using Csp.Api.Security;
+@model Csp.Web.DataTransferObjects.GroupsListDto
+
+
+@{ 
+    var actionHelper = Model.ActionHelper;
+    var userCanEdit = (User.HasPermission(Permission.EditGroup));
+}
+@Html.Hidden((string)@UniqueId.IsGroupPostBack, "")
+
+<script>
+    $(document).ready(function () {
+        groupWindowId = "#@(UniqueId.group)GroupDetailsWindow";
+    });
+
+    function @(UniqueId.group)onGroupsEnterPress(e) {
+
+        if (e.keyCode == 13) {
+            @(UniqueId.group)SearchGroupData();
+            return false;
+        }
+    }
+
+    function @(UniqueId.group)onGroupDataBound() {
+
+        if ($("#@UniqueId.IsGroupPostBack").val() == "") {
+            $("#" + "@UniqueId.Groups" + "groupGrid").data("kendoGrid").dataSource._total = "@Convert.ToInt32(Model.DataParameters.TotalRecordCount)";
+            $("#@UniqueId.IsGroupPostBack").val("1");
+        }
+    }
+
+    function @(UniqueId.group)onCloseAddGroupWindow() {
+        var window = $("#addGroupWindow").data("kendoWindow");
+        window.content("");
+        window.refresh();
+
+        SupportPortal.OnWindowClose("@UniqueId.Groups" + "groupGrid");
+    }
+
+    function @(UniqueId.group)onOpenAddGroupWindow() {
+        SupportPortal.OnWindowOpen("addGroupWindow");
+    }
+
+    function @(UniqueId.group)openGroupstoDeviceWindow() {
+        var direction = "/@ControllerFields.GroupController/GetAvailableDeviceGroups/@actionHelper.Id";
+
+        var window = $("#@UniqueId.AddGroupstoDeviceWindow").data("kendoWindow");
+
+        window.open();
+        window.refresh();
+        window.setOptions({
+            minHeight: 450
+        });
+        window.refresh(direction);
+        window.center();
+    }
+
+
+    function @(UniqueId.group)DeleteGroupDetails(e) {
+
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+        var groupGridData = $('#@UniqueId.Groups' + 'groupGrid').data("kendoGrid");
+
+        var row = $(e.currentTarget).closest("tr");
+        var dataItem = groupGridData.dataItem(row);
+
+        var groupId = dataItem.GroupId;
+
+        var direction;
+
+        if ("@actionHelper.Controller" == "@ControllerFields.DeviceController") {
+
+            direction = "/@ControllerFields.GroupController/RemoveDevice?deviceId= @actionHelper.Id&&groupId=" + groupId;
+
+        } else {
+
+            direction = "/@ControllerFields.GroupController/@actionHelper.Delete?id=" + groupId;
+        }
+
+        SupportPortal.Confirmation("@Constants.DeletePreMessage Group?", function () {  @(UniqueId.group)deleteGroup(); }, null, null);
+
+        function @(UniqueId.group)deleteGroup(e) {
+
+            $.ajax({
+                url: direction,
+                data: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                type: 'POST',
+                cache: false,
+                success: function (result) {
+
+                    if (result == "Success") {
+                        row.hide();
+                        var grid = $("#" + "@UniqueId.Groups" + "groupGrid").data("kendoGrid").dataSource;
+                        grid.read();
+                    } else {
+                        row.show();
+                    }
+                },
+                error: function () {
+                    row.show();
+
+                }
+            });
+
+        }
+    }
+
+
+    function @(UniqueId.group)CreateGroup() {
+
+        var grid = $("#" + "@UniqueId.Groups" + "groupGrid").data("kendoGrid");
+        grid.addRow();
+    }
+
+    function @(UniqueId.group)CreateGroupExtraData() {
+
+        var params = SetAntiForgery();
+
+        params.supportAccountId = '@actionHelper.Id';
+
+        return params;
+    }
+
+    function @(UniqueId.group)SearchGroupData() {
+        var selectedValue = document.getElementById("cmb" + "@UniqueId.Groups" + "groupSearchEntity").value;
+
+        if (selectedValue == "CreatedOn") {
+            if (document.getElementById("dtp" + "@UniqueId.Groups" + "groupSearchValue").value != '') {
+                var dt = new Date(document.getElementById("dtp" + "@UniqueId.Groups" + "groupSearchValue").value);
+                var dtString = dt.getFullYear() + "-" + ((dt.getMonth() + 1) > 9 ? (dt.getMonth() + 1) : "0" + (dt.getMonth() + 1)) + "-" + (dt.getDate() > 9 ? dt.getDate() : "0" + dt.getDate());
+                document.getElementById("txt" + "@UniqueId.Groups" + "groupSearchValue").value = dtString;
+            } else {
+                document.getElementById("txt" + "@UniqueId.Groups" + "groupSearchValue").value = "";
+            }
+        }
+        var grid = $("#" + "@UniqueId.Groups" + "groupGrid").data("kendoGrid").dataSource;
+        grid.filter(
+            {
+                field: document.getElementById("cmb" + "@UniqueId.Groups" + "groupSearchEntity").value,
+                operator: "eq",
+                value: document.getElementById("txt" + "@UniqueId.Groups" + "groupSearchValue").value
+            }
+        );
+            grid.read();
+        }
+
+        function @(UniqueId.group)OnCmbChange() {
+        var cmbId = "#cmb" + "@(UniqueId.Groups)" + "groupSearchEntity";
+        $("#txt" + "@UniqueId.Groups" + "groupSearchValue").select();
+        $(cmbId).data("kendoDropDownList").focus();
+        var selectedValue = $(cmbId).data("kendoDropDownList").value();
+        if (selectedValue == "CreatedOn") {
+            document.getElementById('txt_@UniqueId.Groups').style.display = 'none';
+            document.getElementById('dtp_@UniqueId.Groups').style.display = 'block';
+        } else {
+            document.getElementById('txt_@UniqueId.Groups').style.display = 'block';
+            document.getElementById('dtp_@UniqueId.Groups').style.display = 'none';
+        }
+    }
+
+    var @(UniqueId.group)popupGroupDetails = (function () {
+
+        function getGrid() {
+
+            var groupGridData = $('#@UniqueId.Groups' + 'groupGrid').data("kendoGrid");
+
+            return groupGridData;
+        }
+
+        function getRow(e) {
+
+            var row = $(e.target).closest("tr");
+
+            return row;
+        }
+
+        function getDataItem(e) {
+
+            var groupGridData = getGrid();
+            var row = getRow(e);
+
+            var dataItem = groupGridData.dataItem(row);
+
+            return dataItem;
+        }
+
+        function openGroupWindow(url) {
+
+            var window = $('#@UniqueId.group' + 'GroupDetailsWindow').data("kendoWindow");
+            window.refresh();
+            window.refresh(url);
+            window.open();
+            window.center();
+        }
+
+        function openGroupHome(e) {
+
+            e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+            var groupGridData = getGrid();
+            var row = getRow(e);
+
+            groupGridData.editRow(row);
+        }
+
+        function onGroupEdit(e) {
+
+            var isNew = e.model.isNew();
+
+            if (isNew) {
+
+                var productLinks = $(e.container).find("td").eq(2).find('a');
+                productLinks.remove();
+
+                var membersLink = $(e.container).find("td").eq(3).find('a');
+                membersLink.remove();
+            }
+
+            var deleteLink = $(e.container).find("td").eq(-1).find('a');
+            deleteLink.remove();
+
+            @*$(e.container).find("td").eq(-1).html("<a href='javascript: void(0)' class='abutton update' onclick='@(UniqueId.group)popupGroupDetails.updateRow()' title='Update Group'><i class='icon-circle-arrow-up'></i></a> " +
+                "<a href='javascript: void(0)' class='abutton cancel' onclick='@(UniqueId.group)popupGroupDetails.cancelRow()' title='Cancel Group Changes'><i class='icon-ban-circle'></i></a>");*@
+
+            $(e.container).find("td").eq(-1).html("<a href='javascript: void(0)' class='k-button k-button-icontext k-grid-csp-update' onclick='@(UniqueId.group)popupGroupDetails.updateRow()' title='Update Group'><span class=' '></span></a> " +
+                "<a href='javascript: void(0)' class='k-button k-button-icontext k-grid-csp-cancel' onclick='@(UniqueId.group)popupGroupDetails.cancelRow()' title='Cancel Group Changes'><span class=' '></span></a>");
+        }
+
+        function updateRow(e) {
+
+            var groupGridData = getGrid();
+
+            groupGridData.saveRow();
+        }
+
+        function cancelRow(e) {
+
+            var groupGridData = getGrid();
+
+            groupGridData.cancelRow();
+        }
+
+        function openGroupProdDevices(e, groupId) {
+
+            e.preventDefault ? e.preventDefault() : e.returnValue = false;
+            var dataItem = getDataItem(e);
+
+            openGroupWindow('/group/loadlandingpagepartial/' + groupId + '?groupDestination=DevicesProd');
+        }
+
+        function openGroupSpareDevices(e, groupId) {
+
+            e.preventDefault ? e.preventDefault() : e.returnValue = false;
+            var dataItem = getDataItem(e);
+
+            openGroupWindow('/group/loadlandingpagepartial/' + groupId + '?groupDestination=DevicesSpare');
+        }
+
+        function openGroupMembership(e, groupId) {
+
+            e.preventDefault ? e.preventDefault() : e.returnValue = false;
+            var dataItem = getDataItem(e);
+
+            openGroupWindow('/group/loadlandingpagepartial/' + groupId + '?groupDestination=Memberships');
+        }
+
+        function onCloseGroupDetailsWindow() {
+
+            var window = $('#@UniqueId.group' + 'GroupDetailsWindow').data("kendoWindow");
+            window.content("");
+            window.refresh();
+
+            SupportPortal.OnWindowClose("@UniqueId.Groups" + "groupGrid");
+        }
+
+        function onOpenGroupDetailsWindow() {
+
+            SupportPortal.OnWindowOpen('@UniqueId.group' + 'GroupDetailsWindow');
+        }
+
+        return {
+            openGroupHome: openGroupHome,
+            onGroupEdit: onGroupEdit,
+            updateRow: updateRow,
+            cancelRow: cancelRow,
+            openGroupProdDevices: openGroupProdDevices,
+            openGroupSpareDevices: openGroupSpareDevices,
+            openGroupMembership: openGroupMembership,
+            onCloseGroupDetailsWindow: onCloseGroupDetailsWindow,
+            onOpenGroupDetailsWindow: onOpenGroupDetailsWindow
+        };
+    })();
+
+</script>
+
+<style>
+    span.spacer {
+        width: 10px;
+        display: inline-block;
+    }
+</style>
+@Html.Hidden((string)UniqueId.hdngroupgridcountcheck, "")
+
+<div class="contextTitle">Groups</div>
+
+<div class="grid-header">
+    <div class="grid-left">
+
+        @if (User.HasPermission(Permission.CreateGroup)) {
+            if (actionHelper.Controller == ControllerFields.SupportAccountController) {
+            <input id="Create" class="k-button k-primary" type="button"  data-link-type="add-new-group" value="Add New Group" onclick="@(UniqueId.group)CreateGroup();"/> <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 11);"></i></span>    
+            }
+        }
+    </div>
+    <div class="grid-right">
+
+        <div class="grid-filter">
+            @(Html.Kendo().DropDownList()
+                  .Name("cmb" + (string)UniqueId.Groups + "groupSearchEntity")
+                  .Events(events => events.Change((string)UniqueId.group + "OnCmbChange"))
+                  .OptionLabel("Filter By")
+                  .OptionLabelTemplate("<span class='grid-filter__dropdown-placeholder'>Filter By</span>")
+                  .DataTextField("Text")
+                  .DataValueField("Value")
+                  .BindTo(new List<SelectListItem>
+                      {
+                      new SelectListItem {
+                          Text = "Name",
+                          Value = "SupportAccountGroupName"
+                      },
+              
+                      new SelectListItem {
+                          Text = "Description",
+                          Value = "Description"
+                      }, 
+              
+                      new SelectListItem {
+                          Text = "Created Date",
+                          Value = "CreatedOn"
+                      },
+              
+              
+                      new SelectListItem {
+                          Text = "Created By",
+                          Value = "CreatedByEmail"
+                      },
+              
+              
+                  })
+                  )
+
+        </div>
+
+
+
+        <div class="grid-filter">
+            <div class="grid-filter" id="txt_@UniqueId.Groups">
+                @Html.TextBox("txt" + (string)UniqueId.Groups + "groupSearchValue", "", new {
+                    onkeypress = "return " + (string)UniqueId.group + "onGroupsEnterPress(event)",
+                    @class = "grid-filter__search-input",
+                    placeholder = "Search",
+                    aria_label = "Search"
+                })
+                <button aria-label="search" type="button" class="grid-filter__search-button" onclick="@(UniqueId.group)SearchGroupData()">
+                    <span aria-hidden="true" class="fa fa-search" />
+                </button>
+            </div>
+            <div class="filter-datepicker" id="dtp_@UniqueId.Groups">
+                @(Html.Kendo().DatePicker()
+                      .Name("dtp" + (string)UniqueId.Groups + "groupSearchValue")
+                      .HtmlAttributes(new {
+                          onkeypress = "return " + (string)UniqueId.group + "onGroupsEnterPress(event)",
+                          @class = "grid-filter__date-input"
+                      })
+                      )
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-content">
+
+    <div id="@UniqueId.divgroupslistgrid">
+
+        @{
+            if (Model != null && Model.Groups != null) {
+
+                var maxPageSizeForms = Convert.ToInt32(Model.Groups.Count);
+                var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+                if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                    pageSizeOptionsForms.Add(maxPageSizeForms);
+                }
+
+            @(Html.Kendo().Grid(Model.Groups)
+                      .Name((string)UniqueId.Groups + "groupGrid")
+
+                      .Columns(columns => {
+                          columns.Bound(p => p.SupportAccountGroupName)
+                                 .Width(150).Filterable(false).Sortable(true).Column.Title = "Group Name";
+                          columns.Bound(p => p.Description).Filterable(false).Sortable(true).Column.Title = "Description";
+                          columns.Bound(p => p.GroupId).Width(120).Filterable(false).Sortable(false).Title("Group Products").Template(x => {
+                              return "<a href=\"\\#\" onclick=\"" + UniqueId.group + "popupGroupDetails.openGroupProdDevices(event, " + x.GroupId + ");\">Devices</a><span class='spacer'>&nbsp;</span>" +
+                                     "<a href=\"\\#\" onclick=\"" + UniqueId.group + "popupGroupDetails.openGroupSpareDevices(event, " + x.GroupId + ");\">Spares</a>";
+                          }).ClientTemplate("<a href=\"\\#\" onclick=\"" + UniqueId.group + "popupGroupDetails.openGroupProdDevices(event, #=GroupId#);\">Devices</a><span class='spacer'>&nbsp;</span>" +
+                                            "<a href=\"\\#\" onclick=\"" + UniqueId.group + "popupGroupDetails.openGroupSpareDevices(event, #=GroupId#);\">Spares</a>");
+                          columns.Bound(p => p.GroupId).Filterable(false).Sortable(false).Title("Group Members").Template(x => {
+                              return "<a href=\"\\#\" onclick=\"" + UniqueId.group + "popupGroupDetails.openGroupMembership(event, " + x.GroupId + ");\">Members</a>";
+                          }).ClientTemplate("<a href=\"\\#\" onclick=\"" + UniqueId.group + "popupGroupDetails.openGroupMembership(event, #=GroupId#);\">Members</a>");
+                          columns.Bound(p => p.CreatedOn).Format("{0:MM/dd/yyyy}").Filterable(false).Sortable(true).Column.Title = "Create Date";
+                          columns.Bound(p => p.CreatedByEmail).Filterable(false).Sortable(true).Column.Title = "Created By";
+
+                          if (User.HasPermission(Permission.DeleteGroup)) {
+                              columns.Command(command => {
+                                  command.Custom("csp-edit").Text(" ").Click((string)UniqueId.group + "popupGroupDetails.openGroupHome").HtmlAttributes(new { title = "Edit", href = "javascript:void(0);", style = "display: " + (userCanEdit ? "inline-block" : "none") });
+                                  command.Custom("csp-delete").Text(" ").Click((string)UniqueId.group + "DeleteGroupDetails").HtmlAttributes(new { title = "Delete", href = "javascript:void(0);" });
+
+                              }).Width(220).Title("Actions");
+                          }
+
+
+
+
+                      })
+                                  .Events(e => {
+                                      e.DataBound((string)UniqueId.group + "onGroupDataBound");
+                                      e.Edit((string)UniqueId.group + "popupGroupDetails.onGroupEdit");
+                                  })
+                      .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                      .Sortable()
+                      .Filterable()
+                      .Editable(x => x.Mode(GridEditMode.InLine))
+                      .Resizable(resize => resize.Columns(true))
+                      .DataSource(dataSource => dataSource
+                                                    .Ajax()
+                                                    .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                                        .Model(model => {
+                                                            model.Id(p => p.GroupId);
+                                                            model.Field(f => f.GroupId).Editable(false);
+                                                            model.Field(f => f.CreatedOn).Editable(false);
+                                                            model.Field(f => f.CreatedByEmail).Editable(false);
+                                                        })
+                                                    .PageSize(Model.DataParameters.PaginationCount)
+                                                    .Read(read => read.Action(actionHelper.Groups, actionHelper.Controller, new {
+                                                        id = actionHelper.Id
+                                                    }).Data("SetAntiForgery"))
+                                                            .Update(x => x.Action("UpdateGroupInline", actionHelper.Controller).Data("SetAntiForgery"))
+                                                            .Create(x => x.Action("CreateGroup", "SupportAccount").Data((string)UniqueId.group + "CreateGroupExtraData"))
+                                                    .Events(e => e.RequestEnd("SupportPortal.kendoGridTimezoneToPst"))
+                      )
+                      )
+            }
+        }
+
+
+    </div>
+
+
+</div>
+
+<div class="width-left">
+    @(Html.Kendo().Window()
+      .Name((string)UniqueId.AddGroupstoDeviceWindow)
+       .Width(600)
+       .Modal(true)
+       .Visible(false)
+       .Draggable()
+      .Title("Add Groups to Device")
+        )
+</div>
+
+<div>
+
+    @*
+
+    The "addGroupWindow" id should not be unique to keep things simple. 
+    It is not used in multiple popups as of now. 
+    This will prevent the group from posting back on a create if it is unique
+
+    *@
+
+    @if (actionHelper.Controller == ControllerFields.SupportAccountController) {
+
+        @(Html.Kendo().Window()
+      .Name("addGroupWindow")
+      .Width(1030)
+      .Modal(true)
+      .Draggable()
+      .Scrollable(false)
+      .Events(events => events
+                                .Close((string)UniqueId.group + "onCloseAddGroupWindow")
+                                .Open((string)UniqueId.group + "onOpenAddGroupWindow")
+                                )
+      .Title("Add Group")
+      .Visible(false)
+     )
+    }
+
+    @(Html.Kendo().Window()
+      .Name((string)UniqueId.group + "GroupDetailsWindow")
+      .Width(1130)
+      .Height(600)
+      .Modal(true)
+      .Draggable()
+      .Resizable()
+      .Actions(x => x.Maximize().Close())
+      .Scrollable(true)
+      .Events(events => events
+                                .Close((string)UniqueId.group + "popupGroupDetails.onCloseGroupDetailsWindow")
+                                .Open((string)UniqueId.group + "popupGroupDetails.onOpenGroupDetailsWindow")
+                                )
+      .Title("Group:")
+      .Visible(false)
+     )
+</div>

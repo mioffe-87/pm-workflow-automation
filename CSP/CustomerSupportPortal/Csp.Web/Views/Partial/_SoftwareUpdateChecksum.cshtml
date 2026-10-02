@@ -1,0 +1,17 @@
+﻿@model Csp.Api.Model.SoftwareUpdatesChecksumModel
+
+<div id="details-container">
+    <dl>
+        <dt>FileName: @Model.FileName </dt>
+        <dt>Version: @Model.VersionNumber</dt>
+        <dt>Size: @Model.FileSize</dt>
+        @if (Model.HasMd5Key)
+        {
+            <dt>MD5: @Model.Md5Key</dt>
+        }
+        @if (Model.HasSha256Key)
+        {
+            <dt>SHA256: @Model.Sha256Key</dt>
+        }
+    </dl>
+</div>

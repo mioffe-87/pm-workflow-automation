@@ -1,0 +1,200 @@
+﻿@model Csp.Web.DataTransferObjects.AddEpLicensesDto
+<input type="hidden" name="DeviceId" id="DeviceId" value="@Model.DeviceId" />
+<input type="hidden" name="EsmAuthCode" id="EsmAuthCode" value="@Model.EsmAuthCode" />
+@Html.HiddenFor(model => model.Eula.SelectedEulaId, new { id = "SelectedEulaId", name = "SelectedEulaId" })
+@Html.AntiForgeryToken()
+<script>
+    function getSearchParams() {
+        var params = SetAntiForgery();
+        params.deviceId = $('#DeviceId').val();
+        console.log(params);
+        return params;
+    }
+
+    function ValidateAuthCode() {
+        var deviceId = $('#DeviceId').val(); // Device Id of the ESM (stub)
+        var newAuthCode = $('#NewAuthCode').val();
+        if (newAuthCode == "") {
+            SupportPortal.Notification("Authorization code is required.", 4);
+            return;
+        }
+        // Check if the new AuthCode can be added.
+        var epCanAddLicense = function () {
+            var direction = "/EP/ValidateAuthCode?authCode=" + newAuthCode + "&deviceId=" + deviceId;
+            SupportPortal.BlockUI();
+            $.ajax({
+                url: direction,
+                type: 'Get',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                success: function (result) {
+                    SupportPortal.UnBlockUI();
+                    if (result.HasError == true) {
+                        //SupportPortal.Message(result.ErrorMessage);
+                        SupportPortal.Notification(result.ErrorMessage, 4);
+                    } else if (result.HasSuccess == true) {
+                        SupportPortal.Notification(result.SuccessMessage, 1);
+                    } else {
+                        AddEndpointLicense();
+                    }
+                },
+                error: function () {
+                    SupportPortal.UnBlockUI();
+                    //SupportPortal.Message("Failed to validate the AuthCode");
+                    SupportPortal.Notification("Failed to validate the AuthCode", 4);
+                }
+            });
+        };
+        epCanAddLicense();
+    }
+
+    function AddEndpointLicense() {
+        var esmAuthCode = $('#EsmAuthCode').val(); // Device Id of the ESM (stub)
+        var newAuthCode = $('#NewAuthCode').val();
+        var eulaId = $('#SelectedEulaId').val();
+        var direction = "/EP/AddEndpointLicense?newAuthCode=" + newAuthCode + "&esmAuthCode=" + esmAuthCode + "&eulaId=" + eulaId;
+        SupportPortal.BlockUI();
+        $.ajax({
+            url: direction,
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function (result) {
+                console.log(result);
+                SupportPortal.UnBlockUI();
+                if (result.IsSuccess == true) {
+                    SupportPortal.Notification(result.SuccessMessage, 1);
+                    if (result.IsEsmAuthCode == true) {
+                        $('#EsmAuthCode').val(result.EsmAuthCode);
+                    }
+                    $("#NewAuthCode").val("");
+                    $("#DeviceId").val(result.DeviceId);
+                    $('#EpLicenses').data('kendoGrid').dataSource.read();
+                    $("#epFsGrid").show();
+                } else {
+                    SupportPortal.Notification(result.ErrorMessage,4);
+                }
+            },
+            error: function () {
+                SupportPortal.UnBlockUI();
+                SupportPortal.Notification("Failed to Add License",4);
+            }
+        });
+    }
+
+</script>
+@{ 
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+}
+@if (ViewBag.isMalborkDevice == false)
+{
+<fieldset>
+    <legend>Endpoint License</legend>
+    
+    <div class="popup-details">
+        @if (!Model.IsNewEndpointActivation)
+        {
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Serial Number:")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.SerialNumber)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Device Name:")
+                </div>
+
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.DeviceName)
+                </div>
+            </div>
+        }
+        <div class="fieldset fieldset-padded">
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Authorization Code:")
+                </div>
+
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(model => model.NewAuthCode)
+                    @Html.TextBoxFor(model => model.NewAuthCode, new { maxlength = "46" })
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</fieldset>
+<fieldset id="epFsGrid">
+    @(Html.Kendo().Grid(Model.Licenses)
+          .Name("EpLicenses")
+          .Columns(cols =>
+          {
+              cols.Bound(x => x.PartSubTypeName).Title("Feature Name");
+              cols.Bound(x => x.AuthorizationCode).Title("Authorization Code");
+              cols.Bound(x => x.ExpirationDate).Title("Expiration Date");
+          })
+          .DataSource(dataSource => dataSource
+                                        .Ajax()
+                                        .Model(model =>
+                                        {
+                                            model.Id(p => p.LicenseId);
+                                            model.Field(f => f.FeatureName).Editable(false);
+                                            model.Field(f => f.AuthorizationCode).Editable(false);
+                                            model.Field(f => f.ExpirationDate).Editable(false);
+                                        })
+                                        .Read(read => read.Action("GetLicensesForEp", "EP").Data("getSearchParams"))
+          )
+          )
+</fieldset>
+<div>&nbsp;</div>
+@Html.Partial("../Partial/_Eula", Model.Eula)
+<fieldset>
+    <div class="fieldset">
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input class="k-button csp-submit" type="button" value="Agree and Submit" onclick="ValidateAuthCode()" />&nbsp;&nbsp;&nbsp;
+                <input type="button" value="Refuse" name="btnRefuse" id="btnRefuse" class="k-button" onclick="CloseMe(this)"  />&nbsp;&nbsp;
+        </div>
+    </div>
+</fieldset>
+}
+else
+{
+    <fieldset>
+        <legend>Activation of Traps Management Service</legend>
+
+        <div class="popup-details">
+
+            <div>
+                <div class="csp-label" style="width:500px; text-align:left">
+                    <label>1. Add “Traps” role to a user</label>
+                   
+                </div>
+                <div class="csp-label" style="width:500px; text-align:left">
+                    <label>2. Navigate to <a href='https://apps.paloaltonetworks.com'>hub</a></label>
+                   
+                </div>
+                <div class="csp-label" style="width:500px; text-align:left">
+                    <label>3. Use @(Model.EsmAuthCode) to activate Traps Management Service</label>
+                   
+                </div>
+            </div>
+
+        </div>
+    </fieldset>
+}
+<script>
+    $.validator.unobtrusive.parse("#@UniqueId.AddEpLicenseToServerForm");
+    function CloseMe(obj) {
+        $(obj).closest(".k-window-content").data("kendoWindow").close();
+    }
+</script>
+@if (Model.IsNewEndpointActivation)
+{
+    <script>$("#epFsGrid").hide();</script>
+}

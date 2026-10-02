@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" ?>
+<frameworkSettings xmlns="http://sd/llblgen/pro/frameworkSettingsDefinition.xsd">
+	<supportedFrameworks>
+		<framework name="Entity Framework v5"/>
+	</supportedFrameworks>
+	<settingDefinitions>
+		<!-- project level settings -->
+		<settingDefinition name="PublicPropertyGettersAndSetters" category="General" default="true" type="bool" 
+						   description="This setting controls whether the generated entity, value type, typed view and typed list classes have public getters and setters for properties (true, default), like the properties for entity fields. If set to false, the properties will be generated as private for entity and typed view classes and internal for typed list classes. The context class will always have public properties."
+						   targetElement="1"/>
+
+		<settingDefinition name="EmitForeignKeyFields" category="General" default="false" type="bool" 
+						   description="This setting controls whether a generated entity class and entity type in the edmx file will have visible foreign key fields (true) or not (false, default). The default setting (false, no foreign key fields present in edmx file nor the entity classes) is compatible with v1 of the Entity Framework."
+						   targetElement="1"/>
+
+		<settingDefinition name="SetContextClassNameEqualToEdmxModelContainerName" category="General" default="false" type="bool" 
+						   description="This setting controls whether the context class name should be equal to the CSDL model container name in the edmx file. When set to false (default) the context class will have the suffix 'DataContext', when set to true, the context class will have the suffix 'Entities'. Only set this to true if you are planning to use the Edmx file and generated context class with the WCF RIA Services wizard as that wizard otherwise can't find the edmx model and refuses to function."
+						   targetElement="1"/>
+						   
+		<settingDefinition name="EmitAddToEntitySetMethodsInContext" category="General" default="false" type="bool" 
+						   description="This setting controls whether the generated Context class contains AddTo... methods (true), allowing the developer to add an entity to an entity set. In v4, the AddTo methods are considered deprecated by Microsoft and therefore this setting is set to false by default."
+						   targetElement="1"/>
+						   
+		<settingDefinition name="ProviderManifestTokenValue" category="General" default="" type="string" 
+						   description="This setting specifies the value which is emitted into the SSDL for 'ProviderManifestToken'. This value is necessary sometimes for some providers to be able to generate proper SQL. For example for SQL Server this is the version number, e.g. 2005 or 3.5 if you're targeting SQL CE Desktop."
+						   targetElement="1"/>
+						   
+		<settingDefinition name="EnableLazyLoadingOnContext" category="General" default="false" type="bool" 
+						   description="This setting specifies whether lazy-loading should be enabled at the context level (true) or not (false, default)."
+						   targetElement="1"/>
+
+		<!-- entity level settings -->
+		<settingDefinition name="EntityBaseClassName"
+						   description="The name of the base class for a generated entity class. The following macros are available: {$Name} for the entity name without group name, {$GroupName} for the name of the group the entity is in, {$FullName} for the group name plus entity name. Sub-types will always inherit from their super-type and not from the class specified. When using a non-POCO/non-IPOCO preset, be sure the class specified derives (in)directly from the generated CommonEntityBase class."
+						   default="" category="General" type="string" targetElement="2" defaultSource="EntityBaseClassNameDefault" canBeEmpty="true"/>
+
+		<settingDefinition name="EmitKnownTypeAttributesForWCF" category="General" default="false" type="bool" 
+						   description="This setting controls whether the code generator will add KnownType attributes to the generated entity classes for all types used in the class (true) or not (false, default). KnownTypeAttribute is used for WCF serialization and should be used in combination with Data Contracts."
+						   defaultSource="EmitKnownTypeAttributesForWCFDefault" targetElement="2"/>
+
+		
+		<!-- value type level settings -->
+		<settingDefinition name="ValueTypeBaseClassName"
+						   description="The name of the base class for a generated valuetype class. The following macros are available: {$Name} for the valuetype name without group name, {$GroupName} for the name of the group the valuetype is in, {$FullName} for the group name plus valuetype name. When using a non-POCO/non-IPOCO preset, be sure the class specified derives (in)directly from the generated CommonValueTypeBase class."
+						   default="" category="General" type="string" targetElement="4" defaultSource="ValueTypeBaseClassNameDefault" canBeEmpty="true"/>
+
+		<!-- navigator settings -->
+		<settingDefinition name="UseCascadeDeletes" default="false" type="bool" description="This setting controls whether the related entity / entities over this navigator should be automatically deleted when this entity is deleted (true) or should be left alone (false, default). Ignored for navigators mapped onto M:N relationships and navigators which are on the FK side of the relationship"
+							targetElement="768" canBeEmpty="true" category="General" />
+		
+		<!-- field level settings -->
+		<settingDefinition name="UseForOptimisticConcurrencyChecks" category="General" default="false" type="bool" 
+						   description="This setting controls whether the field is used in optimistic concurrency checks (true) or not (false, default)."
+						   targetElement="64"/>
+		
+		<!-- typed view level settings -->
+		<settingDefinition name="TypedViewRowBaseClassName"
+						   description="The name of the base class for a generated typed view row class. The following macros are available: {$Name} for the typed view name without group name, {$GroupName} for the name of the group the typed view is in, {$FullName} for the group name plus typed view name. When using a non-POCO/non-IPOCO preset, be sure the class specified derives (in)directly from the generated CommonTypedViewRowBase class."
+						   default="" category="General" type="string" targetElement="16" defaultSource="TypedViewRowBaseClassNameDefault" canBeEmpty="true"/>
+
+		
+		<!-- typed list level settings -->
+		<settingDefinition name="TypedListRowBaseClassName"
+						   description="The name of the base class for a generated typed list row class. The following macros are available: {$Name} for the typed list name without group name, {$GroupName} for the name of the group the typed list is in, {$FullName} for the group name plus typed list name."
+						   default="" category="General" type="string" targetElement="8" defaultSource="TypedListRowBaseClassNameDefault" canBeEmpty="true"/>
+		
+		
+		<!-- defaults which control other settings -->
+		<settingDefinition name="EntityBaseClassNameDefault"
+						   description="This setting specifies the default value for the EntityBaseClassName setting of an entity. When using a non-POCO/non-IPOCO preset, be sure the class specified derives (in)directly from the generated CommonEntityBase class."
+						   default="CommonEntityBase" category="Defaults" targetElement="1" type="string" canBeEmpty="true"/>
+
+		<settingDefinition name="ValueTypeBaseClassNameDefault"
+						   description="This setting specifies the default value for the ValueTypeBaseClassName setting of a valuetype. When using a non-POCO/non-IPOCO preset, be sure the class specified derives (in)directly from the generated CommonValueTypeBase class."
+						   default="CommonValueTypeBase" category="Defaults" targetElement="1" type="string" canBeEmpty="true"/>
+
+		<settingDefinition name="TypedViewRowBaseClassNameDefault"
+						   description="This setting specifies the default value for the TypedViewRowBaseClassName setting of a typed view. When using a non-POCO/non-IPOCO preset, be sure the class specified derives (in)directly from the generated CommonTypedViewRowBase class."
+						   default="CommonTypedViewRowBase" category="Defaults" targetElement="1" type="string" canBeEmpty="true"/>
+
+		<settingDefinition name="TypedListRowBaseClassNameDefault"
+						   description="This setting specifies the default value for the TypedListRowBaseClassName setting of a typed List."
+						   default="" category="Defaults" targetElement="1" type="string" canBeEmpty="true"/>
+
+		<settingDefinition name="EmitKnownTypeAttributesForWCFDefault"
+						   description="This setting specifies the default value for the EmitKnownTypeAttributesForWCF setting of an entity."
+						   default="false" category="Defaults" targetElement="1" type="bool"/>
+	</settingDefinitions>
+	<valueLists/>
+</frameworkSettings>

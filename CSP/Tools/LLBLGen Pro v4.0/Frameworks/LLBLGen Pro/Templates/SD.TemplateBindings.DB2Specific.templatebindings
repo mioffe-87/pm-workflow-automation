@@ -1,0 +1,27 @@
+﻿<?xml version="1.0"?>
+<templateBindings xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd" name="SD.TemplateBindings.DB2Specific"
+				  description ="Template bindings for the templates which are specific for IBM DB2 based databases."
+				  databaseDriverID="BB438EBA-A0B5-4236-A2B8-64D828A138AF" precedenceLevel="10">
+	<supportedPlatforms>
+		<platform name=".NET 3.5"/>
+		<platform name=".NET 4.0"/>
+		<platform name=".NET 4.5"/>
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="LLBLGen Pro Runtime Framework"/>
+	</supportedFrameworks>
+
+	<language name="C#">
+		<!-- DB Specific template bindings -->
+		<templateBinding templateID="SD_DQEReferenceXmlIncludeTemplate" filename="DB2Specific\Shared\dqeReferenceXmlInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ProcedureNameIncludeTemplate" filename="DB2Specific\C#\procedureNameInclude.template" templateLanguage="TDL"/>
+		<!-- DB Specific include template bindings -->
+		<templateBinding templateID="SD_DQENamespaceIncludeTemplate" filename="DB2Specific\C#\dqeNamespaceInclude.template" />
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_DQEReferenceXmlIncludeTemplate" filename="DB2Specific\Shared\dqeReferenceXmlInclude.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_ProcedureNameIncludeTemplate" filename="DB2Specific\VB.NET\procedureNameInclude.template" templateLanguage="TDL"/>
+		<!-- DB Specific include template bindings -->
+		<templateBinding templateID="SD_DQENamespaceIncludeTemplate" filename="DB2Specific\VB.NET\dqeNamespaceInclude.template" />
+	</language>
+</templateBindings>

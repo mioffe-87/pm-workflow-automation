@@ -1,0 +1,344 @@
+﻿@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.MetricsConsolidatedDto
+
+
+@if (Model != null)
+{ 
+    <div class="tabel-cell" style="padding: 5px; width: 98%">
+        <div class="titleRoundedDiv" style="width: 98% !important;">
+            <div class="row">
+                <div style="width: 80%" class="tabel-cell">
+                    @ViewData["Title"].ToString()
+                </div>
+                <div class="tabel-cell pull-right">
+                    <span class="csp-white-tooltip">
+                        <i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this,    @ViewData["HelpMessage"].ToString(),{    title: '@ViewData["Title"].ToString()',height: 160,    width: '@ViewData["HelpMessageWidth"].ToString()'});"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="table-cell-withoutmargin" style="padding: 10px; width: 32%">
+            <div class="greyRoundedDiv">
+                @*<div class="row"><a class='@ViewData["Id"].ToString()export-img btn btn-primary pull-right' title="Export to Image"><i class="icon-download-alt"></i></a></div>*@
+
+                <div class="row" style="margin-left: 0px;">
+                    @if (Model.LineChart != null && Model.LineChart.Count > 0)
+                    {
+                        @(Html.Kendo().Chart(Model.LineChart)
+                              .Name(ViewData["Id"].ToString() + "LineChart")
+                              .Title("")
+                              .Legend(legend => legend
+                                  .Position(ChartLegendPosition.Top)
+                              )
+                              .ChartArea(chartArea => chartArea
+                                  .Background("transparent")
+                              )
+                              .SeriesDefaults(series => series.Line().Width(2))
+                              .Series(series =>
+                              {
+                                  if (ViewData["PartnerName"] != null && (ViewData["PartnerName"].ToString() != string.Empty || Convert.ToBoolean(ViewData["DisplayPartnerGrid"].ToString())))
+                                  {
+                                      series.Line(model => model.PartnerTotalCount).Name("Partner").Color("#00689a").Width(5).Labels(l => l.Visible(true).Font("bold  12px Arial,Helvetica,sans-serif").Position(ChartPointLabelsPosition.Left));
+                                  }
+                                  series.Line(model => model.AmericasTotalCount).Name("Americas").Color("#C0504D");
+                                  series.Line(model => model.EmeaTotalCount).Name("EMEA").Color("#9BBB59");
+                                  series.Line(model => model.JapanTotalCount).Name("Japan").Color("#8064A2");
+                                  series.Line(model => model.ApacTotalCount).Name("APAC").Color("#4BACC6");
+                                  series.Line(model => model.TargetCount).Name("Target").Color("#FF0000").DashType(ChartDashType.Dash);
+                              })
+                              .CategoryAxis(axis => axis
+                                  .Categories(model => model.Category)
+                                  .Crosshair(c => c.Visible(true))
+                              )
+                              .ValueAxis(axis => axis
+                                  .Numeric().Labels(labels => labels.Format("{0}%"))
+                                  .Line(line => line.Visible(true))
+
+                              )
+                              .Tooltip(tooltip => tooltip
+                                  .Visible(true)
+                                  .Format("{0}%")
+                              )
+                              )
+                    }
+                    else if(Model.MultipleAscLineChart!=null){
+                         @(Html.Kendo().Chart(Model.MultipleAscLineChart)
+                              .Name(ViewData["Id"].ToString() + "LineChart")
+                              .Title("")
+                              .Legend(legend => legend
+                                  .Position(ChartLegendPosition.Top)
+                              )
+                              .ChartArea(chartArea => chartArea
+                                  .Background("transparent")
+                              )
+                              .SeriesDefaults(series => series.Line().Width(2))
+                              .Series(series =>
+                              {
+                                  series.Line(model => model.WorldWideAverage).Name(Model.TheatreTextForChart).Color("#9BBB59");
+                                  series.Line(model => model.TotalCount).Name(Model.PartnerTextForChart).Color("#00689a").Width(3).Labels(l => l.Visible(true).Font("bold  12px Arial,Helvetica,sans-serif").Position(ChartPointLabelsPosition.Left));
+                                  series.Line(model => model.TargetCount).Name("Target").Color("#FF0000").DashType(ChartDashType.Dash);
+                              })
+                              .CategoryAxis(axis => axis
+                                  .Categories(model => model.Category)
+                                  .Crosshair(c => c.Visible(true))
+                              )
+                              .ValueAxis(axis => axis
+                                  .Numeric().Labels(labels => labels.Format("{0}%"))
+                                  .Line(line => line.Visible(true))
+
+                              )
+                              .Tooltip(tooltip => tooltip
+                                  .Visible(true)
+                                  .Format("{0}%")
+                              )
+                              )
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="table-cell-withoutmargin" style="width: 1%">&nbsp;</div>
+        <div class="table-cell-withoutmargin" style="padding: 10px; width: 63%">
+            @if (Model.MetricsList.Count > 0)
+            {
+                var consolidatedId = @ViewData["Id"].ToString() + "Consolidated";
+            
+                <div class="k-widget k-grid" id="@consolidatedId" data-role="grid">
+                    <table cellspacing="0" role="grid" style="table-layout: fixed">
+                        <colgroup>
+                            <col style="width: 17%;">
+                            @foreach (string fiscalQtrCode in Model.Category)
+                            {
+                                <col style="width: 7%;">
+                                <col style="width: 7%;">
+                            }
+
+                        </colgroup>
+                        <thead class="k-grid-header">
+                            <tr>
+                                <th class="k-group-cell k-header" style="background-color: #f5f5f5 !important;">&nbsp;</th>
+                                @foreach (string fiscalQtrCode1 in Model.Category)
+                                {
+                                    <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5;">@fiscalQtrCode1</th>
+                                    <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5;">@fiscalQtrCode1</th>
+                                }
+                            </tr>
+                            <tr>
+                                <th class="k-group-cell k-header" style="font-weight: bold; background-color: #f5f5f5;">WorldWide @ViewData["ColumnTitle"].ToString() Rate</th>
+                                @foreach (string fiscalQtrCode in Model.Category)
+                                {
+                                    <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5;">Cases</th>
+                                    <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5;">@ViewData["ColumnTitle"].ToString()</th>
+                                }
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (string theatre in Model.Theatre.Where(t => !t.Contains("Global")))
+                            {
+                                <tr>
+                                    <td role="gridcell" class="wrapText" style="border-bottom: 1px solid #dadada;">@theatre</td>
+                                    @foreach (string fiscalQtrCodeValue in Model.Category)
+                                    {
+
+                                        <td role="gridcell" style="border-bottom: 1px solid #dadada; text-align: center;">
+                                            @{var AllCaseValue = "";}
+                                            @if (ViewData["PartnerName"].ToString() == string.Empty)
+                                            {
+                                                AllCaseValue = Model.MetricsList.Where(l => l.Theatre.Equals(theatre) && l.Category.Equals(fiscalQtrCodeValue)).Select(l => l.TotalCount).FirstOrDefault().ToString();
+                                            }
+                                            @AllCaseValue
+                                        </td>
+                                        <td role="gridcell" style="font-weight: bold; text-align: center; border-bottom: 1px solid #dadada;">
+                                            @{ var percentageVal = Model.MetricsList.Where(l => l.Theatre.Equals(theatre) && l.Category.Equals(fiscalQtrCodeValue)).Select(l => l.PercentageTagged).FirstOrDefault(); }
+                                            @percentageVal%
+                                        </td>
+
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <br />
+                <br />
+                            if (Model.MetricsPartner != null && @ViewData["PartnerName"].ToString() != string.Empty)
+                            {
+                                var partnerId = ViewData["Id"].ToString() + "Partner";
+                <div class="k-widget k-grid" id="@partnerId" data-role="grid">
+                    <table cellspacing="0" role="grid" style="table-layout: fixed">
+                        <colgroup>
+                            <col style="width: 17%;">
+                            @foreach (string fiscalQtrCode in Model.Category)
+                            {
+                                <col style="width: 7%;">
+                                <col style="width: 7%;">
+                            }
+
+                        </colgroup>
+                        <thead class="k-grid-header">
+                            <tr>
+                                <th class="k-group-cell k-header" style="background-color: #f5f5f5 !important;">&nbsp;</th>
+                                @foreach (string fiscalQtrCode1 in Model.Category)
+                                {
+                                    <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5;">@fiscalQtrCode1</th>
+                                    <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5;">@fiscalQtrCode1</th>
+                                }
+                            </tr>
+                            <tr>
+                                <th class="k-group-cell k-header" style="font-weight: bold; background-color: #f5f5f5;">ASC Partner</th>
+                                @foreach (string fiscalQtrCode in Model.Category)
+                                {
+                                    <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5;">Cases</th>
+                                    <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5;">@ViewData["ColumnTitle"].ToString()</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td role="gridcell" class="wrapText" style="background-color: #FFD760; font-weight: bold; color: #000000;">@ViewData["PartnerName"]</td>
+                                @foreach (string fiscalQtrCode1 in Model.Category)
+                                {
+                                    var nonComplianceAlert = "false";
+                                    var backgroundColor = "#FFFFFF";
+                                    var totalCount = 0;
+                                    var percentagePartnerValue = 0.0;
+                                    if (Model.MetricsPartner.Where(l => l.Category.Equals(fiscalQtrCode1)).Select(l => l.NonComplianceAlert).FirstOrDefault() != null)
+                                    {
+                                        nonComplianceAlert = Model.MetricsPartner.Where(l => l.Category.Equals(fiscalQtrCode1)).Select(l => l.NonComplianceAlert).FirstOrDefault();
+                                        if (!string.IsNullOrEmpty(nonComplianceAlert))
+                                        {
+                                            nonComplianceAlert = nonComplianceAlert.ToLower();
+                                        }
+                                        backgroundColor = nonComplianceAlert == "true" ? "#FEFF03" : "#FFFFFF";
+                                        totalCount = Model.MetricsPartner.Where(l => l.Category.Equals(fiscalQtrCode1)).Select(l => l.TotalCount).FirstOrDefault();
+                                        percentagePartnerValue = Model.MetricsPartner.Where(l => l.Category.Equals(fiscalQtrCode1)).Select(l => l.PercentageTagged).FirstOrDefault();
+                                    }
+                                    <td role="gridcell" style="font-weight: bold; text-align: center; background-color: @backgroundColor;color: #000000;">
+                                        @totalCount
+                                    </td>
+
+                                    <td role="gridcell" style="font-weight: bold; text-align: center; background-color: @backgroundColor;color: #000000;">
+
+                                        @percentagePartnerValue%
+                                    </td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                            }
+                            else if (Model.MetricsPartner != null && Model.MetricsPartner.Count > 0 && ViewData["PartnerName"] != null && Convert.ToBoolean(ViewData["DisplayPartnerGrid"].ToString()))
+                            {
+                                var partnerId = ViewData["Id"].ToString() + "Partner";
+               
+               
+                
+                <div class="k-widget k-grid" id="@partnerId" style="height: 244px;" data-role="grid">
+                    <div class="k-grid-header" style="padding-right: 17px;">
+                        <div class="k-grid-header-wrap k-auto-scrollable">
+                            <table role="grid">
+                                <colgroup>
+                                    <col style="width: 17%;">
+                                    @foreach (string fiscalQtrCode in Model.Category)
+                                    {
+                                        <col style="width: 7%;">
+                                        <col style="width: 7%;">
+                                    }
+
+                                </colgroup>
+                                <thead class="k-grid-header">
+                                    <tr>
+                                        <th class="k-group-cell k-header" style="background-color: #f5f5f5 !important; border-width: 0 0 1px 0;">&nbsp;</th>
+                                        @foreach (string fiscalQtrCode1 in Model.Category)
+                                        {
+                                            <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5; border-bottom-width: 1px;">@fiscalQtrCode1</th>
+                                            <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5; border-bottom-width: 1px;">@fiscalQtrCode1</th>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <th class="k-group-cell k-header" style="font-weight: bold; background-color: #f5f5f5;">ASC Partner</th>
+                                        @foreach (string fiscalQtrCode in Model.Category)
+                                        {
+                                            <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5;">Cases</th>
+                                            <th class="k-group-cell k-header wrapText" style="font-weight: bold; background-color: #f5f5f5;">@ViewData["ColumnTitle"].ToString()</th>
+                                        }
+                                    </tr>
+                                </thead>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="k-grid-content" style="height: 180px;">
+                        <table role="grid">
+                            <colgroup>
+                                <col style="width: 17%;">
+                                @foreach (string fiscalQtrCode in Model.Category)
+                                {
+                                    <col style="width: 7%;">
+                                    <col style="width: 7%;">
+                                }
+                            </colgroup>
+                            <tbody role="rowgroup">
+                                @foreach (string partnerName in Model.PartnerList)
+                                {
+                                    <tr>
+                                        <td role="gridcell" class="wrapText" style="border-bottom: 1px solid #dadada;">@partnerName</td>
+                                        @foreach (string fiscalQtrCodeValue in Model.Category)
+                                        {
+
+                                            var nonComplianceAlert = Model.MetricsPartner.Where(l => l.Category.Equals(fiscalQtrCodeValue) && l.PartnerName.ToUpper().Equals(partnerName.ToUpper()))
+                                                                    .Select(l => l.NonComplianceAlert).FirstOrDefault();
+                                            if (!string.IsNullOrEmpty(nonComplianceAlert))
+                                            {
+                                                nonComplianceAlert = nonComplianceAlert.ToLower();
+                                            }
+                                            var backgroundColor = nonComplianceAlert == "true" ? "#FEFF03" : "#FFFFFF";
+                                            var allCaseValue = Model.MetricsPartner.Where(l => l.PartnerName.Equals(partnerName) && l.Category.Equals(fiscalQtrCodeValue)).Select(l => l.TotalCount).FirstOrDefault().ToString();
+                                            var percentageVal = Model.MetricsPartner.Where(l => l.PartnerName.Equals(partnerName) && l.Category.Equals(fiscalQtrCodeValue)).Select(l => l.PercentageTagged).FirstOrDefault(); 
+                                            <td role="gridcell" style="border-bottom: 1px solid #dadada;font-weight: bold; text-align: center; background-color: @backgroundColor;color: #000000;">
+                                                @allCaseValue
+                                            </td>
+                                            <td role="gridcell" style="font-weight: bold; text-align: center; border-bottom: 1px solid #dadada;background-color: @backgroundColor;color: #000000;">
+                                                @percentageVal%
+                                            </td>
+
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                     
+                            }
+                <br />
+                <div class="pull-right">
+                    <a class="k-button k-button-icontext" title="Export to CSV" data-link-type="export-csv-assets"
+                        href= "@ViewData["Exportfunction"].ToString()">
+                        Export to CSV
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+@*
+    
+    <script type="text/javascript">
+
+        $(".@ViewData["Id"].ToString()export-img").click(function () {
+
+            var chart = $("#@ViewData["Id"].ToString()LineChart").getKendoChart();
+            chart.exportImage().done(function (data) {
+                kendo.saveAs({
+                    dataURI: data,
+                    fileName: "@ViewData["Id"].ToString()".concat(".png"),
+                    proxyURL: "@Url.Action("Export_Save", "Chart_Api")"
+                });
+            });
+
+        });
+
+
+    </script>*@
+}

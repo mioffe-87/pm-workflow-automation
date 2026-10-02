@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="typeImports" targetNamespace="http://sd/llblgen/pro/typeImports.xsd" 
+		elementFormDefault="qualified" xmlns="http://sd/llblgen/pro/typeImports.xsd" 
+		xmlns:mstns="http://sd/llblgen/pro/typeImports.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="typeImports">
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="typeImport">
+					<xs:complexType>
+						<xs:attribute name="typeName" use="required"/>
+						<xs:attribute name="assemblyFile" use="required"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+        </xs:complexType>
+	</xs:element>
+</xs:schema>

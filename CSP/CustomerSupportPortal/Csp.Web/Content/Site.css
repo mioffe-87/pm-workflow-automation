@@ -1,0 +1,432 @@
+﻿/* General
+-----------------------------------------------------------*/
+
+label.required:after {
+	color: red;
+	content: ' *';
+	font-weight: bold;
+}
+
+label.fieldname {
+	font-weight: bold;
+}
+
+.greenHeader {
+	color: rgb(168, 196, 56);
+	display: block;
+	font-family: "bebas-neue", Georgia, sans-serif;
+	font-size: 40px;
+	font-weight: normal;
+	height: 44px;
+	line-height: 44.984375px;
+	margin: 10px 0 0 0;
+	text-rendering: optimizelegibility;
+}
+
+.blueHeader {
+	height: 35px;
+	line-height: 35.984375px;
+}
+
+.blueHeader,
+.blueTitle {
+	color: rgb(50, 106, 138);
+	display: block;
+	font-family: "bebas-neue", Georgia, sans-serif;
+	font-size: 27px;
+	font-weight: 300;
+	margin: 3px 0 0 0;
+	text-rendering: optimizelegibility;
+}
+
+.sameHeightRow {
+	overflow: hidden;
+}
+
+	.sameHeightRow > div[class*='span'],
+	.sameHeightCell {
+		margin-bottom: -99999px;
+		padding-bottom: 99999px;
+	}
+
+
+hr.boldBlueLine {
+	height: 2px;
+	color: rgb(122, 129, 140);
+	background: rgb(122, 129, 140);
+	width: 940px;
+	margin: 0;
+	border: none;
+}
+
+#background {
+	position: fixed;
+	width: 100%;
+	top: 0;
+	bottom: 0;
+	z-index: -1;
+}
+
+legend .csp-tooltip {
+	font-size: 14px;
+	cursor: pointer;
+	color: #555555;
+	vertical-align: middle;
+}
+
+.csp-tooltip {
+	font-size: 14px;
+	padding-left: 5px;
+	cursor: pointer;
+	color: #555555;
+	vertical-align: middle;
+}
+/* Header
+-----------------------------------------------------------*/
+
+#header {
+	height: 65px;
+	/*-webkit-box-shadow: 0 2px 20px #3c3b39;
+	-webkit-box-shadow: 0 2px 20px rgba(60, 59, 57, 0.8);
+	-moz-box-shadow: 0 2px 20px #3c3b39;
+	-moz-box-shadow: 0 2px 20px rgba(60, 59, 57, 0.8);
+	box-shadow: 0 2px 20px #3c3b39;
+	box-shadow: 0 2px 20px rgba(60, 59, 57, 0.8);*/
+    border-bottom: solid 1px black;
+	margin-bottom: 20px;
+	position: relative;
+	z-index: 101;
+	padding-top: 10px;
+}
+
+	#header .topright, #header .topright a {
+		padding-top: 1px;
+		height: 21px;
+		color: rgb(122, 130, 141);
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: 12px;
+	}
+
+		#header .topright ul {
+			list-style-type: none;
+			display: inline;
+			margin: 0 11px 0 0;
+			padding: 0;
+			float: right;
+		}
+
+			#header .topright ul li {
+				float: left;
+				border-left: 1px solid #7a828d;
+				padding-left: 6px;
+				padding-right: 6px;
+			}
+
+				#header .topright ul li:first-child {
+					border-left: none;
+				}
+
+
+#HeaderMenuDiv {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+#cssmenu ul,
+#cssmenu li,
+#cssmenu span,
+#cssmenu a {
+	margin: 0;
+	padding: 0;
+	position: relative;
+}
+
+#cssmenu {
+	height: 41px;
+}
+
+	#cssmenu:after,
+	#cssmenu ul:after {
+		content: '';
+		display: block;
+		clear: both;
+	}
+
+	#cssmenu a {
+		display: inline-block;
+		color: rgb(122, 130, 141);
+		font-family: "bebas-neue", Georgia, sans-serif;
+		font-size: 19px;
+		font-weight: normal;
+		line-height: 41px;
+		padding: 0 10px;
+		text-decoration: none;
+	}
+
+	#cssmenu ul {
+		list-style: none;
+	}
+
+	#cssmenu > ul {
+		float: left;
+	}
+
+		#cssmenu > ul > li {
+			float: left;
+		}
+
+			#cssmenu > ul > li:hover > a {
+				background-color: #B5D553;
+				color: white;
+			}
+
+			#cssmenu > ul > li ul a {
+				color: #333;
+			}
+
+	#cssmenu .has-sub {
+		z-index: 101;
+	}
+
+		#cssmenu .has-sub:hover > ul {
+			display: block;
+		}
+
+	#cssmenu > ul > li.has-sub > ul > li:first-child a {
+		padding-top: 14px;
+	}
+
+	#cssmenu .has-sub ul {
+		display: none;
+		position: absolute;
+		width: 200px;
+		top: 100%;
+		left: 0;
+	}
+
+		#cssmenu .has-sub ul li {
+			*margin-bottom: -1px;
+		}
+
+	#cssmenu > ul > li > ul:before {
+		content: '';
+		display: block;
+		width: 0;
+		height: 0;
+		position: absolute;
+		left: 40px;
+		top: 0;
+		border-left: 6px solid transparent;
+		border-right: 6px solid transparent;
+		border-top: 6px solid #B5D553;
+		margin-left: -6px;
+		z-index: 102;
+	}
+
+	#cssmenu > ul > li.has-sub > ul > li > a {
+		font-family: "bebas-neue", Georgia, sans-serif;
+		font-size: 19px;
+	}
+
+	#cssmenu .has-sub ul li a {
+		background: #3D3B3C;
+		color: white;
+		font-size: 14px;
+		line-height: inherit;
+		padding: 5px;
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		filter: none;
+		display: block;
+	}
+
+	#cssmenu .has-sub ul li:hover > a {
+		color: #B5D553;
+	}
+
+	#cssmenu .has-sub .has-sub:hover > ul {
+		display: block;
+	}
+
+	#cssmenu .has-sub .has-sub ul {
+		display: none;
+		position: absolute;
+		left: 100%;
+		top: 0;
+	}
+
+	#cssmenu .has-sub.show-left .has-sub ul {
+		left: -100%;
+	}
+
+	#cssmenu .has-sub.show-left ul {
+		left: auto;
+		right: 0;
+	}
+
+	#cssmenu > ul > li.has-sub.show-left > ul:before {
+		left: auto;
+		right: 40px;
+	}
+/* Footer
+-----------------------------------------------------------*/
+#footer {
+	background-color: rgb(32, 36, 44);
+	-webkit-box-shadow: 0 -2px 20px #3c3b39;
+	-webkit-box-shadow: 0 -2px 20px rgba(60, 59, 57, 0.8);
+	-moz-box-shadow: 0 -2px 20px #3c3b39;
+	-moz-box-shadow: 0 -2px 20px rgba(60, 59, 57, 0.8);
+	box-shadow: 0 -2px 20px #3c3b39;
+	box-shadow: 0 -2px 20px rgba(60, 59, 57, 0.8);
+}
+
+#FooterPhone {
+	color: #B5D553;
+	font-family: "bebas-neue", "Bebas Neue", "Georgia", sans-serif;
+	font-weight: normal;
+	font-size: 18px;
+	line-height: 12px;
+	padding-top: 12px;
+	padding-left: 10px;
+}
+
+#footer ul li {
+	list-style-image: none;
+	list-style-type: none;
+	display: inline-block;
+	border-right: solid 1px rgb(163, 166, 170);
+	padding-left: 6px;
+	padding-right: 6px;
+	margin-top: 5px;
+}
+
+	#footer ul li a {
+		color: rgb(122, 130, 141);
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: 12px;
+		line-height: 19px;
+	}
+
+	#footer ul li:last-child {
+		border-right: none;
+	}
+
+#FooterCopyright {
+	color: rgb(163, 166, 170);
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	height: 20px;
+	line-height: 20px;
+	padding-top: 5px;
+	padding-right: 10px;
+}
+
+
+#footer, #push {
+	height: 35px;
+	clear: both;
+}
+
+/* Content
+-----------------------------------------------------------*/
+
+html, body, #stickyfootercontainer {
+	height: 100%;
+}
+
+#stickyfootercontainer {
+	width: 100%;
+}
+
+#wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -35px;
+}
+
+#breadcrumbs {
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+/* Styles for basic forms
+-----------------------------------------------------------*/
+fieldset {
+	border: 1px solid #ddd;
+	padding: 0 1.4em 1.4em 1.4em;
+	margin: 0 0 1.5em 0;
+	margin-top: 10px !important;
+}
+
+.sameHeightRow,
+.noShading {
+	background: white;
+}
+
+	.sameHeightRow > div[class*='span'],
+	.sameHeightCell,
+	.shading {
+		background: rgb(255,255,255); /* Old browsers */
+		background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(245,245,245,1))); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(245,245,245,1) 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(245,245,245,1) 100%); /* Opera 11.10+ */
+		background: -ms-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(245,245,245,1) 100%); /* IE10+ */
+		background: linear-gradient(to right, rgba(255,255,255,1) 0%,rgba(245,245,245,1) 100%); /* W3C */
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f5f5f5',GradientType=1 ); /* IE6-9 */
+	}
+
+fieldset legend, .blackHeader {
+	color: rgb(65, 64, 66);
+	font-size: 27px;
+	font-weight: normal;
+	height: 35px;
+	line-height: 35.984375px;
+	margin: 10px 0 0 0;
+	text-rendering: optimizelegibility;
+}
+
+textarea {
+	min-height: 75px;
+}
+
+.editor-label {
+	margin: 1em 0 0 0;
+}
+
+.editor-field {
+	margin: 0.5em 0 0 0;
+}
+
+
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error {
+	color: #f00 !important;
+}
+
+.field-validation-valid {
+	display: none;
+}
+
+.input-validation-error {
+	outline: 1px solid #f00 !important;
+	background-color: #fee !important;
+}
+
+.validation-summary-errors {
+	font-weight: bold !important;
+	color: #f00 !important;
+}
+
+.validation-summary-valid {
+	display: none;
+}
+
+.announcement {
+	font-weight:bold;
+	color:red;
+	white-space:normal; 
+	font-size:12px;
+}

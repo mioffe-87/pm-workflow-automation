@@ -1,0 +1,86 @@
+﻿@using System.Configuration
+@using BotDetect.Web.UI.Mvc
+@model Csp.Web.DataTransferObjects.UserAccountVerificationDto
+@{
+    var actionHelper = Model.ActionHelper;
+    var registrationCaptcha = CaptchaHelper.GetLoginCaptcha();
+    var sitekey = ConfigurationManager.AppSettings["recaptchaPublickey"].ToString();
+}
+@* add BotDetect header includes *@
+@section BotDetectStyles {
+    <link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl" rel="stylesheet" type="text/css" />
+}
+<script>
+    $.validator.unobtrusive.parse("#CreateSupportAccountForm");
+    $.validator.setDefaults({
+        onkeyup: false,
+        ignore: ""
+    });
+    $(function () {
+        $('#Email').focus();
+    });
+
+
+    function callValidation(){
+        $('#captchaValidation').text("");
+
+        if (grecaptcha.getResponse().length === 0) {
+            $('#captchaValidation').text("Captcha validation failed.Please try again");
+          return false;
+      }
+       
+        return true;
+        
+    }
+
+
+
+</script>
+<div class="content">
+    <div class="container" style="width: 850px;">
+
+        <div class="page-title">
+            <span id="Title" class="contextTitle">Create a New Support Account</span>
+        </div>
+        <div class="horizontal-form-element" style="width: 520px;" id="containerCreateSupportAccount">
+            @using (Html.BeginForm(actionHelper.PreRegister, ControllerFields.UserAccountController, FormMethod.Post, new { id = "CreateSupportAccountForm", name = "CreateSupportAccountForm", autocomplete = "off" })) {
+                @Html.AntiForgeryToken()
+                Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+                if (Model.ShowPleaseUseBizAddressWarning)
+                 {
+                     <div style="white-space: normal;" class="alert alert-warning">Please register using your business email address.  Public email domains are not allowed for Support Portal registrations</div>
+            }
+                <div class="fieldset">
+                    <fieldset>
+                        <legend>Account Email</legend>
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("Your Email Address:")
+                            </div>
+                            <div class="csp-field">
+                                @Html.ValidationMessageFor(model => model.Email, null, new { style = "width:220px;" })
+                                @Html.TextBoxFor(model => model.Email, new { maxlength = 201 })
+                                <span class="csp-required">*</span>
+                            </div>
+                        </div>
+                        <br />
+                        <div>
+                            <div class="csp-label">
+                                @Html.Label("")
+                            </div>
+                            <div class="csp-field">
+                                <label id="captchaValidation" class="Csp-error">@ViewBag.CaptchaError</label>
+                                <div class="g-recaptcha" data-sitekey="@sitekey" data-theme="clean"></div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    @Html.HiddenFor(x => x.SelfRegistrationCode)
+                </div>
+            <div class="csp-submit-container" style="width:88%">
+                <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+                <input type="submit" value="Submit" class="k-button csp-submit" onclick="return callValidation()"/>
+            </div>
+            }
+        </div>
+    </div>
+</div>

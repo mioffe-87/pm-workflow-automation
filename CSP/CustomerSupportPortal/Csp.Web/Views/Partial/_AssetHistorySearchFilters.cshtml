@@ -1,0 +1,173 @@
+﻿@using Csp.Api.Model;
+@model Csp.Api.Model.AssetHistorySearchModel
+@{
+    var assetHistoryFilter = "AssetHistoryFilter";
+}
+<style>
+    .asset-history-search-filters {
+        display: table;
+        border-radius: 0px;
+        vertical-align: middle;
+        line-height: 30px;
+    }
+
+    .asset-history-control-group {
+        padding-left: 10px;
+    }
+
+    .radiobuttonlist {
+        margin-right: 20px;
+    }
+
+    .radiobuttonlist input[type="radio"] { 
+        margin: 0px;
+    }
+
+    .asset-history-filterby {
+        display: inline-block;
+    }
+
+    .asset-history-filterby-code, .asset-history-filterby-daterange {
+        display: inline-block;
+        padding-left: 5px;
+    }
+
+    .asset-history-filterby-daterange {
+        display: inline-block;
+        padding-left: 5px;
+        margin-left: 8px;
+    }
+
+    .grid-header {
+        height: 100%;
+    }
+
+    .asset-history__radio-label {
+        display: flex;
+        align-items: center;
+    }
+    .asset-history__radio-label > input[type='radio'] {
+        margin-right: 6px;
+    }
+
+    .asset-history-section-code {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .asset-history-section-code input {
+        margin: 0;
+    }
+
+    .control-group.asset-history-control-group button {
+        margin-bottom:0;
+    }
+
+    #basicSearchOptions .row > div {
+        display: flex;
+        align-items: center;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input[name="@assetHistoryFilter"]').change(OnAssetHistoryFilterTypeChange);
+
+        ToggleAssetHistoryFilters('@AssetHistoryFilterTypes.Code');
+    });
+
+    function OnAssetHistoryFilterTypeChange() {
+        var filterType = $(this).val();
+        
+        ToggleAssetHistoryFilters(filterType);
+    }
+
+    function ToggleAssetHistoryFilters(filterType) {
+        if (filterType === "Code") {
+            $('.asset-history-section-daterange').hide();
+            $('.asset-history-section-code').show();
+
+            $('#StartDate').val('');
+            $('#EndDate').val('');
+        } else {
+            $('.asset-history-section-daterange').show();
+            $('.asset-history-section-code').hide();
+
+            $('#Keyword').val('');
+        }
+    }
+
+    function ResetSearchFilters() {
+        var filterType = $('input[name="@assetHistoryFilter"]:checked').val();
+
+        if (filterType == "Code") {
+            $('#Keyword').val('');
+        }
+        else {
+            $('#StartDate').val('');
+            $('#EndDate').val('');
+        }
+    }
+
+    function OnSearchKeyPress(e) {
+        if (e.keyCode == 13 || e.which == 13) {
+            SearchAssetHistory();
+            return false;
+        }
+
+        return true;
+    }
+</script>
+<form name="DashboardForm">
+<div class="grid-header">
+    <div class="asset-history-search-filters">
+        <div class="grid-left">
+            <div class="radiobuttonlist">
+                <div class="asset-history-filterby">Filter By:&nbsp;</div>
+                <div class="asset-history-filterby-code"> <label class="asset-history__radio-label">@Html.RadioButtonFor(m => m.AssetHistoryFilterType, AssetHistoryFilterTypes.Code, new {@Name = assetHistoryFilter}) Serial Number/Authorization Code</label></div>
+                <div class="asset-history-filterby-daterange"><label class="asset-history__radio-label">@Html.RadioButtonFor(m => m.AssetHistoryFilterType, AssetHistoryFilterTypes.DateRange, new {@Name = assetHistoryFilter}) Date Range</label></div>
+            </div>
+            <div class="error">
+                @Html.ValidationSummary(null, new { id = "Error" })
+            </div>
+            <div id="basicSearchOptions">
+                <div class="row">
+                    <div>
+                        <span class="control-group">
+                            <span class="asset-history-section-code">
+                                Serial Number/Authorization Code:
+                                @Html.TextBoxFor(m => m.Keyword, new { @onkeypress = "return OnSearchKeyPress();" })
+                            </span>
+                            <span class="asset-history-section-daterange">
+                                Date Range:
+                                <span class="controls">
+                                    <span>
+                                        @(Html.Kendo().DatePickerFor(model => model.StartDate)
+                                            .ParseFormats(new[] { "MM/dd/yyyy" })
+                                            .HtmlAttributes(new { 
+                                                @onkeypress = "return OnSearchKeyPress();",
+                                                @class = "grid-filter__date-input"
+                                             })
+                                        )
+                                        to
+                                        @(Html.Kendo().DatePickerFor(model => model.EndDate)
+                                            .ParseFormats(new[] { "MM/dd/yyyy" })
+                                            .HtmlAttributes(new { 
+                                                @onkeypress = "return OnSearchKeyPress();",
+                                                @class = "grid-filter__date-input"
+                                            })
+                                        )
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                        <span class="control-group asset-history-control-group">
+                            <button type="button" class="k-button" id="btnSearch" onclick="SearchAssetHistory();">Search</button>&nbsp;
+                            <button type="button" class="k-button" id="btnClear" onclick="ResetSearchFilters();">Clear</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>

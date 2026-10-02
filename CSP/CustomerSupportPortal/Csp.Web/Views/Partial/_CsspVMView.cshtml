@@ -1,0 +1,296 @@
+﻿@using Csp.Api.HelperClasses
+@using Csp.Api.Model
+@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.CsspVmDto
+
+<script>
+    var vmProvisioning = {
+
+        makereadonly: function() {
+            $("#registerVM").css(
+            {
+                'opacity': '.5',
+                'pointer-events': 'none',
+                'cursor': 'default'
+            });
+            $("#generateKeys").css(
+            {
+                'opacity': '.5',
+                'pointer-events': 'none',
+                'cursor': 'default'
+            });
+        },
+
+        hidevmregistration: function() {
+            $(".k-grid-RegisterVM").hide();
+        },
+
+        hidegeneratekeys: function () {
+            $(".k-grid-GenerateKeys").hide();
+        },
+
+        hideprelicenseDevices: function () {
+            $(".k-grid-PreLicensedDevices").hide();
+        },
+
+        getSearchParams: function () {
+            var params = SetAntiForgery();
+            params.authCode = $('#FindAuthCode').val();
+            return params;
+        },
+
+        RegisterVm: function () {
+             @{
+                if (!Model.HasCsspAccess)
+                {
+                    <text>return false;</text>
+                }
+            }
+            var direction = '/Cssp/RegisterVm';
+            var selectedAuthCode = $('input[name=CsspVM]:checked').val();
+            if (selectedAuthCode != undefined) {
+                var window = $('#@UniqueId.RegisterVmWindow').data("kendoWindow");
+                    window.refresh(direction + '?authCode=' + selectedAuthCode);
+                    window.setOptions({
+                        minHeight: 200
+                    });
+                    window.open();
+                    window.center();
+            }
+        },
+
+        GenerateKeys: function() {
+            @{
+                if (!Model.CanGeneratePrelicenseKeys)
+                {
+                    <text>return false;</text>
+                }
+            }
+            var direction = '/Cssp/CreatePrelicenseKeys';
+            var selectedAuthCode = $('input[name=CsspVM]:checked').val();
+            if (selectedAuthCode != undefined) {
+                var window = $('#@UniqueId.GeneratePreLicenseKeysWindow').data("kendoWindow");
+                window.refresh(direction + '?authCode=' + selectedAuthCode);
+                window.setOptions({
+                    minHeight: 200
+                });
+                window.open();
+                window.center();
+            }
+        },
+
+        ProvisionedDevices: function () {
+            var iPosOfProvisionedDevices = 3;
+             @{
+                 if (Model.CanGeneratePrelicenseKeys)
+                 {
+                     <text>iPosOfProvisionedDevices = 4;</text>
+                 }
+             }
+            var selectedAuthCode = $('input[name=CsspVM]:checked').val();
+            console.log(selectedAuthCode);
+           
+            $($("#CsspTabStrip").data("kendoTabStrip").contentElement(iPosOfProvisionedDevices)).html("");
+            $("#hdnSelectedCsspAuthCode").val(selectedAuthCode);
+            $("#CsspTabStrip").data("kendoTabStrip").select(iPosOfProvisionedDevices);
+        },
+
+        PreLicensedDevices: function() {
+            var selectedAuthCode = $('input[name=CsspVM]:checked').val();
+            console.log(selectedAuthCode);
+            $($("#CsspTabStrip").data("kendoTabStrip").contentElement(3)).html("");
+            $("#hdnSelectedPreLicenseCsspAuthCode").val(selectedAuthCode);
+            $("#CsspTabStrip").data("kendoTabStrip").select(3);
+        },
+
+        onRegisterVmWindowOpen: function () {
+            SupportPortal.OnWindowOpen('@UniqueId.RegisterVmWindow');
+        },
+
+        onRegisterVmWindowClose: function () {
+            SupportPortal.OnWindowClose("@UniqueId.CsspVMAuthCodesGrid");
+        },
+
+        onGeneratePreLicenseKeysWindowOpen: function () {
+            SupportPortal.OnWindowOpen('@UniqueId.GeneratePreLicenseKeysWindow');
+        },
+
+        onGeneratePreLicenseKeysWindowClose: function () {
+            SupportPortal.OnWindowClose("@UniqueId.CsspVMAuthCodesGrid");
+        },
+
+        Download: function () {
+            var downloadsWindow = $('#@UniqueId.DownloadsWindow').data('kendoWindow');
+            downloadsWindow.refresh('/updates/softwareupdates?id=@(Model.SupportAccountId)&vmDevices=true&csspVms=true');
+            downloadsWindow.setOptions({
+                minHeight: 200
+            });
+            downloadsWindow.open();
+            downloadsWindow.center();
+        },
+
+        onDataBound: function (e) {
+            $(".k-grid-RegisterVM").find("span").addClass("k-icon k-add");
+            $(".k-grid-GenerateKeys").find("span").addClass("k-icon k-i-custom");
+            $(".k-grid-DownloadSoftware").find("span").addClass("k-icon k-i-seek-s");
+            $(".k-grid-PreLicensedDevices").find("span").addClass("k-icon k-i-unlock");
+            $(".k-grid-EnduserDevices").find("span").addClass("k-icon k-i-arrow-e");
+        },
+
+        onDownloadsWindowOpen: function () {
+            SupportPortal.OnWindowOpen('@UniqueId.DownloadsWindow');
+        },
+
+        onWindowClose: function () {
+            SupportPortal.OnWindowClose("@UniqueId.CsspVMAuthCodesGrid");
+        }
+    }
+
+    $(function() {
+        @{
+            if (!Model.HasCsspAccess)
+            {
+                <text>vmProvisioning.makereadonly();</text>
+            }
+            if (Model.CanGeneratePrelicenseKeys)
+            {
+                <text>vmProvisioning.hidevmregistration();</text>
+            }
+            else
+            {
+                <text>vmProvisioning.hidegeneratekeys();</text>
+                <text>vmProvisioning.hideprelicenseDevices();</text>
+            }
+        }
+        $('#@UniqueId.CsspFindVm').click(function () {
+            $('#@UniqueId.CsspVMAuthCodesGrid').data('kendoGrid').dataSource.read();
+        });
+    })
+</script>
+
+<div>
+    @(
+ Html.Kendo().Window()
+        .Name((string)@UniqueId.DownloadsWindow)
+        .Visible(false)
+        .Events(events => events
+            .Open("vmProvisioning.onDownloadsWindowOpen")
+            .Close("vmProvisioning.onWindowClose"))
+        .Modal(true)
+        .Width(1080)
+        .Visible(false)
+        .Draggable()
+        .Title("Downloads")
+          )
+</div>
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)@UniqueId.RegisterVmWindow)
+          .Visible(false)
+          .Width(550)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+                                .Open("vmProvisioning.onRegisterVmWindowOpen")
+                                .Close("vmProvisioning.onRegisterVmWindowClose"))
+          .Title("Register Virtual Machine")
+          )
+</div>
+<div>
+    @(Html.Kendo().Window()
+          .Name((string)@UniqueId.GeneratePreLicenseKeysWindow)
+          .Visible(false)
+          .Width(650)
+          .Modal(true)
+          .Draggable()
+          .Events(events => events
+                                .Open("vmProvisioning.onGeneratePreLicenseKeysWindowOpen")
+                                .Close("vmProvisioning.onGeneratePreLicenseKeysWindowClose"))
+          .Title("Generate License Keys")
+          )
+</div>
+<div class="grid-header">
+    <div class="grid-right">
+        <div class="grid-filter">
+            @Html.HiddenFor(y => y.SupportAccountId, new { id = "hdnCsspSupportAccountId", name = "hdnCsspSupportAccountId" })
+            @Html.Label("FindAuthCode", "Auth Code:")
+        </div>
+        <div class="grid-filter">
+            @Html.Hidden("hdnSelectedCsspAuthCode")
+            @Html.Hidden("hdnSelectedPreLicenseCsspAuthCode")
+            @Html.TextBox("FindAuthCode", Model.DefaultDeviceCode)
+            <input type="button" value="Search" id="@UniqueId.CsspFindVm" class="k-button"/>
+        </div>
+    </div>
+</div>
+
+<div>
+
+    @{
+        var maxPageSizeForms = Convert.ToInt32(Model.DataParameters.TotalRecordCount);
+        var pageSizeOptionsForms = new List<int> { 50, 100 };
+        if (maxPageSizeForms > pageSizeOptionsForms.Max())
+        {
+            pageSizeOptionsForms.Add(maxPageSizeForms);
+        }
+    }
+
+    @(Html.Kendo().Grid(Model.AvailableVms)
+          .Name((string)UniqueId.CsspVMAuthCodesGrid)
+          .Columns(cols =>
+          {
+              cols.Bound(x => x.AuthorizationCode).ClientTemplate(@"<input type=""radio"" id=""rdbCsspVM#=AuthorizationCode#""  value=""#=AuthorizationCode#"" name=""CsspVM""  />").Sortable(false).Title("").Width("2%");
+              cols.Bound(x => x.AuthorizationCode).Title("Authorization Code").Width("10%");
+              cols.Bound(x => x.DisplayQuantity).Title("Quantity of VM Provisioned").Sortable(false).Width("10%");
+              cols.Bound(x => x.ProductSku).Title("Product SKU").Width("20%");
+              cols.Bound(x => x.Description).Title("Part Description").Width("63%");              
+          })
+          .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+          .Sortable()
+          .Events(e => e.DataBound("vmProvisioning.onDataBound"))
+          .ToolBar(toolBar =>
+                  {
+                      toolBar.Custom()
+                          .Name("RegisterVM")
+                           .Text("Register VM")
+                            .HtmlAttributes(new { id = "registerVM", style = "color: #999999;text-decoration: none;pointer-events: none;cursor: default;" })
+                            // .Url("javascript: vmProvisioning.RegisterVm();")
+                            ;
+                      toolBar.Custom()
+                          .Name("GenerateKeys")
+                           .Text("Generate LicenseKeys")
+                            .HtmlAttributes(new { id = "generateKeys" })
+                            .Url("javascript: vmProvisioning.GenerateKeys();");
+                      toolBar.Custom()
+                          .Name("PreLicensedDevices")
+                          .Text("Pre-License Devices")
+                           .HtmlAttributes(new { id = "preLicensedDevices" })
+                           .Url("javascript: vmProvisioning.PreLicensedDevices();");
+                      toolBar.Custom()
+                          .Name("EnduserDevices")
+                          .Text("Provisioned Devices")
+                           .HtmlAttributes(new { id = "provisionedDevices" })
+                           .Url("javascript: vmProvisioning.ProvisionedDevices();");
+                      toolBar.Custom()
+                          .Name("DownloadSoftware")
+                          .Text("Download Software")
+                           .HtmlAttributes(new { id = "downloadVMSoftware" })
+                           .Url("javascript: vmProvisioning.Download();");
+                  })
+          .DataSource(dataSource => dataSource
+                                        .Ajax()
+                                        .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                                .Model(model =>
+                                                {
+                                                    model.Id(p => p.AuthorizationCode);
+                                                    model.Field(f => f.VmUseCount).Editable(false);
+                                                    model.Field(f => f.Description).Editable(false);
+                                                    model.Field(f => f.VmTotalCount).Editable(false);
+                                                    model.Field(f => f.IsNsx).Editable(false);
+                                                    model.Field(f => f.IsPerpetualNsx).Editable(false);
+                                                    model.Field(f => f.AllowGeneratingPanorama).Editable(false);
+                                                })
+                                        .PageSize(Model.DataParameters.PaginationCount)
+                                        .Read(read => read.Action("SearchAvailable", "Cssp").Data("vmProvisioning.getSearchParams"))
+          ))
+</div>

@@ -1,0 +1,139 @@
+﻿@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.CsspProductSelectorDto
+<div id="divProductSelector">
+    <div>&nbsp;</div>
+    <div class="">
+        <div class="grid-filter">
+            <span class="filter_by">Filter By: <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 29);"></i></span></span>
+            @(Html.Kendo().DropDownList()
+                  .Name("ddCsspModel")
+                  .HtmlAttributes(new
+                  {
+                      Class = "k-dropdown k-dropdown-widthinherit",
+                      style = "margin: 0.25em 0.25em;width: 150px;"
+                  })
+                  .DataTextField("Model")
+                  .DataValueField("CsspModelId")
+                  .Events(e => e.Change("productSelector.reloadGrid"))
+                  .BindTo(Model.CsspModels)
+                  )
+            @(Html.Kendo().DropDownList()
+                  .Name("ddCsspTerm")
+                  .HtmlAttributes(new
+                  {
+                      Class = "k-dropdown k-dropdown-widthinherit",
+                      style = "margin: 0.25em 0.25em;width: 150px;"
+                  })
+                  .DataTextField("Term")
+                  .DataValueField("CsspTermId")
+                  .Events(e => e.Change("productSelector.reloadGrid"))
+                  .BindTo(Model.CsspTerms)
+                  )
+            @(Html.Kendo().DropDownList()
+                  .Name("ddCsspSupportType")
+                  .HtmlAttributes(new
+                  {
+                      Class = "k-dropdown k-dropdown-widthinherit",
+                      style = "margin: 0.25em 0.25em;width: 150px;"
+                  })
+                  .DataTextField("SupportType")
+                  .DataValueField("CsspSupportTypeId")
+                  .Events(e => e.Change("productSelector.reloadGrid"))
+                  .BindTo(Model.CsspSupportTypes)
+                  )
+            @(Html.Kendo().DropDownList()
+                  .Name("ddCsspBundle")
+                  .HtmlAttributes(new
+                  {
+                      Class = "k-dropdown k-dropdown-widthinherit",
+                      style = "margin: 0.25em 0.25em;width: 150px;"
+                  })
+                  .DataTextField("Text")
+                  .DataValueField("Value")
+                  .Events(e => e.Change("productSelector.reloadGrid"))
+                  .BindTo(new List<SelectListItem>()
+                  {
+                      new SelectListItem()
+                      {
+                          Text = "- Select Bundle-",
+                          Value = "0"
+                      },
+                      new SelectListItem()
+                      {
+                          Text = "Basic",
+                          Value = "3"
+                      },
+                      new SelectListItem()
+                      {
+                          Text = "Bundle 1",
+                          Value = "1"
+                      },
+                      new SelectListItem()
+                      {
+                          Text = "Bundle 2",
+                          Value = "2"
+                      }
+                  })
+                  .Value("0")
+                  )
+        </div>
+        <div class="grid-header" id="divAddToCartSection" style="padding-top: 20px; display: none">
+            <div class="grid-left">
+                <button type="button" class="k-button" id="btnAddToCart" onclick="shoppingCart.AddItems()"><span class="k-icon k-add" style="margin-bottom: 2px;"></span> Add To Cart</button>
+            </div>
+            <div class="grid-right" style="padding-top: 10px; padding-right: 10px">
+                <span>You have selected </span><span id="countOfSkusSelected" style="font-size: large; color: #326a8a !important"></span><span> product(s)</span>
+            </div>
+        </div>
+    </div>
+    <div>&nbsp;</div>
+    @{
+        var maxPageSizeForms = (Model != null && Model.CsspSkus != null) ? Convert.ToInt32(Model.CsspSkus.ToList().Count) : 0;
+        var pageSizeOptionsForms = new List<int> {50,100, 500};
+        if (maxPageSizeForms > pageSizeOptionsForms.Max())
+        {
+            pageSizeOptionsForms.Add(maxPageSizeForms);
+        }
+
+    }
+    @(Html.Kendo().Grid(Model.CsspSkus)
+          .Name("CsspProductSearchResultsGrid")
+          .AutoBind(false)
+          .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+          .Events(events => events.DataBound("productSelector.onGridDataBound"))
+          .Resizable(resize => resize.Columns(true))
+          .Scrollable()
+          .HtmlAttributes(new { style = "height: 450px" })
+          .Columns(cols =>
+          {
+              cols.Bound(x => x.CsspSkuId).ClientTemplate(
+                  @"
+                         <input type=""checkbox"" id=""chkSku#=CsspSkuId#"" PartNumber=""#=PartNumber#"" SkuId=""#=CsspSkuId#"" name=""chkSku#=CsspSkuId#"" ; onClick=""productSelector.toggleProductSelection(this);"" />").HeaderTemplate(@"<input type=""checkbox"" style=""margin-top: 0px !important;""  id=""chkSelectAllSkus"" onClick=""productSelector.toggleProductsSelection(this);"">&nbsp;<span>Select All</span>&nbsp;").Sortable(false).Title("Select").Width("10%");
+              cols.Bound(x => x.PartNumber).Title("Product SKU").Width("20%");
+              cols.Bound(x => x.Description).Title("Description").Width("30%");
+              cols.Bound(x => x.Model).Title("Model").Width("10%");
+              cols.Bound(x => x.SupportType).Title("Support").Width("10%");
+              cols.Bound(x => x.Term).Title("Term").Width("10%");
+          })
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+              .Model(model =>
+              {
+                  model.Id(p => p.CsspSkuId);
+                  model.Field(f => f.PartNumber).Editable(false);
+                  model.Field(f => f.Description).Editable(false);
+                  model.Field(f => f.Model).Editable(false);
+                  model.Field(f => f.Description).Editable(false);
+                  model.Field(f => f.SupportType).Editable(false);
+                  model.Field(f => f.Term).Editable(false);                  
+              })
+              .PageSize(Model.DataParameters.PaginationCount)
+              .Read(read => read.Action("SearchProducts", "Cssp").Data("productSelector.getSearchParams"))
+          ))
+</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+ <div class="csp-submit-container">
+            <button type="button" class="k-button" style="margin-top: 5px; margin-right: 5px;" onclick="productSelector.CloseMe();" ><span class="k-icon k-i-tick" style="margin-bottom: 2px;"> </span> Finished</button>
+</div>

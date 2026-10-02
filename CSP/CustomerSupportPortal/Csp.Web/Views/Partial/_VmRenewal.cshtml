@@ -1,0 +1,641 @@
+﻿@using System.Text.RegularExpressions
+@using Csp.Api.Model
+@model VmRenewalModel
+
+<style>
+    .lableLeftfloat {
+        width: 50px;
+        height: 10px;
+        text-align: right;
+        float: left;
+    }
+    .floatleft {
+        float: left;
+    }
+    .middlefloat {
+        float: left;
+        margin-left: 95px;
+    }
+    .rightfloat {
+        float: left;
+        margin-left: 95px;
+    }
+    .divinput {
+        -moz-appearance: textfield;
+        -webkit-appearance: textfield;
+        background-color: white;
+        background-color: -moz-field;
+        border: 1px solid darkgray;
+        box-shadow: 1px 1px 1px 0 lightgray inset;
+        font: -moz-field;
+        font: -webkit-small-control;
+        margin-top: 5px;
+        margin-left: 5px;
+        padding: 2px 3px;
+        width: 60px;
+        height: 15px;
+        float: left;
+    }
+    .unprovisiontop {
+        margin-top: 4px;
+    }
+    .diveditbox {
+        width: 65px;
+        height: 15px;
+        float: left;
+        margin-top: 5px;
+        margin-left: 6px;
+    }
+    .magintopadjust {
+        margin-top: -8px;
+        margin-bottom: -6px;
+    }
+    .k-grid-content {
+        overflow-x: scroll;
+    }
+</style>
+
+@{
+    var selectAll = Model.SelectAll ? "1" : "0";
+    var showDowngrade = true;
+    var lockUi = Model.LockUi;
+    var hasPendingRenewals = Model.HasPendingRenewals;
+    var re = new Regex("^PAN-VM-((1000-HV)|(.+-(LAB|NFR)))");
+    if (re.IsMatch(Model.PartNumber)) {
+        showDowngrade = false;
+    }
+    var unprovisioned = Model.TotalQuantity - Model.ProvisionedQuantity;
+    var unprovisionedRenewalModel = Model.UnprovisionedInfo;
+    var unprovisionedRenewalQuantity = unprovisioned;
+    var unprovisionedDowngradeQuantity = 0;
+    var unprovisionedForfeitQuantity = 0;
+    if (unprovisionedRenewalModel != null)
+    {
+        unprovisionedRenewalQuantity = unprovisionedRenewalModel.RenewalQuantity;
+        unprovisionedDowngradeQuantity = unprovisionedRenewalModel.DowngradeQuantity;
+        unprovisionedForfeitQuantity = unprovisionedRenewalModel.ForfeitQuantity;
+    }
+}
+<input type="hidden" id="authCode" value="@Model.AuthCode" />
+<input type="hidden" id="quoteNumber" value="@Model.LatestQuoteNumber"/>
+<input type="hidden" id="selectAll" value="@selectAll"/>
+@Html.AntiForgeryToken()
+
+<script type="text/javascript">
+    //initialization
+    var g_selectedRenewal = 0, g_selectedDowngrade = 0, g_selectedForfeit = 0;
+    $(function () {
+        var unprovisionedNum = parseInt("@unprovisioned");
+        if (unprovisionedNum > 0) {
+            setUnprovisionedQuantities('@unprovisionedRenewalQuantity', '@unprovisionedDowngradeQuantity', '@unprovisionedForfeitQuantity');
+            $('#unprovisionedsettings').show();
+        } else {
+            $('#unprovisionedsettings').hide();
+        }
+        var showDowngrade = '@showDowngrade';
+        if (showDowngrade !== 'True') {
+            $('#unprovisionedDowngrade').hide();
+            $('#hiddenDiv').show();
+        }
+        //disable Save button
+        var lockUi = ('@lockUi' === 'True');
+        if (lockUi) {
+            $('[type=checkbox]').prop("disabled", true);
+            $('.divinput').removeAttr("contenteditable");
+            $('#@UniqueId.VmRenewalGrid').prop("disabled", true);
+            $('#saveBtn').prop("disabled", true);
+            $('#regularMsg').hide();
+        } else {
+            $('#uilockMsg').hide();
+        }
+    });
+
+    //renew all checkbox action
+    function checkAllRadios(radioBoxClassName) {
+        $('.' + radioBoxClassName).each(function (idx, item) {
+            var rowCheckbox = $(item).closest('tr').find("." + radioBoxClassName);
+            if (rowCheckbox != null) {
+                $(rowCheckbox).attr("checked", true);
+                if (checked) {
+                    radioBtnsInterlock(item, radioBoxClassName);
+                }
+            }
+        });
+    }
+
+    //renew all checkbox is clicked
+    function onRenewAllClicked(e) {
+        $('#renewalDataDirty').val('1');
+        var checked = e.checked;
+        var showDowngrade = '@showDowngrade';
+
+        var items = $('#@UniqueId.VmRenewalGrid').data("kendoGrid").dataSource.data();
+        if (checked) {
+            checkAllRadios('selectOneItem');
+            $('#checkAllForfeit').attr("checked", false);
+            $('#checkAllDowngrade').attr("checked", false);
+            g_selectedRenewal = items.length;
+            g_selectedDowngrade = 0;
+            g_selectedForfeit = 0;
+            setQuantities();
+        } else {
+            if (showDowngrade === 'True') {
+                $('#checkAllDowngrade').attr("checked", true);
+                $('#checkAllForfeit').attr("checked", false);
+                checkAllRadios('downgradeItem');
+                g_selectedRenewal = 0;
+                g_selectedDowngrade = items.length;
+                g_selectedForfeit = 0;
+                setQuantities();
+            }
+            else
+            {
+                $('#checkAllForfeit').attr("checked", true);
+                $('#checkAllDowngrade').attr("checked", false);
+                checkAllRadios('forefeitItem');
+                g_selectedRenewal = 0;
+                g_selectedDowngrade = 0;
+                g_selectedForfeit = items.length;
+                setQuantities();
+            }
+        }
+    };
+
+    //downgrade all checkbox is clicked
+    function onDowngradeAllClicked(e) {
+        $('#renewalDataDirty').val('1');
+        var checked = e.checked;
+
+        var items = $('#@UniqueId.VmRenewalGrid').data("kendoGrid").dataSource.data();
+        if (checked) {
+            checkAllRadios('downgradeItem');
+            $('#checkAllForfeit').attr("checked", false);
+            $('#checkAllRenew').attr("checked", false);
+            g_selectedRenewal = 0;
+            g_selectedDowngrade = items.length;
+            g_selectedForfeit = 0;
+            setQuantities();
+        } else {
+            $('#checkAllForfeit').attr("checked", true);
+            $('#checkAllRenew').attr("checked", false);
+            checkAllRadios('forefeitItem');
+            g_selectedRenewal = 0;
+            g_selectedDowngrade = 0;
+            g_selectedForfeit = items.length;
+            setQuantities();
+        }
+    };
+
+    //forfeit all checkbox is clicked
+    function onForfeitAllClicked(e) {
+        $('#renewalDataDirty').val('1');
+        var checked = e.checked;
+
+        var items = $('#@UniqueId.VmRenewalGrid').data("kendoGrid").dataSource.data();
+        if (checked) {
+            checkAllRadios('forefeitItem');
+            $('#checkAllDowngrade').attr("checked", false);
+            $('#checkAllRenew').attr("checked", false);
+            g_selectedRenewal = 0;
+            g_selectedDowngrade = 0;
+            g_selectedForfeit = items.length;
+            setQuantities();
+        } else {
+            $('#checkAllRenew').attr("checked", true);
+            $('#checkAllDowngrade').attr("checked", false);
+            checkAllRadios('selectOneItem');
+            g_selectedRenewal = items.length;
+            g_selectedDowngrade = 0;
+            g_selectedForfeit = 0;
+            setQuantities();
+        }
+    };
+
+    //Data grip data binging event handling
+    function onDataBinding() {
+        $('#renewalDataDirty').val('0');
+        var quoteNumber = $('#quoteNumber').val();
+        var grid = $('#@UniqueId.VmRenewalGrid').data("kendoGrid");
+        var items = grid.dataSource.data();
+        if (quoteNumber == null || quoteNumber.length === 0) {
+            var selectAll = ($('#selectAll').val() === "1");
+            //fresh quote: default to select all.
+            if (selectAll) {
+                $('#checkAllRenew').attr("checked", true);
+                if (items != null) {
+                    g_selectedRenewal = items.length;
+                    g_selectedDowngrade = 0;
+                    g_selectedForfeit = 0;
+                    setQuantities();
+                    $('#renewalDataDirty').val('1');
+                }
+            }
+        }
+
+        if ($('#renewalDataDirty').val() === '0') {
+            g_selectedRenewal = 0;
+            g_selectedDowngrade = 0;
+            g_selectedForfeit = 0;
+            if (items != null) {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].IsSelected) {
+                        g_selectedRenewal++;
+                    } else if (items[i].IsDowngraded) {
+                        g_selectedDowngrade++;
+                    }
+                    else if (items[i].IsForfeited) {
+                        g_selectedForfeit++;
+                    }
+                }
+                setQuantities();
+            }
+        }
+    }
+
+    //data bound event handling
+    function onDadaBound() {
+        if ('@lockUi' === 'True') {
+            $('[type=radio]').prop("disabled", true);
+        }
+    }
+
+    //set the total quantities
+    function setQuantities() {
+        var unprovisionedNum = parseInt("@unprovisioned");
+        var renewalQuantity = g_selectedRenewal;
+        var downgradeQuantity = g_selectedDowngrade;
+        var forfeitQuantity = g_selectedForfeit;
+        if (unprovisionedNum > 0) {
+            var renewal = parseInt($('#unprovisionedRenewal').html());
+            var downgrade = parseInt($('#unprovisionedDowngrade').html());
+            var forfeit = parseInt($('#unprovisionedForfeit').html());
+            if (!isNaN(renewal)) {
+                renewalQuantity += renewal;
+            }
+            if (!isNaN(downgrade)) {
+                downgradeQuantity += downgrade;
+            }
+            if (!isNaN(forfeit)) {
+                forfeitQuantity += forfeit;
+            }
+        }
+        $('#renewalQuantity').html(renewalQuantity);
+        $('#downgradeQuantity').html(downgradeQuantity);
+        $('#forfeitQuantity').html(forfeitQuantity);
+    }
+
+    function setUnprovisionedQuantities(renewalQuantity, downgradeQuantity, forfeitQuantity) {
+        $('#unprovisionedRenewal').text(renewalQuantity);
+        $('#unprovisionedDowngrade').text(downgradeQuantity);
+        $('#unprovisionedForfeit').text(forfeitQuantity);
+    }
+
+    function radioBtnsInterlock(e, selectedRadioCssName) {
+        //uncheck renew radio
+        if (selectedRadioCssName !== 'selectOneItem') {
+            var selectionBox = $(e).closest('tr').find(".selectOneItem");
+            if ($(selectionBox).attr("checked")) {
+                g_selectedRenewal--;
+                setQuantities();
+            }
+            $(selectionBox).attr("checked", false);
+        }
+
+        //uncheck downgrade radio
+        if (selectedRadioCssName !== 'downgradeItem') {
+            var downgradeBox = $(e).closest('tr').find(".downgradeItem");
+            if ($(downgradeBox).attr("checked")) {
+                g_selectedDowngrade--;
+                setQuantities();
+            }
+            $(downgradeBox).attr("checked", false);
+        }
+
+        //uncheck forefeit radio
+        if (selectedRadioCssName !== 'forefeitItem') {
+            var forefeitBox = $(e).closest('tr').find(".forefeitItem");
+            if ($(forefeitBox).attr("checked")) {
+                g_selectedForfeit--;
+                setQuantities();
+            }
+            $(forefeitBox).attr("checked", false);
+        }
+    }
+
+    //the renewal radio is clicked: hide downgrade radio if it is checked.
+    function onRenewRadioChange(e) {
+        $('#renewalDataDirty').val('1');
+        if (e.checked) {
+            g_selectedRenewal++;
+            radioBtnsInterlock(e, 'selectOneItem');
+        }
+    }
+
+    //downgrade radio is clicked
+    function onDowngradeRadioChange(e) {
+        $('#renewalDataDirty').val('1');
+        if (e.checked) {
+            g_selectedDowngrade++;
+            radioBtnsInterlock(e, 'downgradeItem');
+        }
+    }
+
+    //forefeit radio button action
+    function onForefeitRadioChange(e) {
+        $('#renewalDataDirty').val('1');
+        if (e.checked) {
+            g_selectedForfeit++;
+            radioBtnsInterlock(e, 'forefeitItem');
+        }
+    }
+
+    //div input change
+    function onDivInputChange(e) {
+        var tmp = setTimeout(function() {
+            var content = $(e).html();
+            //not a number: set to 0
+            if (isNaN(content)) {
+                $(e).text(0);
+                onDivInputChange(e);
+            }
+            else {
+                $('#renewalDataDirty').val('1');
+                var id = $(e).attr("id");
+                //set the change to downgrade or forfeit
+                if (id === 'unprovisionedRenewal') {
+                    var showDowngrade = '@showDowngrade';
+                    if (showDowngrade === 'True') {
+                        var forfeit1 = parseInt($('#unprovisionedForfeit').text());
+                        //negative number, reset the current box and #unprovisionedDowngrade
+                        if (parseInt('@unprovisioned') - forfeit1 - content < 0) {
+                            $('#unprovisionedDowngrade').text(0);
+                            $(e).text(parseInt('@unprovisioned') - forfeit1);
+                        } else {
+                            $('#unprovisionedDowngrade').text(parseInt('@unprovisioned') - forfeit1 - content);
+                        }
+                    } else {
+                        if (parseInt('@unprovisioned') - content < 0) {
+                            $('#unprovisionedForfeit').text(0);
+                            $(e).text('@unprovisioned');
+                        } else {
+                            $('#unprovisionedForfeit').text(parseInt('@unprovisioned') - content);
+                        }
+                    }
+                } else if (id === 'unprovisionedDowngrade') {
+                    var forfeit = parseInt($('#unprovisionedForfeit').text());
+                    if (!isNaN(forfeit)) {
+                        //negative number, reset the current box and #unprovisionedRenewal
+                        if (parseInt('@unprovisioned') - forfeit - content < 0) {
+                            $('#unprovisionedRenewal').text(0);
+                            $(e).text(parseInt('@unprovisioned') - forfeit);
+                        } else {
+                            $('#unprovisionedRenewal').text(parseInt('@unprovisioned') - forfeit - content);
+                        }
+                    }
+                } else {
+                    var downgrade = parseInt($('#unprovisionedDowngrade').text());
+                    if (!isNaN(downgrade)) {
+                        //negative number, reset the current box and #unprovisionedRenewal
+                        if (parseInt('@unprovisioned') - downgrade - content < 0) {
+                            $('#unprovisionedRenewal').text(0);
+                            $(e).text(parseInt('@unprovisioned') - downgrade);
+                        } else {
+                            $('#unprovisionedRenewal').text(parseInt('@unprovisioned') - downgrade - content);
+                        }
+                    }
+                }
+                setQuantities();
+            }
+            clearTimeout(tmp);
+        }, 200);
+    }
+
+    function getRenewalParams() {
+        var params = SetAntiForgery();
+        params.authCode = $('#authCode').val();
+        params.quoteNumber = $('#quoteNumber').val();
+        params.selectAll = ($('#selectAll').val() === '1');
+        params.hasPendingRenewals = ('@hasPendingRenewals' === 'True');
+        return params;
+    }
+
+    //check if the unprovisioned number is correct or not
+    function validation() {
+        var unprovisioned = parseInt('@unprovisioned');
+        if (unprovisioned > 0) {
+            var showDowngrade = '@showDowngrade';
+            var renewal = parseInt($('#unprovisionedRenewal').text());
+            var downgrade = parseInt($('#unprovisionedDowngrade').text());
+            var forfeit = parseInt($('#unprovisionedForfeit').text());
+            if (showDowngrade === 'True') {
+                if (isNaN(renewal) || isNaN(downgrade) || isNaN(forfeit)) {
+                    SupportPortal.Message("Please check the \"Unprovisioned VM Renewal Settings\" section: it must be numbers in the input box.", { height: 150, width: 350 });
+                    return false;
+                }
+            } else {
+                if (isNaN(renewal) || isNaN(forfeit)) {
+                    SupportPortal.Message("Please check the \"Unprovisioned VM Renewal Settings\" section: it must be numbers in the input box.", { height: 150, width: 350 });
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function onSave() {
+        $('#saveBtn').prop("disabled", true);
+        if (!validation()) {
+            $('#saveBtn').prop("disabled", false);
+            return;
+        }
+        SupportPortal.BlockUI();
+        var postData = {
+            "model" : {
+                "RenewalDevices": [],
+                "AuthCode": $('#authCode').val(),
+                "UnprovisionedInfo": {
+                    "RenewalQuantity": $('#unprovisionedRenewal').text(),
+                    "DowngradeQuantity": $('#unprovisionedDowngrade').text(),
+                    "ForfeitQuantity": $('#unprovisionedForfeit').text()
+                }
+            },
+            "allSelected": true,
+            "quoteNumber": $('#quoteNumber').val()
+        };
+        var items = $('#@UniqueId.VmRenewalGrid').data("kendoGrid").dataSource.data();
+        $('.selectOneItem').each(function (idx, item) {
+            var rowCheckbox = $(item).closest('tr').find(".selectOneItem");
+            if (rowCheckbox != null) {
+                if ($(rowCheckbox).prop("checked")) {
+                    items[idx].IsSelected = true;
+                    items[idx].IsDowngraded = false;
+                    items[idx].IsForfeited = false;
+                } else {
+                    postData.allSelected = false;
+                    items[idx].IsSelected = false;
+                    var rowDowngradeBox = $(item).closest('tr').find(".downgradeItem");
+                    var rowForfeitBox = $(item).closest('tr').find(".forefeitItem");
+                    items[idx].IsDowngraded = $(rowDowngradeBox).prop("checked");
+                    items[idx].IsForfeited = $(rowForfeitBox).prop("checked");
+                }
+                postData.model.RenewalDevices.push(items[idx]);
+            }
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "/VM/SaveRenewalSerialNumbers",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(postData),
+            headers: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+            success: function (result) {
+                SupportPortal.UnBlockUI();
+                if (result.ErrorMsg != null && result.ErrorMsg.length > 0) {
+                    SupportPortal.Message("Failed to save the selected Vms: " + result.ErrorMsg, { height: 250, width: 350 });
+                } else {
+                    SupportPortal.Message("The selected VMs have been successfully saved for renewal.", { height: 150, width: 350 });
+                    $('#renewalDataDirty').val('0');
+                }
+                $('#quoteNumber').val(result.QuoteNumber);
+                $('#saveBtn').prop("disabled", false);
+            },
+            error: function(xhr) {
+                SupportPortal.UnBlockUI();
+                SupportPortal.Message("Failed to save the selected Vms: " + xhr.responseText, { height: 250, width: 350 });
+                $('#saveBtn').prop("disabled", false);
+            }
+        });
+    }
+
+    //tooltips
+    function onClickRenewalTooltip(e) {
+        SupportPortal.Tooltip(e, '<p style="text-align: left; padding-left: 3px; padding-top: 3px;"> \
+            To select the VMs you wish to renew, click <b>Renewal</b> next the appropriate serial numbers and <b>Save</b>. The selected serial numbers and associated support and subscriptions are now ready for renewal.Contact your sales representative at renewals@paloaltonetworks.com to complete your renewal purchase.</p>',
+            { width: 280, height: 130 });
+    }
+
+    function onClickDowngradeTooltip(e) {
+        SupportPortal.Tooltip(e, '<p style="text-align: left; padding-left: 3px; padding-top: 3px;"> \
+            The Basic Bundle includes Support but no subscriptions. Select <b>Change to Basic Bundle</b> for the appropriate serial numbers and <b>Save</b>. Contact your sales representative at renewals@paloaltonetworks.com to complete your renewal purchase</p>',
+            { width: 280, height: 100 });
+    }
+
+    function onClickForefeitTooltip(e) {
+        SupportPortal.Tooltip(e, '<p style="text-align: left; padding-left: 3px; padding-top: 3px;"> \
+            If you choose not to renew a VM, select <b>Forfeit</b> next to the serial number and <b>Save</b>. The serial numbers chosen will not be renewed and will be removed from the system during the renewal process. These serial numbers <b>cannot</b> be reinstated once they have been deleted. Contact your sales representative at renewals@paloaltonetworks.com to complete your renewal purchase for VMs which are to remain in your account.</p>',
+            { width: 280, height: 165 });
+    }
+
+    function onClickUnprovisionedTooltip(e) {
+        SupportPortal.Tooltip(e, '<p style="text-align: left; padding-left: 3px; padding-top: 3px;"> \
+            The Unprovisioned number is the remaining quantity of VM instances you are entitled to run</p>',
+            { height: 50 });
+    }
+</script>
+
+<div style="margin-bottom: 7px; height: 30px; font-size: smaller; overflow: auto; ">@Model.Description</div>
+<div style="font-size: small; margin-top: 3px;">
+    <div style="margin-bottom: -10px;">
+        <div class="floatleft">
+            <label class="lableLeftfloat unprovisiontop">Total:</label>
+            <div class="diveditbox">@Model.TotalQuantity</div>
+        </div>
+        <div class="middlefloat">
+            <label class="unprovisiontop floatleft" style="margin-left: 63px;">Provisioned:</label>
+            <div class="diveditbox" style="width: 35px;">@Model.ProvisionedQuantity</div>
+        </div>
+        <div class="rightfloat">
+            <label class="unprovisiontop floatleft" style="margin-left: -14px;">Unprovisioned:</label>
+            <div class="diveditbox">
+                @unprovisioned
+                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="onClickUnprovisionedTooltip(this)"></i></span>
+            </div>
+        </div>
+    </div>
+    <div style="clear: both;">
+        <div class="floatleft magintopadjust">
+            <label class="lableLeftfloat unprovisiontop">Renewal:</label>
+            <div id="renewalQuantity" class="diveditbox">0</div>
+        </div>
+        <div class="middlefloat magintopadjust">
+            <label class="unprovisiontop floatleft">Change to Basic Bundle:</label>
+            <div id="downgradeQuantity" class="diveditbox">0</div>
+        </div>
+        <div class="rightfloat magintopadjust">
+            <label class="unprovisiontop floatleft">Forfeit:</label>
+            <div id="forfeitQuantity" class="diveditbox">0</div>
+        </div>
+    </div>
+    <div id="unprovisionedsettings">
+        <!--hr cannot layout, use div to simulate hr-->
+        <div style="clear: both; height: 8px; padding-top: 5px;">
+            <div style="background-color: #ccc; text-align: left; height: 1px;">
+            </div>
+        </div>
+        <div style="clear: both; margin-top: -5px">
+            <label>Unprovisioned VM Renewal Settings:</label>
+        </div>
+        <div style="clear: both; margin-top: -6px;">
+            <div class="floatleft">
+                <label class="lableLeftfloat unprovisiontop">Renewal:</label>
+                <div contenteditable class="divinput" id="unprovisionedRenewal" onkeyup="onDivInputChange(this)"></div>
+            </div>
+            <div class="middlefloat">
+                <label class="unprovisiontop floatleft">Change to Basic Bundle:</label>
+                <div contenteditable class="divinput" id="unprovisionedDowngrade" onkeyup="onDivInputChange(this)"></div>
+                <div style="width: 65px; height: 15px; float: left; margin-top: 5px; margin-left: 5px; display: none" id="hiddenDiv">0</div>
+            </div>
+            <div class="rightfloat">
+                <label class="unprovisiontop floatleft">Forfeit:</label>
+                <div contenteditable class="divinput" id="unprovisionedForfeit" onkeyup="onDivInputChange(this)"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="clear: both; padding-top: 10px; font-size: small">
+    @(Html.Kendo().Grid(Model.RenewalDevices)
+          .Name((string) UniqueId.VmRenewalGrid)
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model =>
+              {
+                  model.Field(f => f.IsSelected).Editable(true);
+                  model.Field(f => f.SerialNumber).Editable(false);
+                  model.Field(f => f.ExpirationDate).Editable(false);
+              })
+              .Read(read => read.Action("GetRenewalData", "VM").Data("getRenewalParams"))
+              .PageSize(Model.RenewalDevices.Count())
+          )
+          .Columns(columns =>
+          {
+              columns.Bound(p => p.IsSelected).Width(100).Title("").Sortable(false)
+                  .HeaderTemplate(@"<span>Renewal</span><span class=""csp-tooltip""><i class=""icon-question-sign icon-large"" onclick=""onClickRenewalTooltip(this)""></i></span>
+                        <input type=""checkbox"" id=""checkAllRenew"" class=""selectAllItem"" onchange=""onRenewAllClicked(this)"" style=""margin-left: 5px; margin-top: -3px;""/>")
+                  .ClientTemplate(@"<input type=""radio"" #= IsSelected ? checked=""checked"":"""" # class=""selectOneItem"" onchange=""onRenewRadioChange(this)""/>");
+              columns.Bound(p => p.IsDowngraded).Width(190).Title("").Sortable(false).Hidden(!showDowngrade)
+                  .HeaderTemplate(@"<span>Change to Basic Bundle</span><span class=""csp-tooltip""><i class=""icon-question-sign icon-large"" onclick=""onClickDowngradeTooltip(this)""></i></span>
+                        <input type=""checkbox"" id=""checkAllDowngrade"" class=""selectAllItem"" onchange=""onDowngradeAllClicked(this)"" style=""margin-left: 5px; margin-top: -3px;""/>")
+                  .ClientTemplate(@"<input type=""radio"" #= IsDowngraded ? checked=""checked"":"""" # class=""downgradeItem"" onchange=""onDowngradeRadioChange(this)""/>");
+              columns.Bound(p => p.IsForfeited).Title("").Sortable(false).Width(100).Title("")
+                  .HeaderTemplate(@"<span>Forfeit</span><span class=""csp-tooltip""><i class=""icon-question-sign icon-large"" onclick=""onClickForefeitTooltip(this)""></i></span>
+                        <input type=""checkbox"" id=""checkAllForfeit"" class=""selectAllItem"" onchange=""onForfeitAllClicked(this)"" style=""margin-left: 5px; margin-top: -3px;""/>")
+                  .ClientTemplate(@"<input type=""radio"" #= IsForfeited ? checked=""checked"":"""" # class=""forefeitItem"" onchange=""onForefeitRadioChange(this)""/>");
+              columns.Bound(p => p.SerialNumber).Width(140).Title("Serial Number");
+              columns.Bound(p => p.ExpirationDate).Width(120).Title("Expiration Date").Format("{0:" + System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern + "}");
+              columns.Bound(p => p.Status).Width(300);
+          })
+          .Scrollable(s => s.Enabled(true).Height(390))
+          .Events(events => events.DataBinding("onDataBinding"))
+          .Events(events => events.DataBound("onDadaBound"))
+     )
+</div>
+<div class="csp-submit-container" style="margin-top: 10px; margin-bottom: 10px;">
+    <input type="button" id="saveBtn" class="k-button csp-submit" value="Save" onclick="onSave()" />
+</div>
+<div style="font-size: smaller">
+    <div id="regularMsg">
+        <div>For questions regarding your renewal, please contact: renewals@paloaltonetworks.com</div>
+        <div>For technical assistance and issues, please open a case in the Support Cases page</div>
+    </div>
+    <div id="uilockMsg" style="color: red">A quote is already in process. Changes to previous selections cannot be made at this time. Please contact Renewals@paloaltonetworks.com</div>
+</div>

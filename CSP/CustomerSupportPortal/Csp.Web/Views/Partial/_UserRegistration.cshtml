@@ -1,0 +1,744 @@
+﻿@using System.Configuration
+@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.UserAccountRegistrationDto
+@{
+    var actionHelper = Model.ActionHelper;
+    var uniqueId = (string)UniqueId.UserRegistration;
+    var sitekey = ConfigurationManager.AppSettings["recaptchaPublickey"].ToString();
+}
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<div id="UserRegistrationDiv">
+    <script type="text/javascript">
+        $.validator.unobtrusive.parse("#UserRegistrationForm");
+        $.validator.unobtrusive.adapters.addBool("booleanrequired", "required");
+        $.validator.setDefaults({
+            onkeyup: false,
+            ignore: ""
+        });
+
+        function filterStates() {
+            return {
+                countryId: $("#UserAccount_Address_CountryId").val()
+            };
+        }
+
+        function onCountryDropdownChange() {
+            var countryId = this.value();
+            var country = this.text();
+            var countryCode = this.dataItem().Code;
+
+            if (country == "United States" || country == "Canada") {
+                $("#OtherRegion").val("");
+
+                $("#UserAccount_Address_Region").rules("add", "required");
+                $("#OtherRegion").rules("remove", "required");
+
+                $("#divStateDropDown").show();
+                $("#divStateTextBox").hide();
+
+            } else {
+                if ($("#UserAccount_Address_Region").data("kendoDropDownList") != undefined) {
+                    $("#UserAccount_Address_Region").data("kendoDropDownList").select(0);
+                }
+
+                $("#UserAccount_Address_Region").rules("remove", "required");
+                $("#OtherRegion").rules("add", "required");
+
+                $("#divStateTextBox").show();
+                $("#divStateDropDown").hide();
+            }
+        }
+
+        function ShowSupportAccountsForSapWindow(id) {
+            var direction = '@Url.Action("GetSupportAccountsForSap", "UserAccount")';
+
+            var window = $('#SupportAccountsForSapWindow').data('kendoWindow');
+
+            direction = direction + "/" + id;
+            $(".no-buttons").prev(".k-window-titlebar").find(".k-window-action").hide();
+
+            window.setOptions({
+                minWidth: 500,
+                minHeight: 150
+            });
+
+            window.refresh();
+            window.refresh(direction);
+            window.content(SupportPortal.AjaxLoadingMessage());
+            window.open();
+            window.center();
+        }
+
+        function CancelRegister() {
+            var redirectUrl = '@System.Configuration.ConfigurationManager.AppSettings["LoginServiceLogoutUrl"]';
+            window.location.href = redirectUrl;
+        }
+
+        function FormUpdated() {
+
+            SupportPortal.UnBlockUI();
+        }
+
+        var alreadyEmailed = false;
+        function EmailSuperUsers() {
+
+            if (alreadyEmailed) return;
+
+            alreadyEmailed = true;
+            $.getJSON('/UserAccount/RequestSuperUserAccess', {
+                deviceCode: $('#@UniqueId.DeviceSerialNumber').val(),
+                customerCode: $('#CustomerCode').val(),
+                email: $('#EmailAddress').val(),
+                firstName: $('.firstname').val(),
+                lastName: $('.lastname').val()
+            }, function () {
+                alert('Your request for access has been sent to the account super user(s).');
+            });
+        }
+
+        var snIsPanorama = false;
+        $(function() {
+            $('.firstname').focus();
+
+            //device serial number changes to check if it is Panorama serial number
+            var deviceSerialNumber = $('#@UniqueId.DeviceSerialNumber');
+            deviceSerialNumber.blur(function() {
+                var serialNumber = deviceSerialNumber.val();
+                $.getJSON('/api/DeviceValidation/IsPanoramaSerialNumber?serialNumber=' + serialNumber,
+                    function (data) {
+                        // Panorama
+                        if (data === true) {
+                            snIsPanorama = true;
+                            $('#@UniqueId.OffLineSection').slideDown();
+                        } else {
+                            snIsPanorama = false;
+                            $('#@UniqueId.OfflineCheckBox').prop('checked', false);
+                            $('#@UniqueId.OffLineSection').slideUp();
+                            $('#@UniqueId.OffLineOptions').slideUp();
+                            $("#@UniqueId.OsDropDown").rules("remove");
+                            $('#@UniqueId.HyperVisorDropDown').rules("remove");
+                            $('#@UniqueId.UuId').rules("remove");
+                            $('#@UniqueId.CpuId').rules("remove");
+                            $("#@UniqueId.PanoramaOptions").slideUp();
+                            $('#@UniqueId.IsPanoramaRegistration').val(false);
+                            $('#@UniqueId.OsDropDown').data("kendoDropDownList").value('@Constants.DropDownOsReleaseSelect');
+                            $('#@UniqueId.HyperVisorDropDown').data("kendoDropDownList").value('@Constants.DropDownVirtualPlatformSelect');
+                            $('#@UniqueId.UuId').val('');
+                            $('#@UniqueId.CpuId').val('');
+                        }
+                    });
+                $.getJSON('/api/UserRegistration/CustCodeLabel?deviceCode=' + serialNumber, deviceCodeChangedResponse); 
+            
+            });
+
+            var iscallbackPanorama = '@Model.IsPanoramaRegistration';
+            iscallbackPanorama = iscallbackPanorama.toLowerCase();
+            if (iscallbackPanorama === 'true') {
+                $('#@UniqueId.OfflineCheckBox').prop('checked', true);
+                snIsPanorama = true;
+                $('#@UniqueId.OffLineSection').slideDown();
+                $('#@UniqueId.OffLineOptions').slideDown();
+                $("#@UniqueId.PanoramaOptions").slideDown();
+                $("#@UniqueId.OsDropDown").rules("add", "required");
+                $('#@UniqueId.HyperVisorDropDown').rules("add", "required");
+                $('#@UniqueId.UuId').rules("add", "required");
+                $('#@UniqueId.CpuId').rules("add", "required");
+            }
+        });
+
+        //device offline checkbox changed.
+        function @(uniqueId)offlineClicked() {
+            if (this.checked) {
+                $('#@UniqueId.OffLineOptions').slideDown();
+                $("#@UniqueId.OsDropDown").rules("add", "required");
+            } else {
+                $('#@UniqueId.OffLineOptions').slideUp();
+                $("#@UniqueId.OsDropDown").rules("remove");
+            }
+        }
+
+        //Panoram: apply to 8.1.0 and above.
+        function @(uniqueId)OnPanOsSelectedItem(e) {
+            if (e.item == null) {
+                return;
+            }
+
+            var osVersion8dot1 = false;
+            var dataItem = this.dataItem(e.item);
+            var versions = dataItem.PanOsVersion.split(".");
+            //8.1 or above: display UUID block
+            if (versions.length > 1 && (parseInt(versions[0]) > 8 || (versions[0] === '8' && versions[1] >= '1'))) {
+                osVersion8dot1 = true;
+            } else {
+                osVersion8dot1 = false;
+            }
+            if (snIsPanorama && osVersion8dot1) {
+                $('#@UniqueId.HyperVisorDropDown').rules("add", "required");
+                $('#@UniqueId.UuId').rules("add", "required");
+                $('#@UniqueId.CpuId').rules("add", "required");
+                $("#@UniqueId.PanoramaOptions").slideDown();
+                $('#@UniqueId.IsPanoramaRegistration').val(true);
+            } else {
+                $('#@UniqueId.HyperVisorDropDown').rules("remove");
+                $('#@UniqueId.UuId').rules("remove");
+                $('#@UniqueId.CpuId').rules("remove");
+                $("#@UniqueId.PanoramaOptions").slideUp();
+                $('#@UniqueId.IsPanoramaRegistration').val(false);
+            }
+        }
+        
+        function @(uniqueId)uploadSuccess(e) {
+            var data = e.response;
+            if (data.Message && data.Message.length > 0) {
+                alert(data.Message);
+            } else {
+                $('#@UniqueId.UuId').val(data.UuId);
+                $('#@UniqueId.CpuId').val(data.CpuId);
+            }
+        }
+
+        
+        function deviceCodeChangedResponse(data) {
+            
+            if (data.IsEvalDevice) {
+                $('#CustomerCodeLabel').html('Eval-ID:');
+            } else {
+                $('#CustomerCodeLabel').html('Sales Order Number <span style="font-style: italic;">&nbsp;&nbsp;or&nbsp;&nbsp;</span> Customer Id:');
+            }
+        }
+
+        function callValidation(){
+            $('#captchaValidation').text("");
+
+            if (grecaptcha.getResponse().length === 0) {
+                $('#captchaValidation').text("Captcha validation failed.Please try again");
+                return false;
+            }
+       
+            return true;
+        
+        }
+        
+
+    </script>
+    <div>
+        @(Html.Kendo().Window()
+              .Name("SupportAccountsForSapWindow")
+              .HtmlAttributes(new { @class = "no-buttons" })
+              .Actions(a => a.Clear())
+              .Scrollable(false)
+              .Visible(false)
+              .Modal(true)
+              .Width(500)
+              .Title("Select Support Account")
+              )
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.RedirectUrl))
+    {
+        <text>
+        <script type="text/javascript">window.location.href = '@Model.RedirectUrl';</script>
+        </text>
+    }
+    @if (Model.HasMultipleAccounts)
+    {
+        <text>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                ShowSupportAccountsForSapWindow(@Model.SapId);
+            });
+        </script>
+        </text>
+    }
+
+    @using (Ajax.BeginForm(actionHelper.Register, ControllerFields.UserAccountController, new AjaxOptions { UpdateTargetId = "UserRegistrationDiv", OnBegin = "SupportPortal.BlockUI();", OnComplete = "FormUpdated();" }, new { id = "UserRegistrationForm", @class = "form-horizontal", autocomplete = "off" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.IsPanoramaRegistration, new { id = (string)UniqueId.IsPanoramaRegistration })
+        Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+        <div class="content">
+            <div class="container" style="width: 850px;">
+                <div class="page-title">
+                    <span id="Title" class="contextTitle">New User Registration</span>
+                </div>            
+                <div class="horizontal-form-element" style="width: 100%" id="containerUserRegistration">                   
+                                     @if (@Model.IsAwsRegistration == true)
+                                     {
+                    <div class="awsNote">
+                        <strong>Note:</strong> At this time, customers using a VM-Series Instance purchased from public cloud MarketPlace must create a case through the Support Portal prior to calling Support.
+                    </div>
+                                     }   
+                    <div class="fieldset fieldset-upper">
+                        <fieldset>
+                            <legend>Create Contact Details</legend>
+                            <div class="nowrap">
+                                <div class="csp-label">
+                                    @Html.Label("First Name:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.FirstName)
+                                    @Html.TextBoxFor(model => model.UserAccount.FirstName, new { maxlength = 51, @class = "firstname" })
+                                    <span class="csp-required">*</span>
+                                </div>
+                                <div class="csp-label" style="width: 163px;">
+                                    @Html.Label("Last Name:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.LastName)
+                                    @Html.TextBoxFor(model => model.UserAccount.LastName, new { maxlength = 51, @class = "lastname" })
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                            <div class="nowrap">
+                                <div class="csp-label">
+                                    @Html.Label("Title:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.Title)
+                                    @Html.TextBoxFor(model => model.UserAccount.Title, new { maxlength = 61 })
+                                    <span class="csp-required"></span>
+                                </div>
+                                <div class="csp-label" style="width: 163px;">
+                                    @Html.Label("Phone:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.PhoneNumber)
+                                    @Html.TextBoxFor(model => model.UserAccount.PhoneNumber, new { maxlength = 41 })
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                            <div class="nowrap">
+                                <div class="csp-label">
+                                    @Html.Label("Address Line1:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.Address.Address1)
+                                    @Html.TextBoxFor(model => model.UserAccount.Address.Address1, new { maxlength = 256 })
+                                    <span class="csp-required">*</span>
+                                </div>
+                                <div class="csp-label" style="width: 163px;">
+                                    @Html.Label("Address Line2:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.Address.Address2)
+                                    @Html.TextBoxFor(model => model.UserAccount.Address.Address2, new { maxlength = 256 })
+                                </div>
+                            </div>
+                            <div class="nowrap">
+                                <div class="csp-label">
+                                    @Html.Label("City:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.Address.City)
+                                    @Html.TextBoxFor(model => model.UserAccount.Address.City, new { maxlength = 101 })
+                                    <span class="csp-required">*</span>
+                                </div>
+                                <div class="csp-label" style="width: 163px;">
+                                    @Html.Label("Country:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.Address.CountryId)
+                                    @(Html.Kendo().DropDownListFor(model => model.UserAccount.Address.CountryId)
+                                          .HtmlAttributes(new { @class = "k-dropdown" })
+                                          .Events(e => e.Change("onCountryDropdownChange").DataBound("onCountryDropdownChange"))
+                                          .OptionLabel(Constants.DropDownCountrySelect)
+                                          .DataValueField("Id")
+                                          .DataTextField("Name")
+                                          .BindTo(Model.Countries))
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                            <div class="nowrap">
+                                <div class="csp-label" style="width: 524px;">
+                                    @Html.Label("Region/State:")
+                                </div>
+                                <div class="csp-field">
+                                    <div id="divStateTextBox">
+                                        @Html.ValidationMessageFor(model => model.OtherRegion)
+                                        @Html.TextBoxFor(model => model.OtherRegion, new { maxlength = 46 })
+                                        <span class="csp-required">*</span>
+                                    </div>
+                                    <div id="divStateDropDown" style="display: none;">
+                                        @Html.ValidationMessageFor(model => model.UserAccount.Address.Region)
+                                        @(Html.Kendo().DropDownListFor(model => model.UserAccount.Address.Region)
+                                              .OptionLabel(Constants.DropDownRegionSelect)
+                                              .HtmlAttributes(new { @class = "k-dropdown" })
+                                              .DataValueField("Name")
+                                              .DataTextField("Name")
+                                              .DataSource(source => source.Read(read => read.Action("GetRegions", "Base").Data("filterStates"))
+                                                                          .ServerFiltering(true))
+                                              .AutoBind(false)
+                                              .CascadeFrom("UserAccount_Address_CountryId")
+                                              )
+                                        <span class="csp-required">*</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="nowrap">
+                                <div class="csp-label" style="width: 524px;">
+                                    @Html.Label("Postal Code:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.Address.PostalCode)
+                                    @Html.TextBoxFor(model => model.UserAccount.Address.PostalCode, new { maxlength = 26 })
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <div class="horizontal-form-element" style="width: 100%">
+                    <div class="fieldset fieldset-upper">
+                        <fieldset>
+                            <legend>Create UserID and Password</legend>
+                            <div>
+                                <div class="csp-label" style="width: 524px;">
+                                    @Html.Label("Display Name:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.UserAccount.DisplayName, string.Empty, new { @style = "white-space: normal; width: 250px;" })
+                                    @Html.TextBoxFor(model => model.UserAccount.DisplayName, new { maxlength = 46 })
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-label" style="width: 524px;">
+                                    @Html.Label("Your Email Address:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.EmailAddress)
+                                    @* Must use hidden field here because compare validator will ignore the read-only value; however, we must re-name the read-only textbox, because the model will bind to it AND the hidden field! ML 2013-11-15 *@
+                                    @Html.TextBoxFor(model => model.UserAccount.Email, new { @readonly = "true", id = "ReadOnlyEmail", name = "ReadOnlyEmail" })
+                                    @Html.HiddenFor(model => model.EmailAddress)
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-label" style="width: 524px;">
+                                    @Html.Label("Confirm Email Address:")
+                                </div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.ConfirmEmail)
+                                    @Html.TextBoxFor(model => model.ConfirmEmail, new { maxlength = 201 })
+                                    <span class="csp-required">*</span>
+                                </div>
+                            </div>                           
+                            @if (@Model.IsUsingCloudDeviceRegistration == false)
+                            {
+                                if (string.IsNullOrEmpty(Model.SelfRegistrationCode))
+                                {
+                                    <div>
+                                        <div class="csp-label" style="width: 524px;">
+                                            <label>Device Serial Number <span style="font-style: italic;">&nbsp;&nbsp;or&nbsp;&nbsp;</span> Auth Code 
+                                                <span style="font-style: italic;">&nbsp;&nbsp;or&nbsp;&nbsp;</span> Parent Order Number:</label>
+                                        </div>
+                                        <div class="csp-field">
+                                            @Html.ValidationMessageFor(model => model.DeviceCode)
+                                            @Html.TextBoxFor(model => model.DeviceCode, new { id = (string)UniqueId.DeviceSerialNumber })
+                                            <span class="csp-required">*</span>
+                                        </div>
+
+                                        <!--Panorama offline-->
+                                        <div id="@UniqueId.OffLineSection" style="display: none;">
+                                            <div class="csp-label" style="width: 524px;">
+                                                @Html.Label((string)UniqueId.OfflineLabel, "Device will be used Offline:") 
+                                            </div>
+                                            <div class="csp-field">
+                                                @Html.CheckBox((string)UniqueId.OfflineCheckBox, false, new Dictionary<string, object> { { "onclick", uniqueId + "offlineClicked.call(this)" }, { "Id", (string)UniqueId.OfflineCheckBox } })
+                                            </div>
+                                        </div>
+                                        <div id="@UniqueId.OffLineOptions" style="display: none;" >
+                                            <div>
+                                                <div class="csp-label" style="width: 524px;">
+                                                    @Html.LabelFor(model => model.PanOsVersion, "OS Release:")
+                                                </div>
+                                                <div class="csp-field">
+                                                    @Html.ValidationMessageFor(model => model.PanOsVersion)
+                                                    @(Html.Kendo().DropDownListFor(model => model.PanOsVersion)
+                                                          .HtmlAttributes(new { @class = "k-dropdown", id = (string)UniqueId.OsDropDown })
+                                                          .OptionLabel(Constants.DropDownOsReleaseSelect)
+                                                          .DataValueField("PanOsVersion")
+                                                          .DataTextField("PanOsVersion")
+                                                          .Events(e => e.Select(uniqueId + "OnPanOsSelectedItem"))
+                                                          .DataSource(source => source.Read(read => { read.Action("GetPanOsVersions", "Device"); }))
+                                                          )
+                                                    <span class="csp-required">*</span>
+                                                </div>
+                                            </div>                                        
+                                            <div id="@UniqueId.PanoramaOptions" style="display: none">
+                                                <div>
+                                                    <div class="csp-label" style="width: 524px;">
+                                                        @Html.LabelFor(model => model.HyperVisorVersion, "Virtual Platform:")
+                                                    </div>
+                                                    <div class="csp-field">
+                                                        @Html.ValidationMessageFor(model => model.HyperVisorVersion)
+                                                        @(Html.Kendo().DropDownListFor(model => model.HyperVisorVersion)
+                                                              .OptionLabel(Constants.DropDownVirtualPlatformSelect)
+                                                              .HtmlAttributes(new { @class = "k-dropdown", id = (string)UniqueId.HyperVisorDropDown })
+                                                              .DataValueField("HyperVisorVersion")
+                                                              .DataTextField("DisplayValue")
+                                                              .DataSource(source => source.Read(read => read.Action("GetHyperVisorVersions", "Device", new { filter = "VM" })))
+                                                              )
+                                                        <span class="csp-required">*</span>
+                                                    </div>                            
+                                                </div>
+                                                <div>
+                                                    <div class="csp-label" style="width: 524px;">
+                                                        @Html.Label("UploadUUIDCPUID", "Upload File for UUID & CPUID:")
+                                                    </div>
+                                                    <div class="csp-field">
+                                                        @(Html.Kendo().Upload()
+                                                              .Name("uploadUuIdCpuId")
+                                                              .Multiple(false)
+                                                              .Async(async => async.Save("RegisterVmFile", "VM"))
+                                                              .Events(e => e.Success(uniqueId + "uploadSuccess"))
+                                                              )
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="csp-label" style="width: 524px;">
+                                                        @Html.Label((string)UniqueId.UuId, "UUID:")
+                                                    </div>
+                                                    <div class="csp-field">
+                                                        @Html.ValidationMessageFor(model => model.UuId)
+                                                        @Html.TextBoxFor(model => model.UuId, new { id = (string)UniqueId.UuId })
+                                                        <span class="csp-required">*</span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="csp-label" style="width: 524px;">
+                                                        @Html.Label((string)UniqueId.CpuId, "CPUID:")
+                                                    </div>
+                                                    <div class="csp-field">
+                                                        @Html.ValidationMessageFor(model => model.CpuId)
+                                                        @Html.TextBoxFor(model => model.CpuId, new { id = (string)UniqueId.CpuId })
+                                                        <span class="csp-required">*</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="csp-label" style="width: 524px;">
+                                            <label id="CustomerCodeLabel">Sales Order Number <span style="font-style: italic;">&nbsp;&nbsp;or&nbsp;&nbsp;</span> Customer Id:</label>
+                                        </div>
+                                        <div class="csp-field">
+                                            @Html.ValidationMessageFor(model => model.CustomerCode)
+                                            @Html.TextBoxFor(model => model.CustomerCode)
+                                            <span class="csp-required">*</span>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @Html.HiddenFor(x => x.DeviceCode)
+                                    @Html.HiddenFor(x => x.CustomerCode)
+                                    @Html.HiddenFor(x => x.SelfRegistrationCode)
+                                }
+                            }
+                            else
+                            {
+                                if (Model.IsCsspRegistration)
+                                {
+                                    <div>
+                                        <div class="csp-label" style="width: 524px;">
+                                            <label>Serial Number:</label>
+                                        </div>
+                                        <div class="csp-field">
+                                            @Html.ValidationMessageFor(model => model.CsspSerialNumber)
+                                            @Html.TextBoxFor(model => model.CsspSerialNumber)
+                                            <span class="csp-required">*</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="csp-label" style="width: 524px;">
+                                            <label id="CustomerCodeLabel">CSSP Customer Reference Id:</label>
+                                        </div>
+                                        <div class="csp-field">
+                                            @Html.ValidationMessageFor(model => model.CustomerAccountId)
+                                            @Html.TextBoxFor(model => model.CustomerAccountId)
+                                            <span class="csp-required">*</span>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <div class="csp-label" style="width: 524px;">
+                                            <label>Support Account Name</label>
+                                        </div>
+                                        <div class="csp-field">
+                                            @Html.ValidationMessageFor(model => model.SupportAccountName)
+                                            @Html.TextBoxFor(model => model.SupportAccountName)
+                                            <span class="csp-required">*</span>
+                                            <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 18);"></i></span>
+                                        </div>
+                                    </div>
+                                    if (Model.IsAwsRegistration)
+                                    {
+                                        <div>
+                                            <div class="csp-label" style="width: 524px;">
+                                                <label>Serial #</label>
+                                            </div>
+                                            <div class="csp-field">
+                                                @Html.ValidationMessageFor(model => model.AwsSerialNumber)
+                                                @Html.TextBoxFor(model => model.AwsSerialNumber)
+                                                <span class="csp-required">*</span>
+                                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 13);"></i></span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="csp-label" style="width: 524px;">
+                                                <label>CPU ID</label>
+                                            </div>
+                                            <div class="csp-field">
+                                                @Html.ValidationMessageFor(model => model.AwsCpuid)
+                                                @Html.TextBoxFor(model => model.AwsCpuid)
+                                                <span class="csp-required">*</span>
+                                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 14);"></i></span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                        <div class="csp-label" style="width: 524px;">
+                                                <label>UUID</label>
+                                            </div>
+                                            <div class="csp-field">
+                                                @Html.TextBoxFor(model => model.AwsUuid)
+                                                <span class="csp-required">&nbsp;</span>
+                                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 15);"></i></span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (Model.IsGoogleCloudRegistration)
+                                    {
+                                        <div>
+                                            <div class="csp-label" style="width: 524px;">
+                                                <label>Serial #</label>
+                                            </div>
+                                            <div class="csp-field">
+                                                @Html.ValidationMessageFor(model => model.GoogleCloudSerialNumber)
+                                                @Html.TextBoxFor(model => model.GoogleCloudSerialNumber)
+                                                <span class="csp-required">*</span>
+                                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 13);"></i></span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="csp-label" style="width: 524px;">
+                                                <label>CPU ID</label>
+                                            </div>
+                                            <div class="csp-field">
+                                                @Html.ValidationMessageFor(model => model.GoogleCloudCpuid)
+                                                @Html.TextBoxFor(model => model.GoogleCloudCpuid)
+                                                <span class="csp-required">*</span>
+                                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 14);"></i></span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="csp-label" style="width: 524px;">
+                                                <label>UUID</label>
+                                            </div>
+                                            <div class="csp-field">
+                                                @Html.ValidationMessageFor(model => model.GoogleCloudUuid)
+                                                @Html.TextBoxFor(model => model.GoogleCloudUuid)
+                                                <span class="csp-required">*</span>
+                                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 15);"></i></span>
+                                            </div>
+                                        </div>                                        
+                                    }
+                                    else
+                                    {
+                                        <div>
+                                            <div class="csp-label" style="width: 524px;">
+                                                <label>Serial # of VM-Series</label>
+                                            </div>
+                                            <div class="csp-field">
+                                                @Html.ValidationMessageFor(model => model.AzureSerialNumber)
+                                                @Html.TextBoxFor(model => model.AzureSerialNumber)
+                                                <span class="csp-required">*</span>
+                                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 23);"></i></span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="csp-label" style="width: 524px;">
+                                                <label>CPU ID</label>
+                                            </div>
+                                            <div class="csp-field">
+                                                @Html.ValidationMessageFor(model => model.AzureCpuid)
+                                                @Html.TextBoxFor(model => model.AzureCpuid)
+                                                <span class="csp-required">*</span>
+                                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 24);"></i></span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="csp-label" style="width: 524px;">
+                                                <label>@Html.Label("UUID: ")</label>
+                                            </div>
+                                            <div class="csp-field">
+                                                @Html.TextBoxFor(model => model.AzureUuid)
+                                                <span class="csp-required">&nbsp;</span>
+                                                <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 25);"></i></span>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </fieldset>
+                    </div>
+                </div>
+
+                <div class="horizontal-form-element" style="width: 100%">
+                    <div class="fieldset">
+                        <fieldset>
+                            <legend>Subscriptions and End User Agreement</legend>
+                            <br />
+                            <div>
+                                <div class="csp-field">
+                                    <label>@Html.CheckBoxFor(model => model.UserAccount.IsOptInEmail) Subscribe to Content Update Emails</label>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-field">
+                                    <label>@Html.CheckBoxFor(model => model.UserAccount.IsOptInSecurityEmail) Subscribe to Security Advisories</label>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-field">
+                                    <label>@Html.CheckBoxFor(model => model.UserAccount.IsOptInPanOsUpdateEmail) Subscribe to Software Update Emails</label>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-field">
+                                    @Html.ValidationMessageFor(model => model.IsTermsAgreed)
+                                    <label>@Html.CheckBoxFor(model => model.IsTermsAgreed) By checking this box you are agreeing to the <a target="_blank" href="@System.Configuration.ConfigurationManager.AppSettings["EndUserAgreementUrl"]">End User Agreement</a></label>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="csp-field">
+                                    <label id="captchaValidation" class="Csp-error">@ViewBag.CaptchaError</label>
+                                    <div class="g-recaptcha" data-sitekey="@sitekey" data-theme="clean"></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="csp-submit-container">
+                        <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+                        @Html.HiddenFor(model => model.UserAccount.Id)
+                        @Html.HiddenFor(model => model.IsUserExists)
+                        @Html.HiddenFor(model => model.SelectedSupportAccountId)
+                        @Html.HiddenFor(model => model.IsUsingCloudDeviceRegistration)
+                        @Html.HiddenFor(model => model.IsAzureRegistration)
+                        @Html.HiddenFor(model => model.IsAwsRegistration)
+                        @Html.HiddenFor(model => model.IsCsspRegistration)
+                        @Html.HiddenFor(model => model.IsGoogleCloudRegistration)
+                        <input type="button" value="Cancel" class="k-button csp-submit" id="btncancel" onclick="CancelRegister(); " />
+                        <input type="submit" value="Submit" class="k-button csp-submit" onclick="return callValidation()" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

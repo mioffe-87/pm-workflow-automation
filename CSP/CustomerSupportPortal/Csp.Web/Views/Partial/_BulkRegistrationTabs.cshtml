@@ -1,0 +1,249 @@
+﻿@using Csp.Web.Controllers
+@model Csp.Web.Controllers.BulkRegistrationTabsDto
+@{
+    var resourceRevisionNumber = SiteHelper.GetResourceRevisionNumber();
+}
+<style>
+    li.disabledtab a {
+        color: #CED5D5 !important;
+        font-weight: bold;
+        cursor: default;
+    }
+    li.disabledtab a:hover {
+        text-decoration: none !important;
+    }
+</style>
+
+@Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/bulkreg")
+<script type="text/javascript">
+    var @(UniqueId.bulkreg)bulkReg = (function () {
+        var lastSelectedDevicesTab = -1;
+
+        function onBulkRegTabStripSelect(e) {
+            lastSelectedDevicesTab = $(e.item).index();
+        }
+
+        function onBulkRegTabStripContentLoad(e) {
+            var eItem = $(e.item);
+            var tabStrip = eItem.closest('.k-tabstrip').data("kendoTabStrip");
+
+            var isFirstTabSelection = lastSelectedDevicesTab == -1;
+            var isMostRecentlySelectedTab = lastSelectedDevicesTab == eItem.index();
+            if (isFirstTabSelection || isMostRecentlySelectedTab) {
+                //Proceed as normal - this tab should load
+            } else {
+                //This tab should not load
+                tabStrip.deactivateTab(eItem);
+            }
+
+            deactivateUnselectedTabs(tabStrip);
+        }
+
+        var callonce = true;
+
+        function deactivateUnselectedTabs(tabStrip) {
+            if (callonce) {
+                callonce = false;
+
+                var tabs = tabStrip.items();
+                var current = tabStrip.select();
+                for (var i = 0; i < tabs.length; i++) {
+                    //var tab = $(tabs[i]);
+                    var isCurrentTab = i == current.index();
+
+                    if (!isCurrentTab) {
+                        var contentHolder = tabStrip.contentHolder(i);
+                        $(contentHolder).css('display', 'none');
+                    }
+                }
+            }
+        }
+
+        return {
+            onBulkRegTabStripSelect: onBulkRegTabStripSelect,
+            onBulkRegTabStripContentLoad: onBulkRegTabStripContentLoad
+        };
+    })();
+
+    $(function() {
+        $('li.disabledtab').on('click', 'a', function () {
+            console.log('logged');
+            return false;
+        });
+    });
+
+    $(document).ready(function () {
+        BulkRegistrationManageUtil.Init({
+            urlBulkRegistrationDiscardDraft: '@(Url.Action("PrepBulkRegDiscardDraft", "BulkRegistration", new { id=Model.ActionHelper.Id }))',
+            urlGetPrepBulkRegistration: '@(Url.Action("Devices", "SupportAccount", new {id = Model.ActionHelper.Id, assetType="PrepBulkRegistration"}))'
+        });
+
+        setTimeout(function() {
+            var ts = $('#@UniqueId.bulkRegistrationTabId').data('kendoTabStrip');
+
+            ts.tabGroup.on('click', 'li', function(e) {
+                var index = $(this).index();
+                if (!$(ts.contentElement(index)).is(":empty")) {
+                    $(ts.contentElement(index)).empty();
+                    ts.reload($(this));
+                }
+            });
+        });
+    });
+</script>
+
+<div class="contextTitle">Bulk Registration</div>
+@(Html.Kendo().TabStrip()
+                        .Animation(false)
+                        .Name((string)UniqueId.bulkRegistrationTabId)
+                        .Events(e => e.Select((string)UniqueId.bulkreg + "bulkReg.onBulkRegTabStripSelect").ContentLoad((string)UniqueId.bulkreg + "bulkReg.onBulkRegTabStripContentLoad"))
+                        .HtmlAttributes(new { @class = "subTabs" })
+                        .Items(tabstrip => {
+
+                            var tab = tabstrip.Add().Text("Assets To Register")
+                                                             .LoadContentFrom("ClaimedAssets", "BulkRegistration", new
+                                                             {
+                                                                 id = Model.ActionHelper.Id,
+                                                                 bulkRegistrationId = Model.BulkRegistrationId
+                                                             });
+                            
+                            if (Model.SelectedTab == GroupDestination.ClaimedAssets)
+                            {
+                                tab.Selected(true);
+                            }
+
+                            tab = tabstrip.Add().Text("Bulk Registration")
+                                                             .LoadContentFrom("PrepBulkRegistration", "BulkRegistration", new
+                                                             {
+                                                                 id = Model.ActionHelper.Id,
+                                                                 bulkRegistrationId = Model.BulkRegistrationId
+                                                             });
+
+                            if (Model.SelectedTab == GroupDestination.PrepBulkRegistration)
+                            {
+                                tab.Selected(true);
+                            }
+
+                            //if (Model.BulkRegistrationId.HasValue)
+                            {
+                            tab = tabstrip.Add().Text("Customize")
+                                                             .LoadContentFrom("Customize", "BulkRegistration", new
+                                                             {
+                                                                 id = Model.ActionHelper.Id,
+                                                                 bulkRegistrationId = Model.BulkRegistrationId,
+                                                             });
+                            if (!Model.BulkRegistrationId.HasValue)
+                            {
+                                tab.HtmlAttributes(new {@class="disabledtab"});
+                            }
+
+                            if (Model.SelectedTab == GroupDestination.CustomizeBulkRegistration)
+                            {
+                                tab.Selected(true);
+                            }
+
+                            tab = tabstrip.Add().Text("Review")
+                                                             .LoadContentFrom("Review", "BulkRegistration", new
+                                                             {
+                                                                 id = Model.ActionHelper.Id,
+                                                                 bulkRegistrationId = Model.BulkRegistrationId,
+                                                             });
+
+                            if (!Model.BulkRegistrationId.HasValue)
+                            {
+                                tab.HtmlAttributes(new { @class = "disabledtab" });
+                            }
+                            
+                            if (Model.SelectedTab == GroupDestination.BulkRegistrationReview)
+                            {
+                                tab.Selected(true);
+                            }
+                            }
+                            
+
+                            //var tab = tabstrip.Add().Text("Devices")
+                            //        .LoadContentFrom(actionHelper.ProductionDevices, actionHelper.Controller, new {
+                            //            id = actionHelper.Id,
+                            //            defaultDeviceCode = Model.DefaultDeviceCode,
+                            //        });
+
+                            //if (Model.SelectedTab == GroupDestination.DevicesProd) {
+                            //    tab.Selected(true);
+                            //}
+
+                            //tab = tabstrip.Add().Text("Spares")
+                            //        .LoadContentFrom(actionHelper.SpareDevices, actionHelper.Controller, new {
+                            //            id = actionHelper.Id,
+                            //            defaultDeviceCode = Model.DefaultDeviceCode,
+                            //        });
+
+                            //if (Model.SelectedTab == GroupDestination.DevicesSpare) {
+                            //    tab.Selected(true);
+                            //}
+
+                            //tab = tabstrip.Add().Text("Advanced Endpoint Protection")
+                            //        .LoadContentFrom("ViewAvailable", "EP", new
+                            //        {
+                            //            id = actionHelper.Id,
+                            //            defaultDeviceCode = Model.DefaultDeviceCode,
+                            //        });
+
+                            //if (Model.SelectedTab == GroupDestination.EPAuthCodes)
+                            //{
+                            //    tab.Selected(true);
+                            //}
+
+                            //tab = tabstrip.Add().Text("VM-Series Auth-Codes")
+                            //        .LoadContentFrom("ViewAvailable", "VM", new {
+                            //            id = actionHelper.Id,
+                            //            defaultDeviceCode = Model.DefaultDeviceCode,
+                            //        });
+
+                            //if (Model.SelectedTab == GroupDestination.DevicesVmCodes) {
+                            //    tab.Selected(true);
+                            //}
+
+                            //tab = tabstrip.Add().Text("Site Licenses")
+                            //       .LoadContentFrom("View", "SiteLicense", new
+                            //       {
+                            //           id = actionHelper.Id,
+                            //           defaultDeviceCode = Model.DefaultDeviceCode,
+                            //       });
+
+                            //if (Model.SelectedTab == GroupDestination.SiteLicenses)
+                            //{
+                            //    tab.Selected(true);
+                            //}
+
+                            //tab = tabstrip.Add().Text("Claimed Assets")
+                            //                                 .LoadContentFrom("Tabs", "BulkRegistration", new
+                            //                                 {
+                            //                                     id = actionHelper.Id
+                            //                                 });
+
+                            //var bulkRegistrationTabNames = new []
+                            //{
+                            //    GroupDestination.ClaimedAssets,
+                            //    GroupDestination.PrepBulkRegistration,
+                            //    GroupDestination.CustomizeBulkRegistration,
+                            //    GroupDestination.BulkRegistrationReview,
+                            //};
+                            
+                            //if (bulkRegistrationTabNames.Contains(Model.SelectedTab))
+                            //{
+                            //    tab.Selected(true);
+                            //}
+
+                            //tab = tabstrip.Add().Text("Search All")
+                            //                                 .LoadContentFrom("View", "SearchAll", new {
+                            //                                     id = actionHelper.Id
+                            //                                 });
+
+                            //if (Model.SelectedTab == GroupDestination.SearchAll) {
+                            //    tab.Selected(true);
+                            //}
+
+                        }
+
+                        )
+          )

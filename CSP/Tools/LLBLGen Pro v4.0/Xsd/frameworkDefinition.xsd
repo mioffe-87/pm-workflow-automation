@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- framework Schema definitions for the framework type
+     Used for verification of framework nodes in .framework files. -->
+<xs:schema id="frameworkDefinition" targetNamespace="http://sd/llblgen/pro/frameworkDefinition.xsd" 
+		elementFormDefault="qualified" xmlns="http://sd/llblgen/pro/frameworkDefinition.xsd" 
+		xmlns:mstns="http://sd/llblgen/pro/frameworkDefinition.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="framework">
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs ="1">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="supportedDrivers">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="driver">
+									<xs:complexType>
+										<xs:attribute name="id" type="xs:string" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="supportedPlatforms">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="platform">
+									<xs:complexType>
+										<xs:attribute name="name" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="supportedTemplateGroups">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="templateGroup">
+									<xs:complexType>
+										<xs:attribute name="name" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="attributeDefaults">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="attribute">
+									<xs:complexType>
+										<xs:attribute name="targetElement" use="required" type="xs:int"/>
+										<xs:attribute name="value" use="required" type="xs:string"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="interfaceDefaults">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="interface">
+									<xs:complexType>
+										<xs:attribute name="targetElement" use="required" type="xs:int"/>
+										<xs:attribute name="value" use="required" type="xs:string"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="namespaceDefaults">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="namespace">
+									<xs:complexType>
+										<xs:attribute name="targetElement" use="required" type="xs:int"/>
+										<xs:attribute name="value" use="required" type="xs:string"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="validationAssembly">
+						<xs:complexType>
+							<xs:attribute name="filename" type="xs:string" use="required"/>
+							<xs:attribute name="path" type="xs:string" use="required"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required" />
+			<xs:attribute name="dataFolder" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

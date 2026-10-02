@@ -1,0 +1,53 @@
+﻿@using System.Configuration
+@model Csp.Web.DataTransferObjects.DefaultDto
+@{
+    var supportCookie = Request.Cookies[Constants.SUPPORT_COOKIE];
+    var userInfo = UserHelper.GetSsoToken();
+    var resourceRevisionNumber = SiteHelper.GetResourceRevisionNumber();
+    var portalAssetsCdnUrl = SiteHelper.GetPortalAssetsCdnUrl();
+    var appEumKey = ConfigurationManager.AppSettings["APP_EUM_KEY"];
+    var appEnvironment = ConfigurationManager.AppSettings["AppEnvVerify"];
+    var HOST = appEnvironment == "prod" ? "" : "qa";
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <base href="/">
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta name="google-site-verification" content="T2cVf6A12TgFaNLkMGF0229M8wmw3zE_BLNJqQ8FbdY" />
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico?@(resourceRevisionNumber)">
+    <link href="https://www.paloaltonetworks.com/etc/clientlibs/pan-productpage.min.css" rel="stylesheet" />
+    <link href="@(portalAssetsCdnUrl)/static/css/main.css?@(resourceRevisionNumber)" rel="stylesheet" />
+    <!--noscript id="deferredStyles">
+    </noscript-->
+</head>
+<body class="productpage">
+    @RenderBody()
+    @PortalContext.AddContext()
+    <script type="text/javascript" src="@(portalAssetsCdnUrl)/static/js/main.js?@(resourceRevisionNumber)"></script>
+    @Omniture.AddOmniture("HEAD")
+    @if (supportCookie == null || userInfo == null)
+    {
+        <script type="text/javascript">
+            var webData = {
+                "portalAccessed": "CustomerSupportPortal"
+            };
+        </script>
+    }
+    else
+    {
+        @Omniture.AddOmniture("INIT")
+    }
+
+    <script type="text/javascript" async src="https://www.paloaltonetworks.com/content/dam/ext-includes/dynamic-templates/recentNav/head@(HOST).js"></script>
+    <script type="text/javascript" async src="https://www.paloaltonetworks.com/content/dam/ext-includes/dynamic-templates/recentNav/nav@(HOST).js"></script>
+    <script type="text/javascript" async src="https://www.paloaltonetworks.com/content/dam/ext-includes/dynamic-templates/recentNav/footer.js"></script>
+    @RenderSection("OmniturePageVariables", required: false)
+    @Omniture.AddOmniture("FOOT")
+    @HotJar.AddScript()
+</body>
+</html>

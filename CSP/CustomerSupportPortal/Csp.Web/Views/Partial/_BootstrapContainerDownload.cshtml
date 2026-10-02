@@ -1,0 +1,29 @@
+﻿@model Csp.Web.Controllers.BootstrapContainerDto
+
+@if (Model.ShowDownloadLink)
+{
+    <div id="@(UniqueId.BoostrapContainerLink)">
+        Your @Html.ActionLink("Bootstrap Container Download", "Download", "BootstrapContainer", new {deviceId = Model.DeviceId}, new {onclick = UniqueId.Bootstrap + "downloadClick();"}) is ready
+    </div>
+    <script>
+        $(function() {
+            $('#@(Model.FileUploadAreaDiv)').slideUp();
+        });
+
+        function @(UniqueId.Bootstrap)downloadClick() {
+            $('#@(UniqueId.BoostrapContainerLink)').replaceWith('Download started');
+        }
+    </script>
+}
+else if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div style="color: red; margin-top: 5px;">
+        @Model.ErrorMessage
+    </div>
+
+    <script>
+        $(function () {
+            @(Model.ClearUploadFilesJsMethod)clearUploadFiles();
+        });
+    </script>
+}

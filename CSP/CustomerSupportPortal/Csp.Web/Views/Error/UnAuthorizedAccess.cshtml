@@ -1,0 +1,86 @@
+﻿@model Csp.Web.DataTransferObjects.UnAuthorizedAccessDto
+
+@{
+    ViewBag.Title = "UnAuthorized Access";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var supportLink = "https://live.paloaltonetworks.com/t5/custom/page/page-id/Support";
+}
+
+<script type="text/javascript">
+    function GetSupport() {
+
+        location.href = '@supportLink';
+    }
+</script>
+
+<input class="k-button" type="submit" value="Get Support" onclick="GetSupport();" style="height: 19px; padding-top: 0px; line-height: 18px;" />
+
+<div class="Csp-error">
+    <br />
+    <br />
+    <span>UnAuthorized Access</span>
+</div>
+<div>
+    <div class="alert alert-error">
+        @if (Model.HasExpiredMembership)
+        {
+            <div>
+                Your account has expired. To get this resolved, you must reach out with your <b>Super User</b> for assistance.
+                <br />
+                You can click <a href="#" onclick="SendEmail();"><b>here</b></a> to send your Super User a reminder notification.
+            </div>
+        }
+        else if (Model.IsMembershipPending)
+        {
+            <div>
+                Your account is currently waiting for your company’s <b>Super User Approval.</b> Access will <b>not</b> be provided until this approval is received. To help speed things along, you must reach out to your Super User for approval.
+                <br />
+                You can click <a href="#" onclick="SendEmail();"><b>here</b></a> to send your Super User a reminder notification.
+            </div>
+        }
+        else if (!Model.HasAccess)
+        {
+            <div>
+                You do not have permission to access this content. Please contact Palo Alto Networks Support, if you believe you have reached this notification in error.
+            </div>
+        }
+        else if (string.IsNullOrEmpty(Model.Email))
+        {
+            <span>You do not have permission to access this content. Please contact Palo Alto Networks Support, if you believe you have reached this notification in error.</span>
+        }
+        else
+        {
+            <div>
+                Your email address, <a href="javascript: void(0);">@Model.Email</a>, was not found in the support portal.
+                Please make sure to sign in with an email address that is associated with a support portal account. Click @Html.ActionLink("here", "Logout", "Home") to log out from this account.
+            </div>
+            <br/>
+            <div>For additional assistance, please see the <a href="@supportLink">Get Support</a> page on the Palo Alto Networks Live Community.</div>
+             }
+    </div>
+</div>
+<div style="width: 60%; margin: 0px auto;">
+    <input type='button' value='Go to Support Home Page' class="k-button center" onclick='window.location = "@Url.Action("Index", "Support", new { checkMembershipStatus = true })";' />
+</div>
+
+<script>
+    function SendEmail() {
+            var hasExpiredMembership = '@Model.HasExpiredMembership' == "False" ? false  : true;
+            var direction = "/@ControllerFields.UserAccountController/SendSuperUserReminderEmail?isExpired= " + hasExpiredMembership;
+        $.ajax({
+                url: direction,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function (result) {
+                    if (result.Success) {
+                        SupportPortal.Message(result.Message, { height: 150, width: 350 });
+                    }
+                },
+            error: function () {
+                    SupportPortal.Message("Failed to Send Email.", { height: 150, width: 350 });
+                }
+            });
+        }
+</script>

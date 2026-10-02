@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateBindings name="SD.EntityFramework.NET45" description=".NET 4.5 specific template bindings for the templates specific for Entity Framework support for LLBLGen Pro" precedenceLevel="10" xmlns="http://sd/llblgen/pro/templateBindingsDefinition.xsd">
+	<supportedPlatforms>
+		<platform name=".NET 4.5" />
+	</supportedPlatforms>
+	<supportedFrameworks>
+		<framework name="Entity Framework v5" />
+	</supportedFrameworks>
+	<supportedDrivers>
+		<driver id="2D18D138-1DD2-467E-86CC-4838250611AE"/>	
+		<driver id="3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA"/> 
+		<driver id="758A392F-06F3-498b-AED9-D85A4C795BDA"/> 
+		<driver id="88EBFD8C-CBDD-4452-88AF-1C99E41A123F"/> 
+		<driver id="BB438EBA-A0B5-4236-A2B8-64D828A138AF"/>	
+		<driver id="BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A"/> 
+	</supportedDrivers>
+	<language name="C#">
+		<templateBinding templateID="SD_EF_POCO_Model_VsNet" filename="V4\C#\vsNet2010PocoModelProjectFile.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EF_POCO_Persistence_VsNet" filename="V4\C#\vsNet2010PocoPersistenceProjectFile.template" templateLanguage="TDL" />
+	</language>
+	<language name="VB.NET">
+		<templateBinding templateID="SD_EF_POCO_Model_VsNet" filename="V4\VB.NET\vsNet2010PocoModelProjectFile.template" templateLanguage="TDL" />
+		<templateBinding templateID="SD_EF_POCO_Persistence_VsNet" filename="V4\VB.NET\vsNet2010PocoPersistenceProjectFile.template" templateLanguage="TDL" />
+	</language>
+</templateBindings>

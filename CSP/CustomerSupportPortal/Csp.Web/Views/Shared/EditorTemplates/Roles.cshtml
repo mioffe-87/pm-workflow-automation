@@ -1,0 +1,12 @@
+﻿@using Csp.Api.Model
+@model List<NameValue>
+
+@(
+    Html.Kendo().MultiSelectFor(m => m)
+        .Placeholder("Select Roles...")
+        .DataTextField("Name")
+        .DataValueField("Value")
+        .BindTo((List<NameValue>)ViewData["AvailableRoles"])
+        .ItemTemplate("#if(data.IsActive){# <span data-disabled='#:data.IsDisabled#'>#:data.Name#</span> #}else{# <del>#:data.Name#</del> #}#")
+        .TagTemplate("#if(data.IsActive){# <span data-disabled='#:data.IsDisabled#'>#:data.Name#</span> #}else{# <del>#:data.Name#</del> #}#")
+      )

@@ -1,0 +1,78 @@
+﻿<~
+	// The enum definition for the Dbtypes as it is used by the MySql driver. Used here to determine in readable code
+	// if a field requires a length specification emitted in the DLL and/or collation specifications. 
+	public enum MySqlDbTypes:int
+	{
+		BigInt,
+		BigIntUnsigned,
+		Blob,
+		Char,
+		Date,
+		DateTime,
+		Decimal,
+		Double,
+		Integer,
+		IntegerUnsigned,
+		Float,
+		LongBlob,
+		LongText,
+		MediumBlob,
+		MediumText,
+		SmallInt,
+		SmallIntUnsigned,
+		Text,
+		Time,
+		Timestamp,
+		TinyBlob,
+		TinyInt,
+		TinyIntUnsigned,
+		TinyText,
+		VarBinary,
+		VarChar,
+		Year,
+	}
+	
+	// Creates the string which defines the field, complete with name, type, identity (if applicable) and nullable/not nullable
+	private string CreateFieldDefinitionString(DBTableField field)
+	{
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.AppendFormat("`{0}`", field.FieldName);
+		// append sizes, precision etc.  if applicable.
+		switch((MySqlDbTypes)field.TypeDefinition.DBType)
+		{
+			case MySqlDbTypes.BigIntUnsigned:
+				toReturn.Append(" Bigint UNSIGNED");
+				break;
+			case MySqlDbTypes.IntegerUnsigned:
+				toReturn.Append(" Int UNSIGNED");
+				break;
+			case MySqlDbTypes.SmallIntUnsigned:
+				toReturn.Append(" Smallint UNSIGNED");
+				break;
+			case MySqlDbTypes.TinyIntUnsigned:
+				toReturn.Append(" Tinyint UNSIGNED");
+				break;
+			case MySqlDbTypes.Char:
+			case MySqlDbTypes.VarChar:
+			case MySqlDbTypes.VarBinary:
+				toReturn.AppendFormat(" {0}({1})", field.TypeDefinition.DBTypeAsString, field.TypeDefinition.Length);
+				break;
+			case MySqlDbTypes.Decimal:
+				toReturn.AppendFormat(" Decimal({0}, {1})", field.TypeDefinition.Precision, field.TypeDefinition.Scale);
+				break;
+			default:
+				toReturn.AppendFormat(" {0}", field.TypeDefinition.DBTypeAsString);
+				break;
+		}
+		if(field.IsIdentity)
+		{
+			toReturn.Append(" AUTO_INCREMENT");
+		}
+		if(!field.IsNullable)
+		{
+			toReturn.Append(" NOT");
+		}
+		toReturn.Append(" NULL");
+		return toReturn.ToString();
+	}
+~>

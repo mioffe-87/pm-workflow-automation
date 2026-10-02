@@ -1,0 +1,36 @@
+﻿@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.RoleAssignmentDto
+@Html.HiddenFor(model => model.SelectedRoleIds, new { @Id = UniqueId.SelectedRoles })
+@(Html.Kendo().Grid(Model.Roles)
+    .Name((string)UniqueId.Roles)
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.Role.Id).Hidden();
+            columns.Bound(c => c.Role.Name).Title("Available Roles").Width(200);
+            columns.Template(@<text><input type="checkbox" @(item.IsSelected ? "checked" : "") value="@item.Role.Id" class="checkbox" /></text>).Title("Assigned Roles").Width(100);
+        })
+    )
+<script>
+    $("#@UniqueId.Roles").closest('form').submit(function () {
+        document.getElementById("@UniqueId.SelectedRoles").value = "";
+        
+        $("#@UniqueId.Roles").find("input:checkbox[class=checkbox]:checked").each(function () {
+            if (this.checked) {
+                if (document.getElementById("@UniqueId.SelectedRoles").value == "") {
+                    document.getElementById("@UniqueId.SelectedRoles").value = this.value;
+                } else {
+                    document.getElementById("@UniqueId.SelectedRoles").value += "," + this.value;
+                }
+            }
+        });
+        
+        if (document.getElementById("@UniqueId.SelectedRoles").value == "") {
+            SupportPortal.ClearNotification();
+            SupportPortal.Notification("At least one role is required.", SupportPortal.NotificationType.Error);
+            return false;
+        }
+
+        SupportPortal.ClearNotification();
+        return true;
+    });
+</script>  

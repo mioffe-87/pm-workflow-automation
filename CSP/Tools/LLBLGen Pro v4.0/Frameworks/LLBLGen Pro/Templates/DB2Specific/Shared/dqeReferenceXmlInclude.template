@@ -1,0 +1,4 @@
+﻿	<Reference Include="SD.LLBLGen.Pro.DQE.DB2, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+		<SpecificVersion>True</SpecificVersion>
+		<HintPath><[RuntimeLibraryHintPath]></HintPath>
+	</Reference>

@@ -1,0 +1,148 @@
+﻿@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.ProductModelListDto
+
+
+<script>
+    function ShowProductModelDetails(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var direction = "/ProductModel/AddUpdateProductModel?id=" + dataItem.id;
+        var window = $("#ProductModelWindow");
+        window.data("kendoWindow").refresh();
+        window.data("kendoWindow").refresh(direction);
+        window.data("kendoWindow").open();
+        window.data("kendoWindow").center();
+    }
+
+    function DeleteProductModel(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var message = "@Constants.DeletePreMessage Product Model?";
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var deleteAction = function () {
+            var id = dataItem.ModelId;
+            var direction = "/ProductModel/DeleteProductModel?id=" + id;
+
+            $.ajax({
+                url: direction,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                success: function (result) {
+                    if (result.Success) {
+                        var grid = $("#ProductModelGrid").data("kendoGrid").dataSource;
+                        grid.read();
+                    }
+                },
+                error: function () {
+                    SupportPortal.Message("Failed to delete the Product Model.");
+                }
+            });
+        };
+
+        SupportPortal.Confirmation(message, function () { deleteAction(); }, null);
+    }
+
+    function onProductModelGridDataBound(e) {
+        if (document.getElementById("hdnproductModelgridcountcheck").value == "") {
+            var tempgridName = "#ProductModelGrid";
+            $(tempgridName).data("kendoGrid").dataSource._total = "@Convert.ToInt32(Model.DataParameters.TotalRecordCount)";
+            document.getElementById("hdnproductModelgridcountcheck").value = "1";
+        }
+    }
+
+    $(document).ready(function () {
+        var window = $("#ProductModelWindow");
+        $("#btnCreateProductModel").click(function () {
+            var direction = "/ProductModel/AddUpdateProductModel";
+
+            window.data("kendoWindow").refresh(direction);
+            window.data("kendoWindow").open();
+            window.data("kendoWindow").center();
+
+        });
+    });
+
+    function onProductModelWindowOpen() {
+        SupportPortal.OnWindowOpen("ProductModelWindow");
+    }
+
+    function onProductModelWindowClose() {
+        SupportPortal.OnWindowClose("ProductModelGrid");
+    }
+
+</script>
+
+<div>
+    @(Html.Kendo().Window()
+      .Name("ProductModelWindow")
+      .Width(750)
+      .Height(350)
+      .Modal(true)
+      .Draggable()
+      .Events(events => events
+          .Open("onProductModelWindowOpen")
+          .Close("onProductModelWindowClose"))
+      .Title("Product Model")
+     )
+</div>
+
+@Html.AntiForgeryToken()
+
+@Html.Hidden("hdnproductModelgridcountcheck", "")
+
+
+<fieldset>
+    <legend>Product Model</legend>
+
+    <div class="grid-header" id="gridFilterOptions">
+        <div class="grid-left">
+            <input type="button" value="Add New Product Model" class="k-button" id="btnCreateProductModel" />
+        </div>
+    </div>
+</fieldset>
+
+
+<div class="grid-content">
+    <div id="divproductmodelgrid">
+        @{
+            if (Model != null && Model.ProductModels != null) {
+
+                var maxPageSizeForms = Convert.ToInt32(Model.ProductModels.Count);
+                var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+                if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                    pageSizeOptionsForms.Add(maxPageSizeForms);
+                }
+            
+            @(Html.Kendo().Grid(Model.ProductModels)
+              .Name("ProductModelGrid")
+              .Columns(columns => {
+                  columns.Bound(p => p.ModelId).Width(50).Filterable(false).Sortable(true).Column.Title = "ID";
+                  columns.Bound(p => p.Name).Filterable(false).Sortable(true).Column.Title = "Name";
+                  columns.Bound(p => p.ProductLine).Filterable(false).Column.Title = "Product";
+                  columns.Bound(p => p.Platform).Filterable(false).Column.Title = "Platform";
+                  columns.Bound(p => p.MinimumRequiredVersion).Filterable(false).Column.Title = "Min Required<br/>Version";
+                  columns.Bound(p => p.MaximumSupportedVersion).Filterable(false).Column.Title = "Max Supported<br/>Version";
+                  columns.Command(command => {
+                          command.Custom("Edit").Click("ShowProductModelDetails");
+                          command.Custom("Delete").Click("DeleteProductModel");
+
+                      }).Width(190).Title("Action");
+              })
+              .Events(e => e.DataBound("onProductModelGridDataBound"))
+            .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+              .Sortable()
+              .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                            .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                            .Model(model => model.Id(p => p.ModelId))
+                                            .PageSize(Model.DataParameters.PaginationCount)
+                                            .Read(read => read.Action("ProductModels", "ProductModel").Data("SetAntiForgery"))
+            ))
+            }
+        }
+
+    </div>
+</div>

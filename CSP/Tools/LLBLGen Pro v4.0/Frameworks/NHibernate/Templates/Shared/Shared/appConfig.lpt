@@ -1,0 +1,9 @@
+﻿<%
+	Project currentProject = _executingGenerator.ProjectDefinition;
+%><?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<connectionStrings>
+		<!-- please adjust the connection string embedded in the element below to target the proper catalog / server using the proper user / password combination -->
+		<add name="<%=currentProject.CreateConnectionStringKeyNameForDatabase(_executingGenerator.DriverID)%>" connectionString="<%=currentProject.CreateConnectionStringForDatabase(_executingGenerator.DriverID)%>" />
+	</connectionStrings>
+</configuration> 

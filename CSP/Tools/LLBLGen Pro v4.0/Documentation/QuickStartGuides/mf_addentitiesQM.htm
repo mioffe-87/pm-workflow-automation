@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>LLBLGen Pro quick start guide: Add entities using Quick Model</title>
+	<link rel="STYLESHEET" type="text/css" href="stylesheets/general.css">
+</head>
+
+<body>
+
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td>
+			<H1>Add entities using Quick Model&nbsp;&nbsp;<img src="pics/QuickModelIcon_v3.png" width="16" height="16" border="0" alt="Quick Model"></H1>
+		</td>
+		<td align="right" nowrap>
+			<br>
+			<a href="javascript:history.go(-1)" class="nohover"><img src="pics/back.gif" width="30" height="23" border="0" alt="back"></a>&nbsp;&nbsp;
+			<a href="index.htm" title="home" class="nohover"><img src="pics/home.gif" width="30" height="23" alt="home" border="0"></a>
+		</td>
+	</tr>
+</table>
+<br clear="all"><br>
+<table width="95%" cellpadding="0" cellspacing="5">
+	<tr>
+		<td width="40" valign="top">
+			<img src="pics/1.png" width="30" height="30" alt="1." border="0">
+		</td>
+		<td class="content">
+			Click the <i>Quick Model</i> button on the toolbar.<br>
+			<img src="pics/quickmodel1.png" width="537" height="112" alt="Open the Quick Model editor" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/2.png" width="30" height="30" alt="2." border="0">
+		</td>
+		<td class="content">
+			In the <i>Command input</i> field, type <b>Customer.Orders 1n Order.Customer</b>. Press enter.<br>
+			<img src="pics/quickmodel2.png" width="671" height="612" alt="Command input" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/3.png" width="30" height="30" alt="3." border="0">
+		</td>
+		<td class="content">
+			In the large editor canvas, the 
+			<a href="http://www.llblgen.com/documentation/4.0/Designer/Functionality%20Reference/ModelViewEditor.htm" target="_blank" title="more information" class="info">ModelViewer</a>,
+			the entities Customer and Order are shown, as wel as the relationship between them (1:n).<br>
+			<img src="pics/quickmodel3.png" width="671" height="612" alt="Command input" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/4.png" width="30" height="30" alt="4." border="0">
+		</td>
+		<td class="content">
+			Now type <b>#u Customer</b> in the command input field. This will set the scope to the Customer entity.<br>
+			<img src="pics/quickmodel4.png" width="671" height="143" alt="Scope to Customer" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/5.png" width="30" height="30" alt="5." border="0">
+		</td>
+		<td class="content">
+			To make an Identifying field 'Id' in the customer entity, of type 'int', you type: <b>Id int *</b>.<br>
+			<img src="pics/quickmodel5.png" width="671" height="138" alt="Id int *" border="0"><br><br>
+			<img src="pics/quickmodel6.png" width="671" height="612" alt="Id int *" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/6.png" width="30" height="30" alt="6." border="0">
+		</td>
+		<td class="content">
+			The other fields for Customer are easily created by typing <i>fieldname type</i> and pressing 'enter'. If a field is optional / nullable, you add <b>null</b> to the line and if 
+			a type needs a specification, you can put that between brackets.<br>
+			<img src="pics/quickmodel7.png" width="671" height="159" alt="ContactPerson string null" border="0"><br>
+			<img src="pics/quickmodel8.png" width="671" height="145" alt="Zipcode string (10)" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<img src="pics/7.png" width="30" height="30" alt="7." border="0">
+		</td>
+		<td class="content">
+			When you're done adding fields to the Customer entity, type <b>#u-</b> to update the scope to one level higher. Change the scope to <i>Order</i> the way you did in step 4 and add 
+			the fields for this entity.<br>
+			<img src="pics/quickmodel9.png" width="671" height="612" alt="Update scope" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" height="10" style="background-image: url(pics/hline.png); background-repeat: no-repeat;">&nbsp;</td>
+	</tr>
+</table>
+<br clear="all">
+<table cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="2">
+			<img src="pics/nextstep.png" width="257" height="20" alt="next step" border="0">
+		</td>
+	</tr>
+	<tr>
+		<td width="90">&nbsp;</td>
+		<td class="content">
+			<a href="mf_adddatabase.htm">Add a database</a>
+		</td>
+	</tr>
+</table>
+<br><br>
+</body>
+</html>

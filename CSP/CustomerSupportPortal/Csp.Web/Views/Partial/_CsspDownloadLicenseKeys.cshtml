@@ -1,0 +1,230 @@
+﻿@model Csp.Web.DataTransferObjects.CsspPreLicenseDeviceDto
+<script>
+    var deviceLicenseKeys = {
+        getCsspSearchParams: (function() {
+            return {
+                field: $("#CsspCmbLicenseKeys").data("kendoDropDownList").value(),
+                value: $("#txtCsspLicensekeysSearchValue").val()
+            };
+        }),
+        getCsspGridParams: (function() {
+            var params = deviceLicenseKeys.getCsspSearchParams();
+            if (params.value == "" || params.value == "null") {
+                params.value = $("#hdnSelectedPreLicenseCsspAuthCode").val();
+            }
+            var p = SetAntiForgery();
+            p.supAccountId = "@Model.SupportAccountId";
+            p.searchField = params.field;
+            p.searchValue = params.value;
+            return p;
+        }),
+        onDataBound: function(e) {
+            $(".k-grid-LicenseKeys").find("span").addClass("k-icon k-i-seek-s");
+            if ($("#hdnSelectedAllPrelicenseDeviceToDownload").val() == "1") {
+                deviceLicenseKeys.SelectAllRecordsInGrid();
+            }
+        },
+
+        SelectAllRecordsInGrid: (function() {
+            $("[id^=chkCsspLicenseKey]").each(function() {
+                $(this).prop('checked', "checked");
+            });
+        }),
+
+        toggleDevicesSelection: (function(items) {
+            if (typeof items !== "undefined" && items.checked) {
+
+                var grid = $("#PreLicDevices").data("kendoGrid");
+                var recordsOnCurrentView = grid.dataSource.view().length;
+                var totalRecords = grid.dataSource.total();
+
+                if (totalRecords > 50 && totalRecords > recordsOnCurrentView) {
+                    var confirmationMsg = "";
+                    if (deviceLicenseKeys.getCsspSearchParams().value == "" || deviceLicenseKeys.getCsspSearchParams().value == null) {
+                        confirmationMsg = "Search returned " + totalRecords + " records. You have selected " + recordsOnCurrentView + " records. Do you want to select all " + totalRecords + " records?";
+                    }
+                    else
+                    {
+                        if (deviceLicenseKeys.getCsspSearchParams().field == "AuthorizationCodes") {
+                            confirmationMsg = "Search for Auth Code (" + deviceLicenseKeys.getCsspSearchParams().value + ") returned " + totalRecords + " records. You have selected " + recordsOnCurrentView + " records. Do you want to select all " + totalRecords + " records?";
+                        } else {
+                            confirmationMsg = "Search for Pre-license request ID (" + deviceLicenseKeys.getCsspSearchParams().value + ") returned " + totalRecords + " records. You have selected " + recordsOnCurrentView + " records. Do you want to select all " + totalRecords + " records?";
+                        }
+                    }
+                    SupportPortal.Confirmation(confirmationMsg, function () { deviceLicenseKeys.SelectAllPrelicensedDevices(totalRecords); }, null);
+                }
+
+                $("[id^=chkCsspLicenseKey]").each(function() {
+                    $(this).prop('checked', "checked");
+                });
+
+
+            } else {
+                $("#hdnSelectedAllPrelicenseDeviceToDownload").val(0);
+                $("[id^=chkCsspLicenseKey]").each(function() {
+                    $(this).prop('checked', false);
+                });
+            }
+        }),
+
+        SelectAllPrelicensedDevices: (function (totalRecords) {
+            $("#hdnCountOfRecordsSelectedForDownload").val(totalRecords);
+            $("#hdnSelectedAllPrelicenseDeviceToDownload").val(1);
+        }),
+
+        DownloadOnTheFly: (function () {
+            $("#divDownloadMessage").show();
+            $(".k-grid-LicenseKeys").addClass("k-state-disabled");
+            var provisionedDevices = [];
+            var isSelectAll = $("#hdnSelectedAllPrelicenseDeviceToDownload").val() == "1" ? "true" : "false";
+
+            if (isSelectAll == "false") {
+                $("[id^=chkCsspLicenseKey]:checked").each(function () {
+                    provisionedDevices.push($(this).get(0).id.replace('chkCsspLicenseKey', ''));
+                });
+            }
+
+            var deviceIds = provisionedDevices.join(",");
+
+            var downloadUrl = "/Cssp/DownloadPreLicenseKeysOnTheFly/?csvDeviceIds=" + deviceIds + "&supAccountId=" + @Model.SupportAccountId + "&selectAll=" + isSelectAll + "&searchField=" + deviceLicenseKeys.getCsspSearchParams().field + "&searchValue=" + deviceLicenseKeys.getCsspSearchParams().value;
+            window.location = downloadUrl;
+
+            var timeoutSecs = 3000;
+            var countDevicesToDownload = $("#hdnCountOfRecordsSelectedForDownload").val();
+            countDevicesToDownload = (isNaN(countDevicesToDownload)) ? 0 : countDevicesToDownload;
+            if (countDevicesToDownload > 500 && countDevicesToDownload < 2000) {
+                timeoutSecs = 6000;
+            }
+            if (countDevicesToDownload > 2000 && countDevicesToDownload < 5000) {
+                timeoutSecs = 12000;
+            }
+            if (countDevicesToDownload > 5000) {
+                timeoutSecs = 24000;
+            }
+            setTimeout(function () { $(".k-grid-LicenseKeys").removeClass("k-state-disabled"); $("#divDownloadMessage").hide(); }, timeoutSecs);
+        }),
+
+        download: (function() {
+            if ($("[id^=chkCsspLicenseKey]:checked").length > 0) {
+                deviceLicenseKeys.DownloadOnTheFly();
+            }
+        }),
+
+        SearchCsspDeviceData: (function () {
+            $("#chkSelectAllSkus").prop('checked', false);
+            $('#PreLicDevices').data('kendoGrid').dataSource.read();
+        })
+    }
+    $(function () {
+        @{
+            if (string.IsNullOrEmpty(Model.DefaultDeviceCode))
+            {
+                <text>$("#txtCsspLicensekeysSearchValue").val($("#hdnSelectedPreLicenseCsspAuthCode").val());</text>
+            }
+        }
+     })
+</script>
+<div class="grid-header" style="height: inherit;">
+    <div class="grid-left" style="padding-top: 5px; padding-left: 5px; color: green; display: none; " id="divDownloadMessage">Note: Request to download license received. Your download will begin shortly...</div>
+    <div class="grid-right">
+        <div class="grid-filter">
+            <span class="filter_by">Filter By:</span>
+            @(Html.Kendo().DropDownList()
+                  .Name("CsspCmbLicenseKeys")
+                  .HtmlAttributes(new
+                  {
+                      Class = "k-dropdown",
+                      style = "margin: 0.25em 0.25em;"
+                  })
+                  .DataTextField("Text")
+                  .DataValueField("Value")
+
+                  .BindTo(new List<SelectListItem>
+                  {
+                      new SelectListItem
+                      {
+                          Text = "Serial Number",
+                          Value = "SerialNumber"
+                      },
+                      new SelectListItem
+                      {
+                          Text = "Authorization Code",
+                          Value = "AuthorizationCodes"
+                      },
+                      new SelectListItem
+                      {
+                          Text = "Request Id",
+                          Value = "BatchId"
+                      }
+                  })
+                  .Value(Model.DefaultDeviceSearchField)
+                  )
+        </div>
+        <div class="grid-filter">
+            <div class="grid-filter">
+                @Html.TextBox("txtCsspLicensekeysSearchValue", Model.DefaultDeviceCode)
+            </div>
+        </div>
+        <div class="grid-filter">
+            @Html.Hidden("hdnSelectedAllPrelicenseDeviceToDownload","0")
+            @Html.Hidden("hdnCountOfRecordsSelectedForDownload")
+            <input type="button" value="Search" onclick="deviceLicenseKeys.SearchCsspDeviceData()" class="k-button"/>
+        </div>
+    </div>
+</div>
+<div>
+    @(Html.Kendo().Window()
+          .Name("DownloadPreLicenseKey")
+          .HtmlAttributes(new { @class = "no-buttons" })
+          .Actions(a => a.Clear())
+          .Scrollable(false)
+          .Visible(false)
+          .Modal(true)
+          .Title(false)
+          )
+</div>
+<div class="grid-content">
+    @{
+        if (Model != null && Model != null)
+        {
+            var maxPageSizeForms = Convert.ToInt32(Model.DataParameters.TotalRecordCount);
+            var pageSizeOptionsForms = new List<int> { 50, 100, 1000 };
+            if (maxPageSizeForms > pageSizeOptionsForms.Max())
+            {
+                pageSizeOptionsForms.Add(maxPageSizeForms);
+            }
+        @(Html.Kendo().Grid(Model.Devices)
+                  .Name("PreLicDevices")
+                  .HtmlAttributes(new { @class = "proddevicegrid" })
+                  .Columns(columns =>
+                  {
+                      columns.Bound(x => x.DeviceId).ClientTemplate(@"<input type=""checkbox"" id=""chkCsspLicenseKey#=DeviceId#""  name=""chkCsspLicenseKey#=DeviceId#"" />").HeaderTemplate(@"<input type=""checkbox"" style=""margin-top: 0px !important;""  id=""chkSelectAllSkus"" onClick=""deviceLicenseKeys.toggleDevicesSelection(this);"">&nbsp;<span>Select All</span>&nbsp;").Sortable(false).Title("Select").Width(75);
+                      columns.Bound(p => p.DeviceId).Hidden(true);
+                      columns.Bound(p => p.SerialNumber);
+                      columns.Bound(p => p.MasterAuthCode).Title("Authorization Code");
+                      columns.Bound(x => x.Model);
+                      columns.Bound(x => x.ProvisionedDate).Format("{0:dd/MM/yyyy}");
+                  })
+                  .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                  .Events(e => e.DataBound("deviceLicenseKeys.onDataBound"))
+                  .Resizable(resize => resize.Columns(true))
+                  .ToolBar(toolBar =>
+                  {
+                      toolBar.Custom()
+                          .Name("LicenseKeys")
+                          .Text("Download LicenseKeys")
+                          .Url("javascript: deviceLicenseKeys.download();")
+                           .HtmlAttributes(new { id = "licensekeyinfo" });
+                  })
+                  .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                    .Model(model => model.Id(p => p.DeviceId))
+                    .PageSize(Model.DataParameters.PaginationCount)
+                    .Read(read => read.Action("PreLicenseDevices", "Cssp").Data("deviceLicenseKeys.getCsspGridParams"))
+                  )
+              )
+        }
+    }
+
+</div>

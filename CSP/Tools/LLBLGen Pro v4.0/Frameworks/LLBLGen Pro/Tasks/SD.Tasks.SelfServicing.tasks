@@ -1,0 +1,298 @@
+﻿<?xml version="1.0"?>
+<taskGroup xmlns="http://sd/llblgen/pro/taskGroupElementDefinitions.xsd"
+		name="SD.Tasks.SelfServicing" isOptional ="true" 
+		description="General group of tasks which are selfservicing specific.">
+	<supportedPlatforms/>
+	<supportedTemplateGroups>
+		<templateGroup name="SelfServicing"/>
+	</supportedTemplateGroups>
+	<supportedFrameworks>
+		<framework name="LLBLGen Pro Runtime Framework"/>
+	</supportedFrameworks>
+	<dependencies/>
+	<!-- folder creation tasks -->
+	<task name="SD.Tasks.SelfServicing.CollectionClassesDirectoryCreator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" 
+	   taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.DirectoryCreator" description ="Creates the CollectionClasses folder." isOptional="false">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies/>
+		<parameters>
+			<parameter name="folderToCreate" defaultValue="[driverShortName]\CollectionClasses" isOptional="false" description="The folder to create"/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the folder already exists. Overrules clearWhenExistent" valueType="boolean"/>
+			<parameter name="clearWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal if an existing folder has to be cleared first. Overruled by failWhenExistent" valueType="boolean"/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.SelfServicing.DaoClassesDirectoryCreator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" 
+	   taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.DirectoryCreator" description ="Creates the DaoClasses folder." isOptional="false">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies/>
+		<parameters>
+			<parameter name="folderToCreate" defaultValue="[driverShortName]\DaoClasses" isOptional="false" description="The folder to create"/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the folder already exists. Overrules clearWhenExistent" valueType="boolean"/>
+			<parameter name="clearWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal if an existing folder has to be cleared first. Overruled by failWhenExistent" valueType="boolean"/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.SelfServicing.EntityBaseClassesDirectoryCreator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" 
+	   taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.DirectoryCreator" description ="Creates the EntityBaseClasses folder. Used in a two-classes selfservicing scenario." isOptional="true">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies/>
+		<parameters>
+			<parameter name="folderToCreate" defaultValue="[driverShortName]\EntityBaseClasses" isOptional="false" description="The folder to create"/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the folder already exists. Overrules clearWhenExistent" valueType="boolean"/>
+			<parameter name="clearWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal if an existing folder has to be cleared first. Overruled by failWhenExistent" valueType="boolean"/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.SelfServicing.StoredProcedureCallerClassesDirectoryCreator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" 
+	   taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.DirectoryCreator" description="Creates the StoredProcedureCallerClasses folder" isOptional="true">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies/>
+		<parameters>
+			<parameter name="folderToCreate" defaultValue="[driverShortName]\StoredProcedureCallerClasses" isOptional="false" description="The folder to create"/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the folder already exists. Overrules clearWhenExistent" valueType="boolean"/>
+			<parameter name="clearWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal if an existing folder has to be cleared first. Overruled by failWhenExistent" valueType="boolean"/>
+		</parameters>
+	</task>
+
+	<!-- class generator tasks-->
+	<task name="SD.Tasks.SelfServicing.TypedViewClassGenerator" 
+		assemblyFilename="SD.LLBLGen.Pro.LptParser.dll" 
+		taskPerformerClass="SD.LLBLGen.Pro.LptParser.DotNetTemplateEngine"
+		description ="Generates the TypedView classes."
+		isOptional="true">
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies>
+			<dependency name="SD.Tasks.GenericTasks.TypedViewClassesDirectoryCreator"/>
+		</dependencies>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="[driverShortName]\TypedViewClasses" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="[elementName]TypedView.[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_TypedViewTemplate" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="allTypedViews" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="compileOnly" defaultValue="false" isOptional="true" description="Flag to signal if the templates should just be compiled, but not run" valueType="boolean"/>
+			<parameter name="debugBuild" defaultValue ="false" isOptional="true" description ="Flag to signal that the templates have to be compiled using a debug compile, so debugging the templates can be done more easily." valueType="boolean"/>
+			<parameter name="templateIsOptional" defaultValue="false" isOptional="true" description="This optional parameter is a boolean flag which signals the task performer to report a missing template ID as an error (false, default) or as a normal description (true). Used on tasks which are optional for certain databases, like stored procedure call class generation tasks." valueType="boolean"/>
+			<parameter name="templateAssemblySourceFileFormat" defaultValue="templatesSource.[extension]" isOptional="true" description="The filename format for the template sourcecode as it's compiled. Use for debugging templates."/>
+			<parameter name="elementFilter" defaultValue="" isOptional="true" description="This filter will accept the body of a lambda for filtering in string format, according to the DynamicQuery example for C#, shipped with VS.NET. The filter is used to filter elements in the set to process. Example: 'Fields.Count &gt; 0' (without the quotes) which can be used to allow only entities which have fields" valueType="string"/>
+		</parameters>
+	</task>
+	
+	
+	<task name="SD.Tasks.SelfServicing.EntityCollectionClassesGenerator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" 
+	   taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.CodeEmitter" description="Generates the typed entity collections for selfservicing scenarios" isOptional="false">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies>
+			<dependency name="SD.Tasks.SelfServicing.CollectionClassesDirectoryCreator"/>
+		</dependencies>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="[driverShortName]\CollectionClasses" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="[elementName]Collection.[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_EntityCollectionTemplate" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="allEntities" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.SelfServicing.DaoClassesGenerator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.CodeEmitter"
+	    description="Generates the Dao classes" isOptional="false">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies>
+			<dependency name="SD.Tasks.SelfServicing.DaoClassesDirectoryCreator"/>
+		</dependencies>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="[driverShortName]\DaoClasses" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="[elementName]DAO.[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_EntityDAOTemplate" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="allEntities" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.SelfServicing.CommonDaoBaseClassGenerator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.CodeEmitter"
+	    description="Generates the CommonDaoBase class" isOptional="false">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies>
+			<dependency name="SD.Tasks.GenericTasks.DaoClassesDirectoryCreator"/>
+		</dependencies>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="[driverShortName]\DaoClasses" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="CommonDaoBase.[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_CommonDaoBaseTemplate" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="generic" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+		</parameters>
+	</task>	
+	<task name="SD.Tasks.SelfServicing.TypedListDaoClassGenerator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.CodeEmitter"
+	   	description="Generates the TypedListDao class" isOptional="false">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies>
+			<dependency name="SD.Tasks.SelfServicing.DaoClassesDirectoryCreator"/>
+		</dependencies>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="[driverShortName]\DaoClasses" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="TypedListDAO.[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_TypedListDAOTemplate" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="generic" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.SelfServicing.EntityBaseClassesGenerator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.CodeEmitter"
+	    description="Generates the entity base classes in a two-classes selfservicing scenario." isOptional="true">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies>
+			<dependency name="SD.Tasks.SelfServicing.EntityBaseClassesDirectoryCreator"/>
+		</dependencies>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="[driverShortName]\EntityBaseClasses" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="[elementName]EntityBase.[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_EntityBaseTemplate" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="allEntities" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.SelfServicing.DaoFactoryClassGenerator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.CodeEmitter"
+	    description="Generates the Dao class factory" isOptional="false">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies>
+			<dependency name="SD.Tasks.GenericTasks.FactoryClassesDirectoryCreator"/>
+		</dependencies>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="[driverShortName]\FactoryClasses" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="DaoFactory.[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_DAOFactoryTemplate" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="generic" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.SelfServicing.TransactionClassGenerator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.CodeEmitter"
+	    description="Generates the Transaction class" isOptional="false">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies>
+			<dependency name="SD.Tasks.GenericTasks.HelperClassesDirectoryCreator"/>
+		</dependencies>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="[driverShortName]\HelperClasses" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="Transaction.[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_TransactionTemplate" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="generic" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.SelfServicing.VsNetProjectFileCreator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" 
+	    taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.ProjectFileCreator" description="Generates the VS.NET project file. Be sure to place this at the end of the taskgroup." isOptional="false">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies/>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="[driverShortName]" isOptional ="false" description="The folder to generate the project file in, relative to the destination root folder."/>
+			<parameter name="filenameFormat" defaultValue="[projectName].[extension]proj" isOptional="false" description="The project filename format specification."/>
+			<parameter name="templateID" defaultValue="SD_VsNetTemplateID" isOptional="false" description="The ID of the template to use for the VS.NET project file" valueType="templateID"/>
+			<parameter name="useRootNameSpaceForProjectName" defaultValue="true" isOptional="false" description="Flag to signal if the rootnamespace specified should be used for the project name. If set to false, the property projectName has to be specified with the value to use for project name." valueType="boolean"/>
+			<parameter name="alterWhenExistent" defaultValue="true" isOptional="true" description="Flag to signal if an existing project file should be altered or should be left alone." valueType="boolean"/>
+			<parameter name="binRootFolder" defaultValue="" isOptional="true" description="The name of the root folder, relative to the destination root folder, where VS.NET should store the output folders like bin\debug."/>
+			<parameter name="clearFileCacheAfterwards" defaultValue="false" isOptional ="true" description="Flag to signal if the filename cache has to be cleared after this task has been run succesfully." valueType="boolean"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="projectName" defaultValue="" isOptional="true" description="The name to use for the project if useRootNameSpaceForProjectName is set to false."/>
+			<parameter name="buildActionPerExtension" defaultValue=".config;None|;Compile" valueType="string" description="The build actions to specify per file extension" isOptional="false"/>
+		</parameters>
+	</task>
+	<task name="SD.Tasks.SelfServicing.CommonBaseClassGenerator" assemblyFilename="SD.LLBLGen.Pro.TaskPerformers.dll" taskPerformerClass="SD.LLBLGen.Pro.TaskPerformers.CodeEmitter"
+		description="Generates the CommonBaseClass for entities for SelfServicing." isOptional="true">
+		<supportedPlatforms/>
+		<supportedTemplateGroups>
+			<templateGroup name="SelfServicing"/>
+		</supportedTemplateGroups>
+		<supportedFrameworks>
+			<framework name="LLBLGen Pro Runtime Framework"/>
+		</supportedFrameworks>
+		<dependencies>
+			<dependency name="SD.Tasks.GenericTasks.EntityClassesDirectoryCreator"/>
+		</dependencies>
+		<parameters>
+			<parameter name="destinationFolder" defaultValue="[driverShortName]\EntityClasses" isOptional="false" description="The folder to generate the code in"/>
+			<parameter name="filenameFormat" defaultValue="CommonEntityBase.[extension]" isOptional="false" description="The destination file format specification"/>
+			<parameter name="templateID" defaultValue="SD_CommonEntityBase" isOptional="false" description="The ID of the template to use." valueType="templateID"/>
+			<parameter name="emitType" defaultValue="generic" isOptional="false" description="The type of code generation to perform." valueType="emitType"/>
+			<parameter name="templateBindingDefinitionName" defaultValue="" isOptional="true" description="The name of the TemplateBindings from which to pick the templateID specified. Specifying this parameter will always force the templateID to be picked from the templateBindings with the name specified."/>
+			<parameter name="failWhenExistent" defaultValue="false" isOptional="true" description="Flag to signal what to do when the destination file already exists." valueType="boolean"/>
+		</parameters>
+	</task>
+</taskGroup>

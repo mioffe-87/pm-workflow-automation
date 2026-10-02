@@ -1,0 +1,241 @@
+﻿@using Csp.Api.HelperClasses
+@using Kendo.Mvc.UI
+@using Csp.Api.Security;
+@model Csp.Web.DataTransferObjects.DeviceCategoryListDto
+
+
+@{ 
+ActionHelper actionHelper = Model.ActionHelper; 
+}
+
+<script>
+
+    function ShowDeviceCategoryDetails(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var direction = "/@ControllerFields.DeviceController/@actionHelper.AddUpdateDeviceCategory?deviceCategoryId=" + dataItem.id;
+        var window = $("#DeviceCategoryWindow").data("kendoWindow");
+        window.setOptions({
+            minHeight: 240
+        });
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+    
+    function DeleteDeviceCategory(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var message = "@Constants.DeletePreMessage @ApiConstants.DEVICE_CATEGORY?";
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var deleteAction = function () {
+            var id = dataItem.DeviceCategoryId;
+            var direction = "/@ControllerFields.DeviceController/@actionHelper.DeleteDeviceCategory?deviceCategoryId=" + id;
+
+            $.ajax({
+                url: direction,
+                type: 'POST',
+                dataType: 'json',
+                data: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                cache: false,
+                success: function (result) {
+                    if (result.Success) {
+                        var grid = $("#DeviceCategoriesGrid").data("kendoGrid").dataSource;
+                        grid.read();
+                    }
+                },
+                error: function () {
+                    SupportPortal.Message("Failed to delete the @ApiConstants.DEVICE_CATEGORY.");
+                }
+            });
+        };
+
+        SupportPortal.Confirmation(message, function () { deleteAction(); }, null);
+    }
+
+    $(document).ready(function () {
+        var window = $("#DeviceCategoryWindow");
+        $("#btnCreateDeviceCategory").click(function () {
+            var direction = "/@ControllerFields.DeviceController/@actionHelper.AddUpdateDeviceCategory";
+
+            window.data("kendoWindow").refresh(direction);
+            window.data("kendoWindow").open();
+            window.data("kendoWindow").center();
+
+        });
+    });
+    
+    function onDeviceCategoryWindowOpen() {
+        SupportPortal.OnWindowOpen("DeviceCategoryWindow");
+    }
+    
+    function onDeviceCategoryWindowClose() {
+        SupportPortal.OnWindowClose("DeviceCategoriesGrid");
+    }
+    
+    function onRolesEnterPress(e) {
+        if (e.keyCode == 13) {
+            SearchDeviceCategoriesData();
+            return false;
+        }
+    }
+
+</script>
+
+<div>
+    @(Html.Kendo().Window()
+      .Name("DeviceCategoryWindow")
+      .Width(500)
+      .Modal(true)
+      .Draggable()
+      .Visible(false)
+      .Events(events => events
+          .Open("onDeviceCategoryWindowOpen")
+          .Close("onDeviceCategoryWindowClose"))
+      .Title(ApiConstants.DEVICE_CATEGORY)
+    )
+</div>
+
+@Html.AntiForgeryToken()
+<script>
+    var gridName = "#" + "@actionHelper.DeviceCategories" + "Grid";
+
+    function SearchDeviceCategoriesData() {
+        var grid = $(gridName).data("kendoGrid").dataSource;
+
+        grid.filter(
+            {
+                field: document.getElementById("cmb" + "@actionHelper.DeviceCategories" + "devicecategoriesSearchEntity").value,
+                operator: "eq",
+                value: document.getElementById("txt" + "@actionHelper.DeviceCategories" + "devicecategoriesSearchValue").value
+            }
+        );
+        
+        grid.read();
+    }
+
+    var cmbId = "#cmb" + "@actionHelper.DeviceCategories" + "devicecategoriesSearchEntity";
+    $(cmbId).change(function() {
+        document.getElementById("txt" + "@actionHelper.DeviceCategories" + "devicecategoriesSearchValue").value = "";
+    });
+    
+    function onDeviceCategoriesGridDataBound(e) {
+        var tempgridName = "#" + "@actionHelper.DeviceCategories" + "Grid";
+        var userAccountId = '@User.UserAccount.Id';
+        var supportAccountAdmin = '@Model.IsSupportAccountAdmin';
+        var isSupportAccountAdmin = (supportAccountAdmin.toUpperCase() === "TRUE");
+        
+        if (document.getElementById("hdndevicecategoriesgridcountcheck").value == "") {
+            $(tempgridName).data("kendoGrid").dataSource._total = "@Convert.ToInt32( Model.DataParameters.TotalRecordCount)";
+            document.getElementById("hdndevicecategoriesgridcountcheck").value = "1";
+        }
+
+        $(".k-grid-Edit").each(function () {
+            var row = $(this).closest("tr");
+            var data = $(tempgridName).data("kendoGrid").dataItem(row);
+            if (!isSupportAccountAdmin && data.UserAccountId != userAccountId) {
+                $(this).remove();
+            }
+        });
+        
+        $(".k-grid-Delete").each(function () {
+            var row = $(this).closest("tr");
+            var data = $(tempgridName).data("kendoGrid").dataItem(row);
+            if (!isSupportAccountAdmin && data.UserAccountId != userAccountId) {
+                $(this).remove();
+            }
+        });
+    }
+</script>
+@Html.Hidden("hdndevicecategoriesgridcountcheck", "")
+
+<div class="grid-header" id="gridFilterOptions">
+    <div class="grid-left">
+        <input type="button" value="Add @ApiConstants.DEVICE_CATEGORY" class="k-button" id="btnCreateDeviceCategory"/>
+    </div>
+    <div class="grid-right">
+
+        <div class="grid-filter">
+            <span class="filter_by">Filter By:</span>
+            @(Html.Kendo().DropDownList()
+                .Name("cmb" + @actionHelper.DeviceCategories + "devicecategoriesSearchEntity")
+                .HtmlAttributes(new
+                                {
+                                    Class = "k-dropdown"
+                                })
+                .DataTextField("Text")
+                .DataValueField("Value")
+                .BindTo(new List<SelectListItem>() {
+                    new SelectListItem() {
+                        Text = ApiConstants.DEVICE_CATEGORY + " Name",
+                        Value = "DeviceCategoryName"
+                    },
+                    new SelectListItem() {
+                        Text = "Created By",
+                        Value = "Email"
+                    },
+                })
+                .Value("Name")
+            )
+        </div>
+
+        <div class="grid-filter">
+            <div class="grid-filter" id="txt_@actionHelper.DeviceCategories">
+                @Html.TextBox("txt" + (string)@actionHelper.DeviceCategories + "devicecategoriesSearchValue", null, new { @class = "k-textbox", onkeypress = "return onRolesEnterPress(event)"   })
+            </div>
+        </div>
+        <div class="grid-filter">
+            <input type="button" value="Search" onclick="SearchDeviceCategoriesData()" class="k-button" />
+        </div>
+    </div>
+</div>
+
+<div class="grid-content">
+    <div id="divdevicecategorieslistgrid">
+        @{
+        if (Model != null && Model.DeviceCategories != null)
+        {
+            var maxPageSizeForms = Convert.ToInt32(Model.DeviceCategories.Count);
+            var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+            if (maxPageSizeForms > pageSizeOptionsForms.Max())
+            {
+                pageSizeOptionsForms.Add(maxPageSizeForms);
+            }
+
+            @(Html.Kendo().Grid(Model.DeviceCategories)
+            .Name((string)actionHelper.DeviceCategories + "Grid")
+            .Columns(columns => {
+                columns.Bound(p => p.DeviceCategoryName).Width(200).Filterable(false).Sortable(true).Column.Title = ApiConstants.DEVICE_CATEGORY + " Name";
+                columns.Bound(p => p.Email).Width(150).Filterable(false).Column.Title = "Created By";
+                columns.Command(command =>
+                    {
+                        command.Custom("Edit").Click("ShowDeviceCategoryDetails");
+                        command.Custom("Delete").Click("DeleteDeviceCategory");
+                    }).Width(150).Title("Action");
+            })
+            .CellAction(cell =>
+            {
+                if (cell.Column.Title == "Action" && cell.DataItem.UserAccountId != User.UserAccount.Id)
+                {
+                    cell.HtmlAttributes.Add("style", "visibility: hidden;");
+                }
+            })
+            .Events(e => e.DataBound("onDeviceCategoriesGridDataBound"))
+            .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+            .Sortable()
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount)) 
+                .Model(model => model.Id(p => p.DeviceCategoryId))
+                .PageSize(Model.DataParameters.PaginationCount)
+                .Read(read => read.Action(actionHelper.DeviceCategories, actionHelper.Controller).Data("SetAntiForgery"))
+            ))
+        }
+        }
+
+    </div>
+</div>
+
+

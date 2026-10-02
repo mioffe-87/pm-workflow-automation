@@ -1,0 +1,42 @@
+﻿@using Kendo.Mvc.UI
+
+@{
+    ViewBag.Title = "SendSuperUserEmail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function SendEmail() {
+
+        var direction = "/@ControllerFields.UserAccountController/SendSuperUserEmailPost";
+
+        $.ajax({
+            url: direction,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function (result) {
+                if (result.Success) {
+                    SupportPortal.Message(result.Message);
+                }
+            },
+            error: function () {
+                SupportPortal.Message("Failed to Send Email.");
+            }
+        });
+    }
+
+</script>
+
+<div id="divSuperUserEmail"></div>
+<span id="Title" class="contextTitle">Send Super User Email</span><br />
+<br />
+<br />
+<br />
+<br />
+<div class="csp-submit-container">
+    <input class="k-button csp-submit" type="submit" value="Submit" onclick="SendEmail()" />
+</div>
+
+

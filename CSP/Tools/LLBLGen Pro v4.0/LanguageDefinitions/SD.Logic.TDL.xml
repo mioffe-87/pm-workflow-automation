@@ -1,0 +1,79 @@
+<SyntaxLanguage Key="LogicTDL" LanguageDefinitionVersion="4.0" Secure="True" xmlns="http://ActiproSoftware/SyntaxEditor/4.0/LanguageDefinition">
+	<!-- string properties -->
+	<!-- MigrationAction: Insert or Add (default) -->
+	<!-- CoreLanguage: The key of the Core language, for example CSharp -->
+	<!-- DefaultBackColor: The name of the default back color for all lines in this language when it is the core logic language -->
+	<Properties>
+		<Property Key="Creator" Value="Solutions Design" />
+		<Property Key="Copyright" Value="Copyright (c) 2002-2004 Solutions Design.  All rights reserved." />
+		<Property Key="CoreLanguage" Value="TDL"/>
+		<Property Key="DefaultBackColor" Value="WhiteSmoke" />
+	</Properties>
+	<!-- triggers -->
+	<Triggers></Triggers>
+	<!-- styles -->
+	<Styles>
+		<Style Key="DefaultStyle" ForeColor="Black" BackColor="Default" Bold="False" Italic="False" />
+		<Style Key="LLBLGenProPreprocessorElementStyle" ForeColor="Black" BackColor="WhiteSmoke" Bold="False" Italic="False" />
+		<Style Key="LLBLGenProTemplateElementDelimiterStyle" ForeColor="Black" BackColor="Yellow" Bold="False" Italic="False" />
+		<Style Key="LLBLGenProIncludeElementDelimiterStyle" ForeColor="DarkRed" BackColor="Yellow" Bold="True" Italic="False" />
+	</Styles>
+
+	<!-- macros -->
+	<Macros>
+		<!-- Redefine word macros to include hyphens -->
+		<Macro Key="WordMacro" Value="[a-zA-Z_0-9\-]" />
+		<Macro Key="NonWordMacro" Value="[^a-zA-Z_0-9\-]" />
+	</Macros>
+	
+	<!-- States -->
+	<States>
+		<!-- Text -->
+		<State Key="DefaultState">
+			<!-- Patterns Groups -->
+			<PatternGroups>
+				<!-- Entities -->
+				<RegexPatternGroup TokenKey="EntityToken" Style="DefaultStyle" PatternValue="&amp; {WordMacro}+ ;?" />
+				<!-- Identifier -->
+				<RegexPatternGroup TokenKey="IdentifierToken" PatternValue="{AlphaMacro}({WordMacro})*" />
+				<!-- Whitespace -->
+				<RegexPatternGroup TokenKey="WhitespaceToken" PatternValue="{WhitespaceMacro}+" IsWhitespace="True" />
+			</PatternGroups>
+			<!-- Child States -->
+			<ChildStates>
+				<ChildState Key="LLBLGenPro001StatementDeclarationState" />
+				<ChildState Key="LLBLGenPro002TemplateIncludeDeclarationState" />
+			</ChildStates>
+		</State>
+		
+		<!-- All states start with LLBLGenPro, so the merge routine knows which states to merge -->
+		<!-- As the order in which the states are added is important, 'LLBLGenPro' is followed by a 3 digit number. As the names are -->
+		<!-- sorted by the xml deserializer, the number will make sure that the order is correct. -->
+		
+		<!-- Statement Declaration State-->
+		<State Key="LLBLGenPro001StatementDeclarationState" Filename="SD.TDL.xml"  ChildLanguageBackColor="Default">
+			<!-- Scopes -->
+			<Scopes>
+				<Scope>
+					<ExplicitPatternGroup Type="StartScope" TokenKey="LLBLGenProStatementDeclarationStartToken" 
+						Style="LLBLGenProTemplateElementDelimiterStyle" PatternValue="&lt;[" />
+					<ExplicitPatternGroup Type="EndScope" TokenKey="LLBLGenProStatementDeclarationEndToken" 
+						Style="LLBLGenProTemplateElementDelimiterStyle" PatternValue="]&gt;" />	
+				</Scope>
+			</Scopes>
+		</State>
+
+		<!-- Template include Declaration -->
+		<State Key="LLBLGenPro002TemplateIncludeDeclarationState" TokenKey="TemplateIncludeDeclarationDefaultToken" Style="LLBLGenProPreprocessorElementStyle">
+			<!-- Scopes -->
+			<Scopes>
+				<Scope>
+					<ExplicitPatternGroup Type="StartScope" TokenKey="TemplateIncludeDeclarationStartToken" 
+						Style="LLBLGenProIncludeElementDelimiterStyle" PatternValue="&lt;#" />
+					<ExplicitPatternGroup Type="EndScope" TokenKey="TemplateIncludeDeclarationEndToken" 
+						Style="LLBLGenProIncludeElementDelimiterStyle" PatternValue="#&gt;" />	
+				</Scope>
+			</Scopes>
+		</State>
+	</States>
+</SyntaxLanguage>

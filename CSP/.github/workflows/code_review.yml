@@ -1,0 +1,21 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  code_review:
+    uses: IT-infra/cody-code-review/.github/workflows/vertex_code_review.yml@main
+    with:
+      runs-on-group: org/Default
+      runs-on-labels: '["self-hosted"]'
+      # max-issues: 20                        # Max number of findings to report per review, defaults to 20
+    secrets: inherit

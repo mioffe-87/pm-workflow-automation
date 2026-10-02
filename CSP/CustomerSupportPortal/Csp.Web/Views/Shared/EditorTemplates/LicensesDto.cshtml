@@ -1,0 +1,128 @@
+﻿@using Kendo.Mvc.UI;
+@using Csp.Api.Security;
+
+@model Csp.Web.DataTransferObjects.LicensesDto
+
+
+
+<script>
+    licenseGridId = "@UniqueId.gridId";
+
+    function @(UniqueId.licenses)onLicenseDtoEditorDataBound() {
+
+        var currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        var numberOfDaysToSubtract = 31;
+
+        var grid = this;
+        var data = grid.dataSource.data();
+
+        if ("@Model.IsLicenseForCloudDevice" === "True" || "@Model.IsLicenseForCsspDevice" === "True") {
+            $("#" + licenseGridId).data("kendoGrid").hideColumn(3); // Hide actions column
+        }
+
+        $.each(data, function (i, row) {
+            var expirationDate = row.ExpirationDate;
+            if (!expirationDate) return true;
+
+            var expirationDateWarning = new Date(expirationDate.getTime());
+            expirationDateWarning.setDate(expirationDate.getDate() - numberOfDaysToSubtract);
+
+            if (expirationDate < currentDate) {
+                $('tr[data-uid="' + row.uid + '"] td:nth-child(3)').addClass("expired-license");
+            } else if (expirationDateWarning < currentDate) {
+                $('tr[data-uid="' + row.uid + '"] td:nth-child(3)').addClass("expiration-warning-License");
+            }
+
+            if (row.HasLicenseKey == 0) {
+
+                $('tr[data-uid="' + row.uid + '"] .k-button').hide();
+            }
+
+            if (row.IsPerpetual) {
+                $('tr[data-uid="' + row.uid + '"] td:nth-child(3)').text('Perpetual');
+            }
+            if (row.LicenseNameDisplay == 'Lab Bundle') {
+                $('tr[data-uid="' + row.uid + '"] td:nth-child(3)').text('');
+            }
+
+            if ("@Model.IsLicenseForCsspDevice" === "True") {
+                $('tr[data-uid="' + row.uid + '"] td:nth-child(3)').text('Pay Per Use');
+            }
+
+        });
+    }
+
+
+
+    function @(UniqueId.licenses)downloadDtoEditorLicenseKey(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var licenseId = dataItem.Id;
+        var effectiveDate = dataItem.EffectiveDate;
+
+        var currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        if (effectiveDate > currentDate) {
+
+            SupportPortal.Message(kendo.format("License key can not be downloaded until {0}.", kendo.toString(effectiveDate, "d")), { height: 130, width: 350 });
+
+            return false;
+        }
+
+        window.location.assign("/License/DownloadLicenseKey?licenseId=" + licenseId);
+
+    };
+
+    function getMagicLinkTooltip(e) {
+        var dataItem = $("#" + licenseGridId).data("kendoGrid").dataItem(e.target.closest("tr"));
+        var content = "<div>" + dataItem.LicenseNameDisplay + " setup required. <br><a class='hrefMagicLink' href='" + dataItem.MagicLink + "' target='_blank'>Click here</a> to setup.</div>";
+        return content;
+    }
+
+</script>
+
+
+@{
+    var actionHelper = Model.ActionHelper;       
+    
+    <div style="overflow-y: auto; overflow-x: hidden">
+        @(Html.Kendo().Grid(Model.Licenses)
+            .Name((string)UniqueId.gridId)
+            .Columns(columns => {
+                columns.Bound(model => model.Id).Visible(false);
+                columns.Bound(model => model.HasLicenseKey).Visible(false);
+                columns.Bound(model => model.EffectiveDate).Visible(false);
+                columns.Bound(model => model.LicenseNameDisplay).Column.Title = "Feature Name";
+                columns.Bound(model => model.AuthorizationCode);
+                columns.Bound(model => model.ExpirationDate).Format("{0:MM/dd/yyyy}").Column.Title = "Expiration Date";
+                columns.Template(x =>
+                    (x.AllowDownload ? "<a class='k-grid-csp-download' style='margin-left: 5px;' href='/License/DownloadLicenseKey?licenseId=" + x.Id + "'><span> </span></a>" : "") +
+                    (x.ShowMagicLink ? "<i class='fa-exclamation-triangle fas forMagicLink' style='margin-left: 5px; color: red'></i>" : "") +
+                    (x.IsTrial ? "<span class='TrialLogo' title='Trial License'>T</span>" : "")
+                    ).ClientTemplate("#if(AllowDownload) {# <a class='k-grid-csp-download' style='margin-left: 5px;' href='/License/DownloadLicenseKey?licenseId=#=Id#'><span> </span></a> #}#" +
+                                     "#if(ShowMagicLink) {# <i class='fa-exclamation-triangle fas forMagicLink' style='margin-left: 5px; color: red'></i>#}#" +
+                                     "#if(IsTrial){# <span class='TrialLogo' title='Trial License'>T</span> #}#").Title("Actions");
+            })
+            .Events(e => e.DataBound((string)UniqueId.licenses + "onLicenseDtoEditorDataBound"))
+    .Resizable(resize => resize.Columns(true))
+    .HtmlAttributes(new { style = "max-width:635px;" })
+    .DataSource(dataSource => dataSource
+                .Ajax()
+                .Total(Model.Licenses.Count)
+                .Model(model => model.Id(p => p.Id))
+                .PageSize(50)
+                .Read(read => read.Action(actionHelper.Licenses, actionHelper.Controller, new {
+                    actionHelper.Id
+                }).Data("SetAntiForgery"))
+                .Events(e => e.RequestEnd("SupportPortal.kendoGridTimezoneToPst"))
+            ))
+        @(Html.Kendo().Tooltip()
+            .For("#" + (string)UniqueId.gridId)
+            .Filter(".forMagicLink")
+            .ContentHandler("getMagicLinkTooltip")
+            .Position(TooltipPosition.Right)
+            .AutoHide(true)
+            )
+    </div>
+}

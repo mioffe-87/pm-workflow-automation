@@ -1,0 +1,746 @@
+﻿<[ System.Data ]>
+<[ SD.LLBLGen.Pro.ApplicationCore.Interfaces ]>
+<[ SD.Tools.Algorithmia.Graphs]>
+<[ SD.Tools.Algorithmia.Graphs.Algorithms]>
+<[ SD.Tools.Algorithmia.GeneralDataStructures]>
+<~
+	// returns the path from start till index (including the name on index) of the path contained by wrapper.
+	// index is 0 bound. 
+	internal static string ProducePartialPathName(MappableFieldWrapper wrapper, int index)
+	{
+		StringBuilder builder = new StringBuilder();
+		for(int i=0;i<=index;i++)
+		{
+			builder.Append(wrapper.Path[i]);
+		}
+		return builder.ToString();
+	}
+	
+	
+	// Gets information from the field + mapping specified for key info emitting.
+	internal static void GetFieldEmitInfo(IFieldElementCore field, GroupableModelElementMapping mapping, out FieldMapping fieldMapping, 
+										  out string typeConverterDeclaration, out IProjectElementFieldMapTargetElement targetField)
+	{
+		fieldMapping = mapping.GetFieldMappingOfField(field);
+		typeConverterDeclaration = SD_NHibernateGeneralUtils.ProduceTypeConverterTypeString(fieldMapping);
+		targetField = fieldMapping.MappedTarget;
+	}
+		
+	
+	// Returns a list of pairs where value1 is the relationship over which value2's fields are referencing a related entity, or where
+	// value1 is null and value2 is a list with 1 field which isn't an FK field. The fields should be processed and emitted in the order of the pairs
+	// and within a pair in the order of the fields in Value2. If no cache with pre-calculated pk field orders is present yet, it's produced first. 
+	internal static PkFieldList GetPkFieldsForEntity(EntityDefinition entity, IGenerator executingGenerator)
+	{
+		PkFieldListCache cache = GetPkFieldOrderCache(executingGenerator);
+		PkFieldList toReturn = cache.GetValue(entity);
+		if(toReturn==null)
+		{
+			toReturn = new PkFieldList();
+		}
+		return toReturn;
+	}
+	
+	
+	// determines the custom generator to use, based on settings and the current target db.  Returned dictionary: key: param name, value: value for param
+	internal static Dictionary<string, string> DetermineCustomGeneratorDataToUse(IFieldElementCore field, IGenerator executingGenerator, DBSchema targetSchema, 
+															string quoteEscapeString, bool includeCatalogName, bool forFluentNHibernate, out string generatorToUse)
+	{
+		Project currentProject = executingGenerator.ProjectDefinition;
+		Dictionary<string, string> toReturn = new Dictionary<string, string>();
+		generatorToUse = field.OutputSettingValues.GetRealStringSettingValue("CustomGeneratorTypeToUse", currentProject);
+		int intervalSize = field.OutputSettingValues.GetRealIntSettingValue("CustomGeneratorIntervalSize", currentProject);
+		if(intervalSize >=0)
+		{
+			toReturn.Add("max_lo", intervalSize.ToString());
+		}
+		string schemaName = targetSchema.SchemaOwner;
+		string catalogName = targetSchema.ParentCatalog.CatalogName;
+		string schemaNameInSettings = string.Empty;
+		string targetName = string.Empty;
+		string targetParamName = string.Empty;
+		bool emitCatalogName = includeCatalogName;
+		switch(generatorToUse)
+		{
+			case "hilo":
+				schemaNameInSettings = field.OutputSettingValues.GetRealStringSettingValue("CustomGeneratorHiLoTableSchema", currentProject);
+				targetName = field.OutputSettingValues.GetRealStringSettingValue("CustomGeneratorHiLoTable", currentProject);
+				toReturn.Add("column", field.OutputSettingValues.GetRealStringSettingValue("CustomGeneratorHiLoField", currentProject));
+				targetParamName = "table";
+				if(forFluentNHibernate)
+				{
+					generatorToUse = "HiLo";
+				}
+				break;
+			case "seqhilo":
+				schemaNameInSettings = field.OutputSettingValues.GetRealStringSettingValue("CustomGeneratorSeqHiLoSequenceSchema", currentProject);
+				targetName = field.OutputSettingValues.GetRealStringSettingValue("CustomGeneratorSeqHiLoSequence", currentProject);
+				targetParamName = "sequence";
+				emitCatalogName = false;
+				if(forFluentNHibernate)
+				{
+					generatorToUse = "SeqHiLo";
+				}
+				break;
+		}
+		if(forFluentNHibernate)
+		{
+			targetParamName = "target";
+		}
+		// determine target name
+		if(!string.IsNullOrEmpty(schemaNameInSettings))
+		{
+			schemaName = schemaNameInSettings;
+		}
+		toReturn.Add(targetParamName, ProduceTargetFullName(catalogName, schemaName, targetName, executingGenerator, emitCatalogName, quoteEscapeString));
+		return toReturn;
+	}
+
+	
+	internal static bool DetermineIfFieldIsNumericTyped(IFieldElementCore field)
+	{
+		bool toReturn = false;
+		switch(field.FieldType.KindOfType)
+		{
+			case FieldTypeKind.ValueTypeDefinition:
+				toReturn = false;
+				break;
+			case FieldTypeKind.DotNetType:
+				toReturn = new List<TypeCode>() { TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64,
+												  TypeCode.Decimal}.Contains(Type.GetTypeCode(field.FieldType.RepresentedType));
+				break;
+		}
+		return toReturn;
+	}
+	
+	internal static string GetFluentFetchAttributeValue(string fetchSetting)
+	{
+		string fetchAttribute=string.Empty;
+		
+		if (fetchSetting.Length==0)
+		{
+			return string.Empty;
+		}
+		switch(fetchSetting)
+		{ 
+			case "select":
+				fetchAttribute=".Fetch.Select()";
+				break;
+			case "join":
+				fetchAttribute=".Fetch.Join()";
+				break;
+		}
+		
+		return fetchAttribute;
+	}
+
+
+	internal static string GetFluentCascadeAttributeValue(string cascadeSetting)
+	{
+		string cascadeAttribute=string.Empty;
+		
+		if (cascadeSetting.Length==0)
+		{
+			return string.Empty;
+		}
+		switch(cascadeSetting)
+		{ 
+			case "all":
+				cascadeAttribute=".Cascade.All()";
+				break;
+			case "all-delete-orphan":
+				cascadeAttribute=".Cascade.AllDeleteOrphan()";
+				break;
+			case "none":
+				cascadeAttribute=".Cascade.None()";
+				break;
+			case "save-update":
+				cascadeAttribute=".Cascade.SaveUpdate()";
+				break;
+			case "delete":
+				cascadeAttribute=".Cascade.Delete()";
+				break;
+		}
+		
+		return cascadeAttribute;
+	}
+
+
+	// returns the dialect name To use For the driverid specified
+	internal static string DriverIdToDbConfigurationName(string driverID)
+	{
+		string toReturn;
+		switch(driverID)
+		{
+			case "2D18D138-1DD2-467E-86CC-4838250611AE":
+				// sql server
+				toReturn = "MsSqlConfiguration.MsSql2005";
+				break;
+			case "758A392F-06F3-498b-AED9-D85A4C795BDA":
+				// Mysql. 
+				toReturn = "MySQLConfiguration.Standard";
+				break;
+			case "88EBFD8C-CBDD-4452-88AF-1C99E41A123F":
+				// PostgreSql
+				toReturn = "PostgreSQLConfiguration.Standard";
+				break;
+			case "A8034CB0-319D-4cdd-BC7D-1E7CFDBA3B74":
+				// ODP.NET Oracle
+				toReturn = "OracleDataClientConfiguration.Oracle10";
+				break;
+			case "DE158D99-1B10-4d88-8DEA-888E7930FF40":
+				// MS Oracle
+				toReturn = "OracleClientConfiguration.Oracle10";
+				break;
+			case "BB438EBA-A0B5-4236-A2B8-64D828A138AF":
+				// DB2
+				toReturn = "DB2Configuration.Standard";
+				break;
+			case "BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A":
+				// Firebird
+				toReturn = "FirebirdConfiguration";
+				break;
+			default:
+				toReturn = "Driver not supported by FluentNH, Use Hibernate.cfg.xml file instead";
+				break;
+		}
+		return toReturn;
+	}
+
+	// returns the dialect name to use for the driverid specified
+	internal static string DriverIdToDialectName(string driverID)
+	{
+		string toReturn;
+		switch(driverID)
+		{
+			case "2D18D138-1DD2-467E-86CC-4838250611AE":
+				// sql server
+				toReturn = "NHibernate.Dialect.MsSql2005Dialect";
+				break;
+			case "3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA":
+				// Sybase iAnywhere / ASA
+				toReturn = "NHibernate.Dialect.SybaseAnywhereDialect";
+				break;
+			case "758A392F-06F3-498b-AED9-D85A4C795BDA":
+				// Mysql. 
+				toReturn = "NHibernate.Dialect.MySQL5Dialect";
+				break;
+			case "88EBFD8C-CBDD-4452-88AF-1C99E41A123F":
+				// PostgreSql
+				toReturn = "NHibernate.Dialect.PostgreSQLDialect";
+				break;
+			case "A3076322-977C-4e28-BFF4-F25ED096D1DB":
+				// Sybase Advanced Server Enterprice (ASE)
+				toReturn = "NHibernate.Dialect.SybaseDialect";
+				break;
+			case "A8034CB0-319D-4cdd-BC7D-1E7CFDBA3B74":		// ODP.NET Oracle
+			case "DE158D99-1B10-4d88-8DEA-888E7930FF40":		// MS Oracle
+				toReturn = "NHibernate.Dialect.Oracle10gDialect";
+				break;
+			case "BB438EBA-A0B5-4236-A2B8-64D828A138AF":
+				// DB2
+				toReturn = "NHibernate.Dialect.DB2Dialect";
+				break;
+			case "BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A":
+				// Firebird
+				toReturn = "NHibernate.Dialect.FirebirdDialect";
+				break;
+			default:
+				toReturn = "NHibernate.Dialect.GenericDialect";
+				break;
+		}
+		return toReturn;
+	}
+
+
+	// returns the driver name to use for the driverid specified
+	internal static string DriverIdToDriverName(string driverID)
+	{
+		string toReturn;
+		switch(driverID)
+		{
+			case "2D18D138-1DD2-467E-86CC-4838250611AE":
+				// sql server
+				toReturn = "NHibernate.Driver.SqlClientDriver";
+				break;
+			case "3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA":
+				// Sybase iAnywhere / ASA
+				toReturn = "NHibernate.Driver.ASAClientDriver";
+				break;
+			case "758A392F-06F3-498b-AED9-D85A4C795BDA":
+				// Mysql. 
+				toReturn = "NHibernate.Driver.MySqlDataDriver";
+				break;
+			case "88EBFD8C-CBDD-4452-88AF-1C99E41A123F":
+				// PostgreSql
+				toReturn = "NHibernate.Driver.NpgsqlDriver";
+				break;
+			case "A3076322-977C-4e28-BFF4-F25ED096D1DB":
+				// Sybase Advanced Server Enterprice (ASE)
+				toReturn = "NHibernate.Driver.SybaseClientDriver";
+				break;
+			case "A8034CB0-319D-4cdd-BC7D-1E7CFDBA3B74":
+				// ODP.NET Oracle
+				toReturn = "NHibernate.Driver.OracleDataClientDriver";
+				break;
+			case "BB438EBA-A0B5-4236-A2B8-64D828A138AF":
+				// DB2
+				toReturn = "NHibernate.Driver.DB2Driver";
+				break;
+			case "BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A":
+				// Firebird
+				toReturn = "NHibernate.Driver.FirebirdClientDriver";
+				break;
+			case "DE158D99-1B10-4d88-8DEA-888E7930FF40":
+				// MS Oracle
+				toReturn = "NHibernate.Driver.OracleClientDriver";
+				break;
+			default:
+				toReturn = "NHibernate.Driver.GenericDialect";
+				break;
+		}
+		return toReturn;
+	}
+
+	// gets all the attributes defined on the element specified, with all macro's evaluated.
+	internal static IEnumerable<string> GetAttributes(IOutputSettingValuesTarget element, Project currentProject)
+	{
+		return element.GetAttributes(currentProject);
+	}
+
+	// returns all inherited types (base class from settings, additional interfaces from settings) as a comma separated string
+	// doesn't look at supertypes for inheritance scenario's. Filters out empty names.
+	internal static string GetInheritedTypesAsString(IOutputSettingValuesTarget element, string baseClassSettingName, Project currentProject)
+	{
+		List<string> inheritedTypes = new List<string>();
+		inheritedTypes.Add((element.OutputSettingValues.GetRealStringSettingValue(baseClassSettingName, currentProject) ?? string.Empty).Trim());
+		inheritedTypes.AddRange(element.GetAdditionalInterfaces(currentProject));
+		return string.Join(", ", inheritedTypes.Where(s=>s.Trim().Length>0).ToArray());
+	}
+	
+	// returns all inherited types (base class from settings, additional interfaces from settings) as a comma separated string
+	// doesn't look at supertypes for inheritance scenario's. Filters out empty names.
+	internal static string GetInheritedTypesAsStringVBNet(IOutputSettingValuesTarget element, string baseClassSettingName, Project currentProject)
+	{
+		StringBuilder builder = new StringBuilder();
+		string baseClass = (element.OutputSettingValues.GetRealStringSettingValue(baseClassSettingName, currentProject) ?? string.Empty).Trim();
+		if(!string.IsNullOrEmpty(baseClass))
+		{
+			builder.AppendFormat("\t\tInherits {0}", baseClass);
+		}
+		foreach(var additionalInterface in element.GetAdditionalInterfaces(currentProject).Where(s=>s.Trim().Length>0))
+		{
+			builder.AppendFormat("\t\tImplements {0}", additionalInterface);
+		}
+		return builder.ToString();
+	}
+	
+	// produces the type name for the navigator of the relationship info specified to use in .NET code
+	// collectionTypePattern is the pattern to form a generic collection type, e.g. {0}<{1}>
+	internal static string ProduceNavigatorDotNetTypeName(Project currentProject, RelationshipInfo relationshipInfo, string collectionTypePattern)
+	{
+		string typeName = relationshipInfo.RelatedEntity.Name;
+		if(!relationshipInfo.NavigatorIsSingleEntity)
+		{
+			string collectionType = relationshipInfo.NavigatorInstance.OutputSettingValues.GetRealStringSettingValue("CollectionType", currentProject);
+			switch(collectionType)
+			{
+				case "bag":
+					typeName = "IList";
+					break;
+				case "set":
+					typeName = "Iesi.Collections.Generic.ISet";
+					break;
+			}
+			typeName = string.Format(collectionTypePattern, typeName, relationshipInfo.RelatedEntity.Name);
+		}
+		return typeName;
+	}
+		
+	// returns the type converter declaration (which should implement IUserType) with 'type=' if the field mapping specified has indeed a typeconverter defined
+	internal static string ProduceTypeConverterTypeString(FieldMapping mapping)
+	{
+		if(mapping.TypeConverterToUse==null)
+		{
+			return string.Empty;
+		}
+		return string.Format(" type=\"{0}, {1}\"", mapping.TypeConverterToUse.TypeFullName, mapping.TypeConverterToUse.AssemblyName);
+	}
+
+	// returns the type converter declaration (which should implement IUserType) wrapped in '.CustomType()' if the field mapping specified has indeed a typeconverter defined
+	internal static string ProduceTypeConverterTypeStringFluent(FieldMapping mapping)
+	{
+		return ProduceTypeConverterTypeStringFluent(mapping, "typeof");
+	}
+	
+	// returns the type converter declaration (which should implement IUserType) wrapped in '.CustomType()' if the field mapping specified has indeed a typeconverter defined
+	internal static string ProduceTypeConverterTypeStringFluentVBNet(FieldMapping mapping)
+	{
+		return ProduceTypeConverterTypeStringFluent(mapping, "GetType");
+	}
+
+	// returns the type converter declaration (which should implement IUserType) wrapped in '.CustomType()' if the field mapping specified has indeed a typeconverter defined
+	internal static string ProduceTypeConverterTypeStringFluent(FieldMapping mapping, string typeRetrieverKeyword)
+	{
+		if(mapping.TypeConverterToUse==null)
+		{
+			// check whether the field mapped is an enum field. If so, emit a custom type conversion to the target field of the mapping.
+			if((mapping.MappedFieldInstance.FieldType.KindOfType==FieldTypeKind.DotNetType) && mapping.MappedFieldInstance.FieldType.RepresentedType.IsEnum)
+			{
+				return string.Format(".CustomType({0}({1}))", typeRetrieverKeyword, mapping.MappedFieldInstance.FieldType.RepresentedType);
+			}
+			return string.Empty;
+		}
+		return string.Format(".CustomType({0}({1}))", typeRetrieverKeyword, mapping.TypeConverterToUse.TypeFullName);
+	}
+	
+	// returns the target pattern strings for the driverid specified. 
+	internal static void ProduceTargetPatternStringForDriverId(string driverID, out string patternWithCatalog, out string patternWithoutCatalog, out string patternElementOnly)
+	{
+		switch(driverID)
+		{
+			case "2D18D138-1DD2-467E-86CC-4838250611AE":
+				// sql server
+				patternWithoutCatalog = "[{1}].[{2}]";
+				patternWithCatalog = "[{0}].[{1}].[{2}]";
+				patternElementOnly = "[{2}]";
+				break;
+			case "3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA":
+				// Sybase iAnywhere / ASA
+				patternWithoutCatalog = "[{1}].[{2}]";
+				patternWithCatalog = "[{1}].[{2}]";
+				patternElementOnly = "[{2}]";
+				break;
+			case "758A392F-06F3-498b-AED9-D85A4C795BDA":
+				// Mysql. 
+				patternWithoutCatalog = "`{2}`";
+				patternWithCatalog = "`{0}`.`{2}`";
+				patternElementOnly = "`{2}`";
+				break;
+			case "88EBFD8C-CBDD-4452-88AF-1C99E41A123F":
+				// PostgreSql
+				patternWithoutCatalog = "\"{1}\".\"{2}\"";
+				patternWithCatalog = "\"{1}\".\"{2}\"";
+				patternElementOnly = "\"{2}\"";
+				break;
+			case "A3076322-977C-4e28-BFF4-F25ED096D1DB":
+				// Sybase Advanced Server Enterprice (ASE)
+				patternWithoutCatalog = "{1}.{2}";
+				patternWithCatalog = "{0}.{1}.{2}";
+				patternElementOnly = "{2}";
+				break;				
+			case "A8034CB0-319D-4cdd-BC7D-1E7CFDBA3B74":		// ODP.NET Oracle
+			case "DE158D99-1B10-4d88-8DEA-888E7930FF40":		// MS Oracle
+				patternWithoutCatalog = "\"{1}\".\"{2}\"";
+				patternWithCatalog = "\"{1}\".\"{2}\"";
+				patternElementOnly = "\"{2}\"";
+				break;				
+			case "BB438EBA-A0B5-4236-A2B8-64D828A138AF":
+				// DB2
+				patternWithoutCatalog = "\"{1}\".\"{2}\"";
+				patternWithCatalog = "\"{1}\".\"{2}\"";
+				patternElementOnly = "\"{2}\"";
+				break;
+			case "BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A":
+				// Firebird
+				patternWithoutCatalog = "\"{2}\"";
+				patternWithCatalog = "\"{2}\"";
+				patternElementOnly = "\"{2}\"";
+				break;
+			default:
+				patternWithoutCatalog = "{2}";
+				patternWithCatalog = "{2}";
+				patternElementOnly = "{2}";
+				break;
+		}
+	}
+
+	
+	// returns the field name pattern strings for the driverid specified. 
+	internal static string ProduceFieldNamePatternForDriverId(string driverID)
+	{
+		string toReturn = string.Empty;
+		switch(driverID)
+		{
+			case "2D18D138-1DD2-467E-86CC-4838250611AE":		// sql server
+			case "3FABDE1A-21DF-4fcb-96FD-BBFA8F18B1EA":		// Sybase iAnywhere / ASA
+				toReturn = "[{0}]";
+				break;
+			case "758A392F-06F3-498b-AED9-D85A4C795BDA":
+				// Mysql. 
+				toReturn = "`{0}`";
+				break;
+			case "88EBFD8C-CBDD-4452-88AF-1C99E41A123F":		// PostgreSql
+			case "A8034CB0-319D-4cdd-BC7D-1E7CFDBA3B74":		// ODP.NET Oracle
+			case "DE158D99-1B10-4d88-8DEA-888E7930FF40":		// MS Oracle
+			case "BB438EBA-A0B5-4236-A2B8-64D828A138AF":		// DB2
+			case "BCF16BE3-7E29-4E07-AC27-9FBF79D3CA7A":		// Firebird
+				toReturn = "\"{0}\"";
+				break;
+			case "A3076322-977C-4e28-BFF4-F25ED096D1DB":
+				// Sybase Advanced Server Enterprice (ASE)
+				toReturn = "{0}";
+				break;				
+			default:
+				toReturn = "{0}";
+				break;
+		}
+		return toReturn;
+	}
+
+
+	// cretes the full name for the sequence specified. Assumes sequence specified isn't a system sequence. Overload which doesn't escape quotes
+	internal static string ProduceSequenceFullName(DBSequence sequence, IGenerator executingGenerator)
+	{
+		return ProduceSequenceFullName(sequence, executingGenerator, "\"");
+	}
+	
+	// cretes the full name for the sequence specified. Assumes sequence specified isn't a system sequence
+	internal static string ProduceSequenceFullName(DBSequence sequence, IGenerator executingGenerator, string quoteEscapeString)
+	{
+		DBSchema schema = sequence.ContainingSchema;
+		if(schema==null)
+		{
+			return sequence.Name;
+		}
+		return ProduceTargetFullName(string.Empty, schema.SchemaOwner, sequence.Name, executingGenerator, false, quoteEscapeString);
+	}
+
+	// Creates the full target name for the target specified. Overload which doesn't escape quotes
+	internal static string ProduceTargetFullName(IProjectElementMapTargetElement target, IGenerator executingGenerator, bool includeCatalogName)
+	{
+		return ProduceTargetFullName(target, executingGenerator, includeCatalogName, "\"");
+	}
+
+	
+	// Creates the full target name for the target specified.
+	internal static string ProduceTargetFullName(IProjectElementMapTargetElement target, IGenerator executingGenerator, bool includeCatalogName, string quoteEscapeString)
+	{
+		return ProduceTargetFullName(target.ContainingSchema.ParentCatalog.CatalogName, target.ContainingSchema.SchemaOwner, target.Name, executingGenerator,
+									 includeCatalogName, quoteEscapeString);
+	}
+
+
+	// Creates the full target name for the target specified.
+	internal static string ProduceTargetFullName(string catalogName, string schemaName, string targetName, IGenerator executingGenerator, 
+												 bool includeCatalogName, string quoteEscapeString)
+	{
+		StringBuilder builder = new StringBuilder();
+		string patternWithCatalog;
+		string patternWithoutCatalog;
+		string patternElementOnly;
+		ProduceTargetPatternStringForDriverId(executingGenerator.DriverID, out patternWithCatalog, out patternWithoutCatalog, out patternElementOnly);
+		bool emitCatalogNameInMappings = executingGenerator.ProjectDefinition.GetRealBoolSettingValue("EmitCatalogNameInMappings") && includeCatalogName;
+		bool emitSchemaNameInMappings = executingGenerator.ProjectDefinition.GetRealBoolSettingValue("EmitSchemaNameInMappings") || emitCatalogNameInMappings;
+		string patternToUse = "{2}";
+		if(emitCatalogNameInMappings)
+		{
+			patternToUse = patternWithCatalog;
+		}
+		else
+		{
+			patternToUse = emitSchemaNameInMappings ? patternWithoutCatalog : patternElementOnly;
+		}
+		builder.AppendFormat(patternToUse, catalogName, schemaName, targetName);
+		builder.Replace("\"", quoteEscapeString);
+		return builder.ToString();
+	}
+
+	
+	// Creates the full target name for the target specified.
+	internal static string ProduceFieldFullName(string fieldName, IGenerator executingGenerator, string quoteEscapeString)
+	{
+		StringBuilder builder = new StringBuilder();
+		string fieldNamePattern = ProduceFieldNamePatternForDriverId(executingGenerator.DriverID);
+		builder.AppendFormat(fieldNamePattern, fieldName);
+		builder.Replace("\"", quoteEscapeString);
+		return builder.ToString();
+	}
+
+	
+	// produces the .net type string for the field specified. takes settings into account
+	internal static string ProduceDotNetTypeName(IFieldElementCore field, IGenerator generator, string nullablePattern)
+	{
+		string toReturn = string.Empty;
+		switch(field.FieldType.KindOfType)
+		{
+			case FieldTypeKind.DotNetType:
+				toReturn = GeneratorUtils.ProduceDotNetTypeName(field.FieldType.RepresentedType, field.IsOptional, nullablePattern);
+				toReturn = toReturn.Replace("[", generator.LanguageToUse.ArrayIndexOperatorOpenChar)
+								   .Replace("]", generator.LanguageToUse.ArrayIndexOperatorCloseChar);
+				break;				
+			case FieldTypeKind.ValueTypeDefinition:
+				toReturn = string.Format("{0}.ValueTypeClasses.{1}", generator.RootNamespaceToUse, ((ValueTypeDefinition)field.FieldType).Name);
+				break;
+		}
+		return toReturn;
+	}
+	
+	// Converts the passed in parameter direction to a usable string form for the external mapping file.
+	internal static string ConvertParameterDirectionToString(ParameterDirection direction)
+	{
+		string toReturn="In";
+		switch(direction)
+		{
+			case ParameterDirection.Input:
+				toReturn="In";
+				break;
+			case ParameterDirection.Output:
+				toReturn="Out";
+				break;
+			case ParameterDirection.InputOutput:
+				toReturn="InOut";
+				break;
+		}
+		return toReturn;
+	}
+	
+		
+	
+	// gets (and produces if it's not present) the cache for the pk field order per entity. if a pk field is an fk field, the fk fields have to be grouped
+	// together per relationship to be properly usable for emitting xml/fluentnhibernate code. Per entity
+	// a list of pairs is stored where value1 is the relationship over which value2's fields are referencing a related entity, or where
+	// value1 is null and value2 is a list with 1 field which isn't an FK field. The fields should be processed and emitted in the order of the pairs
+	// and within a pair in the order of the fields in Value2.
+	private static PkFieldListCache GetPkFieldOrderCache(IGenerator executingGenerator)
+	{
+		PkFieldListCache cache = (PkFieldListCache)executingGenerator.TaskCache["PkFieldCache"];
+		if(cache!=null)
+		{
+			return cache;
+		}
+		// build it.
+		// create directed graph of normal edges where fk side has pk fields. StartVertex is Fk side, pointing to Pk side, the EndVertex.
+		var graph = new DirectedGraph<EntityDefinition, DirectedEdge<EntityDefinition>>();
+		foreach(var entity in executingGenerator.Entities)
+		{
+			graph.Add(entity);
+		}
+		var currentProject = executingGenerator.ProjectDefinition;
+		foreach(var edge in currentProject.EntityModel.Edges.OfType<NormalRelationshipEdge>())
+		{
+			if(!executingGenerator.Entities.Contains(edge.StartVertex) || !executingGenerator.Entities.Contains(edge.EndVertex) ||
+				!edge.GetFkFieldsFromFkSide().Any(f=>f.IsPartOfIdentifyingFields))
+			{
+				continue;
+			}
+			graph.Add(new DirectedEdge<EntityDefinition>(edge.EntityFkSide, edge.EntityPkSide));
+		}
+		// sort graph topologically. Ignore cycles.
+		var sorter = new TopologicalSorter<EntityDefinition, DirectedEdge<EntityDefinition>>(graph) {SeeCycleCreatingEdgesAsNonExistend=true};
+		sorter.Sort();
+		// now traverse the sort result, and per entity determine the order of the pk fields. 
+		cache = new PkFieldListCache();
+		executingGenerator.TaskCache["PkFieldCache"] = cache;
+		foreach(var entity in sorter.SortResults)
+		{
+		    var identifyingFields = entity.IdentifyingFields.Cast<IFieldElementCore>().OrderBy(f=>f.Name).ToList();
+			EntityMapping mapping = (EntityMapping)currentProject.GetGroupableModelElementMapping(entity, executingGenerator.DriverID);
+			bool useCompositeKey = identifyingFields.Count > 1;
+			var fieldMappingOfSequencedPkField = mapping.GetAllIdentifyingFieldMappings(true).FirstOrDefault(fm=>fm.SequenceToUse!=null);
+			if((fieldMappingOfSequencedPkField!=null) && useCompositeKey)
+			{
+				identifyingFields = new List<IFieldElementCore>();
+				identifyingFields.Add((IFieldElementCore)fieldMappingOfSequencedPkField.MappedFieldInstance);
+				useCompositeKey = false;
+			}
+			var pkFields = new PkFieldList();
+			if(useCompositeKey)
+			{
+				HashSet<IFieldElementCore> processedFields = new HashSet<IFieldElementCore>();
+				foreach (IFieldElementCore field in identifyingFields) 
+				{
+					if(processedFields.Contains(field))
+					{
+						continue;
+					}
+					if(field.IsForeignKeyField)
+					{
+						var relationship = entity.GetAllRelationshipsContainingFkField(field).FirstOrDefault() as NormalRelationshipEdge;
+						if(relationship==null)
+						{
+							continue;
+						}
+						var pkFieldsPkSide = GetPkFieldsForEntity(relationship.EntityPkSide, executingGenerator);
+						var fkFields = new List<IFieldElementCore>();
+						foreach(var pkFieldPkSide in pkFieldsPkSide.FieldsOrdered)
+						{
+							var fkField = relationship.GetFkFieldAssignedToPkField((IIdentifyingField)pkFieldPkSide);
+							if((fkField==null) || !fkField.IsPartOfIdentifyingFields)
+							{
+								continue;
+							}
+							fkFields.Add(fkField);
+						}
+						processedFields.AddRange(fkFields);
+						pkFields.Add(relationship, fkFields);
+					}
+					else
+					{
+						pkFields.Add(field);
+					}
+				}
+			}
+			else
+			{
+				if(!identifyingFields.Any())
+				{
+					continue;
+				}
+				pkFields.Add(identifyingFields);
+			}
+			cache.Add(entity, pkFields);
+		}
+		return cache;
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// PRIVATE CLASSES
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	// class which contains the pk fields of an entity in the right order, with eventually the relationships fields are to be grouped over.
+	// check count to see whether a composite (>1) or an <id> element has to be generated.
+	internal class PkFieldList : List<Pair<NormalRelationshipEdge, List<IFieldElementCore>>>
+	{
+		internal PkFieldList Add(NormalRelationshipEdge edge, IEnumerable<IFieldElementCore> fields)
+		{
+			this.Add(new Pair<NormalRelationshipEdge, List<IFieldElementCore>>(edge, new List<IFieldElementCore>(fields)));
+			return this;
+		}
+		
+		internal PkFieldList Add(IEnumerable<IFieldElementCore> fields)
+		{
+			return Add(null, fields);
+		}
+		
+		internal PkFieldList Add(IFieldElementCore field)
+		{
+			return Add(null, new List<IFieldElementCore>() { field });
+		}
+		
+		// Returns the fields in the order in which they're store in this pkfieldlist.
+		internal IEnumerable<IFieldElementCore> FieldsOrdered
+		{
+			get 
+			{
+				return from p in this
+					from f in p.Value2
+					select f;
+			}
+		}
+	}
+	
+	
+	internal class PkFieldListCache : Dictionary<EntityDefinition, PkFieldList>
+	{
+		internal PkFieldList GetPkFieldList(EntityDefinition entity)
+		{
+			var list = this.GetValue(entity);
+			if(list==null)
+			{
+				list = new PkFieldList();
+			}
+			return list;
+		}
+	}
+~>

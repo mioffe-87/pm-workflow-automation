@@ -1,0 +1,44 @@
+﻿@using System.Configuration
+<script>
+    $(function () {
+        $('.csp-user-settings-nav > ul').toggleClass('no-js js');
+        $('.csp-user-settings-nav .js ul').hide();
+        $('.csp-user-settings-nav .js').click(function (e) {
+            $('.csp-user-settings-nav .js ul').slideToggle(200);
+            $('.clicker').toggleClass('active');
+            e.stopPropagation();
+        });
+
+        $(document).click(function () {
+            if ($('.csp-user-settings-nav .js ul').is(':visible')) {
+                $('.csp-user-settings-nav .js ul', this).slideUp();
+                $('.clicker').removeClass('active');
+            }
+        });
+    });
+</script>
+<div class="csp-user-settings-nav">
+    <ul class="no-js">
+        <li>
+            <a class="clicker" href="javascript:void(0);"><b>@User.UserAccount.FirstName  @User.UserAccount.LastName</b>&nbsp;<span class="icon-caret-down icon-large"></span>&nbsp;</a>
+            <ul class="pull-right">
+                @{
+                    /*Why do we have a View Admin Site permission used for salesforceurl?  Good question.  originally it was for the admin site link, but TAC users also needed the
+                     * sales force url and this was a quick, hack way of granting both without adding another permission.  then it was decided to take the admin site link out
+                     * so there you have it.  someone should probably rename this permission to "ViewSalesforceUrl".  Perhaps i could have done it in the time it took to write this comment...
+                     */
+                    if (CurrentState.HasLoggedInPermission(Csp.Api.Security.Permission.ViewAdminSite)) {
+                    <li><a href="@ConfigurationManager.AppSettings["SalesforceUrl"]" target = "_blank">Salesforce</a></li>
+                    }
+                    if (CurrentState.HasLoggedInPermission(Csp.Api.Security.Permission.ImpersonateUser)) {
+                    <li>@Html.ActionLink("Impersonate", "Impersonate", "Home")</li>
+                    }
+                }
+                <li><a href="javascript:void(0);" data-id="@User.UserAccount.Id" id="WelcomeNameLink">Edit Profile</a></li>
+                <li><a href="@ConfigurationManager.AppSettings["ChangePasswordUrl"]">Change Password</a></li>
+                <li class="divider"></li>
+                <li>@Html.ActionLink("Log Out", "Logout", "Home")</li>
+            </ul>
+        </li>
+    </ul>
+</div>

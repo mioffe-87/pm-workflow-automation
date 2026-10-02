@@ -1,0 +1,106 @@
+﻿@model Csp.Web.DataTransferObjects.DeviceDto
+
+@Html.AntiForgeryToken()
+<div class="fieldset">
+    <fieldset>
+        <legend>Device Information</legend>
+        <div class="popup-details">
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Serial Number:")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.SerialNumber)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Model:")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.ModelName)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Device Name:")
+                </div>
+
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.DeviceName)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Device Tag:")
+                </div>
+
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.DeviceCategoryName)
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Location Information</legend>
+        <div class="popup-details">
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Address1:")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.Address1)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Adddress2:")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.Address2)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("City:")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.City)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Country:")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.CountryName)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Region/State:")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.Region)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Postal Code:")
+                </div>
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.PostalCode)
+                </div>
+            </div>
+            <div>
+                <div class="csp-label">
+                    @Html.Label("Remarks:")
+                </div>
+
+                <div class="csp-field">
+                    @Html.DisplayFor(model => model.Device.Comments)
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>

@@ -1,0 +1,2 @@
+﻿<% // the name to set is in the variable catalogName %>
+USE <%=catalogName%>;

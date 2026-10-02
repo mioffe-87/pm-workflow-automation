@@ -1,0 +1,180 @@
+﻿@model Csp.Web.DataTransferObjects.DeviceTypeDto
+@{
+    var uniqueId = (string) UniqueId.DeviceType;
+}
+<style>
+    input[type="radio"],
+    input[type="checkbox"] {
+        margin: 0px 0 0;
+        *margin-top: 0;
+        line-height: normal;
+    }
+</style>
+<script>
+    var oAuthCallbackData = null;
+    $(function() {
+        $('input[type=radio][name=DeviceType]').change(function() {
+            var deviceType = $(this).val();
+            console.log(deviceType);
+            if (deviceType === "2") // Cloud Type
+            {
+                $("#divCloudType").slideDown();
+            } else {
+                $("#divCloudType").slideUp();
+            }
+        });
+
+        //hide Google cloud section by default
+        $('#@UniqueId.ExternalIdValidationDiv').hide();
+        $('#@UniqueId.GoogleCloudSection').hide();
+        $('#@UniqueId.GoogleExternalId').on("change keyup paste", function () {
+            setTimeout(function() {
+                if ($('#@UniqueId.GoogleExternalId').val().length > 3) {
+                    $('#@UniqueId.ValidateButton').prop("disabled", false);
+                } else {
+                    $('#@UniqueId.ValidateButton').prop("disabled", true);
+                }
+            }, 100);
+        });
+    });
+
+    function @(uniqueId)onCloudTypeSelectedItem(e) {
+        if (e.item == null) {
+            return;
+        }
+        var dataItem = this.dataItem(e.item);
+
+        // Google Cloud Platform
+        if (dataItem.Name && dataItem.CloudTypeId === 5) {
+            $('#@UniqueId.GoogleCloudSection').show();
+            $('#@UniqueId.Submit').prop("disabled", true);
+            $('#@UniqueId.ValidateButton').prop("disabled", true);
+            $.ajax({
+                url: "/GoogleOauth/GetOauthUrl",
+                type: "GET",
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                success: function (result) {
+                    $('#OauthId').val(result.GoogleOauthUrl);
+                },
+                error: function () {
+                    SupportPortal.Message("Failed to get Google authentication url, please contact technical support.");
+                }
+            });
+
+        } else {
+            $('#@UniqueId.GoogleCloudSection').hide();
+            $('#@UniqueId.Submit').prop("disabled", false);
+        }
+    }
+
+    function @(uniqueId)validateGoogleExternalId() {
+        var temp = $('#OauthId').val();
+        var newWindow = window.open(window.atob(temp), "Google Oauth", "width=600, height=700");
+        var loop = setInterval(function () {
+            if (newWindow == null || newWindow.closed) {
+                clearInterval(loop);
+                if (oAuthCallbackData == null || oAuthCallbackData.length === 0) {
+                    $('#@UniqueId.ExternalIdValidationDiv').show();
+                } else {
+                    //check oAuthCallbackData
+                    $('#@UniqueId.Submit').prop("disabled", false);
+                    $('#@UniqueId.ExternalIdValidationDiv').hide();
+                }
+            }
+        }, 300);
+    }
+
+    function setData(data) {
+        oAuthCallbackData = data;
+    }
+
+</script>
+<div id="@UniqueId.registerDivId">
+    @using (Html.BeginForm("DeviceType", "Device", FormMethod.Post))
+    {
+        @Html.HiddenFor(m => m.DeviceType)
+        @Html.HiddenFor(m => m.SupportAccountId)
+        <input id="OauthId" type="hidden" value="">
+        <div class="fieldset fieldset-upper">
+            <fieldset>
+                <legend style="margin-left: 10px;">Select Device Type</legend>
+                <br/>
+                <ul class="list-style-none">
+                    <li>
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="DeviceType" value="1" @if (Model.DeviceType == 1)
+                                                                            {
+                                                                                <text>checked="checked"</text>
+                                                                            }/>
+                            <span>Register device using Serial Number or Authorization Code</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="DeviceType" value="2" @if (Model.DeviceType == 2)
+                                                                            {
+                                                                                <text>checked="checked"</text>
+                                                                            }/>
+                            <span>Register usage-based VM-Series models (hourly/annual) purchased from public cloud Marketplace or Cloud Security Service Provider (CSSP)</span>
+                        </label>
+                    </li>
+                </ul>
+                <br/>
+            </fieldset>
+        </div>
+        <div class="fieldset fieldset-upper" style="display: none" id="divCloudType">
+            <fieldset>
+                <legend>Select Cloud Marketplace</legend>
+                                    <div>&nbsp;</div>
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Cloud Marketplace:")
+                    </div>
+                    <div class="csp-field">
+                        @(Html.Kendo().DropDownListFor(model => Model.CloudType)
+                              .HtmlAttributes(new { @class = "k-dropdown", id = "ddCloudTypes", name = "ddCloudTypes" })
+                              .OptionLabel(Constants.DropDownPleaseSelect)
+                              .DataValueField("CloudTypeId")
+                              .DataTextField("Name")
+                              //.Events(e => e.Select(uniqueId + "onCloudTypeSelectedItem"))
+                              .BindTo(Model.CloudTypes))
+                        <span class="csp-required">*</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id="cloudValidationMessage" style="color: red; display: none">Cloud Marketplace is required.</span>
+
+                        <div id="@UniqueId.GoogleCloudSection" style="float: right; padding-left: 15px;">
+                            <div>
+                                <div class="csp-label">
+                                    @Html.Label("Google External ID:")
+                                </div>
+                                <div class="csp-field">
+                                    <input type="text" id="@UniqueId.GoogleExternalId"/>
+                                </div>
+                                <div class="csp-field"`>
+                                    <input type="button" value="Validate" onclick="@(uniqueId)validateGoogleExternalId();" id="@UniqueId.ValidateButton"/>
+                                    <span class="csp-tooltip">&nbsp;&nbsp;&nbsp;<i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 57, {width:400, height: 200});"></i></span>
+                                </div>
+                            </div>
+                            <div class="field-validation-error" id="@UniqueId.ExternalIdValidationDiv">
+                                The Google External ID validation has failed. Please try again.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div>&nbsp;</div>
+        <div class="csp-submit-container">
+            <input type="button" value="Submit" class="k-button csp-submit" onclick="SetDeviceType(this) " id="@UniqueId.Submit"/>
+        </div>
+        <div style="margin-left:10px">
+            <fieldset>
+                <legend>Need help?</legend>
+                <div>&nbsp;</div>
+                <div>
+                    <a href="https://knowledgebase.paloaltonetworks.com/KCSArticleDetail?id=kA10g000000ClNVCA0" rel="noopener noreferrer">See How to Create Your Customer Support Portal User Account</a>
+                </div>
+            </fieldset>
+        </div>
+    }
+</div>

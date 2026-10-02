@@ -1,0 +1,27 @@
+﻿@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.AscScoreCardDto
+
+@{
+    Layout = null;
+    var resourceRevisionNumber = SiteHelper.GetResourceRevisionNumber();
+}
+ @Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/alljquery")
+ @Styles.RenderFormat("<link href=\"{0}?" + resourceRevisionNumber + "\" type=\"text/css\" rel=\"stylesheet\"/>", "~/Content/allstyles")
+    <!--[if lte IE 8]>
+            @Styles.RenderFormat("<link href=\"{0}?" + resourceRevisionNumber + "\" type=\"text/css\" rel=\"stylesheet\"/>", "~/Content/SiteIE8")
+    <![endif]-->
+ <script src="~/Scripts/expressive.annotations.validate.js"></script>
+    <script type="text/javascript" src="//use.typekit.net/dzq7sdh.js"></script>
+    <script type="text/javascript">try { Typekit.load(); } catch (e) { }</script>
+    <script type="text/kendo-template" id="validationMessageTemplate">
+        <div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div>
+        </div>
+    </script>
+    @{ Html.RenderPartial("_GoogleAnalytics"); }
+@Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/kendo/2016.1.412/kendojs")
+@Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/custom")
+<div id="AscScoreCardData">
+    @{Html.RenderPartial("../AscScorecard/_AscScorecard", Model);}
+</div>
+

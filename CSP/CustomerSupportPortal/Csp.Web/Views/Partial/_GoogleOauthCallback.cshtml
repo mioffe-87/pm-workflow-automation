@@ -1,0 +1,21 @@
+﻿@model Csp.Api.Model.GoogleApis.GoogleUserInfo
+@{
+    ViewBag.Title = "_GoogleOauthCallback";
+}
+
+<head>
+    <script type="text/javascript" src="~/Scripts/jquery-1.9.1.min.js"></script>
+  
+    <title>Oauth Callback</title>
+    <script>
+        $(function() {
+            $('#testid').html("test");
+            var user = "@Model";
+            window.opener.setData(user);
+            window.close();
+        });
+    </script>
+</head>
+
+<body>
+</body>

@@ -1,0 +1,11 @@
+﻿@model Csp.Web.DataTransferObjects.AwsAccountRegistrationDto
+
+@{
+    Layout = null;
+}
+
+@{
+    ViewBag.Title = "New User Registration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{Html.RenderPartial("../partial/_UserRegistrationForAws", Model);}

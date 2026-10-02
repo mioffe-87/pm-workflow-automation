@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" ?>
+<frameworkSettings xmlns="http://sd/llblgen/pro/frameworkSettingsDefinition.xsd">
+	<supportedFrameworks/>
+	<settingDefinitions>
+		<!-- project level settings -->
+		<!-- entity level settings -->
+	
+		<!-- field level settings -->
+	</settingDefinitions>
+	<valueLists/>
+</frameworkSettings>

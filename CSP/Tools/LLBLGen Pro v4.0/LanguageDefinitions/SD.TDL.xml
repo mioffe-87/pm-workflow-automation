@@ -1,0 +1,142 @@
+<SyntaxLanguage Key="TDL" LanguageDefinitionVersion="4.0" Secure="True" xmlns="http://ActiproSoftware/SyntaxEditor/4.0/LanguageDefinition">
+
+	<!-- String Properties -->
+	<!-- MigrationAction: Insert or Add (default) -->
+	<!-- CoreLanguage: The key of the Core language, for example CSharp -->
+	<!-- DefaultBackColor: The name of the default back color for all lines in this language when it is the core logic language -->
+	<Properties>
+		<Property Key="Creator" Value="Solutions Design" />
+		<Property Key="Copyright" Value="Copyright (c) 2002-2006 Solutions Design.  All rights reserved." />
+	</Properties>
+	<!-- triggers -->
+	<Triggers>
+		<KeyPressTrigger Key="TDLStatementListTrigger" Character=" ">
+			<KeyPressTriggerValidStates>
+				<KeyPressTriggerValidState State="DefaultState" />
+			</KeyPressTriggerValidStates>
+		</KeyPressTrigger>
+	</Triggers>
+	<!-- Highlighting Styles -->	
+	<Styles>
+		<Style Key="SingleTokenStatementStyle" ForeColor="DarkSlateGray" BackColor="Default" Bold="True" Italic="False" />
+		<Style Key="NameSingleTokenStatementStyle" ForeColor="MidnightBlue" BackColor="Default" Bold="False" Italic="False" />
+		<Style Key="NormalStatementTokenStyle" ForeColor="Black" BackColor="Default" Bold="True" Italic="False" />
+		<Style Key="NormalStatementParameterStyle" ForeColor="DarkRed" BackColor="Default" Bold="False" Italic="False" />
+		<Style Key="RelationTypeStyle" ForeColor="DarkGreen" BackColor="Default" Bold="True" Italic="False"/>
+		<Style Key="SeparatorStyle" ForeColor="Purple" BackColor="Default" Bold="False" Italic="False"/>
+		<Style Key="StringDelimiterStyle" ForeColor="DarkBlue" BackColor="Default" Bold="False" Italic="False"/>
+		<Style Key="StringDefaultStyle" ForeColor="DarkBlue" BackColor="Default" Bold="False" Italic="False"/>
+		<Style Key="DefaultStyle" ForeColor="Black" BackColor="Default" Bold="False" Italic="False"/>
+	</Styles>
+
+	<!-- Macros -->	
+	<Macros>
+		<!-- Redefine word macros to include hyphens -->
+		<Macro Key="WordMacro" Value="[a-zA-Z_0-9\-]" />
+		<Macro Key="NonWordMacro" Value="[^a-zA-Z_0-9\-]" />
+	</Macros>
+	
+	<!-- States -->
+	<States>
+		<!-- Code -->
+		<State Key="DefaultState" Style="DefaultStyle">
+			<!-- Patterns Groups -->
+			<PatternGroups>
+				<!-- Whitespace -->
+				<RegexPatternGroup TokenKey="WhitespaceToken" PatternValue="{WhitespaceMacro}+" IsWhitespace="True" Style="DefaultStyle" />
+				<!-- Line Terminators -->
+				<RegexPatternGroup TokenKey="LineTerminatorToken" PatternValue="{LineTerminatorMacro}" IsWhitespace="True" Style="DefaultStyle" />
+				<!-- Single token statements -->
+				<ExplicitPatternGroup TokenKey="SingleTokenStatementToken" Style="SingleTokenStatementStyle" LookAhead="{NonWordMacro}" CaseSensitivity="AutoCorrect">
+					<ExplicitPatterns>
+						ActualParameterName ActualStoredProcedureName AggregateFunction AmountOfEntityFields AmountOfParameters 
+						AmountOfTypedListFields AmountOfTypedViewFields ArrayIndexOperator Attribute ConnectionString ConnectionStringKeyName 
+						CurrentAdditionalInterface CurrentAdditionalNamespace 
+						CurrentParameterDirection CustomPropertyName CustomPropertyValue DbSpecificNamespaceSuffix DiscriminatorColumnName
+						DiscriminatorValue ElementTargetCatalogName ElementTargetSchemaName ElementTargetObjectName
+						EndEntityAlias EntityAlias FieldCaption FieldIndex ForeachIndex 
+						IndexFirstNonInheritedField	IdentityValueSequenceName IsIdentity IsForeignKey IsNullable IsPrimaryKey IsReadOnly JoinHint
+						LazyLoadingWithoutResultReturnsNew LLBLGenVersion ParameterIndex ParameterPrecision ParameterScale ParameterSize ProcedureOutputType
+						RootNamespace SourceCatalogName SourceColumnDbType SourceColumnIsNullable SourceColumnMaxLength 
+						SourceColumnPrecision SourceColumnScale SourceColumnName SourceObjectName SourceSchemaName StartEntityAlias 
+						SubTypeFieldIndex SuperTypeFieldIndex TargetType TemplateName Time TypeConverterFullName
+						TypeOfActualParameter TypeOfField TypeOfMappedTargetField TypeOfParameter TypeOfTypedListField TypeOfTypedViewField
+						UniqueConstraintIndex UserCodeRegionName
+					</ExplicitPatterns>
+				</ExplicitPatternGroup>
+				<!-- Name single token statements -->
+				<ExplicitPatternGroup TokenKey="NameSingleTokenStatementToken" Style="NameSingleTokenStatementStyle" LookAhead="{NonWordMacro}" CaseSensitivity="AutoCorrect">
+					<ExplicitPatterns>
+						CatalogName CurrentEntityName CurrentParameterName CurrentSPCallName CurrentTypedListName
+						CurrentTypedViewName EntityFieldEntityName EntityFieldName IntermediateEntityName
+						MappedFieldNameRelatedField MappedFieldNameRelation RelatedEntityFieldName RelatedEntityName RelatedEntityPrimaryKeyFieldName 
+						RelatedEntityRelationFieldName RelatedMappedFieldNameRelation RelationFieldName RelationEndPointName 
+						RelationStartPointName RootEntityName SuperTypeName TypedListFieldEntityName TypedListFieldName TypedViewFieldName
+					</ExplicitPatterns>
+				</ExplicitPatternGroup>
+				<!-- Normal statement tokens -->
+				<ExplicitPatternGroup TokenKey="NormalStatementToken" Style="NormalStatementTokenStyle" LookAhead="{NonWordMacro}" CaseSensitivity="AutoCorrect">
+					<ExplicitPatterns>
+						AmountOfElements CaseCamel CallByFKReference CallByPKReference CallByUCReference Foreach If Else
+						EndIf NextForeach EndUserCodeRegion UserCodeRegion
+					</ExplicitPatterns>
+				</ExplicitPatternGroup>
+				<!-- Normal statement token parameters -->
+				<ExplicitPatternGroup TokenKey="NormalStatementParameterToken" Style="NormalStatementParameterStyle" LookAhead="{NonWordMacro}" CaseSensitivity="AutoCorrect">
+					<ExplicitPatterns>
+						ActionStoredProcedureCall AdditionalInterfaces AdditionalNamespaces ConvertNulledReferenceTypesToDefaultValue
+						CursorsOnly CurrentRelatedEntity CustomProperty Entity EntityField EntityFieldIsOverriden
+						EntityFieldContainedInCurrentEntity EntityFieldOverrides EntityIsAliassed EntityRelation
+						FieldToLink FkSide Full GenerateAsNullableType HasEntity HasEntityField HasFields HasInputAndOutputParameters
+						HasMultipleCatalogs HasParameter HasPrimaryKey HasRelation HasTypeConverterDefined	HasTypedView HasTypedList
+						IncludeInheritedPk IncludeInherited InputParameter IsAbstract IsForeignKey IsInHierarchyType IsNullable IsPrimaryKey IsOneToOnePkFkUc IsOneToOnePkPk
+						IsOnSubTypeSide	IsOnPkSide IsReadOnly IsStringField IsSubType IsSuperType IsValueTypeDefinition IsValueType
+						MappedFieldRelationIsHidden	NoCursors None Not OppositeRelationPresent OutputParameter
+						Parameter PrimaryKeyEntityField RelatedEntity RelatedEntityField RelatedEntityIsOtherEntity	RelatedEntityIsInHierarchyType
+						RelatedEntityPrimaryKeyField RelatedHierarchyEntity RelationField RelationFieldIsInFkSide RelationIsHidden RelationIsInherited
+						RelationType RetrievalStoredProcedureCall StringValueEquals SupportNullableTypes
+						TargetPerEntityHierarchy TargetPerEntity TypedList TypedListField TypedView TypedViewField UniqueConstraint
+						UniqueConstraintEntityField UsePartialClasses
+					</ExplicitPatterns>
+				</ExplicitPatternGroup>
+				<!-- Separator tokens -->
+				<ExplicitPatternGroup TokenKey="SeparatorToken" Style="SeparatorStyle" LookAhead="{NonWordMacro}" CaseSensitivity="AutoCorrect">
+					<ExplicitPatterns>
+						CrLf Comma CommaCrLf
+					</ExplicitPatterns>
+				</ExplicitPatternGroup>
+				<!-- RelationType tokens -->
+				<ExplicitPatternGroup TokenKey="RelationTypeToken" Style="RelationTypeStyle" LookAhead="{NonWordMacro}" CaseSensitivity="AutoCorrect">
+					<ExplicitPatterns>
+						ManyToMany ManyToOne OneToOne OneToMany
+					</ExplicitPatterns>
+				</ExplicitPatternGroup>
+			</PatternGroups>
+			<!-- Child States -->
+			<ChildStates>
+				<ChildState Key="StringState" />
+			</ChildStates>
+		</State>
+		
+		<!-- Strings -->
+		<State Key="StringState" TokenKey="StringDefaultToken" Style="StringDefaultStyle">
+			<!-- Scopes -->
+			<Scopes>
+				<Scope>
+					<ExplicitPatternGroup Type="StartScope" TokenKey="StringStartToken" Style="StringDelimiterStyle" PatternValue="&quot;" />
+					<RegexPatternGroup Type="EndScope" TokenKey="StringEndToken" Style="StringDelimiterStyle" PatternValue="[\&quot;\n]" />	
+				</Scope>
+			</Scopes>
+			<!-- Patterns Groups -->
+			<PatternGroups>
+				<RegexPatternGroup TokenKey="StringEscapedCharacterToken" PatternValue="\\x {HexDigitMacro}{1,4}" />
+				<RegexPatternGroup TokenKey="StringEscapedCharacterToken" PatternValue="\\u {HexDigitMacro}{4,4}" />
+				<RegexPatternGroup TokenKey="StringEscapedCharacterToken" PatternValue="\\U {HexDigitMacro}{8,8}" />
+				<RegexPatternGroup TokenKey="StringEscapedCharacterToken" PatternValue="\\." />
+				<RegexPatternGroup TokenKey="StringWhitespaceToken" PatternValue="{WhitespaceMacro}+" IsWhitespace="True" />
+				<RegexPatternGroup TokenKey="StringWordToken" PatternValue="\w+" />
+				<RegexPatternGroup TokenKey="StringDefaultToken" PatternValue="[^\&quot;\n]" />
+			</PatternGroups>
+		</State>
+	</States>
+</SyntaxLanguage>

@@ -1,0 +1,284 @@
+﻿@using Kendo.Mvc.UI;
+@model Csp.Web.DataTransferObjects.AscScoreCardDto
+@{
+    ViewBag.Title = "ASC Self-Service Scorecard";
+    ViewBag.IsGlobal = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Html.Partial("../Partial/_CompanyLogoName")
+<div>
+    @(Html.Kendo().Window()
+      .Name("AscDataUploadWindow")
+      .Width(700)
+      .Height(500)
+      .Modal(true)
+      .Draggable()
+      .Visible(false)
+      .Events(events => events
+          .Open("OnAscDataUploadWindowOpen"))
+      .Title("Upload ASC Data")
+    )
+</div>
+<div class="contextTitle">Reports</div>
+<div class="k-tabstrip">
+
+    <input type="hidden" name="hdnIsInternal" id="hdnIsInternal" value="@Model.IsInternal" />
+    <input type="hidden" name="hdnSFDCAccountId" id="hdnSFDCAccountId" value="@Model.SFDCAccountId"/>
+    <div class="ascScoreCard-pdf-page">
+        <span id="SupportAccountTitlePDF" class="contextTitle ascScoreCard-pdf-page-title">
+            @{
+                var supportAccount = CurrentState.GetSupportAccount();
+                var companyLogo = (supportAccount != null) ? CurrentState.GetSupportAccount().SupportAccountLogo : null;
+                var contentType = (supportAccount != null) ? CurrentState.GetSupportAccount().LogoContentType : string.Empty;
+            }
+            @{
+                if (companyLogo != null && contentType != string.Empty)
+                {
+                    var logoContent = Convert.ToBase64String(companyLogo);
+                    var imgSrc = String.Format("data:{0};base64,{1}", contentType, logoContent);
+
+                <img alt="Logo" src="@imgSrc" class="csp-company-logo" />
+                }
+            }
+            @CurrentState.GetSupportAccountName()
+        </span>
+        <div class="k-content k-state-active">
+            <div class="row">
+
+                @if (Model.IsInternal)
+                {
+                
+             
+                    <div class="tabel-cell filterDiv" style="width: 70%;">
+
+                        <div class="row">
+                            <div class="tabel-cell " style="width: 15%;">
+                                @(Html.Kendo().DropDownList()
+                                      .Name("TheatreList")
+                                      .DataTextField("Text")
+                                      .DataValueField("Value")
+                                      .Events(e => e.Change("AscScoreCard.onChangeTheatreList"))
+                                      .BindTo(new List<SelectListItem>()
+                                      {
+                                          new SelectListItem() {Value = "ALL", Text = "All Theatres"},
+                                          new SelectListItem() {Value = "Americas", Text = "Americas"},
+                                          new SelectListItem() {Value = "EMEA", Text = "EMEA"},
+                                          new SelectListItem() {Value = "APAC", Text = "APAC"},
+                                          new SelectListItem() {Value = "Japan", Text = "Japan"},
+                                      })
+                                      .Value(Model.Theatre)
+                                      .HtmlAttributes(new {style = "width: 100%"})
+                                      )
+                            </div>
+                            <div class="tabel-cell " style="width: 30%">
+
+                                @*@(Html.Kendo().ComboBox()
+                      .Name("ascUserList")
+                      .Placeholder("All ASC")
+                      .DataTextField("Value")
+                      .DataValueField("Id")
+                      .HtmlAttributes(new { style = "width:100%;" })
+                      .Filter("contains")
+                      .AutoBind(true)
+                      .MinLength(3)
+                      //.Template("<input type='checkbox' name='cbAscUserList' value='#:data.Id#' /> #:data.Value#")
+                      
+                      .DataSource(source =>
+                      {
+                          source.Read(read =>
+                          {
+                              read.Action("GetAscUserAccountList", "AscScorecard")
+                              .Data("AscScoreCard.ascUserListParameter");
+                          })
+                          .ServerFiltering(false);
+                      })
+                      .Events(e => e.Change("AscScoreCard.userListOnSelect").Close("onClose").Select("onSelect"))
+                            )*@
+
+
+                                @(Html.Kendo().MultiSelect()
+                     .Name("ascUserList")
+                     .HtmlAttributes(new { style = "font-size:12px;width:100%;" })
+                     .Placeholder("All ASC")
+                      .DataTextField("Value")
+                      .DataValueField("Id")
+                     .Filter("contains")
+                     .MaxSelectedItems(25)
+                     .AutoBind(true)
+                     .AutoClose(false)
+                     .ItemTemplate("<input type='checkbox' /> #:data.Value#")
+                     .DataSource(source =>
+                     {
+                         source.Read(read =>
+                         {
+                             read.Action("GetAscUserAccountList", "AscScorecard")
+                             .Data("AscScoreCard.ascUserListParameter");
+                         })
+                         .ServerFiltering(false);
+                     })
+                      .Events(e => e.Change("AscScoreCard.userListOnSelect").DataBound("AscScoreCard.ascUserDataBound"))
+
+                    )
+                            </div>
+                            <div class="tabel-cell" style="color: #000000; width: 30%;">
+                                <div class="row">
+                                    <div class="tabel-cell" style="width: 100%">
+                                        <div class="row">
+                                            <div class="tabel-cell">
+                                                <b>Timeframe: </b>
+                                                <div style="display: inline;">
+                                                    <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="AscScoreCard.FiscalCalendar(this);"></i></span>&nbsp;&nbsp;&nbsp;
+                                                </div>
+                                            </div>
+                                            <div class="tabel-cell">
+                                                <div class="row">
+                                                    <div class="tabel-cell">
+                                                        <input type="radio" name="ascTimeframe" value="0" checked="checked" class="radioLabel"
+                                                            onclick="$('#divIncludeCurrentPartial span.chkIncludeCurrentPartialText').html('Include Current Partial Quarter');" />
+                                                        5 Quarters
+
+                                                        <input type="radio" name="ascTimeframe" value="1" class="radioLabel"
+                                                            onclick="$('#divIncludeCurrentPartial span.chkIncludeCurrentPartialText').html('Include Current Partial Month');" />
+                                                        5 Months
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+
+                                                    <div class="tabel-cell" id="divIncludeCurrentPartial">
+                                                        <input type="checkbox" name="chkIncludeCurrentPartial" id="chkIncludeCurrentPartial" class="radioLabel" checked
+                                                            data-toggle="toggle" data-onstyle="success">
+                                                        <span class="chkIncludeCurrentPartialText">Include Current Partial Quarter
+                                                        </span>
+                                                        &nbsp;
+                                                        <div style="display: inline;"><span class="csp-tooltip"><i class="icon-question-sign icon-large"
+                                                             onclick="SupportPortal.Help(this,31,{ title: 'Include Current Partial Quarter/Month',height:125});"></i></span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tabel-cell" style="font-size: 12px; width: 8%;">
+                                <input type="button" class="k-button" value="Go" id="InternalGeneratReport" onclick="AscScoreCard.InternalGeneratReportClick();" />
+
+                                <input type="button" class="k-button" value="Clear Filter" id="InternalClearFilter" onclick="AscScoreCard.clearFilter();" />
+                            </div>
+                        </div>
+
+
+                    </div>
+                
+                
+                }
+                else
+                {
+                
+                    <div class="tabel-cell" style="width: 45%">
+                        <img src="~/Images/ASC_logo.png" alt="Authorized Support Center" />
+                        <div class="blueBigTitle" style="width: 60%;">ASC Scorecard</div>
+                    </div>
+
+                    <div class="tabel-cell greyRoundedDiv" style="width: 25%; color: #000000;">
+                        <div class="row">
+                            <div class="tabel-cell" style="width: 100%">
+                                <div class="row">
+                                    <div class="tabel-cell">
+                                        <b>Timeframe: </b>
+                                        <div style="display: inline;">
+                                            <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="
+AscScoreCard.FiscalCalendar(this);"></i></span>&nbsp;&nbsp;&nbsp;
+                                        </div>
+                                    </div>
+                                    <div class="tabel-cell">
+                                        <div class="row">
+                                            <div class="tabel-cell">
+                                                <input type="radio" name="ascTimeframe" value="0" onclick="AscScoreCard.AscTimeframeClick(this, false)" checked="checked" class="radioLabel" />
+                                                5 Quarters
+                                            &nbsp; &nbsp;
+                                            <input type="radio" name="ascTimeframe" value="1"
+                                                onclick="AscScoreCard.AscTimeframeClick(this, false)"
+                                                class="radioLabel" />
+                                                5 Months
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="tabel-cell" id="divIncludeCurrentPartial">
+                                                <input type="checkbox" name="chkIncludeCurrentPartial" id="chkIncludeCurrentPartial" class="radioLabel" checked
+                                                    onclick="AscScoreCard.AscIncludeCurrentPartialChkClick(false)">
+                                                <span class="chkIncludeCurrentPartialText">Include Current Partial Quarter</span>
+                                                &nbsp;
+                                                <div style="display: inline;"><span class="csp-tooltip"><i class="icon-question-sign icon-large" 
+                                                    onclick="SupportPortal.Help(this,31,{ title: 'Include Current Partial Quarter/Month',height:125});"></i></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="table-cell pull-right">
+                    <div class="row">
+                        <div class="tabel-cell" style="color:#000000">
+                            <i>Page last refreshed on : @Model.LastRefreshDate US PST</i>
+                            <br/><br/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="tabel-cell">
+                            @*<a  class="btn btn-success" title="AscReminder" 
+                href= "@(String.Format("/AscScorecard/AscReminder"))">
+                    <i class="icon-file"></i>AscReminder
+                </a>*@
+
+                            @*<input type="button" class="k-button" value="Upload ASC Data" onclick="UploadAscData();" />*@
+                            <button class="k-button" onclick="UploadAscData()">
+                                <i class="icon-upload"></i>Upload ASC Data</button>
+                            &nbsp;
+                                     <button class="k-button" onclick="getPDF('.ascScoreCard-pdf-page')" id="ascScoreCardExportToPdf">
+                                         <i class="icon-download"></i>Export Page to PDF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+
+
+            <div id="AscScoreCardData">
+                @{Html.RenderPartial("../AscScorecard/_AscScorecard", Model);}
+            </div>
+        </div>
+    </div>
+    <a href="javascript:" id="return-to-top"><i class="icon-chevron-up"></i></a>
+</div>
+
+
+<script>
+    function getPDF(selector) {
+
+        kendo.drawing.drawDOM($(selector))
+            .then(function (group) {
+                kendo.drawing.pdf.saveAs(group, "AscScorecard.pdf");
+            });
+
+    }
+
+    function OnAscDataUploadWindowOpen() {
+        SupportPortal.OnWindowOpen("AscDataUploadWindow");
+    }
+
+    function UploadAscData() {
+        var window = $("#AscDataUploadWindow").data('kendoWindow');
+
+        window.refresh("/AscScorecard/UploadAscData");
+        window.open();
+        window.center();
+    }
+
+
+</script>
+

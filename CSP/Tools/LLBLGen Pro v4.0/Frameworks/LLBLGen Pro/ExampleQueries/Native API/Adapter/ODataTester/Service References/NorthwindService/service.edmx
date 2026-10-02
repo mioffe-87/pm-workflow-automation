@@ -1,0 +1,463 @@
+﻿<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="1.0">
+    <Schema Namespace="ServiceTester" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2007/05/edm">
+      <EntityType Name="CategoryEntity">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="CategoryName" Type="Edm.String" Nullable="true" />
+        <Property Name="Description" Type="Edm.String" Nullable="true" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Picture" Type="Edm.Binary" Nullable="true" />
+        <NavigationProperty Name="Products" Relationship="ServiceTester.CategoryEntity_Products_ProductEntity_Category" FromRole="CategoryEntity_Products" ToRole="ProductEntity_Category" />
+        <NavigationProperty Name="Suppliers" Relationship="ServiceTester.CategoryEntity_Suppliers" FromRole="CategoryEntity" ToRole="Suppliers" />
+      </EntityType>
+      <EntityType Name="CustomerEntity">
+        <Key>
+          <PropertyRef Name="CustomerId" />
+        </Key>
+        <Property Name="Address" Type="Edm.String" Nullable="true" />
+        <Property Name="City" Type="Edm.String" Nullable="true" />
+        <Property Name="CompanyName" Type="Edm.String" Nullable="true" />
+        <Property Name="ContactName" Type="Edm.String" Nullable="true" />
+        <Property Name="ContactTitle" Type="Edm.String" Nullable="true" />
+        <Property Name="Country" Type="Edm.String" Nullable="true" />
+        <Property Name="CustomerId" Type="Edm.String" Nullable="false" />
+        <Property Name="Fax" Type="Edm.String" Nullable="true" />
+        <Property Name="Phone" Type="Edm.String" Nullable="true" />
+        <Property Name="PostalCode" Type="Edm.String" Nullable="true" />
+        <Property Name="Region" Type="Edm.String" Nullable="true" />
+        <NavigationProperty Name="CustomerCustomerDemo" Relationship="ServiceTester.CustomerEntity_CustomerCustomerDemo_CustomerCustomerDemoEntity_Customers" FromRole="CustomerEntity_CustomerCustomerDemo" ToRole="CustomerCustomerDemoEntity_Customers" />
+        <NavigationProperty Name="Orders" Relationship="ServiceTester.CustomerEntity_Orders_OrderEntity_Customers" FromRole="CustomerEntity_Orders" ToRole="OrderEntity_Customers" />
+        <NavigationProperty Name="Employees" Relationship="ServiceTester.CustomerEntity_Employees" FromRole="CustomerEntity" ToRole="Employees" />
+        <NavigationProperty Name="Shippers" Relationship="ServiceTester.CustomerEntity_Shippers" FromRole="CustomerEntity" ToRole="Shippers" />
+      </EntityType>
+      <EntityType Name="CustomerCustomerDemoEntity">
+        <Key>
+          <PropertyRef Name="CustomerId" />
+          <PropertyRef Name="CustomerTypeId" />
+        </Key>
+        <Property Name="CustomerId" Type="Edm.String" Nullable="false" />
+        <Property Name="CustomerTypeId" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="Customers" Relationship="ServiceTester.CustomerEntity_CustomerCustomerDemo_CustomerCustomerDemoEntity_Customers" FromRole="CustomerCustomerDemoEntity_Customers" ToRole="CustomerEntity_CustomerCustomerDemo" />
+        <NavigationProperty Name="CustomerDemographics" Relationship="ServiceTester.CustomerCustomerDemoEntity_CustomerDemographics_CustomerDemographicsEntity_CustomerCustomerDemo" FromRole="CustomerCustomerDemoEntity_CustomerDemographics" ToRole="CustomerDemographicsEntity_CustomerCustomerDemo" />
+      </EntityType>
+      <EntityType Name="CustomerDemographicsEntity">
+        <Key>
+          <PropertyRef Name="CustomerTypeId" />
+        </Key>
+        <Property Name="CustomerDesc" Type="Edm.String" Nullable="true" />
+        <Property Name="CustomerTypeId" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="CustomerCustomerDemo" Relationship="ServiceTester.CustomerCustomerDemoEntity_CustomerDemographics_CustomerDemographicsEntity_CustomerCustomerDemo" FromRole="CustomerDemographicsEntity_CustomerCustomerDemo" ToRole="CustomerCustomerDemoEntity_CustomerDemographics" />
+      </EntityType>
+      <EntityType Name="EmployeeEntity">
+        <Key>
+          <PropertyRef Name="EmployeeId" />
+        </Key>
+        <Property Name="Address" Type="Edm.String" Nullable="true" />
+        <Property Name="BirthDate" Type="Edm.DateTime" Nullable="true" />
+        <Property Name="City" Type="Edm.String" Nullable="true" />
+        <Property Name="Country" Type="Edm.String" Nullable="true" />
+        <Property Name="EmployeeId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Extension" Type="Edm.String" Nullable="true" />
+        <Property Name="FirstName" Type="Edm.String" Nullable="true" />
+        <Property Name="HireDate" Type="Edm.DateTime" Nullable="true" />
+        <Property Name="HomePhone" Type="Edm.String" Nullable="true" />
+        <Property Name="LastName" Type="Edm.String" Nullable="true" />
+        <Property Name="Notes" Type="Edm.String" Nullable="true" />
+        <Property Name="Photo" Type="Edm.Binary" Nullable="true" />
+        <Property Name="PhotoPath" Type="Edm.String" Nullable="true" />
+        <Property Name="PostalCode" Type="Edm.String" Nullable="true" />
+        <Property Name="Region" Type="Edm.String" Nullable="true" />
+        <Property Name="RegionId" Type="Edm.Int32" Nullable="true" />
+        <Property Name="ReportsTo" Type="Edm.Int32" Nullable="true" />
+        <Property Name="Title" Type="Edm.String" Nullable="true" />
+        <Property Name="TitleOfCourtesy" Type="Edm.String" Nullable="true" />
+        <NavigationProperty Name="ManagedEmployees" Relationship="ServiceTester.EmployeeEntity_ManagedEmployees_EmployeeEntity_Manager" FromRole="EmployeeEntity_ManagedEmployees" ToRole="EmployeeEntity_Manager" />
+        <NavigationProperty Name="EmployeeTerritories" Relationship="ServiceTester.EmployeeEntity_EmployeeTerritories_EmployeeTerritoriesEntity_Employees" FromRole="EmployeeEntity_EmployeeTerritories" ToRole="EmployeeTerritoriesEntity_Employees" />
+        <NavigationProperty Name="Orders" Relationship="ServiceTester.EmployeeEntity_Orders_OrderEntity_Employees" FromRole="EmployeeEntity_Orders" ToRole="OrderEntity_Employees" />
+        <NavigationProperty Name="Customers" Relationship="ServiceTester.EmployeeEntity_Customers" FromRole="EmployeeEntity" ToRole="Customers" />
+        <NavigationProperty Name="Region__" Relationship="ServiceTester.EmployeeEntity_Region__" FromRole="EmployeeEntity" ToRole="Region__" />
+        <NavigationProperty Name="Shippers" Relationship="ServiceTester.EmployeeEntity_Shippers" FromRole="EmployeeEntity" ToRole="Shippers" />
+        <NavigationProperty Name="Territories" Relationship="ServiceTester.EmployeeEntity_Territories" FromRole="EmployeeEntity" ToRole="Territories" />
+        <NavigationProperty Name="Manager" Relationship="ServiceTester.EmployeeEntity_ManagedEmployees_EmployeeEntity_Manager" FromRole="EmployeeEntity_Manager" ToRole="EmployeeEntity_ManagedEmployees" />
+        <NavigationProperty Name="Region_" Relationship="ServiceTester.EmployeeEntity_Region__RegionEntity_Employee" FromRole="EmployeeEntity_Region_" ToRole="RegionEntity_Employee" />
+      </EntityType>
+      <EntityType Name="EmployeeTerritoriesEntity">
+        <Key>
+          <PropertyRef Name="EmployeeId" />
+          <PropertyRef Name="TerritoryId" />
+        </Key>
+        <Property Name="EmployeeId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TerritoryId" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="Employees" Relationship="ServiceTester.EmployeeEntity_EmployeeTerritories_EmployeeTerritoriesEntity_Employees" FromRole="EmployeeTerritoriesEntity_Employees" ToRole="EmployeeEntity_EmployeeTerritories" />
+        <NavigationProperty Name="Territories" Relationship="ServiceTester.EmployeeTerritoriesEntity_Territories_TerritoryEntity_EmployeeTerritories" FromRole="EmployeeTerritoriesEntity_Territories" ToRole="TerritoryEntity_EmployeeTerritories" />
+      </EntityType>
+      <EntityType Name="OrderEntity">
+        <Key>
+          <PropertyRef Name="OrderId" />
+        </Key>
+        <Property Name="CustomerId" Type="Edm.String" Nullable="true" />
+        <Property Name="EmployeeId" Type="Edm.Int32" Nullable="true" />
+        <Property Name="Freight" Type="Edm.Decimal" Nullable="true" />
+        <Property Name="OrderDate" Type="Edm.DateTime" Nullable="true" />
+        <Property Name="OrderId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="RequiredDate" Type="Edm.DateTime" Nullable="true" />
+        <Property Name="ShipAddress" Type="Edm.String" Nullable="true" />
+        <Property Name="ShipCity" Type="Edm.String" Nullable="true" />
+        <Property Name="ShipCountry" Type="Edm.String" Nullable="true" />
+        <Property Name="ShipName" Type="Edm.String" Nullable="true" />
+        <Property Name="ShippedDate" Type="Edm.DateTime" Nullable="true" />
+        <Property Name="ShipPostalCode" Type="Edm.String" Nullable="true" />
+        <Property Name="ShipRegion" Type="Edm.String" Nullable="true" />
+        <Property Name="ShipVia" Type="Edm.Int32" Nullable="true" />
+        <Property Name="CompanyName" Type="Edm.String" Nullable="true" />
+        <Property Name="NullableDec" Type="Edm.Decimal" Nullable="true" />
+        <Property Name="NulledString" Type="Edm.String" Nullable="true" />
+        <Property Name="NullableDateTime" Type="Edm.DateTime" Nullable="true" />
+        <NavigationProperty Name="OrderDetails" Relationship="ServiceTester.OrderEntity_OrderDetails_OrderDetailsEntity_Orders" FromRole="OrderEntity_OrderDetails" ToRole="OrderDetailsEntity_Orders" />
+        <NavigationProperty Name="Products" Relationship="ServiceTester.OrderEntity_Products" FromRole="OrderEntity" ToRole="Products" />
+        <NavigationProperty Name="Customers" Relationship="ServiceTester.CustomerEntity_Orders_OrderEntity_Customers" FromRole="OrderEntity_Customers" ToRole="CustomerEntity_Orders" />
+        <NavigationProperty Name="Employees" Relationship="ServiceTester.EmployeeEntity_Orders_OrderEntity_Employees" FromRole="OrderEntity_Employees" ToRole="EmployeeEntity_Orders" />
+        <NavigationProperty Name="Shippers" Relationship="ServiceTester.OrderEntity_Shippers_ShipperEntity_Orders" FromRole="OrderEntity_Shippers" ToRole="ShipperEntity_Orders" />
+      </EntityType>
+      <EntityType Name="OrderDetailsEntity">
+        <Key>
+          <PropertyRef Name="OrderId" />
+          <PropertyRef Name="ProductId" />
+        </Key>
+        <Property Name="Discount" Type="Edm.Single" Nullable="false" />
+        <Property Name="OrderId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ProductId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Quantity" Type="Edm.Int16" Nullable="false" />
+        <Property Name="UnitPrice" Type="Edm.Decimal" Nullable="false" />
+        <NavigationProperty Name="Orders" Relationship="ServiceTester.OrderEntity_OrderDetails_OrderDetailsEntity_Orders" FromRole="OrderDetailsEntity_Orders" ToRole="OrderEntity_OrderDetails" />
+        <NavigationProperty Name="Products" Relationship="ServiceTester.OrderDetailsEntity_Products_ProductEntity_OrderDetails" FromRole="OrderDetailsEntity_Products" ToRole="ProductEntity_OrderDetails" />
+      </EntityType>
+      <EntityType Name="ProductEntity">
+        <Key>
+          <PropertyRef Name="ProductId" />
+        </Key>
+        <Property Name="CategoryId" Type="Edm.Int32" Nullable="true" />
+        <Property Name="Discontinued" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ProductId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ProductName" Type="Edm.String" Nullable="true" />
+        <Property Name="QuantityPerUnit" Type="Edm.String" Nullable="true" />
+        <Property Name="ReorderLevel" Type="Edm.Int16" Nullable="true" />
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="true" />
+        <Property Name="UnitPrice" Type="Edm.Decimal" Nullable="true" />
+        <Property Name="UnitsInStock" Type="Edm.Int16" Nullable="true" />
+        <Property Name="UnitsOnOrder" Type="Edm.Int16" Nullable="true" />
+        <NavigationProperty Name="OrderDetails" Relationship="ServiceTester.OrderDetailsEntity_Products_ProductEntity_OrderDetails" FromRole="ProductEntity_OrderDetails" ToRole="OrderDetailsEntity_Products" />
+        <NavigationProperty Name="Orders" Relationship="ServiceTester.ProductEntity_Orders" FromRole="ProductEntity" ToRole="Orders" />
+        <NavigationProperty Name="Category" Relationship="ServiceTester.CategoryEntity_Products_ProductEntity_Category" FromRole="ProductEntity_Category" ToRole="CategoryEntity_Products" />
+        <NavigationProperty Name="Suppliers" Relationship="ServiceTester.ProductEntity_Suppliers_SupplierEntity_Products" FromRole="ProductEntity_Suppliers" ToRole="SupplierEntity_Products" />
+      </EntityType>
+      <EntityType Name="RegionEntity">
+        <Key>
+          <PropertyRef Name="RegionId" />
+        </Key>
+        <Property Name="RegionDescription" Type="Edm.String" Nullable="true" />
+        <Property Name="RegionId" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="Employee" Relationship="ServiceTester.EmployeeEntity_Region__RegionEntity_Employee" FromRole="RegionEntity_Employee" ToRole="EmployeeEntity_Region_" />
+        <NavigationProperty Name="Territories" Relationship="ServiceTester.RegionEntity_Territories_TerritoryEntity_Region" FromRole="RegionEntity_Territories" ToRole="TerritoryEntity_Region" />
+        <NavigationProperty Name="Employee_" Relationship="ServiceTester.RegionEntity_Employee_" FromRole="RegionEntity" ToRole="Employee_" />
+      </EntityType>
+      <EntityType Name="ShipperEntity">
+        <Key>
+          <PropertyRef Name="ShipperId" />
+        </Key>
+        <Property Name="CompanyName" Type="Edm.String" Nullable="true" />
+        <Property Name="Phone" Type="Edm.String" Nullable="true" />
+        <Property Name="ShipperId" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="Orders" Relationship="ServiceTester.OrderEntity_Shippers_ShipperEntity_Orders" FromRole="ShipperEntity_Orders" ToRole="OrderEntity_Shippers" />
+        <NavigationProperty Name="Customers" Relationship="ServiceTester.ShipperEntity_Customers" FromRole="ShipperEntity" ToRole="Customers" />
+        <NavigationProperty Name="Employees" Relationship="ServiceTester.ShipperEntity_Employees" FromRole="ShipperEntity" ToRole="Employees" />
+      </EntityType>
+      <EntityType Name="SupplierEntity">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Address" Type="Edm.String" Nullable="true" />
+        <Property Name="City" Type="Edm.String" Nullable="true" />
+        <Property Name="CompanyName" Type="Edm.String" Nullable="true" />
+        <Property Name="ContactName" Type="Edm.String" Nullable="true" />
+        <Property Name="ContactTitle" Type="Edm.String" Nullable="true" />
+        <Property Name="Country" Type="Edm.String" Nullable="true" />
+        <Property Name="Fax" Type="Edm.String" Nullable="true" />
+        <Property Name="HomePage" Type="Edm.String" Nullable="true" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Phone" Type="Edm.String" Nullable="true" />
+        <Property Name="PostalCode" Type="Edm.String" Nullable="true" />
+        <Property Name="Region" Type="Edm.String" Nullable="true" />
+        <NavigationProperty Name="Products" Relationship="ServiceTester.ProductEntity_Suppliers_SupplierEntity_Products" FromRole="SupplierEntity_Products" ToRole="ProductEntity_Suppliers" />
+        <NavigationProperty Name="Category" Relationship="ServiceTester.SupplierEntity_Category" FromRole="SupplierEntity" ToRole="Category" />
+      </EntityType>
+      <EntityType Name="TCTesterEntity">
+        <Key>
+          <PropertyRef Name="OrderId" />
+          <PropertyRef Name="ProductId" />
+        </Key>
+        <Property Name="BoolFromShort" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IntFromDecimal" Type="Edm.Int32" Nullable="false" />
+        <Property Name="OrderId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ProductId" Type="Edm.Int32" Nullable="false" />
+      </EntityType>
+      <EntityType Name="TerritoryEntity">
+        <Key>
+          <PropertyRef Name="TerritoryId" />
+        </Key>
+        <Property Name="RegionId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TerritoryDescription" Type="Edm.String" Nullable="true" />
+        <Property Name="TerritoryId" Type="Edm.String" Nullable="false" />
+        <Property Name="Test" Type="Edm.Binary" Nullable="true" />
+        <NavigationProperty Name="EmployeeTerritories" Relationship="ServiceTester.EmployeeTerritoriesEntity_Territories_TerritoryEntity_EmployeeTerritories" FromRole="TerritoryEntity_EmployeeTerritories" ToRole="EmployeeTerritoriesEntity_Territories" />
+        <NavigationProperty Name="Employees" Relationship="ServiceTester.TerritoryEntity_Employees" FromRole="TerritoryEntity" ToRole="Employees" />
+        <NavigationProperty Name="Region" Relationship="ServiceTester.RegionEntity_Territories_TerritoryEntity_Region" FromRole="TerritoryEntity_Region" ToRole="RegionEntity_Territories" />
+      </EntityType>
+      <Association Name="CategoryEntity_Products_ProductEntity_Category">
+        <End Role="CategoryEntity_Products" Type="ServiceTester.CategoryEntity" Multiplicity="0..1" />
+        <End Role="ProductEntity_Category" Type="ServiceTester.ProductEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="CategoryEntity_Suppliers">
+        <End Role="CategoryEntity" Type="ServiceTester.CategoryEntity" Multiplicity="*" />
+        <End Role="Suppliers" Type="ServiceTester.SupplierEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="CustomerEntity_CustomerCustomerDemo_CustomerCustomerDemoEntity_Customers">
+        <End Role="CustomerEntity_CustomerCustomerDemo" Type="ServiceTester.CustomerEntity" Multiplicity="0..1" />
+        <End Role="CustomerCustomerDemoEntity_Customers" Type="ServiceTester.CustomerCustomerDemoEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="CustomerEntity_Orders_OrderEntity_Customers">
+        <End Role="CustomerEntity_Orders" Type="ServiceTester.CustomerEntity" Multiplicity="0..1" />
+        <End Role="OrderEntity_Customers" Type="ServiceTester.OrderEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="CustomerEntity_Employees">
+        <End Role="CustomerEntity" Type="ServiceTester.CustomerEntity" Multiplicity="*" />
+        <End Role="Employees" Type="ServiceTester.EmployeeEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="CustomerEntity_Shippers">
+        <End Role="CustomerEntity" Type="ServiceTester.CustomerEntity" Multiplicity="*" />
+        <End Role="Shippers" Type="ServiceTester.ShipperEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="CustomerCustomerDemoEntity_CustomerDemographics_CustomerDemographicsEntity_CustomerCustomerDemo">
+        <End Role="CustomerCustomerDemoEntity_CustomerDemographics" Type="ServiceTester.CustomerCustomerDemoEntity" Multiplicity="*" />
+        <End Role="CustomerDemographicsEntity_CustomerCustomerDemo" Type="ServiceTester.CustomerDemographicsEntity" Multiplicity="0..1" />
+      </Association>
+      <Association Name="EmployeeEntity_ManagedEmployees_EmployeeEntity_Manager">
+        <End Role="EmployeeEntity_ManagedEmployees" Type="ServiceTester.EmployeeEntity" Multiplicity="0..1" />
+        <End Role="EmployeeEntity_Manager" Type="ServiceTester.EmployeeEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="EmployeeEntity_EmployeeTerritories_EmployeeTerritoriesEntity_Employees">
+        <End Role="EmployeeEntity_EmployeeTerritories" Type="ServiceTester.EmployeeEntity" Multiplicity="0..1" />
+        <End Role="EmployeeTerritoriesEntity_Employees" Type="ServiceTester.EmployeeTerritoriesEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="EmployeeEntity_Orders_OrderEntity_Employees">
+        <End Role="EmployeeEntity_Orders" Type="ServiceTester.EmployeeEntity" Multiplicity="0..1" />
+        <End Role="OrderEntity_Employees" Type="ServiceTester.OrderEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="EmployeeEntity_Customers">
+        <End Role="EmployeeEntity" Type="ServiceTester.EmployeeEntity" Multiplicity="*" />
+        <End Role="Customers" Type="ServiceTester.CustomerEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="EmployeeEntity_Region__">
+        <End Role="EmployeeEntity" Type="ServiceTester.EmployeeEntity" Multiplicity="*" />
+        <End Role="Region__" Type="ServiceTester.RegionEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="EmployeeEntity_Shippers">
+        <End Role="EmployeeEntity" Type="ServiceTester.EmployeeEntity" Multiplicity="*" />
+        <End Role="Shippers" Type="ServiceTester.ShipperEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="EmployeeEntity_Territories">
+        <End Role="EmployeeEntity" Type="ServiceTester.EmployeeEntity" Multiplicity="*" />
+        <End Role="Territories" Type="ServiceTester.TerritoryEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="EmployeeEntity_Region__RegionEntity_Employee">
+        <End Role="EmployeeEntity_Region_" Type="ServiceTester.EmployeeEntity" Multiplicity="*" />
+        <End Role="RegionEntity_Employee" Type="ServiceTester.RegionEntity" Multiplicity="0..1" />
+      </Association>
+      <Association Name="EmployeeTerritoriesEntity_Territories_TerritoryEntity_EmployeeTerritories">
+        <End Role="EmployeeTerritoriesEntity_Territories" Type="ServiceTester.EmployeeTerritoriesEntity" Multiplicity="*" />
+        <End Role="TerritoryEntity_EmployeeTerritories" Type="ServiceTester.TerritoryEntity" Multiplicity="0..1" />
+      </Association>
+      <Association Name="OrderEntity_OrderDetails_OrderDetailsEntity_Orders">
+        <End Role="OrderEntity_OrderDetails" Type="ServiceTester.OrderEntity" Multiplicity="0..1" />
+        <End Role="OrderDetailsEntity_Orders" Type="ServiceTester.OrderDetailsEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="OrderEntity_Products">
+        <End Role="OrderEntity" Type="ServiceTester.OrderEntity" Multiplicity="*" />
+        <End Role="Products" Type="ServiceTester.ProductEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="OrderEntity_Shippers_ShipperEntity_Orders">
+        <End Role="OrderEntity_Shippers" Type="ServiceTester.OrderEntity" Multiplicity="*" />
+        <End Role="ShipperEntity_Orders" Type="ServiceTester.ShipperEntity" Multiplicity="0..1" />
+      </Association>
+      <Association Name="OrderDetailsEntity_Products_ProductEntity_OrderDetails">
+        <End Role="OrderDetailsEntity_Products" Type="ServiceTester.OrderDetailsEntity" Multiplicity="*" />
+        <End Role="ProductEntity_OrderDetails" Type="ServiceTester.ProductEntity" Multiplicity="0..1" />
+      </Association>
+      <Association Name="ProductEntity_Orders">
+        <End Role="ProductEntity" Type="ServiceTester.ProductEntity" Multiplicity="*" />
+        <End Role="Orders" Type="ServiceTester.OrderEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="ProductEntity_Suppliers_SupplierEntity_Products">
+        <End Role="ProductEntity_Suppliers" Type="ServiceTester.ProductEntity" Multiplicity="*" />
+        <End Role="SupplierEntity_Products" Type="ServiceTester.SupplierEntity" Multiplicity="0..1" />
+      </Association>
+      <Association Name="RegionEntity_Territories_TerritoryEntity_Region">
+        <End Role="RegionEntity_Territories" Type="ServiceTester.RegionEntity" Multiplicity="0..1" />
+        <End Role="TerritoryEntity_Region" Type="ServiceTester.TerritoryEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="RegionEntity_Employee_">
+        <End Role="RegionEntity" Type="ServiceTester.RegionEntity" Multiplicity="*" />
+        <End Role="Employee_" Type="ServiceTester.EmployeeEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="ShipperEntity_Customers">
+        <End Role="ShipperEntity" Type="ServiceTester.ShipperEntity" Multiplicity="*" />
+        <End Role="Customers" Type="ServiceTester.CustomerEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="ShipperEntity_Employees">
+        <End Role="ShipperEntity" Type="ServiceTester.ShipperEntity" Multiplicity="*" />
+        <End Role="Employees" Type="ServiceTester.EmployeeEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="SupplierEntity_Category">
+        <End Role="SupplierEntity" Type="ServiceTester.SupplierEntity" Multiplicity="*" />
+        <End Role="Category" Type="ServiceTester.CategoryEntity" Multiplicity="*" />
+      </Association>
+      <Association Name="TerritoryEntity_Employees">
+        <End Role="TerritoryEntity" Type="ServiceTester.TerritoryEntity" Multiplicity="*" />
+        <End Role="Employees" Type="ServiceTester.EmployeeEntity" Multiplicity="*" />
+      </Association>
+      <EntityContainer Name="NorthwindService" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Category" EntityType="ServiceTester.CategoryEntity" />
+        <EntitySet Name="Customer" EntityType="ServiceTester.CustomerEntity" />
+        <EntitySet Name="CustomerCustomerDemo" EntityType="ServiceTester.CustomerCustomerDemoEntity" />
+        <EntitySet Name="CustomerDemographics" EntityType="ServiceTester.CustomerDemographicsEntity" />
+        <EntitySet Name="Employee" EntityType="ServiceTester.EmployeeEntity" />
+        <EntitySet Name="EmployeeTerritories" EntityType="ServiceTester.EmployeeTerritoriesEntity" />
+        <EntitySet Name="Order" EntityType="ServiceTester.OrderEntity" />
+        <EntitySet Name="OrderDetails" EntityType="ServiceTester.OrderDetailsEntity" />
+        <EntitySet Name="Product" EntityType="ServiceTester.ProductEntity" />
+        <EntitySet Name="Region" EntityType="ServiceTester.RegionEntity" />
+        <EntitySet Name="Shipper" EntityType="ServiceTester.ShipperEntity" />
+        <EntitySet Name="Supplier" EntityType="ServiceTester.SupplierEntity" />
+        <EntitySet Name="TCTester" EntityType="ServiceTester.TCTesterEntity" />
+        <EntitySet Name="Territory" EntityType="ServiceTester.TerritoryEntity" />
+        <AssociationSet Name="CategoryEntityProductEntityCategoryId" Association="ServiceTester.CategoryEntity_Products_ProductEntity_Category">
+          <End Role="CategoryEntity_Products" EntitySet="Category" />
+          <End Role="ProductEntity_Category" EntitySet="Product" />
+        </AssociationSet>
+        <AssociationSet Name="CategoryEntity_Suppliers" Association="ServiceTester.CategoryEntity_Suppliers">
+          <End Role="CategoryEntity" EntitySet="Category" />
+          <End Role="Suppliers" EntitySet="Supplier" />
+        </AssociationSet>
+        <AssociationSet Name="CustomerEntityCustomerCustomerDemoEntityCustomerId" Association="ServiceTester.CustomerEntity_CustomerCustomerDemo_CustomerCustomerDemoEntity_Customers">
+          <End Role="CustomerEntity_CustomerCustomerDemo" EntitySet="Customer" />
+          <End Role="CustomerCustomerDemoEntity_Customers" EntitySet="CustomerCustomerDemo" />
+        </AssociationSet>
+        <AssociationSet Name="CustomerEntityOrderEntityCustomerId" Association="ServiceTester.CustomerEntity_Orders_OrderEntity_Customers">
+          <End Role="CustomerEntity_Orders" EntitySet="Customer" />
+          <End Role="OrderEntity_Customers" EntitySet="Order" />
+        </AssociationSet>
+        <AssociationSet Name="CustomerEntity_Employees" Association="ServiceTester.CustomerEntity_Employees">
+          <End Role="CustomerEntity" EntitySet="Customer" />
+          <End Role="Employees" EntitySet="Employee" />
+        </AssociationSet>
+        <AssociationSet Name="CustomerEntity_Shippers" Association="ServiceTester.CustomerEntity_Shippers">
+          <End Role="CustomerEntity" EntitySet="Customer" />
+          <End Role="Shippers" EntitySet="Shipper" />
+        </AssociationSet>
+        <AssociationSet Name="CustomerDemographicsEntityCustomerCustomerDemoEntityCustomerTypeId" Association="ServiceTester.CustomerCustomerDemoEntity_CustomerDemographics_CustomerDemographicsEntity_CustomerCustomerDemo">
+          <End Role="CustomerCustomerDemoEntity_CustomerDemographics" EntitySet="CustomerCustomerDemo" />
+          <End Role="CustomerDemographicsEntity_CustomerCustomerDemo" EntitySet="CustomerDemographics" />
+        </AssociationSet>
+        <AssociationSet Name="EmployeeEntityEmployeeEntityReportsTo" Association="ServiceTester.EmployeeEntity_ManagedEmployees_EmployeeEntity_Manager">
+          <End Role="EmployeeEntity_ManagedEmployees" EntitySet="Employee" />
+          <End Role="EmployeeEntity_Manager" EntitySet="Employee" />
+        </AssociationSet>
+        <AssociationSet Name="EmployeeEntityEmployeeTerritoriesEntityEmployeeId" Association="ServiceTester.EmployeeEntity_EmployeeTerritories_EmployeeTerritoriesEntity_Employees">
+          <End Role="EmployeeEntity_EmployeeTerritories" EntitySet="Employee" />
+          <End Role="EmployeeTerritoriesEntity_Employees" EntitySet="EmployeeTerritories" />
+        </AssociationSet>
+        <AssociationSet Name="EmployeeEntityOrderEntityEmployeeId" Association="ServiceTester.EmployeeEntity_Orders_OrderEntity_Employees">
+          <End Role="EmployeeEntity_Orders" EntitySet="Employee" />
+          <End Role="OrderEntity_Employees" EntitySet="Order" />
+        </AssociationSet>
+        <AssociationSet Name="EmployeeEntity_Customers" Association="ServiceTester.EmployeeEntity_Customers">
+          <End Role="EmployeeEntity" EntitySet="Employee" />
+          <End Role="Customers" EntitySet="Customer" />
+        </AssociationSet>
+        <AssociationSet Name="EmployeeEntity_Region__" Association="ServiceTester.EmployeeEntity_Region__">
+          <End Role="EmployeeEntity" EntitySet="Employee" />
+          <End Role="Region__" EntitySet="Region" />
+        </AssociationSet>
+        <AssociationSet Name="EmployeeEntity_Shippers" Association="ServiceTester.EmployeeEntity_Shippers">
+          <End Role="EmployeeEntity" EntitySet="Employee" />
+          <End Role="Shippers" EntitySet="Shipper" />
+        </AssociationSet>
+        <AssociationSet Name="EmployeeEntity_Territories" Association="ServiceTester.EmployeeEntity_Territories">
+          <End Role="EmployeeEntity" EntitySet="Employee" />
+          <End Role="Territories" EntitySet="Territory" />
+        </AssociationSet>
+        <AssociationSet Name="RegionEntityEmployeeEntityRegionId" Association="ServiceTester.EmployeeEntity_Region__RegionEntity_Employee">
+          <End Role="EmployeeEntity_Region_" EntitySet="Employee" />
+          <End Role="RegionEntity_Employee" EntitySet="Region" />
+        </AssociationSet>
+        <AssociationSet Name="TerritoryEntityEmployeeTerritoriesEntityTerritoryId" Association="ServiceTester.EmployeeTerritoriesEntity_Territories_TerritoryEntity_EmployeeTerritories">
+          <End Role="EmployeeTerritoriesEntity_Territories" EntitySet="EmployeeTerritories" />
+          <End Role="TerritoryEntity_EmployeeTerritories" EntitySet="Territory" />
+        </AssociationSet>
+        <AssociationSet Name="OrderEntityOrderDetailsEntityOrderId" Association="ServiceTester.OrderEntity_OrderDetails_OrderDetailsEntity_Orders">
+          <End Role="OrderEntity_OrderDetails" EntitySet="Order" />
+          <End Role="OrderDetailsEntity_Orders" EntitySet="OrderDetails" />
+        </AssociationSet>
+        <AssociationSet Name="OrderEntity_Products" Association="ServiceTester.OrderEntity_Products">
+          <End Role="OrderEntity" EntitySet="Order" />
+          <End Role="Products" EntitySet="Product" />
+        </AssociationSet>
+        <AssociationSet Name="ShipperEntityOrderEntityShipVia" Association="ServiceTester.OrderEntity_Shippers_ShipperEntity_Orders">
+          <End Role="OrderEntity_Shippers" EntitySet="Order" />
+          <End Role="ShipperEntity_Orders" EntitySet="Shipper" />
+        </AssociationSet>
+        <AssociationSet Name="ProductEntityOrderDetailsEntityProductId" Association="ServiceTester.OrderDetailsEntity_Products_ProductEntity_OrderDetails">
+          <End Role="OrderDetailsEntity_Products" EntitySet="OrderDetails" />
+          <End Role="ProductEntity_OrderDetails" EntitySet="Product" />
+        </AssociationSet>
+        <AssociationSet Name="ProductEntity_Orders" Association="ServiceTester.ProductEntity_Orders">
+          <End Role="ProductEntity" EntitySet="Product" />
+          <End Role="Orders" EntitySet="Order" />
+        </AssociationSet>
+        <AssociationSet Name="SupplierEntityProductEntitySupplierId" Association="ServiceTester.ProductEntity_Suppliers_SupplierEntity_Products">
+          <End Role="ProductEntity_Suppliers" EntitySet="Product" />
+          <End Role="SupplierEntity_Products" EntitySet="Supplier" />
+        </AssociationSet>
+        <AssociationSet Name="RegionEntityTerritoryEntityRegionId" Association="ServiceTester.RegionEntity_Territories_TerritoryEntity_Region">
+          <End Role="RegionEntity_Territories" EntitySet="Region" />
+          <End Role="TerritoryEntity_Region" EntitySet="Territory" />
+        </AssociationSet>
+        <AssociationSet Name="RegionEntity_Employee_" Association="ServiceTester.RegionEntity_Employee_">
+          <End Role="RegionEntity" EntitySet="Region" />
+          <End Role="Employee_" EntitySet="Employee" />
+        </AssociationSet>
+        <AssociationSet Name="ShipperEntity_Customers" Association="ServiceTester.ShipperEntity_Customers">
+          <End Role="ShipperEntity" EntitySet="Shipper" />
+          <End Role="Customers" EntitySet="Customer" />
+        </AssociationSet>
+        <AssociationSet Name="ShipperEntity_Employees" Association="ServiceTester.ShipperEntity_Employees">
+          <End Role="ShipperEntity" EntitySet="Shipper" />
+          <End Role="Employees" EntitySet="Employee" />
+        </AssociationSet>
+        <AssociationSet Name="SupplierEntity_Category" Association="ServiceTester.SupplierEntity_Category">
+          <End Role="SupplierEntity" EntitySet="Supplier" />
+          <End Role="Category" EntitySet="Category" />
+        </AssociationSet>
+        <AssociationSet Name="TerritoryEntity_Employees" Association="ServiceTester.TerritoryEntity_Employees">
+          <End Role="TerritoryEntity" EntitySet="Territory" />
+          <End Role="Employees" EntitySet="Employee" />
+        </AssociationSet>
+        <FunctionImport Name="GetProductByProductName" EntitySet="Product" ReturnType="Collection(ServiceTester.ProductEntity)" m:HttpMethod="GET">
+          <Parameter Name="productName" Type="Edm.String" Mode="In" />
+        </FunctionImport>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

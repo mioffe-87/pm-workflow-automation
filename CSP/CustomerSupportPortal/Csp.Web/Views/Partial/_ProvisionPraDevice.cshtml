@@ -1,0 +1,175 @@
+﻿@model Csp.Web.DataTransferObjects.NsxDto
+@using Csp.Api.Services.Contracts
+
+@{
+    bool hideProvisionBtn = false;
+    if (!string.IsNullOrEmpty(Model.PartNumber) && Model.PartNumber.Contains("-NSX"))
+    {
+        hideProvisionBtn = true;        
+    }
+}
+<input type="hidden" name="AuthCode" id="AuthCode" value="@Model.AuthCode" />
+<style>
+        .sectionTitle {
+        font-weight: bold;
+        font-size: 18px;
+    }
+</style>
+<script>
+    $(function() {
+        $("#nsxSoftwareDownload").hide();
+    });
+    function getSearchParams() {
+        var params = SetAntiForgery();
+        params.authCode = $('#AuthCode').val();
+        console.log(params);
+        return params;
+    }
+    
+
+    function SoftwareDownloads() {
+        var direction = '/updates/softwareupdates?id=' + @Model.SupportAccountId +'&vmDevices=false&nsx=true';
+        var window = $('#DownloadsWindow').data('kendoWindow');
+        window.setOptions({
+            minWidth: 800,
+            minHeight: 250
+        });
+        window.refresh();
+        window.refresh(direction);
+        window.open();
+        window.center();
+    }
+    
+    function onDownloadsWindowOpen() {
+        SupportPortal.OnWindowOpen('DownloadsWindow');
+    }
+    
+    function onWindowClose() {
+    }
+         
+    function ProvisionPanoramaCheck() {
+        var authCode = $('#AuthCode').val();
+        var iCount = $('#NSX').data('kendoGrid').dataSource.total();
+        var iTotal = '@System.Configuration.ConfigurationManager.AppSettings["MaxPraProvisioningForNsxCount"]';
+        if (iCount >= iTotal) {
+            SupportPortal.Message("Maximum number already provisioned.");
+            return;
+        }
+        // Check for number of already provisioned panorma device.
+        var nsxProvisionPanorama = function () {
+            var direction = "/@ControllerFields.VirtualMachineController/CanProvisionPanorama?authCode=@Model.AuthCode";
+            SupportPortal.BlockUI();
+            $.ajax({
+                url: direction,
+                type: 'Get',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                cache: false,
+                success: function (result) {
+                    SupportPortal.UnBlockUI();
+                    if (result == true) {
+                        ProvisionPanorama("@Model.AuthCode");
+                    } else {
+                        SupportPortal.Message("Maximum number already provisioned.");
+                    }
+                },
+                error: function () {
+                    SupportPortal.UnBlockUI();
+                    SupportPortal.Message("Failed to check if Panorama can be provisioned");
+                }
+            });
+        };
+
+        SupportPortal.Confirmation('Are you sure you want to provision Panorama?', function () { nsxProvisionPanorama(); }, null);
+    }
+
+    function ProvisionPanorama(aCode) {
+        var direction = "/@ControllerFields.VirtualMachineController/ProvisionPanorama?authCode=" + aCode;
+        SupportPortal.BlockUI();
+        $.ajax({
+            url: direction,
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function (result) {
+                if (result == true) {
+                    SupportPortal.UnBlockUI();
+                    SupportPortal.Message("You have successfully provisioned panorama.");
+                    $('#NSX').data('kendoGrid').dataSource.read();
+                } else {
+                    SupportPortal.UnBlockUI();
+                    SupportPortal.Message("Failed to provision panorama.");
+                }
+            },
+            error: function () {
+                SupportPortal.UnBlockUI();
+                SupportPortal.Message("Failed to provision panorama");
+            }
+        });
+    }
+    
+    function NsxOnDataBound(e) {
+        var iCount = $('#NSX').data('kendoGrid').dataSource.total();
+        if (iCount > 0) {
+            //$("#nsxCount").text(iCount);
+            $("#nsxSoftwareDownload").show();
+        }
+
+        //hide the button
+        var hideBtn = '@hideProvisionBtn';
+        if (hideBtn === 'True' && iCount >= 2) {
+            $('#provisionBtn').hide();
+        } else {
+            $('#provisionBtn').show();
+        }
+    }
+
+</script>
+<div>&nbsp;</div>
+<div>List of Panorama devices provisioned:</div>
+<div>&nbsp;</div>
+<div>
+    @(Html.Kendo().Grid(Model.Devices)
+          .Name("NSX")
+          .Columns(cols => {
+                               cols.Bound(x => x.SerialNumber).Title("Serial Number");
+                               cols.Bound(x => x.License).Title("License").Encoded(false);
+                               cols.Bound(x => x.AuthCode).Title("Auth Code").Encoded(false);
+                               cols.Bound(x => x.Expiration).Title("Expiration").Encoded(false);
+          })
+          .Events(e => e.DataBound("NsxOnDataBound"))
+          .DataSource(dataSource => dataSource
+                                        .Ajax()
+                                        .Model(model => {
+                                                            model.Id(p => p.SerialNumber);
+                                                            model.Field(f => f.SerialNumber).Editable(false);
+                                                            model.Field(f => f.License).Editable(false);
+                                                            model.Field(f => f.AuthCode).Editable(false);
+                                                            model.Field(f => f.Expiration).Editable(false);
+                                        })
+                                        .Read(read => read.Action("GetProvisionedPanoramaDevices", "VM").Data("getSearchParams"))
+          )
+          )
+</div>
+
+<div>
+    @(
+    Html.Kendo().Window()
+        .Name("DownloadsWindow")
+        .Visible(false)
+        .Events(events => events
+                              .Open("onDownloadsWindowOpen")
+                              .Close("onWindowClose"))
+        .Modal(true)
+        .Width(1080)
+        .Visible(false)
+        .Draggable()
+        .Title("Downloads")
+          )
+</div>
+<div>&nbsp;</div><div>&nbsp;</div>
+<div class="csp-submit-container">
+    <a id="nsxSoftwareDownload" class="k-button k-button-icontext k-grid-csp-download" title="Download" href="javascript:void(0);" onclick="SoftwareDownloads()"><span class=" "></span> </a>&nbsp;&nbsp;
+    <input id="provisionBtn" class="k-button csp-submit" type="button" value="Provision" onclick="ProvisionPanoramaCheck()" />
+</div>

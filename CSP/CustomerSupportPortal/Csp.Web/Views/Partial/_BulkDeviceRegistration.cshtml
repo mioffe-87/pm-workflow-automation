@@ -1,0 +1,730 @@
+﻿@using Kendo.Mvc.UI;
+@using Csp.Web.HelperClasses;
+@using Csp.Api.Security;
+@model Csp.Web.DataTransferObjects.BulkDeviceRegistrationDto
+
+@{ 
+    ActionHelper actionHelper = Model.ActionHelper;
+    Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);
+    
+    //This code is a copy from how the country and regions work in other areas. This was coded by Garett. 
+    string modelAddress = "Device.";
+    var uniqueId = modelAddress.Replace(".", "") + "BulkRegistration";
+    var countryDropDownId = uniqueId + "CountryDropDownId";
+    var countryDropDownName = modelAddress + "CountryID";
+    var regionDropDownId = uniqueId + "RegionDropDownId";
+    var regionTextId = uniqueId + "RegionTextId";
+    var regionTextHiddenId = uniqueId + "RegionTextHiddenId";
+    var regionName = modelAddress + "Region";
+    var regionTextDivId = uniqueId + "RegionTextDivId";
+    var regionDropDownDivId = uniqueId + "RegionDropDownDivId";
+
+    /* TWO SUBMITS OCCUR ON THIS FORM - RESULTING IN THE DISABLING OF CLIENT VALIDATION
+     * When submitting a sales order number to add a sales order, there is no validation on the client or server. 
+     * When submitting the form for bulk registration to process the validation is on the server. We prevent client 
+     * validation so that the sales order numbers can be added to retrieve the devices and auth codes without validation errors. 
+     * We perform the server side validation on the submit so we can ensure that at least one device and other required information is 
+     * populated and selected. */
+    Html.EnableClientValidation(false);
+}
+
+
+<script>
+
+    //The array of selected devices
+    var @(UniqueId.device)Selected = [];
+
+    //The array of selected licenses. 
+    var @(UniqueId.license)Selected = []; 
+
+    function @(uniqueId)OnCountryDropdownChange() {
+        var countryName = $("#@countryDropDownId").data("kendoDropDownList").text();
+         $("#@UniqueId.countryHidden").val(countryName);
+         SupportPortal.OnCountryDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionTextDivId", "@regionDropDownDivId", "@countryDropDownId");
+     }
+
+    function @(uniqueId)OnRegionDropdownChange() {
+        SupportPortal.OnRegionDropdownChange("@regionTextId", "@regionTextHiddenId", "@regionDropDownId", "@regionDropDownDivId", "@Constants.DropDownRegionSelect");
+    }
+
+    function @(uniqueId)OnRegionTextChange() {
+        SupportPortal.OnRegionTextChange("@regionTextHiddenId", "@regionTextId");
+    }
+
+    function @(uniqueId)FilterCountry() {
+        return { countryId: $("#@countryDropDownId").val() };
+    }
+
+
+    $().ready(function () {
+
+        /* 
+        
+        A user can select devices or licenses in the lists, then add another sales order. For this reason the items 
+        are stored in hidden fields. When the page is ready, we want to load all of the selected device Ids and License Ids into 
+        the arrays so that we can determine what should and what should not display as checked.
+        
+        */
+
+        var selectedDevices = $("#@UniqueId.selectedDevices").val();
+        var selectedLicenses = $("#@UniqueId.selectedAuthorizationCodes").val();
+        var deviceArray;
+        var licenseArray;
+
+        //Add all the devices using the ID as the index into an array.
+        if (selectedDevices != null && selectedDevices.length > 0) {
+
+            deviceArray = selectedDevices.split(',');
+            for (var i = 0; i < deviceArray.length; i++){
+            
+                @(UniqueId.device)Selected[deviceArray[i]] = deviceArray[i];
+            }
+
+            
+        }
+
+        //Add all the licenses using the index as an array.
+        if (selectedLicenses != null && selectedLicenses.length > 0) {
+
+            licenseArray = selectedLicenses.split(',');
+            for (var i = 0; i < licenseArray.length; i++){
+            
+                @(UniqueId.license)Selected[licenseArray[i]] = licenseArray[i];
+            }
+        }
+       
+    });
+
+    //This is used by the device and license grids    
+    function @(UniqueId.salesOrder)DeselectAllInGrid(grid, selectedIds) {
+
+
+        var view = grid.dataSource.view();
+
+        for (var i = 0; i < view.length; i++) {
+
+            //Set the id of the element in the array to 0 so it does not reload as checked
+            selectedIds[view[i].id] = 0;
+
+            //Remove the check in the UI
+            grid.tbody.find("tr[data-uid='" + view[i].uid + "']")
+                .find(".checkbox")
+                .removeAttr("checked");
+        }
+    }
+
+    //This is used by the device and license grids
+    function @(UniqueId.salesOrder)SelectAllInGrid(grid, selectedIds, selectAll) {
+
+        var view = grid.dataSource.view(); 2
+
+        for (var i = 0; i < view.length; i++) {
+
+            /*
+            
+            This is called in the onGridDataBound as well as when the check box is checked for both device and license grids. 
+            For this reason we check to see if SelectAll is check and if so then we add it to the list of selected Ids 
+            to force the selection in the grid.
+
+            */
+
+            if ($(selectAll).is(":checked")) {
+
+                selectedIds[view[i].id] = view[i].id;
+
+            }
+
+            /*
+
+            This selects all visible items in the grid if the item is in the selected Ids. 
+            Greater than 0 is true and 0 is used if not selected.
+
+            */
+
+            if (selectedIds[view[i].id]) {
+                grid.tbody.find("tr[data-uid='" + view[i].uid + "']")
+                    .find(".checkbox")
+                    .attr("checked", "checked");
+            }
+        }
+    }
+
+
+    function @(UniqueId.salesOrder)PrepareForSubmit(isReadyForRegistration) {
+
+        /*
+        
+        This sets a hidden field used to determine if the system is performing the bulk registration or 
+        if it is adding items from a sales order to the form.  All of the selected Ids are used. 
+
+        */
+
+        $("#@UniqueId.startRegistration").val(isReadyForRegistration);
+        @(UniqueId.salesOrder)SetSelectedIds();
+    }
+
+
+    function @(UniqueId.salesOrder)SetSelectedIds() {
+
+        /* 
+        
+        The arrays use the ID as the index. This results in a large quantity of empty elements that 
+        should not be passed to the server. For this reason I remove all of the empty elements, convert it
+        to a string and store he hidden fields to be passed as part of the form in the post.
+
+        */
+
+        var selectedDevices = _.compact(@(UniqueId.device)Selected).toString();
+        var selectedAuthorizationCodes = _.compact(@(UniqueId.license)Selected).toString();
+
+        $("#@UniqueId.selectedDevices").val(selectedDevices);
+        $("#@UniqueId.selectedAuthorizationCodes").val(selectedAuthorizationCodes);
+    }
+
+
+    /*
+
+        THESE ARE THE FUNCTIONS FOR THE DEVICE GRID
+
+    */
+
+    function  @(UniqueId.device)SelectRow() {
+
+        //If a device is selected, then set the value in the array to the device id
+
+        var checked = this.checked;
+        var row = $(this).closest("tr");
+        var grid = @(UniqueId.device)Grid;
+        var dataItem = grid.dataItem(row);
+        if (checked) {
+
+            @(UniqueId.device)Selected[dataItem.id] = dataItem.DeviceId;
+
+        } else {
+
+            $('#@UniqueId.checkAllDevices').removeAttr("checked");
+            @(UniqueId.device)Selected[dataItem.id] = 0;
+        }
+    }
+  
+
+    $('#@UniqueId.checkAllDevices').change(function () {
+
+        //Selects or deselects all VISIBLE items in the array
+        if (this.checked) {
+
+            @(UniqueId.salesOrder)SelectAllInGrid($('#@UniqueId.deviceGrid').data("kendoGrid"),@(UniqueId.device)Selected, '#@UniqueId.checkAllDevices');
+
+        } else {
+
+            @(UniqueId.salesOrder)DeselectAllInGrid($('#@UniqueId.deviceGrid').data("kendoGrid"),@(UniqueId.device)Selected);
+
+        }
+     });
+
+    
+    function @(UniqueId.device)onGridDataBound(e) {
+        $('#@UniqueId.checkAllDevices').removeAttr("checked");
+
+        //Select all items in the device grid that are in the selected Ids.
+        @(UniqueId.salesOrder)SelectAllInGrid(this,@(UniqueId.device)Selected);
+
+
+        //Used as a standing workaround to properly set the total record count.
+        if ($("#@UniqueId.deviceCountCheck").val() == "") {
+
+            this.dataSource._total = "@Convert.ToInt32(Model.DataParameters.TotalRecordCount)";
+            $("#@UniqueId.deviceCountCheck").val("1");
+        }
+    }
+
+    function @(UniqueId.device)SearchData() {
+
+        //Standard search function used in other areas of the application. A good candidate for refactoring. 
+        var selectedValue = $("#@UniqueId.deviceSearchFieldId").val();
+
+        var grid = $("#@UniqueId.deviceGrid").data("kendoGrid");
+        var gridData = grid.dataSource;
+        
+        gridData.filter(
+            {
+                field: $("#@UniqueId.deviceSearchFieldId").val(),
+                operator: "eq",
+                value: $("#@UniqueId.deviceSearchValueId").val()
+            }
+        );
+
+        grid.collapseRow(grid.tbody.find("tr.k-master-row"));
+        gridData.read();
+    }
+
+    function @(UniqueId.device)onEnterPress(e) {
+
+        //This performs the search on the press of the enter button. A good candidate for refactoring. 
+
+        if (e.keyCode == 13) {
+            @(UniqueId.device)SearchData();
+            return false;
+        }
+
+        return true;
+    }
+
+    $("#@UniqueId.deviceSearchFieldId").change(function () {
+
+        //select the text rather than clear it when the drop down of fields changes. A good candidate for refactoring.         
+        $("#@UniqueId.deviceSearchValueId").select();
+        $("#@UniqueId.deviceSearchValueId").data("kendoDropDownList").focus();
+    });
+
+
+    /*
+
+    THESE ARE THE FUNCTIONS FOR THE LICENSE GRID
+
+    */
+
+
+    function  @(UniqueId.license)SelectRow() {
+
+        var checked = this.checked;
+        var row = $(this).closest("tr");
+        var grid = @(UniqueId.license)Grid;
+        var dataItem = grid.dataItem(row);
+        
+        /*
+        
+        If the item is checked then set the element to the id otherwise set it to 0. 
+        This allows the databound to select the proper items in the list. 
+
+        */
+
+        if (checked) {
+            @(UniqueId.license)Selected[dataItem.id] = dataItem.Id;
+
+        } else {
+
+            $('#@UniqueId.checkAllLicenses').removeAttr("checked");
+            @(UniqueId.license)Selected[dataItem.id] = 0;
+        }
+
+    }
+
+    $('#@UniqueId.checkAllLicenses').change(function () {
+
+        /*
+            When the 'check all' check box is checked, select all items in the grid, otherwise unselect them all. 
+        
+        */
+        if (this.checked) {
+           @(UniqueId.salesOrder)SelectAllInGrid($('#@UniqueId.licenseGrid').data("kendoGrid"),@(UniqueId.license)Selected, '#@UniqueId.checkAllLicenses');
+
+        } else {
+            @(UniqueId.salesOrder)DeselectAllInGrid($('#@UniqueId.licenseGrid').data("kendoGrid"),@(UniqueId.license)Selected);
+
+        }
+    });
+     
+    function @(UniqueId.license)onGridDataBound(e) {
+        
+        $('#@UniqueId.checkAllLicenses').removeAttr("checked");
+
+        //Call is used in mor ethan one place to select all items in the grid. Here and when the 'Check All Licenses' check box is selected.
+        @(UniqueId.salesOrder)SelectAllInGrid(this,@(UniqueId.license)Selected);
+
+        //This code is a work around to set the Total Record Count
+        if ($("#@UniqueId.licenseCountCheck").val() == "") {
+            this.dataSource._total = "@Convert.ToInt32(Model.AuthorizationCodes.DataParameters.TotalRecordCount)";
+            $("#@UniqueId.licenseCountCheck").val("1");
+        }
+    }
+
+
+    function @(UniqueId.license)SearchData() {
+
+        //Standard search method used for the license grid. A good candidate for refactoring.        
+        var selectedValue = $("#@UniqueId.licenseSearchFieldId").val();
+
+        var grid = $("#@UniqueId.licenseGrid").data("kendoGrid");
+        var gridData = grid.dataSource;
+        gridData.filter(
+            {
+                field: $("#@UniqueId.licenseSearchFieldId").val(),
+                operator: "eq",
+                value: $("#@UniqueId.licenseSearchValueId").val()
+            }
+        );
+
+        grid.collapseRow(grid.tbody.find("tr.k-master-row"));
+        gridData.read();
+    }
+
+    function @(UniqueId.license)onEnterPress(e) {
+
+        // this is to search on the press of the enter key. A good candidiate for refactoring. 
+        if (e.keyCode == 13) {
+            @(UniqueId.license)SearchData();
+            return false;
+        }
+
+        return true;
+    }
+
+
+    $("#@UniqueId.licenseSearchFieldId").change(function () {
+
+        //Selects the seach criteria rather than selecting it, a good candidate for refactoring. 
+        $("#@UniqueId.licenseSearchValueId").select();
+        $("#@UniqueId.licenseSearchValueId").data("kendoDropDownList").focus();
+    });
+
+
+</script>
+
+@Html.Hidden((string)UniqueId.deviceCountCheck, "")
+@Html.Hidden((string)UniqueId.licenseCountCheck, "")
+
+<div id="@UniqueId.formDiv">
+
+    @using (Ajax.BeginForm(actionHelper.BulkDeviceRegistration, ControllerFields.DeviceController, "",
+         new AjaxOptions {
+             OnBegin = "SupportPortal.BlockUI();",
+             OnComplete = "SupportPortal.UnBlockUI();",
+             UpdateTargetId = (string)UniqueId.formDiv
+         }, new { id = (string)UniqueId.salesOrderForm })) {
+     
+        <div class="fieldset fieldset-upper">
+            <fieldset>
+                <legend>Add Sales Order</legend>
+                @Html.AntiForgeryToken()
+
+                <!-- This validation message is displayed at the top so the user knows to enter a sales order number. A separate message displays below as well by the list of devices.
+                    This message should only display if there are no devices. The reason is that the user must enter a sales order number for a sales order that has devices 
+                    in order for a user to be able to select a device. In the case where no device is selected but there are devices in the list, this message should not display. -->
+                @if (Model.Devices.Count == 0) { @Html.ValidationMessageFor(model => Model.SelectedDevices, "Please enter sales order number to get list of devices.")}
+                @Html.TextBoxFor(model => model.SalesOrderNumberSearchValue, new { maxlength = 46 })
+                @Html.HiddenFor(model => model.SupportAccountId)
+                @Html.HiddenFor(model => model.SelectedDevices, new { id = (string)UniqueId.selectedDevices })
+                @Html.HiddenFor(model => model.SelectedSalesOrders)
+                @Html.HiddenFor(model => model.SelectedAuthorizationCodes, new { id = (string)UniqueId.selectedAuthorizationCodes })
+                @Html.HiddenFor(model => model.StartRegistration, new { id = (string)UniqueId.startRegistration })
+
+                <input type="submit" value="Add to list" class="k-button" id="@UniqueId.salesOrderButton"  onclick="@(UniqueId.salesOrder)PrepareForSubmit(false)"/>
+            </fieldset>
+        </div>
+        
+        <div class="fieldset fieldset-upper">
+            <fieldset>
+                <legend>Sales Order Selection</legend>
+                @{
+                if (Model != null && Model.SalesOrders != null) {
+                    var maxPageSizeForms = Convert.ToInt32(Model.SalesOrders.Count);
+                    var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+                    if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                        pageSizeOptionsForms.Add(maxPageSizeForms);
+                    }
+
+                    @(Html.Kendo().Grid(Model.SalesOrders)
+                        .Name((string)UniqueId.salesOrderGrid)
+                        .Columns(columns => {
+                            columns.Bound(p => p.Id).Visible(false);
+                            columns.Bound(p => p.SalesOrderNumber).Filterable(false).Sortable(true).Column.Title = "Sales Order Number";
+                            columns.Bound(p => p.PurchaseOrderNumber).Filterable(false).Sortable(true).Column.Title = "Purchase Order Number";
+                            columns.Bound(p => p.SalesDate).Filterable(false).Sortable(true).Column.Title = "Order Date";
+                        })
+                        .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                        .Resizable(resize => resize.Columns(true))
+                        .Sortable()
+                        .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .Total(Model.SalesOrders.Count)
+                            .Model(model => model.Id(p => p.Id))
+                            .PageSize(10)
+                            .ServerOperation(false)
+                            /* There is no sorting or filtering that should happen on the server so the server operation is set to false.
+                             * In most cases one or two sales orders should be added at the most for the known use cases at this time.   */
+                            .Events(e => e.RequestEnd("SupportPortal.kendoGridTimezoneToPst"))
+                        ))
+                }   
+                }
+            </fieldset>
+        </div>
+        
+        <div class="fieldset fieldset-upper">
+            <fieldset>
+                <legend>Device Location Information <span class="csp-tooltip"><i class="icon-question-sign icon-large" onclick="SupportPortal.Help(this, 7);"></i></span></legend>
+                <div class="innernotification">(Inaccurate location information may impede timely RMA turnaround, in the event of hardware replacement.)</div>
+                <div>
+                    <div class="csp-label">@Html.Label("City: ")</div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.Device.City)
+                        <!--Length is one more than allowed so the validation message will display if max lenght is exceeded. -->
+                        @Html.TextBoxFor(model => model.Device.City, new { maxlength = 101 })
+                        <span class="csp-required">*</span>
+
+                    </div>
+                </div>
+
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Postal Code: ")
+                    </div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => model.Device.PostalCode)
+                        <!--Length is one more than allowed so the validation message will display if max lenght is exceeded. -->
+                        @Html.TextBoxFor(model => model.Device.PostalCode, new { maxlength = 16 })
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="csp-label">
+                        @Html.Label("Country: ")
+                    </div>
+                    <div class="csp-field">
+                        @Html.ValidationMessageFor(model => Model.Device.CountryId)
+                        @(Html.Kendo().DropDownListFor(model => Model.Device.CountryId)
+                                .HtmlAttributes(new { @class = "k-dropdown", @id = countryDropDownId, @name = countryDropDownName })
+                                .Events(e => e.Change(@uniqueId + "OnCountryDropdownChange").DataBound(@uniqueId + "OnCountryDropdownChange"))
+                                .OptionLabel(Constants.DropDownCountrySelect)
+                                .DataValueField("Id")
+                                .DataTextField("Name")
+                                .DataSource(source => source.Read(read => {
+                                        if (read != null) {
+
+                                            read.Action("GetCountries", "Base");
+                                        }
+                                    })).Value(Model.Device.CountryId.ToString()))
+                        <span class="csp-required">*</span>
+                    </div>
+                </div>
+                <div>
+                    <input id="@regionTextHiddenId" name="@regionName" type="hidden" value="@Model.Device.Region"/>
+
+                    <div class="csp-label">
+                        @Html.Label("Region/State: ")
+                    </div>
+                    <div class="csp-field">
+                        <div id="@regionTextDivId">
+                            @Html.ValidationMessageFor(model => Model.Device.Region)
+                            @Html.TextBoxFor(model => Model.Device.Region, new { @id = regionTextId, onchange = @uniqueId + "OnRegionTextChange()" })
+                        </div>
+                        <div id="@regionDropDownDivId" style="display:none;">
+                            @Html.ValidationMessageFor(model => Model.Device.Region)
+                            @(Html.Kendo().DropDownListFor(model => Model.Device.Region)
+                                .OptionLabel(Constants.DropDownRegionSelect)
+                                .HtmlAttributes(new { @class = "k-dropdown", @id = @regionDropDownId, @name = "" })
+                                .Events(e => e.Change(@uniqueId + "OnRegionDropdownChange").DataBound(@uniqueId + "OnRegionDropdownChange"))
+                                .DataValueField("Name")
+                                .DataTextField("Name")
+                                .DataSource(source => source.Read(read => read.Action("GetRegions", "Base").Data(@uniqueId + "FilterCountry")).ServerFiltering(true))
+                                .Value(Model.Device.Region)
+                                .AutoBind(false)
+                                .CascadeFrom(@countryDropDownId)
+                            )
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="fieldset fieldset-upper">
+            <fieldset>
+                <legend>Devices <span class="csp-required">*</span></legend>
+
+                <div class="grid-header">
+                    <div class="grid-left">
+                        <!-- display the validation here if at least one device is not selected. -->
+                        @Html.CheckBoxFor(model => model.CheckAllDevices, new { id = (string)UniqueId.checkAllDevices }) Select All Visible   @Html.ValidationMessageFor(model => Model.SelectedDevices, "You must select a device.", new { style = "display:inline-block" })
+                    </div>
+                    <div class="grid-right">
+
+                        <div class="grid-filter">
+                            <span class="filter_by">Filter By:</span>
+                            @(Html.Kendo().DropDownList()
+                                .Name((string)UniqueId.deviceSearchFieldId)
+                                .HtmlAttributes(new {
+                                    Class = "k-dropdown"
+                                })
+                                .DataTextField("Text")
+                                .DataValueField("Value")
+                                .BindTo(new List<SelectListItem>() {
+                                    new SelectListItem() {
+                                        Text = "Serial Number",
+                                        Value = "SerialNumber"
+                                    },
+                                    new SelectListItem() {
+                                        Text = "Model Name",
+                                        Value = "ModelName"
+                                    },
+                                })
+                                .Value("SerialNumber")
+                            )
+                        </div>
+
+                        <div class="grid-filter">
+                            <div class="grid-filter">
+                                @Html.TextBox((string)UniqueId.deviceSearchValueId, null,
+                                        new { @class = "k-textbox", onkeypress = "return " + (string)UniqueId.device + "onEnterPress(event)" })
+                            </div>
+                        </div>
+                        <div class="grid-filter">
+                            <input type="button" value="Search"  onclick="@(UniqueId.device)SearchData()" class="k-button" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-content">
+                    <div>
+                        @{
+                if (Model != null && Model.Devices != null) {
+                    var maxPageSizeForms = Model.Devices.Count;
+                    var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+                    if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                        pageSizeOptionsForms.Add(maxPageSizeForms);
+                    }
+                            
+                            @(Html.Kendo().Grid(Model.Devices)
+                            .Name((string)UniqueId.deviceGrid)
+                            .Columns(columns => {
+                                columns.Bound(p => p.DeviceId).ClientTemplate("<input type='checkbox' class='checkbox' />").Filterable(false).Sortable(false).Column.Title = "Select";
+                                columns.Bound(p => p.SerialNumber).Filterable(false).Sortable(true).Column.Title = "Serial Number";
+                                columns.Bound(p => p.ModelName).Filterable(false).Sortable(true).Column.Title = "Model";
+                            })
+                            .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                            .Events(e => e.DataBound((string)UniqueId.device + "onGridDataBound"))
+                            .Sortable()
+                            .Resizable(resize => resize.Columns(true))
+                            .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .Model(model => model.Id(p => p.DeviceId))
+                            .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                            .PageSize(Model.DataParameters.PaginationCount)
+                            .Read(read => read.Action(actionHelper.BulkRegistrationDevices, actionHelper.Controller,
+                            new { salesOrderIds = (Model.SelectedSalesOrders ?? "") }).Data("SetAntiForgery"))
+                            ))
+                }
+                        }
+
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="fieldset">
+            <fieldset>
+                <legend>Licenses</legend>
+                <div class="grid-header">
+                    <div class="grid-left">
+                        @Html.CheckBoxFor(model => model.CheckAllLicenses, new { id = (string)UniqueId.checkAllLicenses }) Select All Visible
+                    </div>
+                    <div class="grid-right">
+
+                        <div class="grid-filter">
+                            <span class="filter_by">Filter By:</span>
+                            @(Html.Kendo().DropDownList()
+                                .Name((string)UniqueId.licenseSearchFieldId)
+                                .HtmlAttributes(new {
+                                    Class = "k-dropdown"
+                                })
+                                .DataTextField("Text")
+                                .DataValueField("Value")
+                                .BindTo(new List<SelectListItem>() {
+                                    new SelectListItem() {
+                                        Text = "Authorization Code",
+                                        Value = "AuthorizationCode"
+                                    },
+                                     new SelectListItem() {
+                                        Text = "Model Name",
+                                        Value = "ModelName"
+                                    },
+                                    new SelectListItem() {
+                                        Text = "Feature Name",
+                                        Value = "LicenseName"
+                                    }
+                                })
+                                .Value("AuthorizationCode")
+                            )
+                        </div>
+
+                        <div class="grid-filter">
+                            <div class="grid-filter">
+                                @Html.TextBox((string)UniqueId.licenseSearchValueId, null,
+                                        new { @class = "k-textbox", onkeypress = "return " + (string)UniqueId.license + "onEnterPress(event)" })
+                            </div>
+
+                        </div>
+                        <div class="grid-filter">
+                            <input type="button" value="Search"  onclick="@(UniqueId.license)SearchData()" class="k-button" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-content">
+                    <div>
+                        @{
+                if (Model != null && Model.AuthorizationCodes.Licenses != null) {
+                    var maxPageSizeForms = Model.AuthorizationCodes.Licenses.Count;
+                    var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+                    if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                        pageSizeOptionsForms.Add(maxPageSizeForms);
+                    }
+
+                            @(Html.Kendo().Grid(Model.AuthorizationCodes.Licenses)
+                                    .Name((string)UniqueId.licenseGrid)
+                                    .Columns(columns => {
+                                        columns.Bound(p => p.Id).ClientTemplate("<input type='checkbox' class='checkbox' />").Filterable(false).Sortable(false).Column.Title = "Select";
+                                        columns.Bound(p => p.AuthorizationCode).Filterable(false).Sortable(true).Column.Title = "Authorization Code";
+                                        columns.Bound(p => p.LicenseName).Filterable(false).Sortable(true).Column.Title = "Feature Name";
+                                        columns.Bound(p => p.ModelName).Filterable(false).Sortable(true).Column.Title = "Model Name";
+                                    })
+                        .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                        .Events(e => e.DataBound((string)UniqueId.license + "onGridDataBound"))
+                        .Editable(editable => editable.Mode(GridEditMode.InLine))
+                        .Sortable()
+                        .Resizable(resize => resize.Columns(true))
+                        .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Model(model => model.Id(p => p.Id))
+                        .Total(Convert.ToInt32(Model.AuthorizationCodes.DataParameters.TotalRecordCount))
+                        .PageSize(Model.AuthorizationCodes.DataParameters.PaginationCount)
+                        .Read(read => read.Action(actionHelper.BulkRegistrationLicenses, actionHelper.Controller,
+                            new { salesOrderIds = (Model.SelectedSalesOrders ?? "") }).Data("SetAntiForgery"))
+                        ))
+                }
+                        }
+
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        
+        
+        
+       
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input class="k-button csp-submit" type="submit" value="Submit" onclick="@(UniqueId.salesOrder)PrepareForSubmit(true)" />
+        </div>        
+    }
+
+
+</div>
+
+
+<script>
+
+    var @(UniqueId.device)Grid = $("#@UniqueId.deviceGrid").data("kendoGrid");
+    var @(UniqueId.license)Grid = $("#@UniqueId.licenseGrid").data("kendoGrid");
+
+    if (@(UniqueId.device)Grid != undefined) {
+
+        @(UniqueId.device)Grid.table.on("click", ".checkbox", @(UniqueId.device)SelectRow);
+    }
+
+    if (@(UniqueId.license)Grid != undefined) {
+
+        @(UniqueId.license)Grid.table.on("click", ".checkbox", @(UniqueId.license)SelectRow);
+    }
+
+
+
+</script>

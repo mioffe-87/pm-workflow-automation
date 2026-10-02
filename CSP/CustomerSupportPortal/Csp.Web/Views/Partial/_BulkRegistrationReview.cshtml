@@ -1,0 +1,137 @@
+﻿@using Csp.Api.HelperClasses
+@using Csp.Api.Model
+@model Csp.Web.DataTransferObjects.CustomizeBulkRegistrationDto
+@{ 
+    ActionHelper actionHelper = Model.ActionHelper;
+    var divUniqueId = "ReviewBulkRegistration";
+
+}
+<div id="@divUniqueId">
+    <div class="response-notification bulk-registration-review-notification"></div>
+    @Html.AntiForgeryToken()
+    <div class="content">
+        <div class="grid-header">
+            <div class="grid-left">
+                <input type="button" class="k-button" value="Expand All" onclick="ExpandAll(this);"/>&nbsp;
+                <input type="button" class="k-button" value="Collapse All" onclick="CollapseAll(this);"/>
+            </div>
+            <div class="grid-right">
+            </div>
+        </div>
+
+        <div>
+            @{Html.RenderPartial("../Partial/_BulkRegistrationCustomize", Model);}
+        </div>
+        <div>&nbsp;</div>
+
+        @Html.Partial("../Partial/_Eula", Model.Eula)
+
+        <div>&nbsp;</div>
+
+        <div>
+            <input type="button" class="k-button bulk-registration-review-finalize" onclick="FinalizeCustomizations(this);" value="Confirm and Finalize Bulk Activation"/>
+            @if (Model.BulkRegistrationId.HasValue)
+            {
+                <input type="button" class="k-button bulk-registration-review-cancel" onclick="BulkRegistrationManageUtil.DiscardDraft(this);" value="Cancel and Discard Progress"/>
+            }
+        </div>
+    </div>
+</div>
+<style>
+    .error-notification {
+        height: 100%;
+    }
+</style>
+<script>
+    var supportAccountId = function () {
+        return @Model.SupportAccountId;
+    }();
+    var bulkRegistrationId = function () {
+        return @Model.BulkRegistrationId;
+    }();
+
+    function ExpandAll() {
+        var allDevices = $('.device-info-header');
+
+        if (allDevices.length > 0) {
+            allDevices.find('.toggle').removeClass('plus').addClass('minus');
+            allDevices.siblings('.device-info').slideDown("slow");
+        }
+    }
+
+    function CollapseAll() {
+        var allDevices = $('.device-info-header');
+
+        if (allDevices.length > 0) {
+            allDevices.find('.toggle').removeClass('minus').addClass('plus');
+            allDevices.siblings('.device-info').slideUp("slow");
+        }
+    }
+
+    function FinalizeCustomizations(e) {
+        var self = this;
+
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var message = "Are you sure, you want to finalize?";
+        var data = $('div.list-customize-bulk-activation').data('kendoListView').dataSource.data();
+
+        if (data.length === 0) {
+            SupportPortal.Message("There are no devices to save");
+            return;
+        }
+
+        var saveAction = function () {
+            $(e).prop('disabled', true);
+            SupportPortal.ClearNotification();
+            SupportPortal.BlockUI();
+
+            $.ajax({
+                url: '@Url.Action("FinalizeCustomizations", "BulkRegistration")',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({ SupportAccountId: supportAccountId, BulkRegistrationId: bulkRegistrationId, BulkRegistrationDevices: data }),
+                contentType: 'application/json; charset=utf-8',
+                headers: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                cache: false
+            }).fail(function(e) {
+                SupportPortal.Notification("Failed to finalize your bulk activation.", SupportPortal.NotificationType.Error);
+            }).done(function(e) {
+                if (e.Success) {
+                    //SupportPortal.Notification(e.Message, SupportPortal.NotificationType.Success, $('.bulk-registration-review-notification'));
+
+                    var redirectAction = function() {
+                        location.href = '@(Url.Action("Devices", "SupportAccount", new {id = Model.ActionHelper.Id, assetType = "ClaimedAssets"}))';
+                    };
+
+                    SupportPortal.Message('Your bulk registration has been submitted for processing. This could take a few minutes to complete.', { height: 130, width: 350, actions: {} }, function() { redirectAction(); });
+                } 
+                else {
+                    SupportPortal.Notification(e.Message + '<br/>' + e.Errors.join('<br/>'), SupportPortal.NotificationType.Error, $('.bulk-registration-review-notification'));
+                }
+            }).always(function () {
+                SupportPortal.UnBlockUI();
+                $(e).prop('disabled', false);
+            });
+        };
+
+        SupportPortal.Confirmation(message, function () { saveAction(); }, null);
+    }
+
+    $(document).ready(function () {
+        var isReviewMode = '@Model.IsReviewMode';
+        CustomizeBulkRegistrationManageUtil.Init({
+            uniqueId: '@divUniqueId',
+            isReadOnly: (isReviewMode.toUpperCase() === "TRUE"),
+            countries: function () {
+                return @Html.Raw(JsonConvert.SerializeObject(Model.Countries));
+            }(),
+            regions: function () {
+                return @Html.Raw(JsonConvert.SerializeObject(Model.Regions));
+            }(),
+            deviceCategories: function () {
+                return @Html.Raw(JsonConvert.SerializeObject(Model.DeviceCategories));
+            }(),
+            urlGetBulkRegistrationDevicesWithLicenses: '@Html.Raw(Url.Action("GetBulkRegistrationDevicesWithLicenses", "BulkRegistration", new { bulkRegistrationId = Model.BulkRegistrationId, supportAccountId = Model.SupportAccountId }))'
+        });
+    });
+</script>

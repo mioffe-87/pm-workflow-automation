@@ -1,0 +1,31 @@
+﻿@using Csp.Api.Security;
+@using Kendo.Mvc.UI;
+
+@model Csp.Web.DataTransferObjects.DeviceDto
+@{
+   // var deviceTitle = Html.Raw(Common.GetCurrentDeviceTitle());
+    var deviceTitle = Common.GetCurrentDeviceTitle();
+}
+
+<script>
+    $(document).ready(function () {
+        var window = $(deviceWindowId).data("kendoWindow");
+        var title = '@deviceTitle';
+        if (title == null || title.length === 0) {
+            title = 'Device';
+        } else {
+            title = 'Device: ' + title;
+        }
+        window.title(title);
+    });
+</script>
+
+@if (User.HasPermission(Permission.EditDevice)) {
+    Html.RenderAction(Model.ActionHelper.Edit, Model.ActionHelper.Controller, new {
+        device = Model.Device
+    });
+} else if (User.HasPermission(Permission.ViewDevice)) {
+    Html.RenderAction(Model.ActionHelper.View, Model.ActionHelper.Controller, new {
+        device = Model.Device
+    });
+}

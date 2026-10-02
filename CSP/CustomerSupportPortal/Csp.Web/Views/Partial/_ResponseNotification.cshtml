@@ -1,0 +1,46 @@
+﻿@using Csp.Api.Model
+@model IEnumerable<ResponseNotification>
+
+<div class="response-notification">
+    @{
+    
+        foreach (var notification in Model) {
+            string className;
+
+            switch (notification.State) {
+                case ResponseState.Success:
+                    className = "success-notification notification";
+                    break;
+                case ResponseState.Information:
+                    className = "information-notification notification";
+                    break;
+                case ResponseState.Warning:
+                    className = "warning-notification notification";
+                    break;
+                case ResponseState.Error:
+                    className = "error-notification notification";
+                    break;
+                default:
+                    className = "";
+                    break;
+            }
+        
+        <div style="position: relative;">
+            <div  class="@className ascupload-notification-height">
+                <div class="notification-text wrapText ascupload-notification-text">@Html.Raw(notification.Message)</div>
+                <input type="button" value="x" class="notification-button" onclick="closeNotification(this)" style="position:absolute" />
+            </div>
+        </div>
+        }
+    }
+</div>
+
+<script>
+    if ($(".success-notification").length > 0) {
+        SupportPortal.FadeOutNotification();
+    }
+
+    function closeNotification(e) {
+        $(e).parent().fadeOut(700);
+    }
+</script>

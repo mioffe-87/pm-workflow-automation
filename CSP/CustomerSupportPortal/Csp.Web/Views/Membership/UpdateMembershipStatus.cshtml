@@ -1,0 +1,65 @@
+﻿@using Csp.Api.Model.Enums
+@model Csp.Web.DataTransferObjects.MembershipStatusDto
+
+@{
+    ViewBag.Title = "User Activation";
+    if (ViewBag.options == "back")
+    {
+        ViewBag.IsGlobal = true;
+    }
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@functions { 
+    public string DisplayMessage() {
+        string message;
+
+        if (Model.ActionType == "NONE") {
+            switch (Model.MembershipStatus) {
+                case MembershipStatus.Accepted:
+                    message = "User has already been accepted by another super user.";
+                    break;
+                case MembershipStatus.Rejected:
+                    message = "User has already been rejected by another super user.";
+                    break;
+                default:
+                    message = "Invalid User. Please contact support.";
+                    break;
+            }
+        } else {
+            switch (Model.MembershipStatus) {
+                case MembershipStatus.Accepted:
+                    message = "User has been accepted.";
+                    break;
+                case MembershipStatus.Rejected:
+                    message = "User has been rejected";
+                    break;
+                default:
+                    message = "An error occured while activating the user. Please contact support.";
+                    break;
+            }
+        }
+
+        return message;
+    }
+}
+
+@{Html.RenderPartial("../Partial/_ResponseNotification", Model.Notifications);}
+<div class="content">
+    <div class="container" style="width: 850px;">
+        <div class="page-title">
+            <span id="Title" class="contextTitle" style="margin-left: 0px;">User Activation</span>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="row-fluid">
+                    <div class="span4">
+                        <div class="control-group">
+                            @DisplayMessage()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

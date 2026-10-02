@@ -1,0 +1,2 @@
+﻿<% // The table to rename is in the variable 'table'. The current schema is in the variable 'schema' %>
+ALTER TABLE "<%=schema.SchemaOwner%>"."<%=GetOriginalName(table)%>" RENAME TO "<%=GetNewName(table)%>";

@@ -1,0 +1,322 @@
+﻿@using Kendo.Mvc.UI;
+@using Csp.Api.Security;
+@model Csp.Web.DataTransferObjects.WildfireUserAccountListDto
+
+@{
+    ViewBag.Title = "Wildfire Users - Customer Support - Palo Alto Networks";
+    ViewBag.IsGlobal = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var actionHelper = Model.ActionHelper;
+}
+
+<script>
+
+    function onWildfireUsersEnterPress(e) {
+
+        if (e.keyCode == 13) {
+            SearchWildfireUsersData();
+            return false;
+        }
+
+        return true;
+    }
+
+    function onWildfireUsersGridDataBound() {
+        if ($("#isPostBackId").val() == "") {
+            $("#WildfireUsersGrid").data("kendoGrid").dataSource._total = "@Convert.ToInt32(Model.DataParameters.TotalRecordCount)";
+            $("#isPostBackId").val(1);
+        }
+    }
+
+    function EditWildfireUser(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var userAccountId = dataItem.WildfireUserAccountId;
+        var email = dataItem.Email;
+        ShowWildfireUserDetails(userAccountId, email);
+    }
+
+
+    function ShowWildfireUserDetails(userAccountId, email) {
+        var direction = "/@ControllerFields.UserAccountController/@actionHelper.AddUpdateWildfireUser?userAccountId=" + userAccountId;
+
+        if (email != '') {
+            direction += "&email=" + encodeURIComponent(email);
+        }
+
+        var window = $("#AddUpdateWildfireUserWindow").data("kendoWindow");
+        window.refresh();
+        window.refresh(direction);
+        
+        window.setOptions({
+            minWidth: 985,
+            minHeight: 750
+        });
+        
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+        window.center();
+        window.open();
+    }
+
+    function CreateWildfireUser() {
+        var window = $("#CreateWildfireUserWindow").data("kendoWindow");
+        var direction = "/@ControllerFields.UserAccountController/@actionHelper.CreateWildfireUser";
+        window.refresh(direction);
+        window.setOptions({
+            minWidth: 300,
+            minHeight: 100
+        });
+        window.open();
+        window.center();
+    };
+
+    function DeleteWildfireUser(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        var message = "@Constants.DeletePreMessage Wildfire User?";
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var deleteAction = function () {
+            var id = dataItem.WildfireUserAccountId;
+            var direction = "/@ControllerFields.UserAccountController/@actionHelper.DeleteWildfireUser?id=" + id;
+
+            $.ajax({
+                url: direction,
+                type: 'POST',
+                dataType: 'json',
+                data: { "__RequestVerificationToken": $("input[name=__RequestVerificationToken]").val() },
+                cache: false,
+                success: function (result) {
+                    if (result.Success) {
+                        var grid = $("#WildfireUsersGrid").data("kendoGrid").dataSource;
+                        grid.read();
+                    }
+                },
+                error: function () {
+                    SupportPortal.Message("Failed to delete Wildfire User.");
+                }
+            });
+        };
+
+        SupportPortal.Confirmation(message, function () { deleteAction(); }, null);
+    }
+
+    function SearchWildfireUsersData() {
+        var selectedValue = $("#searchFieldId").val();
+        if ($("#searchDateTimePickerId").val() != '') {
+            var dt = new Date($("#searchDateTimePickerId").val());
+            var dtString = dt.getFullYear() + "-" + ((dt.getMonth() + 1) > 9 ? (dt.getMonth() + 1) : "0" + (dt.getMonth() + 1)) + "-" + (dt.getDate() > 9 ? dt.getDate() : "0" + dt.getDate());
+
+
+            if (selectedValue == "CreatedOn") {
+                $("#searchValueId").val(dtString);
+            }
+        }
+        var grid = $("#WildfireUsersGrid").data("kendoGrid").dataSource;
+        grid.filter(
+        {
+            field: $("#searchFieldId").val(),
+            operator: "eq",
+            value: $("#searchValueId").val()
+        }
+        );
+        grid.sync();
+    }
+
+    function OnCmbChange() {
+        $("#searchValueId").select();
+        var dropDownControl = $("#searchFieldId").data("kendoDropDownList");
+
+        var selectedValue = dropDownControl.value();
+        if (selectedValue == "CreatedOn") {
+            $("#dateDivId").show();
+            $("#searchDivId").hide();
+        }
+        else {
+            $("#dateDivId").hide();
+            $("#searchDivId").show();
+        }
+    };
+
+    function onOpenAddUpdateWildfireUserWindow() {
+        SupportPortal.OnWindowOpen("AddUpdateWildfireUserWindow");
+    }
+
+
+    function onCloseAddUpdateWildfireUserWindow() {
+        var window = $("#AddUpdateWildfireUserWindow").data("kendoWindow");
+        window.content("");
+        window.refresh();
+
+        SupportPortal.OnWindowClose("WildfireUsersGrid");
+    }
+
+
+    function onCloseCreateWildfireUserWindow() {
+        var window = $("#CreateWildfireUserWindow").data("kendoWindow");
+        window.content("");
+        window.refresh();
+
+        SupportPortal.OnWindowClose("WildfireUsersGrid");
+    }
+
+    function onOpenCreateWildfireUserWindow() {
+        SupportPortal.OnWindowOpen("CreateWildfireUserWindow");
+    }
+
+</script>
+
+
+
+@Html.Hidden("isPostBackId", "")
+@Html.AntiForgeryToken()
+<div>
+
+    @(Html.Kendo().Window()
+          .Name("AddUpdateWildfireUserWindow")
+          .Modal(true)
+          .Draggable()
+          .Scrollable(false)
+          .Events(events => events
+                                    .Close("onCloseAddUpdateWildfireUserWindow")
+                                    .Open("onOpenAddUpdateWildfireUserWindow"))
+          .Title("Wildfire User:")
+          .Visible(false)
+     )
+</div>
+
+<div>
+    @(Html.Kendo().Window()
+          .Name("CreateWildfireUserWindow")
+          .Modal(true)
+          .Draggable()
+          .Title("Add New Wildfire User")
+          .Events(events => events
+                                    .Close("onCloseCreateWildfireUserWindow")
+                                    .Open("onOpenCreateWildfireUserWindow"))
+          .Visible(false)
+            )
+</div>
+
+<div>
+
+    @Html.Partial("../Partial/_CompanyLogoName")
+
+    <div class="contextTitle">Manage Wildfire Users</div>
+
+<!--   <div class="k-tabstrip">
+        <div class="k-content k-state-active"> -->
+
+            <div class="grid-header">
+                <div class="grid-left">
+                    <input type="button" value="Add Wildfire User" class="k-button k-primary" onclick="CreateWildfireUser();" />
+                </div>
+
+                <div class="grid-right">
+
+                    <div class="grid-filter">
+                        @(Html.Kendo().DropDownList()
+                              .Name("searchFieldId")
+                              .Events(events => events.Change("OnCmbChange"))
+                              .OptionLabel("Filter By")
+                              .OptionLabelTemplate("<span class='grid-filter__dropdown-placeholder'>Filter By</span>")
+                              .DataTextField("Text")
+                              .DataValueField("Value")
+                              .BindTo(new List<SelectListItem>
+                                  {
+                                      new SelectListItem {
+                                          Text = "Name",
+                                          Value = "Name"
+                                      },
+                                      new SelectListItem {
+                                          Text="Email",
+                                          Value="Email"
+                                      },
+                                      new SelectListItem {
+                                          Text="CreatedBy",
+                                          Value="Created By"
+                                      },
+                                      new SelectListItem {
+                                          Text = "Created On",
+                                          Value = "CreatedOn"
+                                      } 
+                                  })
+                              )
+                    </div>
+
+
+                    <div class="grid-filter">
+                        <div class="grid-filter" id="searchDivId">
+                            @Html.TextBox("searchValueId", "", new {
+                                onkeypress = "return onWildfireUsersEnterPress(event)",
+                                @class = "grid-filter__search-input",
+                                placeholder = "Search",
+                                aria_label = "Search"
+                            })
+                            <button aria-label="search" type="button" class="grid-filter__search-button" onclick="SearchWildfireUsersData()">
+                                <span aria-hidden="true" class="fa fa-search" />
+                            </button>
+                        </div>
+                        <div class="filter-datepicker" id="dateDivId">
+                            @(Html.Kendo().DatePicker()
+                                  .Name("searchDateTimePickerId")
+                                  .HtmlAttributes(new {
+                                      onkeypress = "return onWildfireUsersEnterPress(event)",
+                                      @class = "grid-filter__date-input",
+                                  })
+                                  )
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-content">
+
+                <div id="Grid">
+                    @{ 
+                        if (Model != null && Model.WildfireUserAccounts != null) {
+
+                            var maxPageSizeForms = Convert.ToInt32(Model.WildfireUserAccounts.Count());
+                            var pageSizeOptionsForms = new List<int> { 5, 10, 20, 50 };
+                            if (maxPageSizeForms > pageSizeOptionsForms.Max()) {
+                                pageSizeOptionsForms.Add(maxPageSizeForms);
+                            }
+             
+                        @(Html.Kendo().Grid(Model.WildfireUserAccounts)
+                                  .Name("WildfireUsersGrid")
+                                  .Columns(columns => {
+                                          columns.Bound(p => p.Name).Column.Title = "Name";
+                                          columns.Bound(p => p.Email).Column.Title = "Email";
+                                          columns.Bound(p => p.CreatedBy).Column.Title = "Created By";
+                                          columns.Bound(p => p.CreatedOn).Format("{0:MM/dd/yyyy}").Column.Title = "Created On";
+                                          columns.Command(command => {
+                                              command.Custom("Edit").Click("EditWildfireUser");
+                                              command.Custom("Delete").Click("DeleteWildfireUser");
+                                          }).Title("Action");
+                                      })
+                                  .Events(e => e.DataBound("onWildfireUsersGridDataBound"))
+                                  .Pageable(pageable => pageable.PageSizes(pageSizeOptionsForms.ToArray()))
+                                  .Sortable()
+                                  .Resizable(resize => resize.Columns(true))
+                                  .DataSource(dataSource => dataSource
+                                                                .Ajax()
+                                                                .Model(model => model.Id(p => p.WildfireUserAccountId))
+                                                                .Total(Convert.ToInt32(Model.DataParameters.TotalRecordCount))
+                                                                .PageSize(Model.DataParameters.PaginationCount)
+                                                                .Read(read => read.Action(actionHelper.WildfireUsers, actionHelper.Controller).Data("SetAntiForgery"))
+                                                                .Sort(s => s.Add("Name").Ascending())
+                                                                .Events(e => e.RequestEnd("SupportPortal.kendoGridTimezoneToPst"))
+                                  )
+                                  )
+                        }
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+<!--   </div>
+
+</div> -->
+
+

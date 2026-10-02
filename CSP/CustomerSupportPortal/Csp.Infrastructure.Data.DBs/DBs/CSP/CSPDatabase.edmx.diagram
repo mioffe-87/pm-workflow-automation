@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="9cadeeef550f41b087ec05904c3d941b" Name="Diagram1">
+        <EntityTypeShape EntityType="cspModel.accounttype" Width="1.5" PointX="22.25" PointY="163.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.accounttypeassignablerole" Width="1.5" PointX="32.5" PointY="175.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.accounttypedefaultrole" Width="1.5" PointX="32.5" PointY="179.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.adminsiteapprovalrequest" Width="1.5" PointX="5.25" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.adminsitefeatureemail" Width="1.5" PointX="12.75" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.adminsitefeatureinputvalue" Width="1.5" PointX="5.25" PointY="17.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.adminsitefeaturerolemapping" Width="1.5" PointX="3" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.adminsitefeature" Width="1.5" PointX="0.75" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.adminsitesfdcrequest" Width="1.5" PointX="3" PointY="14.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.adminuserrolesmapping" Width="1.5" PointX="21.75" PointY="106.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.adminuser" Width="1.5" PointX="19.5" PointY="203.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.adminusersfeatureaccess" Width="1.5" PointX="2.75" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.adminusertype" Width="1.5" PointX="0.75" PointY="8.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.alertmessage" Width="1.5" PointX="11.25" PointY="120.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.appnamelicensetypemapping" Width="1.5" PointX="4.75" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.appportalapp" Width="1.5" PointX="7.75" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.appportalappstype" Width="1.5" PointX="6.75" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.ascdata" Width="1.5" PointX="22.75" PointY="16.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.ascinformationreview" Width="1.5" PointX="15.75" PointY="23.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.ascreminderemaillist" Width="1.5" PointX="13" PointY="23.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.ascscorecardreminder" Width="1.5" PointX="10.75" PointY="23.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.assetactivation" Width="1.5" PointX="22.5" PointY="143.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.atcmanagerseat" Width="1.5" PointX="0.75" PointY="24.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.autofocustrialuser" Width="1.5" PointX="16.25" PointY="177.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.autofocustrialusersaudit" Width="1.5" PointX="2.75" PointY="24.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.awsaccountsupportaccountmapping" Width="1.5" PointX="9.75" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.awsdevice" Width="1.5" PointX="23.75" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.awslookup" Width="1.5" PointX="4.75" PointY="25.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.awsregion" Width="1.5" PointX="19.75" PointY="16.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.bannermessage" Width="1.5" PointX="11.25" PointY="124.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.betaaccess" Width="1.5" PointX="24.75" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.betafeature" Width="1.5" PointX="24.75" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.betarole" Width="1.5" PointX="24.75" PointY="16.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.bulkdevicetransfer" Width="1.5" PointX="14.25" PointY="168.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.bulkregistrationdevice" Width="1.5" PointX="5.25" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.bulkregistrationfiltertype" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.bulkregistrationlicens" Width="1.5" PointX="7.5" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.bulkregistration" Width="1.5" PointX="3" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.bulkregistrationstate" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.bundle" Width="1.5" PointX="22.25" PointY="184.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cdlsharingaccount" Width="1.5" PointX="24.75" PointY="20.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cdlsharinglog" Width="1.5" PointX="24.75" PointY="23.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.chassiscomponent" Width="1.5" PointX="13.5" PointY="139" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cirrousercredential" Width="1.5" PointX="18.75" PointY="150.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.claimedpurchas" Width="1.5" PointX="22" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.claimedpurchasestate" Width="1.5" PointX="19.75" PointY="23.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cloudaccountsupportaccountmapping" Width="1.5" PointX="25.75" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.clouddevice" Width="1.5" PointX="6.75" PointY="26.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cloudproductlookup" Width="1.5" PointX="21.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cloudproductskumapping" Width="1.5" PointX="24" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cloudregion" Width="1.5" PointX="17.75" PointY="26.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cloudserviceusertransfer" Width="1.5" PointX="21" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cloudtype" Width="1.5" PointX="26.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cnstubsn" Width="1.5" PointX="26.75" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.compatibilitymatrix" Width="1.5" PointX="8.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.compatible4hr" Width="1.5" PointX="26.75" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.consentrequest" Width="1.5" PointX="10.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.contentupdate" Width="1.5" PointX="13.5" PointY="159.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.contentupdatesmodel" Width="1.5" PointX="12.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.country" Width="1.5" PointX="11.25" PointY="138.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csphelp" Width="1.5" PointX="11.25" PointY="143.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspautoinvoicing" Width="1.5" PointX="5.75" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspdata" Width="1.5" PointX="26.75" PointY="14.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspenduserdevice" Width="1.5" PointX="14.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspenduserinformation" Width="1.5" PointX="16.75" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspendusermultiplesfdcmatch" Width="1.5" PointX="19" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspenduserpanaccount" Width="1.5" PointX="19" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspenduserpanaccountslog" Width="1.5" PointX="26.75" PointY="19.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspmodel" Width="1.5" PointX="19.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cssporderstatu" Width="1.5" PointX="15" PointY="152.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.cssporderxml" Width="1.5" PointX="21.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspprelicenserequest" Width="1.5" PointX="22" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspprelicenserequeststatu" Width="1.5" PointX="19.75" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspshoppingcart" Width="1.5" PointX="17.25" PointY="172.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspshoppingcartitem" Width="1.5" PointX="27.5" PointY="165.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspsku" Width="1.5" PointX="25.25" PointY="150.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspsupporttype" Width="1.5" PointX="26.75" PointY="23.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspterm" Width="1.5" PointX="23.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspusagereportstaging" Width="1.5" PointX="26.75" PointY="26.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.csspvmusage" Width="1.5" PointX="8" PointY="20.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.deactivatedauthcode" Width="1.5" PointX="17.25" PointY="169.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.decommisonedinfo" Width="1.5" PointX="0.75" PointY="28.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.device" Width="1.5" PointX="16.5" PointY="155.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.devicecategory" Width="1.5" PointX="19.25" PointY="177.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.devicedefaultrole" Width="1.5" PointX="27.5" PointY="173.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.deviceinfoztp" Width="1.5" PointX="27.75" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.deviceregistrationpin" Width="1.5" PointX="2.75" PointY="29.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.deviceset" Width="1.5" PointX="11.25" PointY="148" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.devicesetsdevice" Width="1.5" PointX="24.75" PointY="162.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.devicetransfer" Width="1.5" PointX="26.75" PointY="176.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.devicetransferstate" Width="1.5" PointX="12" PointY="134.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.domain" Width="1.5" PointX="11.25" PointY="152.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.eaexcludeddevice" Width="1.5" PointX="11.25" PointY="156.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.eaquoteinfo" Width="1.5" PointX="9" PointY="152.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.easku" Width="1.5" PointX="3" PointY="20.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.easupportaccount" Width="1.5" PointX="11.25" PointY="169.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.easyonboarding" Width="1.5" PointX="22.5" PointY="140" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.easyonboardingitem" Width="1.5" PointX="24.75" PointY="157.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.eatype" Width="1.5" PointX="0.75" PointY="20.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.elatokengrant" Width="1.5" PointX="16.25" PointY="187.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.emailnotificationdetail" Width="1.5" PointX="28.75" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.emailseedlist" Width="1.5" PointX="28.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.emailsubscription" Width="1.5" PointX="11.25" PointY="159.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.emailtemplate" Width="1.5" PointX="11.25" PointY="165.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.endpointlicensetype" Width="1.5" PointX="28.75" PointY="12.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.endpointstub" Width="1.5" PointX="28.75" PointY="16.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.eoled" Width="1.5" PointX="16.75" PointY="29.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.epagentinfo" Width="1.5" PointX="28.75" PointY="19.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.epagentinfolog" Width="1.5" PointX="28.75" PointY="23.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.eptelemetry" Width="1.5" PointX="28.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.eula" Width="1.5" PointX="15" PointY="12.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.eulaagreement" Width="1.5" PointX="17.25" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.eulacontext" Width="1.5" PointX="15" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.eulalanguage" Width="1.5" PointX="12.75" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.evalaccountcreationlog" Width="1.5" PointX="10.75" PointY="30.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.evalextensionhistory" Width="1.5" PointX="29.75" PointY="167.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.evalitem" Width="1.5" PointX="24.75" PointY="154" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.evalsfdcmapping" Width="1.5" PointX="8.25" PointY="208.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.excludedproductactivation" Width="1.5" PointX="25.25" PointY="172.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.gdpraction" Width="1.5" PointX="11.25" PointY="172.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.gdprrequestrole" Width="1.5" PointX="13.5" PointY="176.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.gdprrequest" Width="1.5" PointX="24.5" PointY="183" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.gdprrole" Width="1.5" PointX="11.25" PointY="176.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.generictelemetry" Width="1.5" PointX="18.75" PointY="190.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.groupdefaultrole" Width="1.5" PointX="29.5" PointY="176.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.groupdevice" Width="1.5" PointX="27.5" PointY="169" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.grouplicens" Width="1.5" PointX="30.5" PointY="171.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.hardware_comp" Width="1.5" PointX="29.75" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.hardwarecomp_upgrade" Width="1.5" PointX="12.75" PointY="30.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.hypervisor" Width="1.5" PointX="18.75" PointY="30.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.ibclog" Width="1.5" PointX="20.75" PointY="30.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.jiveaggregateseventlog" Width="1.5" PointX="22.75" PointY="30.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.jivetemp" Width="1.5" PointX="30.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.lgsdeldependencycheck" Width="1.5" PointX="4.75" PointY="31.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.lgssubaccount" Width="1.5" PointX="30.75" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.license" Width="1.5" PointX="19.5" PointY="154.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.licensefeature" Width="1.5" PointX="6.75" PointY="31.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.licensingapikey" Width="1.5" PointX="20.25" PointY="172.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.lightcyberbundledsku" Width="1.5" PointX="18.75" PointY="195.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.lightcyberdevice" Width="1.5" PointX="30.75" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logaccounttransfer" Width="1.5" PointX="8.25" PointY="215.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logaccounttransferdetail" Width="1.5" PointX="10.5" PointY="215.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logadminuserrolesmapping" Width="1.5" PointX="30.75" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logadminuser" Width="1.5" PointX="30.75" PointY="17.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logaftrialextension" Width="1.5" PointX="27.5" PointY="181.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logautofocusapicall" Width="1.5" PointX="30.75" PointY="21.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logbannermessage" Width="1.5" PointX="11.25" PointY="180" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logbpa" Width="1.5" PointX="30.75" PointY="24.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logcloudservicetransfer" Width="1.5" PointX="18.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logdevice" Width="1.5" PointX="24.75" PointY="31.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logdeviceregistrationapicall" Width="1.5" PointX="30.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logdeviceregistrationpin" Width="1.5" PointX="26.75" PointY="31.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logdevicetransfer" Width="1.5" PointX="28.75" PointY="31.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logemailnotification" Width="1.5" PointX="11.25" PointY="184.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logemailnotificationemaillist" Width="1.5" PointX="13.5" PointY="184.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.loggingsvcdeletionexclusion" Width="1.5" PointX="30.75" PointY="30.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.loglicense" Width="1.5" PointX="14.75" PointY="32.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logmembership" Width="1.5" PointX="32.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logmembershiprole" Width="1.5" PointX="32.75" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logmfa" Width="1.5" PointX="32.75" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.lognewuser" Width="1.5" PointX="32.75" PointY="15.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logpcprovision" Width="1.5" PointX="16.75" PointY="33.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logregistration" Width="1.5" PointX="11.25" PointY="188.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logsapsupportaccountmapping" Width="1.5" PointX="32.75" PointY="18.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logsecaasbulkotp" Width="1.5" PointX="32.75" PointY="23.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logsecaasotp" Width="1.5" PointX="32.75" PointY="28.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logsedevice" Width="1.5" PointX="0.75" PointY="34.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logservicerequest" Width="1.5" PointX="2.75" PointY="34.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logsfdcsync" Width="1.5" PointX="8.75" PointY="34.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logsupportaccount" Width="1.5" PointX="10.75" PointY="34.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logtactoolboxapicall" Width="1.5" PointX="11.25" PointY="191.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logtransaction" Width="1.5" PointX="11.25" PointY="195" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.loguseraccount" Width="1.5" PointX="30.75" PointY="34.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logvmelatokennotification" Width="1.5" PointX="32.75" PointY="34.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logvmrenewal" Width="1.5" PointX="34.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.logwildfireuseraccount" Width="1.5" PointX="4.75" PointY="35.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.lookup" Width="1.5" PointX="11.25" PointY="198.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.membership" Width="1.5" PointX="3" PointY="172.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.membershiprole" Width="1.5" PointX="14.25" PointY="173.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.membershipstatus" Width="1.5" PointX="34.75" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.messagepush" Width="1.5" PointX="34.75" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.messagepushtelemetry" Width="1.5" PointX="34.75" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.mfaapicalllog" Width="1.5" PointX="34.75" PointY="17.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.mfauserregistration" Width="1.5" PointX="18.75" PointY="35.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.model" Width="1.5" PointX="11.25" PointY="202.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.navigationlinkgroup" Width="1.5" PointX="9" PointY="219.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.navigationlinkprivilege" Width="1.5" PointX="13.5" PointY="193.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.navigationlink" Width="1.5" PointX="11.25" PointY="218.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.navigationsublink" Width="1.5" PointX="11.25" PointY="251.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.onlineservicesconfig" Width="1.5" PointX="11.25" PointY="210.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.onlineservicessubconfig" Width="1.5" PointX="13.5" PointY="180.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.pano" Width="1.5" PointX="34.75" PointY="20.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.partmaster" Width="1.5" PointX="16.5" PointY="193.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.partmaster_stage" Width="1.5" PointX="20.75" PointY="35.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.partsubtype" Width="1.5" PointX="13.5" PointY="188.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.parttype" Width="1.5" PointX="11.25" PointY="225.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.phoenixgrandparent" Width="1.5" PointX="21.75" PointY="153.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.presharedkey" Width="1.5" PointX="34.75" PointY="23.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.privilege" Width="1.5" PointX="11.25" PointY="229.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.productquantity" Width="1.5" PointX="34.75" PointY="28.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.publishtarget" Width="1.5" PointX="11.25" PointY="233.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rbacrole" Width="1.5" PointX="11.25" PointY="238.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rbacrole_bkp" Width="1.5" PointX="34.75" PointY="32.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rbacroleapp" Width="1.5" PointX="26.75" PointY="36.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rbacrolemapping" Width="1.5" PointX="13.5" PointY="198" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rbacrolemapping_bkp" Width="1.5" PointX="36.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rbacrolemappinglog" Width="1.5" PointX="36.75" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.region" Width="1.5" PointX="13.5" PointY="155.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.registeredapp" Width="1.5" PointX="0.75" PointY="174.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.registeredfrusalesorder" Width="1.5" PointX="6.75" PointY="37.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.resourcelinkgroup" Width="1.5" PointX="9.75" PointY="2.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.resourcelink" Width="1.5" PointX="12" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.resourcesublink" Width="1.5" PointX="14.25" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.retiredsku" Width="1.5" PointX="26.75" PointY="186.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rmaapplicabledevice" Width="1.5" PointX="36.75" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rmadevice" Width="1.5" PointX="11.25" PointY="242.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rmadevicejobqueue" Width="1.5" PointX="11.25" PointY="246.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.role" Width="1.5" PointX="25.25" PointY="166" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rolecategory" Width="1.5" PointX="23" PointY="151.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.roleprivilege" Width="1.5" PointX="19.5" PointY="200.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rolesecurityclassification" Width="1.5" PointX="23" PointY="147.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.salesforcelog" Width="1.5" PointX="36.75" PointY="15.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.salesorder" Width="1.5" PointX="11.25" PointY="256.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.salesorderitem" Width="1.5" PointX="21.75" PointY="205.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.salesordertemp" Width="1.5" PointX="36.75" PointY="19.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.sapsupportaccountmapping" Width="1.5" PointX="16.25" PointY="182.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.secaasawscalllog" Width="1.5" PointX="36.75" PointY="22.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.secaasbulkotp" Width="1.5" PointX="12.75" PointY="18.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.secaascertrequest" Width="1.5" PointX="17.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.secaascertrequestdetail" Width="1.5" PointX="20" PointY="18.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.secaascertrequestlog" Width="1.5" PointX="36.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.secaascertrevokerequest" Width="1.5" PointX="36.75" PointY="30.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.secaasotp" Width="1.5" PointX="15" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.secaaspanoramaregistration" Width="1.5" PointX="36.75" PointY="35.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.secaaspanoramaregistration_bkp" Width="1.5" PointX="20.75" PointY="38.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.secaasskopanoramaregistration" Width="1.5" PointX="32.75" PointY="38.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.sedevice" Width="1.5" PointX="21.75" PointY="194.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.selfregistrationcode" Width="1.5" PointX="20.25" PointY="169.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.sesupportaccountmapping" Width="1.5" PointX="19.25" PointY="182.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.sfdcaccesstoken" Width="1.5" PointX="38.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.sitelicensedetail" Width="1.5" PointX="0.75" PointY="39.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.skusupportmapping" Width="1.5" PointX="38.75" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.software_comp" Width="1.5" PointX="38.75" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.softwarecomp_upgrade" Width="1.5" PointX="38.75" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.softwareupdate" Width="1.5" PointX="22.5" PointY="168.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.subscriptionversion" Width="1.5" PointX="38.75" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportaccount" Width="1.5" PointX="6" PointY="169" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportaccountdefaultrole" Width="1.5" PointX="14.25" PointY="165.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportaccountdomain" Width="1.5" PointX="19.5" PointY="165.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportaccountgroup" Width="1.5" PointX="22.25" PointY="177.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportaccountreview" Width="1.5" PointX="22.5" PointY="157.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportproblemcategory" Width="1.5" PointX="11.25" PointY="261.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportproblemcategorymapping" Width="1.5" PointX="13.5" PointY="209.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportproblemsubcategory" Width="1.5" PointX="13.5" PointY="214.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportproductmodel" Width="1.5" PointX="16.5" PointY="217.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportproductsery" Width="1.5" PointX="11.25" PointY="272.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.supportproductskumapping" Width="1.5" PointX="21.75" PointY="191" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.swapped_accounts" Width="1.5" PointX="38.75" PointY="16.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.temp_compatibilitymatrix" Width="1.5" PointX="16.75" PointY="39.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tempcompatibilitymatrix_upgrade" Width="1.5" PointX="38.75" PointY="20.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tenant_deactivation" Width="1.5" PointX="38.75" PointY="23.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tenantassociation" Width="1.5" PointX="38.75" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tenantassociation_bkp" Width="1.5" PointX="26.75" PointY="39.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tenantinfo" Width="1.5" PointX="12.25" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tenantinfo_bkp" Width="1.5" PointX="38.75" PointY="31.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tenantlookup" Width="1.5" PointX="10" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tenantlookup_bkp" Width="1.5" PointX="10" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tenantplatformmapping" Width="1.5" PointX="38.75" PointY="35.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tenantplatformmapping_bkp" Width="1.5" PointX="38.75" PointY="38.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tmp_compat_add" Width="1.5" PointX="2.75" PointY="40.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tmpcompatadd_upgrade" Width="1.5" PointX="4.75" PointY="40.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.useraccount" Width="1.5" PointX="9" PointY="157.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.userpreference" Width="1.5" PointX="11.25" PointY="275.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.userselectedmembership" Width="1.5" PointX="8.25" PointY="245.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.virusupdate" Width="1.5" PointX="24.5" PointY="176" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.vmelatokenexchangerate" Width="1.5" PointX="15.75" PointY="201.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.vmeval" Width="1.5" PointX="6.75" PointY="40.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.vmrenewal" Width="1.5" PointX="19.25" PointY="185.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.vmrenewalstatu" Width="1.5" PointX="17" PointY="204.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.vmrenewaltype" Width="1.5" PointX="17" PointY="207" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.vmrenewalunprovisioned" Width="1.5" PointX="19.25" PointY="207.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.vmstubsn" Width="1.5" PointX="34.75" PointY="40.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.vmupgrade" Width="1.5" PointX="40.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.wildfireapikey" Width="1.5" PointX="11.25" PointY="279.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.wildfiredevice" Width="1.5" PointX="18.75" PointY="219.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.wildfiredevicelog" Width="1.5" PointX="40.75" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.wildfireuseraccount" Width="1.5" PointX="11.25" PointY="283.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.duplicatesap" Width="1.5" PointX="40.75" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.duplicatesap_total" Width="1.5" PointX="40.75" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rmajobstatuscode" Width="1.5" PointX="40.75" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.tmp_sw" Width="1.5" PointX="12.75" PointY="41.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.getalligniteuser" Width="1.5" PointX="40.75" PointY="16.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.getigniteremaininglicens" Width="1.5" PointX="22.75" PointY="41.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.pingcust" Width="1.5" PointX="40.75" PointY="26.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.pingcustcsp" Width="1.5" PointX="40.75" PointY="34.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.pinglive" Width="1.5" PointX="8.75" PointY="42.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.pingwildfirecust" Width="1.5" PointX="14.75" PointY="42.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rowgenerator" Width="1.5" PointX="16.75" PointY="42.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.rowgenerator200" Width="1.5" PointX="28.75" PointY="42.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.saascertificaterequest" Width="1.5" PointX="30.75" PointY="42.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.single" Width="1.5" PointX="36.75" PointY="42.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="cspModel.validauthcodetype" Width="1.5" PointX="38.75" PointY="42.5" IsExpanded="true" />
+        <AssociationConnector Association="cspModel.FK_AccountType_AdministrativeRoleId_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AccountType_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AccountType_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_accounttype_secclass_RoleSecurityClassificationId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AccountTypeAssignableRoles_AccountTypeId_AccountType" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AccountTypeDefaultRoles_AccountTypeId_AccountType" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccount_AccountTypeId_AccountType" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AccountTypeAssignableRoles_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AccountTypeAssignableRoles_RoleId_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AccountTypeDefaultRoles_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AccountTypeDefaultRoles_RoleId_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_ApprovalRequests_SFDCRequests" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_featureinputvalues_SfdcRequest" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_adminsitefeaturerolemapping_adminsitefeatures_FeatureId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_adminsitefeaturerolemapping_adminusertype_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_sfdcrequests_features" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_adminuserrolesmapping_adminusers_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_adminuserrolesmapping_adminusertype_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_sedevices_useraccount_CreatedByUserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_sedevices_useraccount_LastUpdatedByUserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_alertmessages_CreatedUserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_alertmessages_LastUpdated_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_tenantlookup_appportalapps_AppPortalAppsId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_tenantlookup_BKP_appportalapps_AppPortalAppsId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_ASCScorecardReminderEmailList_ASCScorecardReminderId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AssetActivationItemId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_EOB_AssetActivationId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AutofocusTrialId_AutofocusTrialUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AutoFocusTrialUsers_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AutoFocusTrialUsers_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AutoFocusTrialUsers_SupportAccountId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AutoFocusTrialUsers_UserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_BannerMessages_CreatedUserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_BannerMessages_LastUpdated_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_bulkdevicetransfers_destinationtAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_bulkdevicetransfers_devicetransferstates_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_bulkdevicetransfers_lastupdated_UserAccountid" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_bulkdevicetransfers_supportaccount_SupportAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_bulkdevicetransfers_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_devicetransfers_bulkdevicetransfers_BulkDeviceTransferId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_BulkRegistrationDeviceId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_BulkRegistrationId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_BulkRegistrationFilterTypeId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_bulkregistrationstates_BulkRegistrationStateId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Bundle_BundlePartMasterId_PartMaster" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Bundle_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Bundle_FeaturePartMasterId_PartMaster" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Bundle_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_ChassisComponent_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.DeviceId_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_claimedpurchases_claimedpurchasestate_ClaimedPurchaseStateId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_CloudProductLookupId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_CloudServiceTransferLogId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_ContentUpdates_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_ContentUpdates_DeviceSetId_DeviceSets_DeviceSetId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_ContentUpdates_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Country_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Country_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Device_BillToCountryId_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Device_CountryId_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_License_BillToCountryId_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Region_CountryId_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccount_CountryId_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccountReview_CountryId_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_UserAccount_CountryId_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceCategory_CreatedByUserAccountId_UserAccount000" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceCategory_LastUpdateByUserAccountId_UserAccount000" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_csspvmusage_CsspAutoInvoicingId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_CsspEndUserId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_CsspEndUserInformationId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_OrderStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_csspprelicenserequeststatus" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_ShoppingCart" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Sku" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_deactivatedauthcodes_supportaccount_SupportAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_deactivatedauthcodes_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Device_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Device_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Device_PartMasterId_PartMaster" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Device_SupportAccountId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Device_SupportCenterSupportId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceDefaultRoles_DeviceId_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceSetsDevices_DeviceId_Device_DeviceId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_devicetransfers_device_DeviceId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_EBI_Device_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_EvalItem_Device_ID" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_generictelemetry_deviceid_DeviceId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_GroupDevices_DeviceId_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Membership_DeviceId_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SalesOrderItem_DeviceId_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_WildfireDevice_DeviceId_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceCategory_CreatedByUserAccountId_UserAccount00" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceCategory_LastUpdateByUserAccountId_UserAccount00" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceCategory_SupportAccountId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceCategory_UserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceDefaultRoles_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceDefaultRoles_RoleId_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceSets_CreatedByUserAccountId_UserAccount0" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceSets_LastUpdateByUserAccountId_UserAccount0" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceSetsDevices_DeviceSetId_DeviceSets_DeviceSetId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SoftwareUpdates_DeviceSetId_DeviceSets_DeviceSetId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_VirusUpdates_DeviceSetId_DeviceSets_DeviceSetId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceSetsDevices_CreatedByUserAccountId_UserAccount00" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_DeviceSetsDevices_LastUpdateByUserAccountId_UserAccount00" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_devicetransfers_CreatedBy_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_devicetransfers_DestinationUserAccountId_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_devicetransfers_ReviewedBy_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_devicetransfers_StateId_devicetransferstates_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_elatokengrant_devicetransferstates_StateId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Domain_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Domain_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccountDomains_DomainId_Domain" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_eaexcludeddevices_eaquoteinfo_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_easupportaccounts_eaquoteinfo_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_easkus_eatype_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_easupportaccounts_supportaccount_SupportAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_EBI_Easyonboarding_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_EBI_License_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_elatokengrant_UserAccount_CreatedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_elatokengrant_UserAccount_DestinationUserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_emailsubscriptions_useraccount_CreatedBy_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_emailsubscriptions_useraccount_LastUpdatedBY_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_emailsubscriptions_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_emailtemplates_useraccount_LastUserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_emailtemplates_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Eula_EulaLanguage" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_EulaAgreements_Eula" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_EulaAgreements_EulaContext" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_CreatedByUserAccountId_UserAccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_LicenseId_License_LicenseId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_EvalItem_License_ID" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_evalsfdcmappings_supportaccount_SupportAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_excludedproductactivation_partmaster_PartMasterId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_excludedproductactivation_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_gdpractions_LastUpdatedByuseraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_gdpractions_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_gdprrequests_gdpractions_ActionId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.gdprrequestroles_ibfk_2" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_gdprrequests_gdprroles_RoleId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_gdprrequests_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_gdprrequests_useraccountLastUpdated_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_gdprroles_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_gdprroles_useraccountLast_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_GroupDefaultRoles_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_GroupDefaultRoles_GroupId_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_GroupDefaultRoles_RoleId_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_GroupDevices_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_GroupDevices_GroupId_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_GroupDevices_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_GroupLicenses_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_GroupLicenses_GroupId_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_GroupLicenses_LicenseId_License" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_License_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_License_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_License_PartMasterId_PartMaster" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_phoenixgrandparents_GrandparentLicenseId_license" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_phoenixgrandparents_ParentLicenseId_license" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SalesOrderItem_LicenseId_License" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_licensingapikeys_supportaccount_SupportAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_licensingapikeys_useraccount_UpdatedByUserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_licensingapikeys_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_LightCyberBundledSkus_PartMaster_PartMasterId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AccountTransferLog_SourceSupportAccountId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_AccountTransferLog_TargetSupportAccountId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_ATransferDetailLog_AccountTransferLogId_AccountTransferLog" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_LogBannerMessages_CreatedUserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_LogBannerMessages_LastUpdated_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_EmailNotificationLogId_logEmailNotification" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_EmailNotificationsLog_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RegistrationLog_CreatedByUserAccountId_UserAccount0" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_LogTacToolboxApiCalls_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_TransactionLog_CreatedByUserAccountId_UserAccount00" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Lookups_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Lookups_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Membership_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Membership_GroupId_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Membership_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Membership_RegisteredAppId_RegisteredApps_rcx_idx" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Membership_SupportAccountId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Membership_UserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_MembershipRoles_MembershipId_Membership" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_MembershipRoles_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_MembershipRoles_RoleId_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Models_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Models_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_navigationlinks_navigationlinkgroups_NavigationLinkGroupID" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_navigationlinkprivileges_navigationlinks_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_navigationlinkprivileges_privilege_PrivilegeId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_navigationlinkprivileges_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_navigationsublinks_NavigationSubLinkId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_navigationsublinks_navigationlinks_Id_new" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_onlineservicesconfig_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_onlineservicessubconfig_onlineservicesconfig_LevelId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_onlineservicessubconfig_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PartMaster_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PartMaster_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PartMaster_PartSubtypeId_PartSubtype" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PartMaster_PartTypeId_PartType" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_productmapping_partmaster_PartMasterId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RetiredSkus_PartMasterId_PartMaster_PartMasterId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_sedevices_partmaster_PartMasterId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PartSubType_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PartSubType_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PartSubType_PartTypeId_PartType" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_vmelatokenrate_PartSubtypeId_partsubtype" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PartType_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PartType_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Privilege_CreatedByUserAccountId_UserAccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Privilege_LastUpdateByUserAccountId_UserAccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RolePrivileges_PrivilegeId_Privilege" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PublishTargets_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_PublishTargets_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RBAcRoleMapping_rbacroles_roleid" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RBACRoles_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RBAcRoleMapping_supportaccount_SupportAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RBAcRoleMapping_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Region_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Region_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccount_RegisteredAppId_RegisteredApps_rcx_idx" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Useraccount_RegisteredAppId_RegisteredApps_rcx_idx" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_resourcelinks_resourcelinkgroups_ResourceLinkGroupID" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_resourcesublinks_resourcelinks_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RetiredSkus_CreatedByUserAccountId_UserAccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RmaDevice_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RmaDevice_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_rmadevicejobqueue_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_rmadevicejobqueue_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Role_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Role_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_role_rolecategories_RoleCategoryId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_role_rolesecurityclassifications_RoleSecurityClassificationId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RolePrivileges_RoleId_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccountRoles_RoleId_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_RolePrivileges_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SalesOrder_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SalesOrder_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SalesOrderItem_SalesOrderId_SalesOrder" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SalesOrderItem_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SalesOrderItem_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.Mapping_CreatedByUserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.Mapping_LastUpdateByUserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.Mapping_SupportAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_secaasotp_SecaasBulkOtp_Id" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Detail_SecaasCertRequestId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_selfregistrationcodes_supportaccount_SupportAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_selfregistrationcodes_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_sesupportaccountmapping_supportaccount_SupportAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_sesupportaccountmapping_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SoftwareUpdates_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SoftwareUpdates_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Group_SupportAccountId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccount_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccount_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccountDomain_SupportAccountId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccountRoles_SupportAccountId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_vmrenewal_SupportAccountId_supportaccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_WildfireDevice_SupportAccountId_SupportAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.userselectedmembership_SupportAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccountDefaultRoles_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccountDomains_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Group_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_Group_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccountReview_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_SupportAccountReview_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_supportproductcateg_supportproductcategory_ProductCategoryId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_supportproductcategory_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_supportproduct_supportcategorymapping_CategoryId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_supportproductcategorymapping_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_sfdcproducthierarchy_sfdcproductmodels_ModelId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_sfdcproducthierarchy_sfdcproductseries_SeriesId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_supportcategorymapping_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_productmodels_productseries_SeriesId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_productmodels_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_supportproductskumapping_supportproductmodels_ModelId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_productseries_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_productmapping_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.tenantinfo_ibfk_1" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_UserAccount_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_UserAccount_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_userpreferences_useraccount_CreatedBy_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_userpreferences_useraccount_LastUpdatedBY_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_userpreferences_useraccount_UserAccountId" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_VirusUpdates_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_VirusUpdates_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_WFUserAccount_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_WildFireApiKey_CreatedByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_WildFireApiKey_LastUpdateByUserAccountId_UserAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_vmrenewal_Status_vmrenewalstatus" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_vmrenewal_type_vmrenewaltype" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_vmunprovisioned_type_vmrenewaltype" ManuallyRouted="false" />
+        <AssociationConnector Association="cspModel.FK_WildfireDevice_WildfireUserAccountId_UserAccount" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

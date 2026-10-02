@@ -1,0 +1,82 @@
+﻿@using Kendo.Mvc.UI
+@model Csp.Web.DataTransferObjects.RegisterVmDto
+
+<script>
+    function uploadSuccess(e) {
+        var data = e.response;
+        if (data.Message && data.Message.length > 0) {
+            alert(data.Message);
+        } else {
+            $('#@UniqueId.UuId').val(data.UuId);
+            $('#@UniqueId.CpuId').val(data.CpuId);
+        }
+    }
+
+    function CompleteSubmit() {
+        SupportPortal.UnBlockUI();
+    }
+</script>
+
+<div id="@UniqueId.VmRegisterArea">
+    @using (Ajax.BeginForm("RegisterVm", "Cssp", new { }, new AjaxOptions {
+        UpdateTargetId = @UniqueId.VmRegisterArea,
+        OnBegin = "SupportPortal.BlockUI();",
+        OnComplete = "CompleteSubmit();"
+    }, new { id = "RegisterVmForm" })) {
+        
+        @Html.HiddenFor(x => x.NewDeviceId, new { id = UniqueId.NewDeviceId });
+        @Html.Partial("../Partial/_ResponseNotification", Model.Notifications)
+
+        <div class="fieldset fieldset-padded">
+            <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.Label("UploadUUIDCPUID", "Upload File for UUID & CPUID:")
+                </div>
+                <div class="csp-field">
+                    @(Html.Kendo().Upload()
+                            .Name("uploadUuIdCpuId")
+                            .Async(async => async.Save("RegisterVmFile", "VM"))
+                            .Events(e => e.Success("uploadSuccess"))
+                            .Enable(false))
+                </div>
+            </div>
+            <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.Label((string)UniqueId.UuId, "UUID:")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(x => x.UuId)
+                    @Html.TextBoxFor(x => x.UuId, new { id = UniqueId.UuId })
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+            <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.Label((string)UniqueId.CpuId, "CPUID:")
+                </div>
+                <div class="csp-field">
+                    @Html.ValidationMessageFor(x => x.CpuId)
+                    @Html.TextBoxFor(x => x.CpuId, new { id = UniqueId.CpuId })
+                    <span class="csp-required">*</span>
+                </div>
+            </div>
+            <div>
+                <div class="csp-label" style="width: 200px;">
+                    @Html.LabelFor(x => x.AuthCode, "Authorization Code:")
+                </div>
+                <div class="csp-field">
+                    @Html.TextBoxFor(x => x.AuthCode, new { @readonly = "readonly" })
+                </div>
+            </div>
+        </div>
+        
+        <div class="csp-submit-container">
+            <span class="csp-required-text"><span class="csp-required">*</span>@Constants.RequiredField</span>
+            <input type="submit" class="k-button csp-submit" value="Submit" />
+        </div>
+
+        <script>
+            $.validator.unobtrusive.parse("#RegisterVmForm");
+        </script>
+    }
+</div>

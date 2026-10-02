@@ -1,0 +1,184 @@
+﻿@model Csp.Web.DataTransferObjects.DefaultDto
+@using System.Configuration
+@using Kendo.Mvc.UI;
+
+@{
+    var resourceRevisionNumber = SiteHelper.GetResourceRevisionNumber();
+    var portalAssetsCdnUrl = SiteHelper.GetPortalAssetsCdnUrl();
+    var appEumKey = ConfigurationManager.AppSettings["APP_EUM_KEY"];
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="referrer" content="origin" />
+    <meta name="google-site-verification" content="T2cVf6A12TgFaNLkMGF0229M8wmw3zE_BLNJqQ8FbdY" />
+
+    <title>@ViewBag.Title</title>
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico?@(resourceRevisionNumber)">
+    @RenderSection("BotDetectStyles", required: false)
+    @Styles.RenderFormat("<link href=\"{0}?" + resourceRevisionNumber + "\" type=\"text/css\" rel=\"stylesheet\"/>", "~/Content/kendo/2016.1.412/kendocss")
+    @Styles.RenderFormat("<link href=\"{0}?" + resourceRevisionNumber + "\" type=\"text/css\" rel=\"stylesheet\"/>", "~/Content/allstyles")
+    @Omniture.AddOmniture("HEAD")
+ 
+    <!-- Adobe Lato Fonts defered -->
+    <link rel="preload" href="https://use.typekit.net/exn3eyx.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <!-- Font Awesome -->
+    @*<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/v4-shims.css" />*@
+
+    <link rel="stylesheet" href="~/Content/fontawesome/css/all.min.css"/>
+    <link rel="stylesheet" href="~/Content/fontawesome/css/v4-shims.min.css" />
+
+    <link href="~/Content/site.css?@(resourceRevisionNumber)" rel="stylesheet" />    
+    <link href="~/Content/csp.css?@(resourceRevisionNumber)" rel="stylesheet" />
+    <link href="~/Content/kendo.css?@(resourceRevisionNumber)" rel="stylesheet" />
+    <link href="@(portalAssetsCdnUrl)/css/layout.css?@(resourceRevisionNumber)" rel="stylesheet" />
+    <link href="@(portalAssetsCdnUrl)/static/css/main.css?@(resourceRevisionNumber)" rel="stylesheet" />
+    <style>
+        .pan-logo {
+            width: 100px !important;
+        }
+
+        .fieldset {
+            border: 0px !important;
+        }
+
+        #SupportAccountTitle {
+            padding-top: 10px !important;
+        }
+
+        .csp-BreadCrumb, .csp-logout, .helpTitle {
+            display: none !important;
+        }
+
+        .csp-jumpTo {
+            top: 43px !important;
+        }
+
+        .k-list {
+            overflow: initial !important;
+        }
+
+        #content-body-container p {
+            margin-bottom: 0px;
+            font-size: inherit !important;
+        }
+
+        #content-body-container .marketing-font.csp-home-font-gray {
+            font-size: 1.55em !important;
+            margin-top: 0px !important;
+        }
+
+        #content-body-container p.marketing-font {
+            font-size: 1.4em !important;
+            margin-top: 0px !important;
+        }
+        
+        #AscScoreCardData *,
+        #AscScoreCardData ::after,
+        #AscScoreCardData ::before {
+            box-sizing: initial !important;
+        }
+
+      
+    </style>
+    @Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/alljquery")
+    <script src="~/Scripts/expressive.annotations.validate.js?@(resourceRevisionNumber)"></script>
+    <script type="text/javascript" src="//use.typekit.net/dzq7sdh.js"></script>
+    <script type="text/javascript">try { Typekit.load(); } catch (e) { }</script>
+    <script type="text/kendo-template" id="validationMessageTemplate">
+        <div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error wrapText" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div>
+        </div>
+    </script>
+    @{ Html.RenderPartial("_GoogleAnalytics"); }
+<script src='https://www.google.com/recaptcha/api.js'></script>
+</head>
+
+<body class="comfortable logging">
+
+@{ Html.RenderPartial("_GoogleTagManager"); }
+
+<div>
+    @(Html.Kendo().Window()
+          .Name("temporaryAnnouncementWindow")
+          .Visible(false)
+          .Modal(true)
+          .Width(500)
+          .Draggable()
+          .Actions(a => a.Clear())
+          .Title("Welcome")
+          )
+</div>
+
+<div id="overlay"></div>
+<div id="loading-screen"></div>
+<div id="amber-app-container" data-id="csp-ethos">
+    <div id="header-container" data-id="header-container"></div>
+    <div id="sidenav-container" data-id="sidenav-container"></div>
+    <div id="wrap">
+        <main>
+    
+            <div class="page-body">
+            @using (Html.BeginForm("Index", "Home"))
+            {
+                <!--We MUST have this here to create the anti-forgery cookie because partials can't create the cookie-->
+                @Html.AntiForgeryToken()
+            }
+       
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+    <div id="footer-container" data-id='footer-container'></div>
+</div>
+
+@Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/kendo/2016.1.412/kendojs")
+@Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}?" + resourceRevisionNumber + "\"></script>", "~/bundles/custom")
+<script type="text/javascript">
+    var spinnerImageUrl = '@Url.Content("~/Images/spinner.gif")';
+    var logOnUrl = '@Url.Action("Index", "Home")';
+    var validationMessageTemplate = kendo.template($("#validationMessageTemplate").html());
+
+    $(document).ready(function () {
+        SupportPortal.Init({
+            SpinnerImageUrl: spinnerImageUrl,
+            LogOnUrl: logOnUrl,
+            ValidationMessageTemplate: validationMessageTemplate,
+            DateFormat: '@SiteHelper.DateFormat'
+        });
+    });
+</script>
+
+@(Html.Kendo().Window()
+      .Name("CaseManagementWarningWindow")
+      .Title("Case Management")
+      .Content(@<text>
+                   Your role is limited and you do not have access to case management. Please contact a super user on your account.
+                </text>)
+      .Draggable()
+      .Width(300).Visible(false)
+      )
+<script>
+    function ShowCaseManagementWarningWindow() {
+        var window = $('#CaseManagementWarningWindow').data("kendoWindow");
+        window.open();
+        window.center();
+    }
+</script>
+
+@PortalContext.AddContext()
+
+@RenderSection("BodyScripts", required: false)
+
+<script type="text/javascript" src="@(portalAssetsCdnUrl)/static/js/main.js?@(resourceRevisionNumber)"></script>
+
+@Omniture.AddOmniture("INIT")
+@HotJar.AddScript()
+@PortalFooter.AddScript()
+</body>
+</html>
